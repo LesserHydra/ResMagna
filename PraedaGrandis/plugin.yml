@@ -1,0 +1,12 @@
+name: PraedaGrandis
+main: com.roboboy.PraedaGrandis.PraedaGrandis
+version: 0.0-WIP
+author: Roboboy
+
+commands:
+  PraedaGrandis:
+    aliases: [pg, item]
+    description: Main command for PraedaGrandis
+    usage: /<command> <give|create|test|reload>
+    permission: praeda.grandis.maincommand
+    permissions message: You don't have <permission>
