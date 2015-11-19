@@ -20,14 +20,15 @@ public class ItemUpdater implements Listener
 {
 	private final PraedaGrandis plugin;
 	
-	public ItemUpdater(PraedaGrandis plugin)
-	{
+	public ItemUpdater(PraedaGrandis plugin) {
 		this.plugin = plugin;
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		updateItems(e.getPlayer());
+		Player p = e.getPlayer();
+		updateItems(p);
+		VariableHandler.registerPlayer(p);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -55,6 +56,7 @@ public class ItemUpdater implements Listener
 	{
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			updateItems(p);
+			VariableHandler.registerPlayer(p);
 		}
 	}
 	
