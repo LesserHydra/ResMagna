@@ -36,9 +36,9 @@ public class GrandLocation
 		z = Double.parseDouble(args[2].replace("~", "0").replace("0-", "-"));
 	}
 
-	public Location calculate(Location relitiveLocation)
+	public Location calculate(Location relativeLocation)
 	{
-		Location finalLoc = relitiveLocation.clone();
+		Location finalLoc = relativeLocation.clone();
 		finalLoc.add(x, y, z);
 		if (!relX) finalLoc.setX(x);
 		if (!relY) finalLoc.setY(y);
