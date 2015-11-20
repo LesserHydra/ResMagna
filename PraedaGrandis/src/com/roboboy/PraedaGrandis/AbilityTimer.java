@@ -32,11 +32,16 @@ public class AbilityTimer
 		public void run()
 		{
 			PraedaGrandis.plugin.getLogger().info("Running timer!");
-			//TODO: What happens if the player dies or logs off?
 			//For all active players
 			for (Iterator<Player> it = activePlayers.iterator(); it.hasNext();)
 			{
 				Player p = it.next();
+				
+				//If the player dies or logs off
+				if (!p.isOnline() || !p.isValid()) {
+					it.remove();
+					continue;
+				}
 				
 				ItemSlotType slotType = ItemSlotType.NONE;
 				//Search through players GrandItems for the required one
