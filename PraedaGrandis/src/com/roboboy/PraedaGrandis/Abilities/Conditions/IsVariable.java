@@ -1,11 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
@@ -47,10 +47,10 @@ public class IsVariable extends Condition
 	}
 
 	@Override
-	protected boolean checkThis(LivingEntity target)
+	protected boolean checkThis(Target target)
 	{
-		if (!(target instanceof Player)) return false;
-		Player p = (Player) target;
+		if (!(target.get() instanceof Player)) return false;
+		Player p = (Player) target.get();
 		return VariableHandler.checkCondition(p, name, conditional, (otherName != null ? VariableHandler.get(p, otherName) : number));
 	}
 

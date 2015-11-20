@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
 public class IsSprinting extends Condition
@@ -11,10 +11,10 @@ public class IsSprinting extends Condition
 	}
 
 	@Override
-	public boolean checkThis(LivingEntity target)
+	public boolean checkThis(Target target)
 	{
-		if (target instanceof Player)
-			return ((Player)target).isSprinting();
+		if (target.get() instanceof Player)
+			return ((Player)target.get()).isSprinting();
 		else return false;
 	}
 

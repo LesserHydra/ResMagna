@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
@@ -19,12 +18,12 @@ public abstract class Condition
 	{
 		//boolean result = true;
 		for (Target t : targeter.getTargets(target)) {
-			if ( !(not ^ checkThis(t.get())) ) return false;
+			if ( !(not ^ checkThis(t)) ) return false;
 			//result = result && (not ^ checkThis(t.get())); //(not ? !result : result)
 		}
 		//return result;
 		return true;
 	}
 	
-	protected abstract boolean checkThis(LivingEntity target);
+	protected abstract boolean checkThis(Target target);
 }

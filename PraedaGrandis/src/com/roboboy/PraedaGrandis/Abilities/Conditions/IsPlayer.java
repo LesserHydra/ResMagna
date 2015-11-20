@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
 public class IsPlayer extends Condition
@@ -12,8 +12,8 @@ public class IsPlayer extends Condition
 	}
 
 	@Override
-	protected boolean checkThis(LivingEntity target) {
-		return (target instanceof Player);
+	protected boolean checkThis(Target target) {
+		return (target.get() instanceof Player);
 	}
 
 }

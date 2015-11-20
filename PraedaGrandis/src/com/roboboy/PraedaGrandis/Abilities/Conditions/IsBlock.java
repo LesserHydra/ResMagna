@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
@@ -20,10 +20,10 @@ public class IsBlock extends Condition
 	}
 
 	@Override
-	public boolean checkThis(LivingEntity target)
+	public boolean checkThis(Target target)
 	{
 		//Material blockType = location.calculate(target.getLocation()).getBlock().getType();
-		if (materials.contains(location.calculate(target.getLocation()).getBlock().getType())) {
+		if (materials.contains(location.calculate(target.get().getLocation()).getBlock().getType())) {
 			return true;
 		}
 		else return false;

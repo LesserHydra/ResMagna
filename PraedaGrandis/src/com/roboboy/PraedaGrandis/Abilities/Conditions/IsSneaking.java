@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
 public class IsSneaking extends Condition
@@ -12,10 +12,10 @@ public class IsSneaking extends Condition
 	}
 
 	@Override
-	public boolean checkThis(LivingEntity target)
+	public boolean checkThis(Target target)
 	{
-		if (target instanceof Player)
-			return ((Player)target).isSneaking();
+		if (target.get() instanceof Player)
+			return ((Player)target.get()).isSneaking();
 		else return false;
 	}
 

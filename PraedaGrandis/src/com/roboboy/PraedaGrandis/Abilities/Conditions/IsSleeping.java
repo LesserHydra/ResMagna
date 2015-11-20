@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
 public class IsSleeping extends Condition
@@ -11,9 +11,9 @@ public class IsSleeping extends Condition
 	}
 
 	@Override
-	protected boolean checkThis(LivingEntity target) {
-		if (target instanceof Player)
-			return ((Player)target).isSleeping();
+	protected boolean checkThis(Target target) {
+		if (target.get() instanceof Player)
+			return ((Player)target.get()).isSleeping();
 		else return false;
 	}
 }
