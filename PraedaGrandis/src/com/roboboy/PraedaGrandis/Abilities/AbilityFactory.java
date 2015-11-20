@@ -57,6 +57,8 @@ public class AbilityFactory
 		break;
 		case "damage": a = new DamageAbility(slotType, actType, targeter, args);
 		break;
+		case "sound": a = new SoundAbility(slotType, actType, targeter, args);
+		break;
 		case "potion": a = new PotionAbility(slotType, actType, targeter, args);
 		break;
 		case "ghostblock": a = new GhostBlockAbility(slotType, actType, targeter, args);
