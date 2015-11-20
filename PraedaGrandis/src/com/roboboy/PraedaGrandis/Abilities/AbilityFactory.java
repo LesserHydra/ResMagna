@@ -61,6 +61,8 @@ public class AbilityFactory
 		break;
 		case "push": a = new PushAbility(slotType, actType, targeter, args);
 		break;
+		case "fling": a = new FlingAbility(slotType, actType, targeter, args);
+		break;
 		case "sound": a = new SoundAbility(slotType, actType, targeter, args);
 		break;
 		case "particle": a = new ParticleAbility(slotType, actType, targeter, args);
