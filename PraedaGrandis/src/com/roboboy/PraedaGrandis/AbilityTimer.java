@@ -31,7 +31,7 @@ public class AbilityTimer
 		@Override
 		public void run()
 		{
-			PraedaGrandis.plugin.getLogger().info("Running timer!");
+			//PraedaGrandis.plugin.getLogger().info("Running timer!");
 			//For all active players
 			for (Iterator<Player> it = activePlayers.iterator(); it.hasNext();)
 			{

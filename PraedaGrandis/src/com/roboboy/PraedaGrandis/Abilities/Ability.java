@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
@@ -24,7 +23,7 @@ public abstract class Ability
 	
 	public final void activate(ItemSlotType slot, Target target)
 	{
-		PraedaGrandis.plugin.getLogger().info("Item in " + slot.name() + " slot, asking for " + slotType.name());
+		//PraedaGrandis.plugin.getLogger().info("Item in " + slot.name() + " slot, asking for " + slotType.name());
 		if (slot.isSubtypeOf(slotType)) {
 			for (Target t : targeter.getTargets(target)) {
 				execute(t);
