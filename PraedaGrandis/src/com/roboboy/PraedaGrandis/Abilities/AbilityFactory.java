@@ -57,6 +57,8 @@ public class AbilityFactory
 		break;
 		case "damage": a = new DamageAbility(slotType, actType, targeter, args);
 		break;
+		case "pull": a = new PullAbility(slotType, actType, targeter, args);
+		break;
 		case "sound": a = new SoundAbility(slotType, actType, targeter, args);
 		break;
 		case "particle": a = new ParticleAbility(slotType, actType, targeter, args);
