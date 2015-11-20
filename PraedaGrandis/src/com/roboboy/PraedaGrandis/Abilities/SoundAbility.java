@@ -17,10 +17,10 @@ public class SoundAbility extends Ability
 	public SoundAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
 	{
 		super(slotType, activator, targeter);
-		if (args.size() > 4) {
+		if (args.size() > 3) {
 			sound = Sound.valueOf(args.get(1).toUpperCase());
 			volume = Float.parseFloat(args.get(2));
-			pitch = Float.parseFloat(args.get(2));
+			pitch = Float.parseFloat(args.get(3));
 		}
 		else {
 			//Error

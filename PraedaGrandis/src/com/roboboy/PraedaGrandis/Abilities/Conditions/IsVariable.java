@@ -14,13 +14,13 @@ public class IsVariable extends Condition
 {
 	final private String 				name;
 	final private VariableConditional	conditional;
-	final private String			otherName;
-	final private int				number;
+	final private String				otherName;
+	final private int					number;
 	
 	public IsVariable(Targeter targeter, boolean not, ConfigString args)
 	{
 		super(targeter, not);
-		if (args.size() > 4) {
+		if (args.size() > 3) {
 			name = args.get(1);
 			conditional = VariableConditional.fromSymbol(args.get(2));
 			

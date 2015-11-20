@@ -49,7 +49,7 @@ public class ConditionFactory
 		break;
 		case "iswearing": c = new IsWearing(targeter, not, args);
 		break;
-		case "isvariable": c = new IsWearing(targeter, not, args);
+		case "isvariable": c = new IsVariable(targeter, not, args);
 		break;
 		}
 		

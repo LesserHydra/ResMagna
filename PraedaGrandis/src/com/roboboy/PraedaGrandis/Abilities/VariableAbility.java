@@ -20,7 +20,7 @@ public class VariableAbility extends Ability
 	public VariableAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
 	{
 		super(slotType, activator, targeter);
-		if (args.size() > 4) {
+		if (args.size() > 3) {
 			name = args.get(1);
 			operator = VariableOperator.fromSymbol(args.get(2));
 			
