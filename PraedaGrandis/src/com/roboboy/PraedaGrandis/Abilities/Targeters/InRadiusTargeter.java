@@ -8,19 +8,26 @@ import org.bukkit.entity.LivingEntity;
 public class InRadiusTargeter implements Targeter
 {
 	double radius;
+	double radiusSquared;
 	
 	public InRadiusTargeter(double radius) {
 		this.radius = radius;
+		this.radiusSquared = Math.pow(radius, 2);
 	}
 	
 	@Override
 	public MultiTarget getTargets(Target currentTarget)
 	{
+		LivingEntity holder = currentTarget.getHolder();
 		List<LivingEntity> targets = new LinkedList<>();
 		
-		//FIXME: Not technically radius.
-		for (Entity e : currentTarget.getHolder().getNearbyEntities(radius, radius, radius)) {
-			if (e instanceof LivingEntity && !e.equals(currentTarget.getHolder())) targets.add((LivingEntity) e);
+		//For all entities in bounding box
+		for (Entity e : holder.getNearbyEntities(radius, radius, radius)) {
+			//If living and not holder
+			if (e instanceof LivingEntity && !e.equals(holder)) {
+				//If in radius
+				if (e.getLocation().distanceSquared(holder.getLocation()) <= radiusSquared) targets.add((LivingEntity) e);
+			}
 		}
 		
 		return new MultiTarget(targets, currentTarget);
