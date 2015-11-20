@@ -20,7 +20,7 @@ public class InRadiusTargeter implements Targeter
 		
 		//FIXME: Not technically radius.
 		for (Entity e : currentTarget.getHolder().getNearbyEntities(radius, radius, radius)) {
-			if (e instanceof LivingEntity) targets.add((LivingEntity) e);
+			if (e instanceof LivingEntity && !e.equals(currentTarget.getHolder())) targets.add((LivingEntity) e);
 		}
 		
 		return new MultiTarget(targets, currentTarget);
