@@ -46,7 +46,7 @@ public enum ItemSlotType
 		case 1: return CHESTPLATE;
 		case 2: return LEGGINGS;
 		case 3: return BOOTS;
-		default: return NONE;
+		default: throw new IllegalArgumentException("Invalid armor slot (0-3): " + i);
 		}
 	}
 	
