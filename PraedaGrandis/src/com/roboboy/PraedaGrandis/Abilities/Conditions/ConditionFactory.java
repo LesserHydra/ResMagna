@@ -37,6 +37,8 @@ public class ConditionFactory
 		{
 		case "isnull": c = new IsNull(targeter, not);
 		break;
+		case "isholder": c = new IsHolder(targeter, not);
+		break;
 		case "isplayer": c = new IsPlayer(targeter, not);
 		break;
 		case "ismob": c = new IsMob(targeter, not);
