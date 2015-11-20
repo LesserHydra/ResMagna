@@ -49,6 +49,8 @@ public class ConditionFactory
 		break;
 		case "isblocking": c = new IsBlocking(targeter, not);
 		break;
+		case "issleeping": c = new IsSleeping(targeter, not);
+		break;
 		case "iswearing": c = new IsWearing(targeter, not, args);
 		break;
 		case "isvariable": c = new IsVariable(targeter, not, args);
