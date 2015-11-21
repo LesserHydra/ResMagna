@@ -235,13 +235,7 @@ public class GrandItem
 		Attributes att = new Attributes(item);
 		//Remove all attributes
 		att.clear();
-		/*for (Iterator<Attribute> it = att.values().iterator(); it.hasNext();)
-		{
-			Attribute a = it.next();
-			if (!a.getUUID().equals(PraedaGrandis.ID)) {
-				it.remove();
-			}
-		}*/
+		
 		//Re-add the proper attributes
 		for (GrandAttribute a: attributes) {
 			att.add(a.build());
