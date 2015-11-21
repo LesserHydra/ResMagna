@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.configuration.ConfigurationSection;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
+import com.roboboy.PraedaGrandis.Abilities.DelayAbility;
 import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
 import com.roboboy.PraedaGrandis.Abilities.Conditions.ConditionFactory;
@@ -24,6 +25,8 @@ public class GrandAbility
 	
 	public GrandAbility(ConfigurationSection abilitySection)
 	{
+		DelayAbility currentDelayAbility = null;
+		
 		//Conditions (if)
 		for (String s : abilitySection.getStringList("if"))
 		{
@@ -34,8 +37,19 @@ public class GrandAbility
 		//Abilities (then)
 		for (String s : abilitySection.getStringList("then"))
 		{
+			//Construct ability
 			Ability a = AbilityFactory.build(s);
-			if (a != null) abilities.add(a);
+			if (a == null) continue;
+			
+			//Add to delay ability if exists
+			if (currentDelayAbility != null) currentDelayAbility.addAbility(a);
+			//Otherwise, add to ability list
+			else abilities.add(a);
+			
+			//Following abilities are assigned to this DelayAbility
+			if (a instanceof DelayAbility) {
+				currentDelayAbility = (DelayAbility) a;
+			}
 		}
 		
 		//Otherwise (else)

@@ -51,6 +51,8 @@ public class AbilityFactory
 		{
 		case "custom": a = new CustomAbility(slotType, actType, targeter, args);
 		break;
+		case "delay": a = new DelayAbility(slotType, actType, targeter, args);
+		break;
 		case "variable": a = new VariableAbility(slotType, actType, targeter, args);
 		break;
 		case "heal": a = new HealAbility(slotType, actType, targeter, args);
