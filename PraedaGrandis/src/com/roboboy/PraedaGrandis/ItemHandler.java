@@ -125,11 +125,10 @@ public class ItemHandler extends MultiConfig
 		return null;
 	}
 
-	public String listItems()
-	{
+	public String listItems() {
 		String result = "";
 		for (String key : items.keySet()) {
-			result.concat(", " + key);
+			result += ", " + key;
 		}
 		
 		return result;
