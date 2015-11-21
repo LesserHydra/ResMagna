@@ -21,9 +21,10 @@ public class AbilityTimer
 	final private Ability ability;
 	final private long delay;
 	
-	boolean running = false;
-	TimerRunnable timer = new TimerRunnable();
-	private Set<Player> activePlayers = new HashSet<>();
+	private boolean running = false;
+	private TimerRunnable timer;
+	
+	final private Set<Player> activePlayers = new HashSet<>();
 	
 	//Runnable
 	private class TimerRunnable extends BukkitRunnable
@@ -63,6 +64,7 @@ public class AbilityTimer
 			//If no players are active, cancel the timer
 			if (activePlayers.isEmpty()) {
 				this.cancel();
+				running = false;
 			}
 		}
 	}
@@ -82,7 +84,8 @@ public class AbilityTimer
 		activePlayers.add(player);
 		if (!running) {
 			running = true;
-			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);
+			timer = new TimerRunnable(); //It seems you must construct a new instance every time
+			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);;
 		}
 	}
 }
