@@ -8,18 +8,28 @@ import com.roboboy.PraedaGrandis.Configuration.GrandAbility;
 
 public class CustomAbility extends Ability
 {
-	final private GrandAbility grandAbility;
+	final private String name;
+	private GrandAbility grandAbility;
 	
 	public CustomAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
 	{
 		super(slotType, activator, targeter);
-		//TODO: Error handling
-		grandAbility = PraedaGrandis.plugin.abilityHandler.customAbilities.get(args.get(1));
+		name = args.get(1);
+		findGrandAbility(false);
+	}
+	
+	public void findGrandAbility(boolean checkForFail) {
+		grandAbility = PraedaGrandis.plugin.abilityHandler.customAbilities.get(name);
 		if (grandAbility == null) {
-			PraedaGrandis.plugin.getLogger().severe("Grand ability not found: " + args.get(1));
-			PraedaGrandis.plugin.getLogger().severe("Registered abilities:");
-			for (String s : PraedaGrandis.plugin.abilityHandler.customAbilities.keySet()) {
-				PraedaGrandis.plugin.getLogger().severe("    - " + s);
+			if (checkForFail) {
+				PraedaGrandis.plugin.getLogger().severe("Grand ability not found: " + name);
+				PraedaGrandis.plugin.getLogger().severe("Registered abilities:");
+				for (String s : PraedaGrandis.plugin.abilityHandler.customAbilities.keySet()) {
+					PraedaGrandis.plugin.getLogger().severe("    - " + s);
+				}
+			}
+			else {
+				PraedaGrandis.plugin.abilityHandler.toBeUpdated.add(this);
 			}
 		}
 	}
