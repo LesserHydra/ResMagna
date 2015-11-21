@@ -16,7 +16,7 @@ public class ConditionFactory
 		//Get name and NOT opperator
 		String cName = args.get(0);
 		boolean not = false;
-		if (cName.startsWith("not")) {
+		if (cName.startsWith("~")) {
 			not = true;
 			cName = cName.substring(3);
 		}
