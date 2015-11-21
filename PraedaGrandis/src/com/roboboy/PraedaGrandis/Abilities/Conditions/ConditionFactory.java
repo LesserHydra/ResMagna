@@ -49,6 +49,8 @@ public class ConditionFactory
 		break;
 		case "issprinting": c = new IsSprinting(targeter, not);
 		break;
+		case "isonground": c = new IsOnGround(targeter, not);
+		break;
 		case "isblocking": c = new IsBlocking(targeter, not);
 		break;
 		case "issleeping": c = new IsSleeping(targeter, not);
