@@ -34,6 +34,6 @@ public enum VariableOperator
 		for (VariableOperator op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
-		return null;
+		throw new IllegalArgumentException("Invalid variable operator: " + symbol);
 	}
 }

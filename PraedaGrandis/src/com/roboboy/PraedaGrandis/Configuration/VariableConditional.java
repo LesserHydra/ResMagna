@@ -31,6 +31,6 @@ public enum VariableConditional
 		for (VariableConditional op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
-		return null;
+		throw new IllegalArgumentException("Invalid variable conditional: " + symbol);
 	}
 }
