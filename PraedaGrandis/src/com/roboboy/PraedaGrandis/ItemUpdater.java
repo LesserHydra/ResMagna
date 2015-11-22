@@ -34,22 +34,17 @@ public class ItemUpdater implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(final InventoryClickEvent e)
 	{
-		//if (!(e instanceof InventoryCreativeEvent))
-		//{
-			//updateItem(e.getCurrentItem());
-			//updateItem(e.getCursor());
-			if (e.getWhoClicked() instanceof Player) {
-				//Player p = (Player) e.getWhoClicked();
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					@Override
-					public void run() {
-						updateItem(e.getCurrentItem());
-						updateItem(e.getCursor());
-						//((Player) e.getWhoClicked()).updateInventory();
-					}
-				}, 1L);
-			}
-		//}
+		if (e.getWhoClicked() instanceof Player) {
+			//Player p = (Player) e.getWhoClicked();
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				@Override
+				public void run() {
+					updateItem(e.getCurrentItem());
+					updateItem(e.getCursor());
+					//((Player) e.getWhoClicked()).updateInventory();
+				}
+			}, 1L);
+		}
 	}
 	
 	public void reload()
