@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +53,16 @@ public class ItemUpdater implements Listener
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			updateItems(p);
 			VariableHandler.registerPlayer(p);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onCraftingEvent(CraftItemEvent e) {
+		for (ItemStack item : e.getInventory().getMatrix()) {
+			GrandItem gItem = plugin.itemHandler.matchItem(item);
+			if (gItem != null) {
+				e.setCancelled(true);
+			}
 		}
 	}
 	
