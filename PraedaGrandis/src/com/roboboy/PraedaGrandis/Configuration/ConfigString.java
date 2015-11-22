@@ -24,19 +24,15 @@ public class ConfigString implements Iterable<String>
 			if (c == '(') { //Open bracket
 				open++;
 			}
-			else if (open > 0) //Searching for the close bracket
-			{
+			else if (open > 0) { //Searching for the close bracket
 				if (c == ')') open--;
-				if (open == 0) { //Found final closing bracket
-					elements.add(s.substring(startI, i));
-					startI = i + 1;
-				}
 			}
 			else if (c == ' ') { //Spaces otherwise
 				if (startI != i) elements.add(s.substring(startI, i)); //Don't add blank spaces
 				startI = i + 1;
 			}
-			else if (i == s.length() - 1) { //Final character
+			
+			if (i == s.length() - 1) { //Final character
 				elements.add(s.substring(startI, s.length()));
 			}
 		}
