@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -139,9 +140,14 @@ public class GrandItem
 		for (GrandAttribute a: attributes)
 			att.add(a.build());
 		
-		//ID
+		//NBT Name
 		NBTStorage storage = NBTStorage.newTarget(att.getStack(), PraedaGrandis.STORAGE_ITEM_NAME);
 		storage.setData(id);
+		
+		//NBT ID
+		UUID newID = UUID.randomUUID();
+		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);
+		storage.setData(newID.toString());
 		
 		return storage.getTarget();
 	}

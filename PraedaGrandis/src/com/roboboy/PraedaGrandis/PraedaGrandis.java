@@ -14,7 +14,8 @@ import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 public class PraedaGrandis extends JavaPlugin
 {
 	public static PraedaGrandis plugin;
-	public static final String STORAGE_ITEM_NAME = "PraedaGrandis.GrandItem";
+	public static final String STORAGE_ITEM_NAME = "PraedaGrandis.GrandItemName";
+	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
 	//private Map<String, GrandItem> items = new HashMap<String, GrandItem>();

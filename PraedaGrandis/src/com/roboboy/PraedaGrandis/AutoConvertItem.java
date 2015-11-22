@@ -2,6 +2,7 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
@@ -48,6 +49,10 @@ public class AutoConvertItem
 	{
 		NBTStorage storage = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME);
 		storage.setData(convertItem.id);
+		
+		UUID newID = UUID.randomUUID();
+		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);
+		storage.setData(newID.toString());
 		
 		return convertItem.update(storage.getTarget());
 	}
