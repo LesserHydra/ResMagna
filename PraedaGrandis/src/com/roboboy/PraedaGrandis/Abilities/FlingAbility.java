@@ -15,7 +15,13 @@ public class FlingAbility extends Ability
 	public FlingAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
 		super(slotType, activator, targeter);
 		forceAmount = Double.parseDouble(args.get(1));
-		targetLocation = new GrandLocation(args.get(2));
+		
+		if (args.size() > 2 && args.get(2).startsWith("(")) {
+			targetLocation = new GrandLocation(args.get(2));
+		}
+		else {
+			targetLocation = null;
+		}
 	}
 
 	@Override
@@ -23,13 +29,24 @@ public class FlingAbility extends Ability
 	{
 		LivingEntity targetEntity = target.get();
 		Location currentLocation = targetEntity.getLocation();
-		//Old velocity plus new force vector
-		targetEntity.setVelocity(targetEntity.getVelocity().add(
-				//Force vector pointing to targetLocation...
-				targetLocation.calculate(currentLocation).toVector().subtract(
-						currentLocation.toVector())
-				//...with length of forceAmount
-				.normalize().multiply(forceAmount)));
+		
+		if (targetLocation != null) {
+			//Old velocity plus new force vector
+			targetEntity.setVelocity(targetEntity.getVelocity().add(
+					//Force vector pointing to targetLocation...
+					targetLocation.calculate(currentLocation).toVector().subtract(
+							currentLocation.toVector())
+					//...with length of forceAmount
+					.normalize().multiply(forceAmount)));
+		}
+		else {
+			//Old velocity plus new force vector
+			targetEntity.setVelocity(targetEntity.getVelocity().add(
+					//Entity facing direction...
+					currentLocation.getDirection()
+					//...with length of forceAmount
+					.multiply(forceAmount)));
+		}
 	}
 
 }
