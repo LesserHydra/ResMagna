@@ -36,13 +36,11 @@ public class ItemUpdater implements Listener
 	public void onInventoryClick(final InventoryClickEvent e)
 	{
 		if (e.getWhoClicked() instanceof Player) {
-			//Player p = (Player) e.getWhoClicked();
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				@Override
 				public void run() {
 					updateItem(e.getCurrentItem());
 					updateItem(e.getCursor());
-					//((Player) e.getWhoClicked()).updateInventory();
 				}
 			}, 1L);
 		}
