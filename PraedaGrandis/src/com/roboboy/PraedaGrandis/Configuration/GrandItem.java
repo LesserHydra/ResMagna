@@ -196,6 +196,15 @@ public class GrandItem
 	public void setHideAttributes(boolean hideAttributes)
 	{this.hideAttributes = hideAttributes;}
 	
+	public boolean getUpdateName()
+	{return updateName;}
+	public boolean getUpdateDurability()
+	{return updateDurability;}
+	public boolean getUpdateAmount()
+	{return updateAmount;}
+	public boolean getUpdateEnchantments()
+	{return updateEnchantments;}
+	
 	public void setUpdateName(boolean updateName)
 	{this.updateName = updateName;}
 	public void setUpdateDurability(boolean updateDurability)
