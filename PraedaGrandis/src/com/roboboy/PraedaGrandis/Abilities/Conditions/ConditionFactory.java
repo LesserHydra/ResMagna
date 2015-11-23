@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
@@ -59,6 +60,20 @@ public class ConditionFactory
 		break;
 		case "isvariable": c = new IsVariable(targeter, not, args);
 		break;
+		}
+		
+		if (c != null) {
+			PraedaGrandis.plugin.getLogger().info(s);
+			PraedaGrandis.plugin.getLogger().info("\tConditionType: " + cName);
+			PraedaGrandis.plugin.getLogger().info("\tInversed: " + not);
+			PraedaGrandis.plugin.getLogger().info("\tTargeterType: " + targeter.getClass().getSimpleName());
+			
+			/*if (args.size() != 0) {
+				PraedaGrandis.plugin.getLogger().info("\tArguments:");
+				for (String argString : args) {
+					PraedaGrandis.plugin.getLogger().info("\t- " + argString);
+				}
+			}*/
 		}
 		
 		return c;

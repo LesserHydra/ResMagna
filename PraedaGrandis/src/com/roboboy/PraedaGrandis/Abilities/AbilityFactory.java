@@ -85,12 +85,12 @@ public class AbilityFactory
 			PraedaGrandis.plugin.getLogger().info("\tActivatorType: " + actType.name());
 			PraedaGrandis.plugin.getLogger().info("\tTimerDelay: " + timerDelay);
 			
-			if (args.size() != 0) {
+			/*if (args.size() != 0) {
 				PraedaGrandis.plugin.getLogger().info("\tArguments:");
 				for (String argString : args) {
 					PraedaGrandis.plugin.getLogger().info("\t- " + argString);
 				}
-			}
+			}*/
 		}
 		
 		return a;
