@@ -18,7 +18,7 @@ public class ConditionFactory
 		boolean not = false;
 		if (cName.startsWith("~")) {
 			not = true;
-			cName = cName.substring(3);
+			cName = cName.substring(1);
 		}
 		
 		//Targeter
