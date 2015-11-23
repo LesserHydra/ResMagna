@@ -15,19 +15,12 @@ public enum ActivatorType
 	DROP			(NONE),					//Pressed Q
 	
 	MOVE			(NONE),					//Owner location changed
-	MOVESNEAK		(MOVE),					//Owner sneaking
 	MOVEWALK		(MOVE),					//Owner walking
-	MOVESPRINT		(MOVE),					//Owner sprinting
-	MOVEJUMP		(MOVE),
-	MOVEFALL		(MOVE),
-	MOVESTEP		(MOVE),
-	MOVESTEPUP		(MOVESTEP),
-	MOVESTEPDOWN	(MOVESTEP),
-	MOVECLIMB		(MOVE),
-	MOVECLIMBUP		(MOVECLIMB),
-	MOVECLIMBDOWN	(MOVECLIMB),
-	MOVETELEPORT	(MOVE),					//Owner teleported
-	MOVEPORTAL		(MOVETELEPORT),			//Owner about to go through portal
+	MOVEUP			(MOVE),
+	MOVEDOWN		(MOVE),
+	
+	TELEPORT		(MOVE),					//Owner teleported
+	PORTAL			(TELEPORT),				//Owner about to go through portal
 	
 	LOOK			(NONE),					//Owner direction changed
 	
