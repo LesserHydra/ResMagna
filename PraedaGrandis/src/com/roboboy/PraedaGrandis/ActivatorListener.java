@@ -2,6 +2,7 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -14,6 +15,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
 import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
@@ -162,8 +166,8 @@ public class ActivatorListener implements Listener
 		}
 	}
 	
-	/*TODO:----------MOVE----------*/
-	/*@EventHandler(priority = EventPriority.MONITOR)
+	/*----------MOVE----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
 		Player p = e.getPlayer();
@@ -174,53 +178,31 @@ public class ActivatorListener implements Listener
 			activate(ActivatorType.LOOK, e.getPlayer(), null);
 		}
 		
-		if (!to.toVector().equals(from.toVector())) { 		//Move
-			ActivatorType moveType = ActivatorType.MOVE;
-			if (e instanceof PlayerTeleportEvent) { 		//MoveTeleport
-				if (e instanceof PlayerPortalEvent) { 		//MovePortal
-					moveType = ActivatorType.MOVEPORTAL;
-				}
-				else {
-					moveType = ActivatorType.MOVETELEPORT;
-				}
+		if (!to.getBlock().equals(from.getBlock())) { 	//Move
+			ActivatorType moveType;
+			if (from.getY() < to.getY()) {				//Up
+				moveType = ActivatorType.MOVEUP;
 			}
-			else if (from.getY() < to.getY()) {				//Up
-				//TODO: Check for step
-				if (to.getBlock().getType() == Material.AIR) {
-					if (from.getBlockY() + 1 == to.getBlockY()) {
-						moveType = ActivatorType.MOVEJUMP;
-					}
-				}
-				else {
-					
-				}
+			else if (from.getY() > to.getY()) {			//Down
+				moveType = ActivatorType.MOVEDOWN;
 			}
-			else if (from.getY() > to.getY()) {				//Down
-				if (p.getFallDistance() > 1) {				//Fall
-					moveType = ActivatorType.MOVEFALL;
-				}
-				else if (p.getFallDistance() > 0) {			//StepDown
-					moveType = ActivatorType.MOVESTEPDOWN;
-				}
-				else {										//ClimbDown
-					moveType = ActivatorType.MOVECLIMBDOWN;
-				}
-			}
-			else {											//Horizontal Movement
-				if (p.isSneaking()) {
-					moveType = ActivatorType.MOVESNEAK;
-				}
-				else if (p.isSprinting()) {
-					moveType = ActivatorType.MOVESPRINT;
-				}
-				else {
-					moveType = ActivatorType.MOVEWALK;
-				}
+			else {										//Horizontal Movement
+				moveType = ActivatorType.MOVEWALK;
 			}
 			
 			activate(moveType, p, null);
 		}
-	}*/
+	}
+	
+	/*----------TELEPORT----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+		activate(ActivatorType.TELEPORT, e.getPlayer(), null);
+	}
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerPortal(PlayerPortalEvent e) {
+		activate(ActivatorType.PORTAL, e.getPlayer(), null);
+	}
 	
 	//TODO: Interact
 	
