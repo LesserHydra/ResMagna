@@ -1,6 +1,6 @@
 name: PraedaGrandis
 main: com.roboboy.PraedaGrandis.PraedaGrandis
-version: 0.0-WIP
+version: 0.5
 author: Roboboy
 
 commands:
