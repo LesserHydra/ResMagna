@@ -23,6 +23,8 @@ public class PraedaGrandis extends JavaPlugin
 	public ItemHandler itemHandler;
 	public GrandAbilityHandler abilityHandler;
 	
+	private long timerHandlerDelay = 80L;
+	
 	//Plugin startup
 	@Override
 	public void onEnable()
@@ -45,7 +47,7 @@ public class PraedaGrandis extends JavaPlugin
             		}
             	}
             }
-        }, 0L, 80L); //TODO: Make this configurable
+        }, 0L, timerHandlerDelay);
 	}
 
 	//Plugin disable
