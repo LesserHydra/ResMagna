@@ -20,7 +20,7 @@ public class PraedaGrandis extends JavaPlugin
 	
 	public ConfigManager configManager = new ConfigManager(this);
 	public ItemUpdater itemUpdater = new ItemUpdater(this);
-	public ItemHandler itemHandler;// = new ItemHandler(this);
+	public ItemHandler itemHandler;
 	public GrandAbilityHandler abilityHandler;
 	
 	//Plugin startup

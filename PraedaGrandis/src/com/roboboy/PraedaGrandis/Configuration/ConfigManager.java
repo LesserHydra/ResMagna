@@ -13,8 +13,6 @@ public class ConfigManager
 	public final File abilityFolder;
 	
 	public FileConfiguration pluginConfig;
-	//public GrandItemMultiConfig itemConfig;
-	//private AbilityMultiConfig abilityConfig;
 	
 	public ConfigManager(PraedaGrandis p)
 	{
@@ -29,10 +27,5 @@ public class ConfigManager
 		
 		if (!itemFolder.exists()) itemFolder.mkdir();
 		if (!abilityFolder.exists()) abilityFolder.mkdir();
-		
-		//itemConfig = new GrandItemMultiConfig(plugin, itemFolder);
-		//abilityConfig = new AbilityMultiConfig(abilityFolder);
-		
-		//itemConfig.reload();
 	}
 }
