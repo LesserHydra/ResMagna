@@ -49,7 +49,6 @@ public class GrandItem
 	private boolean updateAmount = false;
 	private boolean updateEnchantments = false;
 	
-	//private Multimap<ActivatorType, Ability> abilities = ArrayListMultimap.create();
 	private List<Ability> abilities = new ArrayList<>();
 	
 	private List<AbilityTimer> timers = new ArrayList<>();

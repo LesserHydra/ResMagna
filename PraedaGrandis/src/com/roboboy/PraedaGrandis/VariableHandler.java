@@ -42,7 +42,6 @@ public class VariableHandler
 	}
 	
 	static public int get(Player p, String varName) {
-		//TODO: if (!variables.containsKey(p)) throw ;
 		Integer value = variables.get(p).get(varName);
 		return (value == null ? 0 : value);
 	}

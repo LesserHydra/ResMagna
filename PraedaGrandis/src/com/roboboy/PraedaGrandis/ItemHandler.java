@@ -39,18 +39,9 @@ public class ItemHandler extends MultiConfig
 		{
 			ConfigurationSection itemConfig = config.getConfigurationSection(key);
 			ConfigurationSection autoconvertSection = itemConfig.getConfigurationSection("autoconvert"); //TODO: Move to seperate file
-			//List<String> abilityList = itemConfig.getStringList("abilities");
-			
-			//itemConfig.set("abilities", null);
-			//itemConfig.set("autoconvert", null);
 			
 			GrandItem item = new GrandItem(itemConfig);
 			items.put(key.toLowerCase(), item);
-			
-			//TODO: Create seperate handler
-			/*for (String abilityString : abilityList) {
-				//AbilityFactory.build(abilityString);
-			}*/
 			
 			//autoconvert
 			if (autoconvertSection != null)
@@ -61,7 +52,6 @@ public class ItemHandler extends MultiConfig
 				Material searchType = Material.matchMaterial(itemConfig.getString("autoconvert.type", ""));
 				convertItems.add(new AutoConvertItem(item, searchDisplay, searchLore, searchType));
 			}
-			//TODO: Construct abilities/autoconvert
 		}
 	}
 
@@ -133,9 +123,4 @@ public class ItemHandler extends MultiConfig
 		
 		return result;
 	}
-
-	/*public void activate(ActivatorType type, GrandItem grandItem, Player holder, LivingEntity activatorTarget)
-	{
-		grandItem.activateAbilities(type, holder, activatorTarget);
-	}*/
 }

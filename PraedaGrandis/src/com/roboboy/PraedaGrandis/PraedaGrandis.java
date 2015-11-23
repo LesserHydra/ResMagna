@@ -18,14 +18,10 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
-	//private Map<String, GrandItem> items = new HashMap<String, GrandItem>();
-	
 	public ConfigManager configManager = new ConfigManager(this);
 	public ItemUpdater itemUpdater = new ItemUpdater(this);
 	public ItemHandler itemHandler;// = new ItemHandler(this);
 	public GrandAbilityHandler abilityHandler;
-	
-	//private int timerTaskNum;
 	
 	//Plugin startup
 	@Override
@@ -173,8 +169,4 @@ public class PraedaGrandis extends JavaPlugin
 	static public void log(String s, LogType type) {
 		plugin.getLogger().info(s);
 	}
-	
-	/* How will these items be created? It needs to be in some way that another plugin
-	 * could access. For example, using an item's name or lore. Perhaps an item that gets
-	 * turned into the loot when held by a player? Maybe it need to be interacted with?*/
 }
