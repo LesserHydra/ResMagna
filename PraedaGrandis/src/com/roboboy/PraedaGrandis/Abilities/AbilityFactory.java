@@ -71,6 +71,10 @@ public class AbilityFactory
 		break;
 		case "potion": a = new PotionAbility(slotType, actType, targeter, args);
 		break;
+		case "swapholder": a = new SwapHolderAbility(slotType, actType, targeter, args);
+		break;
+		case "swapactivator": a = new SwapActivatorAbility(slotType, actType, targeter, args);
+		break;
 		case "ghostblock": a = new GhostBlockAbility(slotType, actType, targeter, args);
 		break;
 		}
