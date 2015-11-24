@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -40,6 +41,21 @@ public class ActivatorListener implements Listener
 		}
 		else if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			activate(ActivatorType.CLICKRIGHT, e.getPlayer(), null);
+		}
+	}
+	
+	/*----------Interact----------*/
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+	public void onPlayerInteract(PlayerInteractEntityEvent e)
+	{
+		if (!(e.getRightClicked() instanceof LivingEntity)) return;
+		
+		LivingEntity target = (LivingEntity) e.getRightClicked();
+		if (target instanceof Player) {
+			activate(ActivatorType.INTERACTPLAYER, e.getPlayer(), target);
+		}
+		else {
+			activate(ActivatorType.INTERACTMOB, e.getPlayer(), target);
 		}
 	}
 	
@@ -203,8 +219,6 @@ public class ActivatorListener implements Listener
 	public void onPlayerPortal(PlayerPortalEvent e) {
 		activate(ActivatorType.PORTAL, e.getPlayer(), null);
 	}
-	
-	//TODO: Interact
 	
 	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget)
 	{
