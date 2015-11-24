@@ -123,4 +123,8 @@ public class ItemHandler extends MultiConfig
 		}
 		return result.substring(0, result.length() - 2);
 	}
+
+	public Set<String> getItemNames() {
+		return items.keySet();
+	}
 }

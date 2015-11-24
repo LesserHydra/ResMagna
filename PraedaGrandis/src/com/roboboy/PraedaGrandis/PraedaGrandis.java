@@ -1,11 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
@@ -37,6 +34,8 @@ public class PraedaGrandis extends JavaPlugin
 		itemHandler = new ItemHandler(this, configManager.itemFolder);
 		reload();
 		
+		getCommand(MainCommandExecutor.COMMAND_NAME).setExecutor(new MainCommandExecutor());
+		
 		//Timer handler
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
@@ -59,7 +58,7 @@ public class PraedaGrandis extends JavaPlugin
 		plugin = null;
 	}
 	
-	private void reload()
+	public void reload()
 	{
 		//HandlerList.unregisterAll(this);
 		configManager = new ConfigManager(this);
@@ -75,7 +74,7 @@ public class PraedaGrandis extends JavaPlugin
 	//		- list		(List all registered GrandItems)
 	//		- give		(Analog to vanilla command)
 	//Command handling
-	@Override
+	/*@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args)
 	{
 		if (sender instanceof Player)
@@ -111,7 +110,7 @@ public class PraedaGrandis extends JavaPlugin
 					}
 					else showCommandHelp(sender, cmd, subCommand);
 					break;
-				/*case "test":
+				case "test":
 					//TODO: test
 					if (args.length == 3)
 					{
@@ -124,7 +123,7 @@ public class PraedaGrandis extends JavaPlugin
 					}
 					else showCommandHelp(sender, cmd, subCommand);
 					break;
-				*/
+				
 				case "reload":
 					reload();
 					sender.sendMessage(ChatColor.GREEN + "Reloaded config files.");
@@ -139,9 +138,9 @@ public class PraedaGrandis extends JavaPlugin
 		else sender.sendMessage(ChatColor.RED + "Only players may use this command!");
 		
 		return true;
-	}
+	}*/
 	
-	private void showCommandHelp(CommandSender sender, Command cmd, String subCommand)
+	/*private void showCommandHelp(CommandSender sender, Command cmd, String subCommand)
 	{
 		switch (subCommand.toLowerCase())
 		{
@@ -165,7 +164,7 @@ public class PraedaGrandis extends JavaPlugin
 			sender.sendMessage(ChatColor.GRAY + "/pg reload");
 			break;
 		}
-	}
+	}*/
 	
 	//TODO: Expand logging system
 	static public void log(String s, LogType type) {
