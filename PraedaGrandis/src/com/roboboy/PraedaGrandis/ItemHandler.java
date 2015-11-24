@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -118,9 +119,8 @@ public class ItemHandler extends MultiConfig
 	public String listItems() {
 		String result = "";
 		for (String key : items.keySet()) {
-			result += ", " + key;
+			result += key + ", ";
 		}
-		
-		return result;
+		return result.substring(0, result.length() - 2);
 	}
 }
