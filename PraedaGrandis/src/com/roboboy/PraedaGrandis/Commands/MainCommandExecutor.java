@@ -16,9 +16,9 @@ public class MainCommandExecutor implements TabCompleter, CommandExecutor
 		if (!command.getName().equalsIgnoreCase(COMMAND_NAME)) return false;
 		if (args.length == 0) return false;
 		
-		MainSubCommand sub = MainSubCommand.fromString(args[0]);
+		MainSubCommandEnum sub = MainSubCommandEnum.fromString(args[0]);
 		sub.execute(sender, command, alias, args);
-		return (sub != MainSubCommand.NONE);
+		return (sub != MainSubCommandEnum.NONE);
 	}
 
 	@Override
@@ -26,10 +26,10 @@ public class MainCommandExecutor implements TabCompleter, CommandExecutor
 	{
 		if (!command.getName().equalsIgnoreCase(COMMAND_NAME)) return null;
 		if (args.length <= 1) {
-			return MainSubCommand.autoCompleteName(args.length == 0 ? "" : args[0]);
+			return MainSubCommandEnum.autoCompleteName(args.length == 0 ? "" : args[0]);
 		}
 		
-		MainSubCommand sub = MainSubCommand.fromString(args[0]);
+		MainSubCommandEnum sub = MainSubCommandEnum.fromString(args[0]);
 		return sub.autoCompleteArg(args);
 	}
 
