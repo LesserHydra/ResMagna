@@ -39,7 +39,7 @@ public class TeleportAbility extends Ability
 				Vector randomVector = new Vector(rand.nextInt(radius*2+1)-radius, rand.nextInt(radius*2+1)-radius, rand.nextInt(radius*2+1)-radius);
 				randomLoc.add(randomVector);
 				randomLoc.setY(Math.max(0, randomLoc.getY()));
-				if (!atHighest) randomLoc = getSafe(randomLoc);
+				if (!atHighest) randomLoc = getSafe(centerLoc, randomLoc);
 				i++;
 			} while (i < attempts && randomLoc == null);
 			if (i == attempts && randomLoc == null) return;
@@ -47,23 +47,28 @@ public class TeleportAbility extends Ability
 			centerLoc = randomLoc;
 		}
 		
-		if (atHighest) centerLoc = centerLoc.getWorld().getHighestBlockAt(centerLoc).getLocation();
+		//TODO: Check for safe location, aka NOT OVER LAVA!!!
+		if (atHighest) centerLoc = centerLoc.getWorld().getHighestBlockAt(centerLoc).getLocation().add(0, 1, 0);
 		
 		centerLoc.add(0.5, 0, 0.5);
 		centerLoc.setDirection(target.get().getLocation().getDirection());
 		target.get().teleport(centerLoc);
 	}
 
-	private Location getSafe(Location loc)
+	private Location getSafe(Location start, Location loc)
 	{
 		Block bottom = loc.getBlock();
-		Block top = bottom.getRelative(BlockFace.UP);
+		Block highest = loc.getWorld().getHighestBlockAt(loc).getRelative(BlockFace.UP);
+		//If highest is lower, switch directly to it.
+		if (highest.getY() < bottom.getY()) bottom = highest;
+		
 		if (bottom.getType().isSolid()) return null;
-		if (top.getType().isSolid()) return null;
+		if (bottom.getRelative(BlockFace.UP).getType().isSolid()) return null;
 		
 		Block ground = bottom;
 		do {
 			if (ground.getY() < 0) return null;
+			if (ground.getLocation().distanceSquared(start) > radius) return null;
 			if (ground.getType() == Material.LAVA || ground.getType() == Material.STATIONARY_LAVA) return null;
 			bottom = ground;
 			ground = bottom.getRelative(BlockFace.DOWN);
