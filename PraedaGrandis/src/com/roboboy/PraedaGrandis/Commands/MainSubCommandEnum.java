@@ -8,15 +8,17 @@ import org.bukkit.command.CommandSender;
 public enum MainSubCommandEnum
 {
 	//TODO: Implement help output
-	NONE (null),
+	NONE ("", null),
 	
-	LIST (new PGListSubCommand()),
-	GIVE (new PGGiveSubCommand()),
-	RELOAD (new PGReloadSubCommand());
+	LIST ("list", new PGListSubCommand()),
+	GIVE ("give", new PGGiveSubCommand()),
+	RELOAD ("reload", new PGReloadSubCommand());
 
+	final private String name;
 	final private SubCommand subCommand;
 	
-	private MainSubCommandEnum(SubCommand subCommand) {
+	private MainSubCommandEnum(String name, SubCommand subCommand) {
+		this.name = name;
 		this.subCommand = subCommand;
 	}
 	
@@ -30,19 +32,22 @@ public enum MainSubCommandEnum
 		return subCommand.autoCompleteArg(args);
 	}
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 	static public MainSubCommandEnum fromString(String s) {
 		for (MainSubCommandEnum sub : values()) {
-			if (sub == NONE) continue;
-			if (sub.toString().equals(s.toUpperCase())) return sub;
+			if (s.equalsIgnoreCase(sub.toString())) return sub;
 		}
 		return NONE;
 	}
-	
+
 	static public List<String> autoCompleteName(String s) {
 		List<String> results = new LinkedList<String>();
 		for (MainSubCommandEnum sub : values()) {
-			if (sub == NONE) continue;
-			if (sub.toString().startsWith(s.toUpperCase())) results.add(sub.toString().toLowerCase());
+			if (s.toLowerCase().startsWith(sub.toString())) results.add(sub.toString());
 		}
 		return results;
 	}
