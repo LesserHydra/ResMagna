@@ -260,11 +260,11 @@ public class GrandItem
 
 	public void activateAbilities(ActivatorType activatorType, ItemSlotType slot, Target target)
 	{
-		PraedaGrandis.plugin.getLogger().info("Recieved " + activatorType.name() + " activator.");
+		//PraedaGrandis.plugin.getLogger().info("Recieved " + activatorType.name() + " activator.");
 		for (Ability a : abilities) {
-			PraedaGrandis.plugin.getLogger().info("  Checking an ability: " + a.getActivator().name());
+			//PraedaGrandis.plugin.getLogger().info("  Checking an ability: " + a.getActivator().name());
 			if (activatorType.isSubtypeOf(a.getActivator())) {
-				PraedaGrandis.plugin.getLogger().info("  Match!");
+				//PraedaGrandis.plugin.getLogger().info("  Match!");
 				a.activate(slot, target);
 			}
 		}
