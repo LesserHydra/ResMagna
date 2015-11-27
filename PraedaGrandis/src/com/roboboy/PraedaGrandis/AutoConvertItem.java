@@ -33,13 +33,14 @@ public class AutoConvertItem
 	public boolean match(ItemStack item)
 	{
 		boolean matches = true;
-		boolean meta = item.hasItemMeta();
-		boolean lore = meta && item.getItemMeta().hasLore();
+		boolean hasMeta = item.hasItemMeta();
+		boolean hasLore = hasMeta && item.getItemMeta().hasLore();
+		boolean hasDisplay = hasMeta && item.getItemMeta().hasDisplayName();
 		
 		if (searchType != null) matches = matches && item.getType().equals(searchType);
-		if (searchName != null) matches = matches && meta && item.getItemMeta().getDisplayName().equals(searchName);
+		if (searchName != null) matches = matches && hasDisplay && item.getItemMeta().getDisplayName().equals(searchName);
 		for (String s : searchLore) {
-			matches = matches && lore && item.getItemMeta().getLore().contains(s);
+			matches = matches && hasLore && item.getItemMeta().getLore().contains(s);
 		}
 		
 		return matches && !(searchName == null && searchLore.isEmpty());
