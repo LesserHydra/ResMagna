@@ -4,6 +4,10 @@ public class TargeterFactory
 {
 	public static final String PREFIX = "@";
 	
+	public static Targeter getDefault() {
+		return new DefaultTargeter();
+	}
+	
 	public static Targeter build(String targeterString)
 	{
 		//Remove prefix
@@ -13,7 +17,7 @@ public class TargeterFactory
 		int argIndex = targeterString.indexOf('(');
 		String argument;
 		if (argIndex != -1) {
-			argument = targeterString.substring(argIndex).replace("(", "").replace(")", "");
+			argument = targeterString.substring(argIndex + 1, targeterString.length() - 1);
 			targeterString = targeterString.substring(0, argIndex);
 		}
 		else {
@@ -21,24 +25,21 @@ public class TargeterFactory
 		}
 		
 		//Build the Targeter
-		Targeter t = null;
-		switch (targeterString)
-		{
-		case "holder": t = new HolderTargeter();
-			break;
-		case "activator": t = new ActivatorTargeter();
-			break;
-		case "inradius": t = new InRadiusTargeter(Double.parseDouble(argument));
-			break;
-		case "default": t = new DefaultTargeter();
-			break;
-		}
+		Targeter t = constructTargeter(targeterString, argument);
 		
 		return t;
 	}
-
-	public static Targeter getDefault() {
-		return new DefaultTargeter();
+	
+	private static Targeter constructTargeter(String name, String argument)
+	{
+		switch (name) {
+		case "holder":		return new HolderTargeter();
+		case "activator":	return new ActivatorTargeter();
+		case "inradius":	return new InRadiusTargeter(Double.parseDouble(argument));
+		case "default":		return new DefaultTargeter();
+		
+		default:			return null;
+		}
 	}
 
 }
