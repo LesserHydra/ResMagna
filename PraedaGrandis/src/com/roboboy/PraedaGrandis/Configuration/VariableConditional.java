@@ -3,19 +3,19 @@ package com.roboboy.PraedaGrandis.Configuration;
 public enum VariableConditional
 {
 	EQUAL("==") {
-		@Override public boolean check(int a, int b) {return a == b;}
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) == 0;}
 	},
 	LESS("<") {
-		@Override public boolean check(int a, int b) {return a < b;}
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) < 0;}
 	},
 	GREATER(">") {
-		@Override public boolean check(int a, int b) {return a > b;}
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) > 0;}
 	},
 	LESS_EQUAL("<=") {
-		@Override public boolean check(int a, int b) {return a <= b;}
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) <= 0;}
 	},
 	GREATER_EQUAL(">=") {
-		@Override public boolean check(int a, int b) {return a >= b;}
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) >= 0;}
 	};
 	
 	final private String symbol;
@@ -24,7 +24,7 @@ public enum VariableConditional
 		this.symbol = symbol;
 	}
 	
-	public abstract boolean check(int a, int b);
+	public abstract <T extends Comparable<T>> boolean check(T a, T b);
 
 	public static VariableConditional fromSymbol(String symbol)
 	{
