@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 public enum MainSubCommandEnum
 {
 	//TODO: Implement help output
-	NONE ("", null),
+	NULL ("", new NullSubCommand()),
 	
 	LIST ("list", new PGListSubCommand()),
 	GIVE ("give", new PGGiveSubCommand()),
@@ -23,12 +23,10 @@ public enum MainSubCommandEnum
 	}
 	
 	public void execute(CommandSender sender, Command command, String label, String[] args) {
-		if (this == NONE) return;
 		subCommand.execute(sender, command, label, args);
 	}
 	
 	public List<String> autoCompleteArg(String[] args) {
-		if (this == NONE) return null;
 		return subCommand.autoCompleteArg(args);
 	}
 	
@@ -37,13 +35,17 @@ public enum MainSubCommandEnum
 		return name;
 	}
 	
+	public boolean isNull() {
+		return this == NULL;
+	}
+	
 	static public MainSubCommandEnum fromString(String s) {
 		for (MainSubCommandEnum sub : values()) {
-			if (s.equalsIgnoreCase(sub.toString())) return sub;
+			if (sub.toString().equalsIgnoreCase(s)) return sub;
 		}
-		return NONE;
+		return NULL;
 	}
-
+	
 	static public List<String> autoCompleteName(String s) {
 		List<String> results = new LinkedList<String>();
 		for (MainSubCommandEnum sub : values()) {
