@@ -49,7 +49,7 @@ public enum MainSubCommandEnum
 	static public List<String> autoCompleteName(String s) {
 		List<String> results = new LinkedList<String>();
 		for (MainSubCommandEnum sub : values()) {
-			if (s.toLowerCase().startsWith(sub.toString())) results.add(sub.toString());
+			if (sub.toString().startsWith(s.toLowerCase())) results.add(sub.toString());
 		}
 		return results;
 	}
