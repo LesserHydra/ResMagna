@@ -66,6 +66,8 @@ public class ConditionFactory
 		break;
 		case "isexp": c = new IsExp(targeter, not, args);
 		break;
+		case "islevel": c = new IsLevel(targeter, not, args);
+		break;
 		case "israining": c = new IsRaining(targeter, not);
 		break;
 		case "isthundering": c = new IsThundering(targeter, not);
