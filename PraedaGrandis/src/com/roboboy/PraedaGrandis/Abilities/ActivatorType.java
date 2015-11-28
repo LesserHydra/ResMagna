@@ -74,4 +74,8 @@ public enum ActivatorType
 		if (this == supertype) return true; 	//Is subtype of self
 		return parent.isSubtypeOf(supertype);	//Is subtype of anything parent is subtype of, ect
 	}
+
+	public boolean isNull() {
+		return (this == NONE);
+	}
 }

@@ -2,11 +2,12 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -33,6 +34,7 @@ public class ActivatorListener implements Listener
 		this.plugin = plugin;
 	}
 	
+	
 	/*----------CLICK----------*/
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 	public void onPlayerClick(PlayerInteractEvent e) {
@@ -43,6 +45,7 @@ public class ActivatorListener implements Listener
 			activate(ActivatorType.CLICKRIGHT, e.getPlayer(), null);
 		}
 	}
+	
 	
 	/*----------Interact----------*/
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
@@ -59,128 +62,53 @@ public class ActivatorListener implements Listener
 		}
 	}
 	
+	
 	/*----------Hurt & Attack----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEntityDamage(EntityDamageEvent e)
-	{
-		ActivatorType hurtType = null;
-		ActivatorType attackType = null;
-		LivingEntity hurt = null;
-		LivingEntity attacker = null;
-		
-		//Skip if a non living entity was damaged (painting, minecart, ect)
-		if (e.getEntity() instanceof LivingEntity)
-		{
-			hurt = (LivingEntity) e.getEntity();
-			
-			//Get attacker, if exists
-			if (hurt.getLastDamageCause() instanceof EntityDamageByEntityEvent) //By mob
-			{
-				EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) hurt.getLastDamageCause();
-				Entity damager = damageEvent.getDamager();
-				if (damager instanceof LivingEntity) {
-					attacker = (LivingEntity) damager;
-				}
-				else if (damager instanceof Arrow) {
-					ProjectileSource source = ((Arrow) damager).getShooter();
-					if (source instanceof LivingEntity) attacker = (LivingEntity) source;
-				}
-			}
-			
-			//Player was hurt
-			if (hurt instanceof Player) //TODO: Refactor. Use one "(attacker instanceof Player)"
-			{
-				if (attacker instanceof Player) //By player
-				{
-					if (((Player) hurt).equals((Player) attacker)) {
-						hurtType = ActivatorType.HURTSELF;
-						attackType = ActivatorType.ATTACKSELF;
-					}
-					else {
-						hurtType = ActivatorType.HURTPLAYER;
-						attackType = ActivatorType.ATTACKPLAYER;
-					}
-				}
-				else if (attacker != null) //By mob
-				{
-					hurtType = ActivatorType.HURTMOB;
-				}
-				else { //By environment
-					hurtType = ActivatorType.HURTOTHER;
-				}
-			}
-			else if (attacker instanceof Player) {
-				attackType = ActivatorType.ATTACKMOB;
-			}
-			
-			//Activation
-			if (hurtType != null) {
-				activate(hurtType, (Player) hurt, attacker);
-			}
-			if (attackType != null) {
-				activate(attackType, (Player) attacker, hurt);
-			}
-		}
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (!(e.getEntity() instanceof Player)) return;
+		activate(ActivatorType.HURTOTHER, (Player) e.getEntity(), null);
 	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e)
+	{
+		//Skip if a non living entity was damaged (painting, minecart, ect)
+		if (!(e.getEntity() instanceof LivingEntity)) return;
+		
+		//Get hurt and attacker
+		LivingEntity hurt = (LivingEntity) e.getEntity();
+		LivingEntity attacker = getAttacker(e.getDamager());
+		
+		//Calculate activators
+		Pair<ActivatorType, ActivatorType> actPair = getAttackActivators(hurt, attacker);
+		ActivatorType hurtType = actPair.getLeft();
+		ActivatorType attackType = actPair.getRight();
+		
+		//Activation
+		if (!hurtType.isNull())	activate(hurtType, (Player) hurt, attacker);
+		if (!attackType.isNull())	activate(attackType, (Player) attacker, hurt);
+	}
+	
 	
 	/*----------Kill & Death----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityDeath(EntityDeathEvent e)
 	{
-		ActivatorType killType = null;
-		ActivatorType deathType = null;
 		LivingEntity killed = e.getEntity();
 		LivingEntity killer = e.getEntity().getKiller(); //Only returns players
 		
-		//Player was killed
-		if (killed instanceof Player)
-		{
-			if (killer != null) //By player
-			{
-				if (((Player) killed).equals(killer)) {
-					killType = ActivatorType.KILLSELF;
-					deathType = ActivatorType.DEATHSELF;
-				}
-				else {
-					killType = ActivatorType.KILLPLAYER;
-					deathType = ActivatorType.DEATHPLAYER;
-				}
-			}
-			else //Not by player
-			{
-				if (killed.getLastDamageCause() instanceof EntityDamageByEntityEvent) //By mob
-				{
-					deathType = ActivatorType.DEATHMOB;
-					EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) killed.getLastDamageCause();
-					Entity damager = damageEvent.getDamager();
-					if (damager instanceof LivingEntity) {
-						killer = (LivingEntity) damager;
-					}
-					else if (damager instanceof Arrow) {
-						ProjectileSource source = ((Arrow) damager).getShooter();
-						if (source instanceof LivingEntity) killer = (LivingEntity) source;
-					}
-				}
-				else { //By environment
-					deathType = ActivatorType.DEATHOTHER;
-				}
-			}
-		}
-		else //Mob was killed
-		{
-			if (killer != null) {
-				killType = ActivatorType.KILLMOB;
-			}
-		}
+		if (killer == null) killer = getKiller(killed);
+		
+		Pair<ActivatorType, ActivatorType> actPair = getDeathActivators(killed, killer);
+		ActivatorType deathType = actPair.getLeft();
+		ActivatorType killType = actPair.getRight();
 		
 		//Activation
-		if (killType != null) {
-			activate(killType, (Player) killer, killed);
-		}
-		if (deathType != null) {
-			activate(deathType, (Player) killed, killer);
-		}
+		if (!deathType.isNull()) activate(deathType, (Player) killed, killer);
+		if (!killType.isNull()) activate(killType, (Player) killer, killed);
 	}
+	
 	
 	/*----------MOVE----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -210,6 +138,7 @@ public class ActivatorListener implements Listener
 		}
 	}
 	
+	
 	/*----------TELEPORT----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
@@ -220,6 +149,13 @@ public class ActivatorListener implements Listener
 		activate(ActivatorType.PORTAL, e.getPlayer(), null);
 	}
 	
+	
+	/**
+	 * Sends an activator on the next tick
+	 * @param type Type of activator
+	 * @param holder Player involved in event
+	 * @param activatorTarget Target for the activator, or null
+	 */
 	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget)
 	{
 		//Run one tick later, to avoid the infinite hunger bug
@@ -234,5 +170,97 @@ public class ActivatorListener implements Listener
 				}
 			}
 		}, 1L);
+	}
+	
+	/**
+	 * Gets an attacking LivingEntity from the damager Entity. Looks for the
+	 * projectile source if damager is a projectile.
+	 * @param damager Damager from EntityDamagedByEntityEvent
+	 * @return The living entity that caused the damage event, or null
+	 */
+	private LivingEntity getAttacker(Entity damager) {
+		//Damager is living
+		if (damager instanceof LivingEntity) return (LivingEntity) damager;
+		
+		//Damager is projectile
+		if (damager instanceof Projectile) {
+			ProjectileSource source = ((Projectile) damager).getShooter();
+			if (source instanceof LivingEntity) return (LivingEntity) source;
+		}
+		
+		//No living attacker found
+		return null;
+	}
+	
+	/**
+	 * Gets a living entity's killer from last damage event.
+	 * @param died The entity that died
+	 * @return The living entity that caused the last damage event, or null
+	 */
+	private LivingEntity getKiller(LivingEntity died) {
+		if (died.getLastDamageCause() instanceof EntityDamageByEntityEvent) return null;
+		return getAttacker( ((EntityDamageByEntityEvent)died.getLastDamageCause()).getDamager() );
+	}
+	
+	/**
+	 * Calculates the appropriate hurt and attack activators.
+	 * @param hurt The entity that was damaged; May not be null
+	 * @param attacker The damaging entity
+	 * @return A pair containing the hurt activator in the left, and the
+	 * attack activator on the right. Either can be NONE.
+	 */
+	private Pair<ActivatorType, ActivatorType> getAttackActivators(LivingEntity hurt, LivingEntity attacker)
+	{		
+		boolean hurtIsPlayer = (hurt instanceof Player);
+		boolean attackerIsPlayer = (attacker instanceof Player);
+		
+		//If neither is a player, otherwise at least one is a player
+		if (!hurtIsPlayer && !attackerIsPlayer)		return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
+		
+		//If both are equal, otherwise different
+		if (hurt.equals(attacker))					return Pair.of(ActivatorType.HURTSELF, ActivatorType.ATTACKSELF);
+		
+		//If both are players, otherwise only one is a player
+		if (hurtIsPlayer && attackerIsPlayer)		return Pair.of(ActivatorType.HURTPLAYER, ActivatorType.ATTACKPLAYER);
+		
+		//If attacker is player, otherwise hurt is player
+		if (attackerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.ATTACKMOB);
+		
+		//If attacker is not null, otherwise attacker is null
+		if (attacker != null)						return Pair.of(ActivatorType.HURTMOB, ActivatorType.NONE);
+		
+		//Hurt is player and attacker is null
+		return Pair.of(ActivatorType.HURTOTHER, ActivatorType.NONE);
+	}
+	
+	/**
+	 * Calculates the appropriate death and kill activators.
+	 * @param died The entity that died; May not be null
+	 * @param killer The entity that killed
+	 * @return A pair containing the death activator in the left, and the
+	 * kill activator on the right. Either can be NONE.
+	 */
+	private Pair<ActivatorType, ActivatorType> getDeathActivators(LivingEntity died, LivingEntity killer)
+	{		
+		boolean diedIsPlayer = (died instanceof Player);
+		boolean killerIsPlayer = (killer instanceof Player);
+		
+		//If neither is a player, otherwise at least one is a player
+		if (!diedIsPlayer && !killerIsPlayer)	return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
+		
+		//If both are equal, otherwise different
+		if (died.equals(killer))				return Pair.of(ActivatorType.DEATHSELF, ActivatorType.KILLSELF);
+		
+		//If both are players, otherwise only one is a player
+		if (diedIsPlayer && killerIsPlayer)		return Pair.of(ActivatorType.DEATHPLAYER, ActivatorType.KILLPLAYER);
+		
+		//If killer is player, otherwise died is player
+		if (killerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.KILLMOB);
+		
+		//If killer is not null, otherwise killer is null
+		if (killer != null)						return Pair.of(ActivatorType.DEATHMOB, ActivatorType.NONE);
+		
+		//Died is player and killer is null
+		return Pair.of(ActivatorType.DEATHOTHER, ActivatorType.NONE);
 	}
 }
