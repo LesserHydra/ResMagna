@@ -3,7 +3,6 @@ package com.roboboy.PraedaGrandis;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
 
 public class VariableHandler
@@ -28,17 +27,6 @@ public class VariableHandler
 	
 	static public int operate(Player p, String var1Name, VariableOperator operation, String var2Name) {
 		return operate(p, var1Name, operation, get(p, var2Name));
-	}
-	
-	static public boolean checkCondition(Player p, String varName, VariableConditional conditional, int number) {
-		Integer value = variables.get(p).get(varName);
-		if (value == null) value = 0;
-		
-		return conditional.check(value, number);
-	}
-	
-	static public boolean checkCondition(Player p, String var1Name, VariableConditional conditional, String var2Name) {
-		return checkCondition(p, var1Name, conditional, get(p, var2Name));
 	}
 	
 	static public int get(Player p, String varName) {

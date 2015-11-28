@@ -51,7 +51,11 @@ public class IsVariable extends Condition
 	{
 		if (!(target.get() instanceof Player)) return false;
 		Player p = (Player) target.get();
-		return VariableHandler.checkCondition(p, name, conditional, (otherName != null ? VariableHandler.get(p, otherName) : number));
+		
+		int a = VariableHandler.get(p, name);
+		int b = (otherName != null ? VariableHandler.get(p, otherName) : number);
+		
+		return conditional.check(a, b);
 	}
 
 }
