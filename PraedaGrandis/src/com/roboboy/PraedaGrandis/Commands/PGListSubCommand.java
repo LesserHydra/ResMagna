@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,6 +16,6 @@ public class PGListSubCommand implements SubCommand
 
 	@Override
 	public List<String> autoCompleteArg(String[] args) {
-		return null;
+		return new ArrayList<>();
 	}
 }

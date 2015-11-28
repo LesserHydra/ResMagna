@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Commands;
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,7 +41,9 @@ public class PGGiveSubCommand implements SubCommand
 
 	@Override
 	public List<String> autoCompleteArg(String[] args) {
-		if (args.length != 3) return null;
+		if (args.length == 2) return null;				//Player name
+		if (args.length != 3) return new ArrayList<>();	//Nothing
+		
 		List<String> results = new LinkedList<String>();
 		for (String s : PraedaGrandis.plugin.itemHandler.getItemNames()) {
 			if (s.startsWith(args[2].toLowerCase())) results.add(s);
