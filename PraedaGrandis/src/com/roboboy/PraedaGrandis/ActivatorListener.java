@@ -278,7 +278,7 @@ public class ActivatorListener implements Listener
 	 * @return The living entity that caused the last damage event, or null
 	 */
 	private LivingEntity getKiller(LivingEntity died) {
-		if (died.getLastDamageCause() instanceof EntityDamageByEntityEvent) return null;
+		if (!(died.getLastDamageCause() instanceof EntityDamageByEntityEvent)) return null;
 		return getAttacker( ((EntityDamageByEntityEvent)died.getLastDamageCause()).getDamager() );
 	}
 }
