@@ -38,12 +38,8 @@ public class ActivatorListener implements Listener
 	/*----------CLICK----------*/
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 	public void onPlayerClick(PlayerInteractEvent e) {
-		if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-			activate(ActivatorType.CLICKLEFT, e.getPlayer(), null);
-		}
-		else if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			activate(ActivatorType.CLICKRIGHT, e.getPlayer(), null);
-		}
+		ActivatorType clickType = getClickActivator(e.getAction());
+		if (!clickType.isNull()) activate(clickType, e.getPlayer(), null);
 	}
 	
 	
@@ -54,11 +50,29 @@ public class ActivatorListener implements Listener
 		if (!(e.getRightClicked() instanceof LivingEntity)) return;
 		
 		LivingEntity target = (LivingEntity) e.getRightClicked();
-		if (target instanceof Player) {
-			activate(ActivatorType.INTERACTPLAYER, e.getPlayer(), target);
+		ActivatorType interactType = getInteractActivator(target);
+		
+		if (!interactType.isNull()) activate(interactType, e.getPlayer(), target);
+	}
+	
+	
+	/*----------MOVE----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerMove(PlayerMoveEvent e)
+	{
+		Player p = e.getPlayer();
+		Location from = e.getFrom();
+		Location to = e.getTo();
+		
+		//Look
+		if (!to.getDirection().equals(from.getDirection())) {
+			activate(ActivatorType.LOOK, e.getPlayer(), null);
 		}
-		else {
-			activate(ActivatorType.INTERACTMOB, e.getPlayer(), target);
+		
+		//Move
+		if (!to.getBlock().equals(from.getBlock())) {
+			ActivatorType moveType = getMoveActivator(from, to);
+			activate(moveType, p, null);
 		}
 	}
 	
@@ -110,35 +124,6 @@ public class ActivatorListener implements Listener
 	}
 	
 	
-	/*----------MOVE----------*/
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerMove(PlayerMoveEvent e)
-	{
-		Player p = e.getPlayer();
-		Location from = e.getFrom();
-		Location to = e.getTo();
-		
-		if (!to.getDirection().equals(from.getDirection())) { //Look
-			activate(ActivatorType.LOOK, e.getPlayer(), null);
-		}
-		
-		if (!to.getBlock().equals(from.getBlock())) { 	//Move
-			ActivatorType moveType;
-			if (from.getY() < to.getY()) {				//Up
-				moveType = ActivatorType.MOVEUP;
-			}
-			else if (from.getY() > to.getY()) {			//Down
-				moveType = ActivatorType.MOVEDOWN;
-			}
-			else {										//Horizontal Movement
-				moveType = ActivatorType.MOVEWALK;
-			}
-			
-			activate(moveType, p, null);
-		}
-	}
-	
-	
 	/*----------TELEPORT----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
@@ -173,6 +158,101 @@ public class ActivatorListener implements Listener
 	}
 	
 	/**
+	 * Calculates the appropriate click activator
+	 * @param action Player action type
+	 * @return Click activator type
+	 */
+	private ActivatorType getClickActivator(Action action) {
+		if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) return ActivatorType.CLICKLEFT;
+		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) return ActivatorType.CLICKRIGHT;
+		return ActivatorType.NONE;
+	}
+	
+	/**
+	 * Calculates the appropriate interact activator
+	 * @param target LivingEntity that was interacted with
+	 * @return Interact activator type.
+	 */
+	private ActivatorType getInteractActivator(LivingEntity target) {
+		if (target instanceof Player) return ActivatorType.INTERACTPLAYER;
+		return ActivatorType.INTERACTMOB;
+	}
+	
+	/**
+	 * Calculates the appropriate move activator
+	 * @param from From location
+	 * @param to To location
+	 * @return Move activator type.
+	 */
+	private ActivatorType getMoveActivator(Location from, Location to) {
+		if (from.getY() < to.getY()) return ActivatorType.MOVEUP;
+		if (from.getY() > to.getY()) return ActivatorType.MOVEDOWN;
+		return ActivatorType.MOVEWALK;
+	}
+	
+	/**
+	 * Calculates the appropriate hurt and attack activators.
+	 * @param hurt The entity that was damaged
+	 * @param attacker The damaging entity, or null
+	 * @return A pair containing the hurt activator in the left, and the
+	 * attack activator on the right. Either can be NONE.
+	 */
+	private Pair<ActivatorType, ActivatorType> getAttackActivators(LivingEntity hurt, LivingEntity attacker)
+	{
+		boolean hurtIsPlayer = (hurt instanceof Player);
+		boolean attackerIsPlayer = (attacker instanceof Player);
+		
+		//If neither is a player, otherwise at least one is a player
+		if (!hurtIsPlayer && !attackerIsPlayer)		return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
+		
+		//If both are equal, otherwise different
+		if (hurt.equals(attacker))					return Pair.of(ActivatorType.HURTSELF, ActivatorType.ATTACKSELF);
+		
+		//If both are players, otherwise only one is a player
+		if (hurtIsPlayer && attackerIsPlayer)		return Pair.of(ActivatorType.HURTPLAYER, ActivatorType.ATTACKPLAYER);
+		
+		//If attacker is player, otherwise hurt is player
+		if (attackerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.ATTACKMOB);
+		
+		//If attacker is not null, otherwise attacker is null
+		if (attacker != null)						return Pair.of(ActivatorType.HURTMOB, ActivatorType.NONE);
+		
+		//Hurt is player and attacker is null
+		return Pair.of(ActivatorType.HURTOTHER, ActivatorType.NONE);
+	}
+	
+	/**
+	 * Calculates the appropriate death and kill activators.
+	 * @param died The entity that died
+	 * @param killer The entity that killed, or null
+	 * @return A pair containing the death activator in the left, and the
+	 * kill activator on the right. Either can be NONE.
+	 */
+	private Pair<ActivatorType, ActivatorType> getDeathActivators(LivingEntity died, LivingEntity killer)
+	{		
+		boolean diedIsPlayer = (died instanceof Player);
+		boolean killerIsPlayer = (killer instanceof Player);
+		
+		//If neither is a player, otherwise at least one is a player
+		if (!diedIsPlayer && !killerIsPlayer)	return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
+		
+		//If both are equal, otherwise different
+		if (died.equals(killer))				return Pair.of(ActivatorType.DEATHSELF, ActivatorType.KILLSELF);
+		
+		//If both are players, otherwise only one is a player
+		if (diedIsPlayer && killerIsPlayer)		return Pair.of(ActivatorType.DEATHPLAYER, ActivatorType.KILLPLAYER);
+		
+		//If killer is player, otherwise died is player
+		if (killerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.KILLMOB);
+		
+		//If killer is not null, otherwise killer is null
+		if (killer != null)						return Pair.of(ActivatorType.DEATHMOB, ActivatorType.NONE);
+		
+		//Died is player and killer is null
+		return Pair.of(ActivatorType.DEATHOTHER, ActivatorType.NONE);
+	}
+	
+	/**
 	 * Gets an attacking LivingEntity from the damager Entity. Looks for the
 	 * projectile source if damager is a projectile.
 	 * @param damager Damager from EntityDamagedByEntityEvent
@@ -200,67 +280,5 @@ public class ActivatorListener implements Listener
 	private LivingEntity getKiller(LivingEntity died) {
 		if (died.getLastDamageCause() instanceof EntityDamageByEntityEvent) return null;
 		return getAttacker( ((EntityDamageByEntityEvent)died.getLastDamageCause()).getDamager() );
-	}
-	
-	/**
-	 * Calculates the appropriate hurt and attack activators.
-	 * @param hurt The entity that was damaged; May not be null
-	 * @param attacker The damaging entity
-	 * @return A pair containing the hurt activator in the left, and the
-	 * attack activator on the right. Either can be NONE.
-	 */
-	private Pair<ActivatorType, ActivatorType> getAttackActivators(LivingEntity hurt, LivingEntity attacker)
-	{		
-		boolean hurtIsPlayer = (hurt instanceof Player);
-		boolean attackerIsPlayer = (attacker instanceof Player);
-		
-		//If neither is a player, otherwise at least one is a player
-		if (!hurtIsPlayer && !attackerIsPlayer)		return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
-		
-		//If both are equal, otherwise different
-		if (hurt.equals(attacker))					return Pair.of(ActivatorType.HURTSELF, ActivatorType.ATTACKSELF);
-		
-		//If both are players, otherwise only one is a player
-		if (hurtIsPlayer && attackerIsPlayer)		return Pair.of(ActivatorType.HURTPLAYER, ActivatorType.ATTACKPLAYER);
-		
-		//If attacker is player, otherwise hurt is player
-		if (attackerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.ATTACKMOB);
-		
-		//If attacker is not null, otherwise attacker is null
-		if (attacker != null)						return Pair.of(ActivatorType.HURTMOB, ActivatorType.NONE);
-		
-		//Hurt is player and attacker is null
-		return Pair.of(ActivatorType.HURTOTHER, ActivatorType.NONE);
-	}
-	
-	/**
-	 * Calculates the appropriate death and kill activators.
-	 * @param died The entity that died; May not be null
-	 * @param killer The entity that killed
-	 * @return A pair containing the death activator in the left, and the
-	 * kill activator on the right. Either can be NONE.
-	 */
-	private Pair<ActivatorType, ActivatorType> getDeathActivators(LivingEntity died, LivingEntity killer)
-	{		
-		boolean diedIsPlayer = (died instanceof Player);
-		boolean killerIsPlayer = (killer instanceof Player);
-		
-		//If neither is a player, otherwise at least one is a player
-		if (!diedIsPlayer && !killerIsPlayer)	return Pair.of(ActivatorType.NONE, ActivatorType.NONE);
-		
-		//If both are equal, otherwise different
-		if (died.equals(killer))				return Pair.of(ActivatorType.DEATHSELF, ActivatorType.KILLSELF);
-		
-		//If both are players, otherwise only one is a player
-		if (diedIsPlayer && killerIsPlayer)		return Pair.of(ActivatorType.DEATHPLAYER, ActivatorType.KILLPLAYER);
-		
-		//If killer is player, otherwise died is player
-		if (killerIsPlayer)						return Pair.of(ActivatorType.NONE, ActivatorType.KILLMOB);
-		
-		//If killer is not null, otherwise killer is null
-		if (killer != null)						return Pair.of(ActivatorType.DEATHMOB, ActivatorType.NONE);
-		
-		//Died is player and killer is null
-		return Pair.of(ActivatorType.DEATHOTHER, ActivatorType.NONE);
 	}
 }
