@@ -13,24 +13,23 @@ public class MainCommandExecutor implements TabCompleter, CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args)
 	{
-		if (!command.getName().equalsIgnoreCase(COMMAND_NAME)) return false;
-		if (args.length == 0) return false;
+		if (!command.getName().equalsIgnoreCase(COMMAND_NAME))
+			throw new IllegalArgumentException("Only applies to " + COMMAND_NAME + " command");
 		
+		if (args.length == 0) return false;
 		MainSubCommandEnum sub = MainSubCommandEnum.fromString(args[0]);
 		sub.execute(sender, command, alias, args);
-		return (sub != MainSubCommandEnum.NONE);
+		return (!sub.isNull());
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
 	{
-		if (!command.getName().equalsIgnoreCase(COMMAND_NAME)) return null;
-		if (args.length <= 1) {
-			return MainSubCommandEnum.autoCompleteName(args.length == 0 ? "" : args[0]);
-		}
+		if (!command.getName().equalsIgnoreCase(COMMAND_NAME))
+			throw new IllegalArgumentException("Only applies to " + COMMAND_NAME + " command");
 		
-		MainSubCommandEnum sub = MainSubCommandEnum.fromString(args[0]);
-		return sub.autoCompleteArg(args);
+		if (args.length <= 1) return MainSubCommandEnum.autoCompleteName(args.length == 0 ? "" : args[0]);
+		return MainSubCommandEnum.fromString(args[0]).autoCompleteArg(args);
 	}
 
 }
