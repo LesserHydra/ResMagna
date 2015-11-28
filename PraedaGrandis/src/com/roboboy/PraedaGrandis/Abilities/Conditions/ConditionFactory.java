@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
+import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
@@ -33,61 +34,41 @@ public class ConditionFactory
 		}
 		
 		//Choose proper condition by name
-		Condition c = null;
-		switch (cName)
-		{
-		case "isnull": c = new IsNull(targeter, not);
-		break;
-		case "isholder": c = new IsHolder(targeter, not);
-		break;
-		case "isplayer": c = new IsPlayer(targeter, not);
-		break;
-		case "ismob": c = new IsMob(targeter, not);
-		break;
-		case "isblock": c = new IsBlock(targeter, not, args);
-		break;
-		case "issneaking": c = new IsSneaking(targeter, not);
-		break;
-		case "issprinting": c = new IsSprinting(targeter, not);
-		break;
-		case "isonground": c = new IsOnGround(targeter, not);
-		break;
-		case "isblocking": c = new IsBlocking(targeter, not);
-		break;
-		case "issleeping": c = new IsSleeping(targeter, not);
-		break;
-		case "iswearing": c = new IsWearing(targeter, not, args);
-		break;
-		case "isvariable": c = new IsVariable(targeter, not, args);
-		break;
-		case "ishealth": c = new IsHealth(targeter, not, args);
-		break;
-		case "ishunger": c = new IsHunger(targeter, not, args);
-		break;
-		case "isexp": c = new IsExp(targeter, not, args);
-		break;
-		case "islevel": c = new IsLevel(targeter, not, args);
-		break;
-		case "israining": c = new IsRaining(targeter, not);
-		break;
-		case "isthundering": c = new IsThundering(targeter, not);
-		break;
-		}
+		Condition c = createCondition(cName, targeter, not, args);
 		
 		if (c != null) {
-			PraedaGrandis.plugin.getLogger().info(s);
-			PraedaGrandis.plugin.getLogger().info("\tConditionType: " + cName);
-			PraedaGrandis.plugin.getLogger().info("\tInversed: " + not);
-			PraedaGrandis.plugin.getLogger().info("\tTargeterType: " + targeter.getClass().getSimpleName());
-			
-			/*if (args.size() != 0) {
-				PraedaGrandis.plugin.getLogger().info("\tArguments:");
-				for (String argString : args) {
-					PraedaGrandis.plugin.getLogger().info("\t- " + argString);
-				}
-			}*/
+			PraedaGrandis.log(s, LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tConditionType: " + cName, LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tInversed: " + not, LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
 		}
 		
 		return c;
+	}
+	
+	private static Condition createCondition(String name, Targeter targeter, boolean not, ConfigString args)
+	{
+		switch (name) {
+		case "isnull":			return new IsNull(targeter, not);
+		case "isholder":		return new IsHolder(targeter, not);
+		case "isplayer":		return new IsPlayer(targeter, not);
+		case "ismob":			return new IsMob(targeter, not);
+		case "isblock":			return new IsBlock(targeter, not, args);
+		case "issneaking":		return new IsSneaking(targeter, not);
+		case "issprinting":		return new IsSprinting(targeter, not);
+		case "isonground":		return new IsOnGround(targeter, not);
+		case "isblocking":		return new IsBlocking(targeter, not);
+		case "issleeping":		return new IsSleeping(targeter, not);
+		case "iswearing":		return new IsWearing(targeter, not, args);
+		case "isvariable":		return new IsVariable(targeter, not, args);
+		case "ishealth":		return new IsHealth(targeter, not, args);
+		case "ishunger":		return new IsHunger(targeter, not, args);
+		case "isexp":			return new IsExp(targeter, not, args);
+		case "islevel":			return new IsLevel(targeter, not, args);
+		case "israining":		return new IsRaining(targeter, not);
+		case "isthundering":	return new IsThundering(targeter, not);
+		
+		default:				return null;
+		}
 	}
 }
