@@ -62,6 +62,8 @@ public class ConditionFactory
 		break;
 		case "ishealth": c = new IsHealth(targeter, not, args);
 		break;
+		case "ishunger": c = new IsHunger(targeter, not, args);
+		break;
 		case "israining": c = new IsRaining(targeter, not);
 		break;
 		case "isthundering": c = new IsThundering(targeter, not);
