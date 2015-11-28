@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
@@ -46,59 +47,42 @@ public class AbilityFactory
 		}
 		
 		//Choose proper ability by name
-		Ability a = null;
-		switch (abilityName)
-		{
-		case "custom": a = new CustomAbility(slotType, actType, targeter, args);
-		break;
-		case "delay": a = new DelayAbility(slotType, actType, targeter, args);
-		break;
-		case "variable": a = new VariableAbility(slotType, actType, targeter, args);
-		break;
-		case "heal": a = new HealAbility(slotType, actType, targeter, args);
-		break;
-		case "damage": a = new DamageAbility(slotType, actType, targeter, args);
-		break;
-		case "pull": a = new PullAbility(slotType, actType, targeter, args);
-		break;
-		case "push": a = new PushAbility(slotType, actType, targeter, args);
-		break;
-		case "fling": a = new FlingAbility(slotType, actType, targeter, args);
-		break;
-		case "sound": a = new SoundAbility(slotType, actType, targeter, args);
-		break;
-		case "particle": a = new ParticleAbility(slotType, actType, targeter, args);
-		break;
-		case "potion": a = new PotionAbility(slotType, actType, targeter, args);
-		break;
-		case "teleport": a = new TeleportAbility(slotType, actType, targeter, args);
-		break;
-		case "swapholder": a = new SwapHolderAbility(slotType, actType, targeter, args);
-		break;
-		case "swapactivator": a = new SwapActivatorAbility(slotType, actType, targeter, args);
-		break;
-		case "ghostblock": a = new GhostBlockAbility(slotType, actType, targeter, args);
-		break;
-		}
+		Ability a = constructAbility(abilityName, slotType, actType, targeter, args);
 		
 		if (timerDelay > 0) a.setTimerDelay(timerDelay);
 		
 		if (a != null) {
-			PraedaGrandis.plugin.getLogger().info(s);
-			PraedaGrandis.plugin.getLogger().info("\tAbilityType: " + abilityName);
-			PraedaGrandis.plugin.getLogger().info("\tTargeterType: " + targeter.getClass().getSimpleName());
-			PraedaGrandis.plugin.getLogger().info("\tSlotType: " + slotType.name());
-			PraedaGrandis.plugin.getLogger().info("\tActivatorType: " + actType.name());
-			PraedaGrandis.plugin.getLogger().info("\tTimerDelay: " + timerDelay);
-			
-			/*if (args.size() != 0) {
-				PraedaGrandis.plugin.getLogger().info("\tArguments:");
-				for (String argString : args) {
-					PraedaGrandis.plugin.getLogger().info("\t- " + argString);
-				}
-			}*/
+			PraedaGrandis.log(s, LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tAbilityType: " + abilityName, LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tSlotType: " + slotType.name(), LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tActivatorType: " + actType.name(), LogType.CONFIG_PARSING);
+			PraedaGrandis.log("\tTimerDelay: " + timerDelay, LogType.CONFIG_PARSING);
 		}
 		
 		return a;
+	}
+	
+	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, ConfigString args)
+	{
+		switch (name) {
+		case "custom":			return new CustomAbility(slotType, actType, targeter, args);
+		case "delay":			return new DelayAbility(slotType, actType, targeter, args);
+		case "variable":		return new VariableAbility(slotType, actType, targeter, args);
+		case "heal":			return new HealAbility(slotType, actType, targeter, args);
+		case "damage":			return new DamageAbility(slotType, actType, targeter, args);
+		case "pull":			return new PullAbility(slotType, actType, targeter, args);
+		case "push":			return new PushAbility(slotType, actType, targeter, args);
+		case "fling":			return new FlingAbility(slotType, actType, targeter, args);
+		case "sound":			return new SoundAbility(slotType, actType, targeter, args);
+		case "particle":		return new ParticleAbility(slotType, actType, targeter, args);
+		case "potion":			return new PotionAbility(slotType, actType, targeter, args);
+		case "teleport":		return new TeleportAbility(slotType, actType, targeter, args);
+		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, args);
+		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, args);
+		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, args);
+		
+		default:				return null;
+		}
 	}
 }
