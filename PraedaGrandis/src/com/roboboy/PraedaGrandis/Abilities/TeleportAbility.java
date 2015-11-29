@@ -1,11 +1,12 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
@@ -13,17 +14,15 @@ import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class TeleportAbility extends Ability
 {
+	final private Random randomGenerator = new Random();
+	
 	final private int radius;
-	final private boolean atHighest;
 	final private GrandLocation location;
-	final private int attempts;
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
 		super(slotType, activator, targeter);
 		radius = Integer.parseInt(args.get(1));
-		atHighest = Boolean.parseBoolean(args.get(2));
-		location = new GrandLocation(args.get(3));
-		attempts = Integer.parseInt(args.get(4));
+		location = new GrandLocation(args.get(2));
 	}
 
 	@Override
@@ -31,50 +30,50 @@ public class TeleportAbility extends Ability
 		Location centerLoc = location.calculate(target.get().getLocation());
 		
 		if (radius > 0) {
-			Random rand = new Random();
-			Location randomLoc;
-			int i = 0;
-			do {
-				randomLoc = centerLoc.clone();
-				Vector randomVector = new Vector(rand.nextInt(radius*2+1)-radius, rand.nextInt(radius*2+1)-radius, rand.nextInt(radius*2+1)-radius);
-				randomLoc.add(randomVector);
-				randomLoc.setY(Math.max(0, randomLoc.getY()));
-				if (!atHighest) randomLoc = getSafe(centerLoc, randomLoc);
-				i++;
-			} while (i < attempts && randomLoc == null);
-			if (i == attempts && randomLoc == null) return;
+			List<Location> safe = getSafeInRadius(centerLoc, radius);
+			if (safe.isEmpty()) return;
 			
-			centerLoc = randomLoc;
+			centerLoc = safe.get(randomGenerator.nextInt(safe.size()));
 		}
-		
-		//TODO: Check for safe location, aka NOT OVER LAVA!!!
-		if (atHighest) centerLoc = centerLoc.getWorld().getHighestBlockAt(centerLoc).getLocation().add(0, 1, 0);
 		
 		centerLoc.add(0.5, 0, 0.5);
 		centerLoc.setDirection(target.get().getLocation().getDirection());
 		target.get().teleport(centerLoc);
 	}
 
-	private Location getSafe(Location start, Location loc)
-	{
-		Block bottom = loc.getBlock();
-		Block highest = loc.getWorld().getHighestBlockAt(loc).getRelative(BlockFace.UP);
-		//If highest is lower, switch directly to it.
-		if (highest.getY() < bottom.getY()) bottom = highest;
+	private List<Location> getSafeInRadius(Location center, int radius) {
+		List<Location> safeLocations = new LinkedList<>();
 		
-		if (bottom.getType().isSolid()) return null;
-		if (bottom.getRelative(BlockFace.UP).getType().isSolid()) return null;
+		int centerX = center.getBlockX();
+		int centerY = center.getBlockY();
+		int centerZ = center.getBlockZ();
 		
-		Block ground = bottom;
-		do {
-			if (ground.getY() < 0) return null;
-			if (ground.getLocation().distanceSquared(start) > radius) return null;
-			if (ground.getType() == Material.LAVA || ground.getType() == Material.STATIONARY_LAVA) return null;
-			bottom = ground;
-			ground = bottom.getRelative(BlockFace.DOWN);
-		} while (!ground.getType().isSolid());
+		int maxX = centerX + radius;
+		for (int x = centerX-radius; x <= maxX; x++) {
+			int maxZ = centerZ + radius;
+			for (int z = centerZ-radius; z <= maxZ; z++) {
+				int maxY = Math.min(centerY + radius, center.getWorld().getHighestBlockYAt(x, z) + 1);
+				for (int y = centerY-radius; y <= maxY; y++)
+				{
+					if (x == centerX && z == centerZ && y == centerY) continue;
+					Location toCheck = new Location(center.getWorld(), x, y, z);
+					if (isSafe(toCheck)) safeLocations.add(toCheck);
+				}
+			}
+		}
 		
-		return bottom.getLocation();
+		return safeLocations;
+	}
+	
+	private boolean isSafe(Location loc) {
+		Block feetBlock = loc.getBlock();
+		if (feetBlock.getType().isSolid()) return false;
+		if (!feetBlock.getRelative(BlockFace.DOWN).getType().isSolid()) return false;
+		if (feetBlock.getRelative(BlockFace.UP).getType().isSolid()) return false;
+		
+		if (feetBlock.getType() == Material.STATIONARY_LAVA || feetBlock.getType() == Material.STATIONARY_WATER) return false;
+		
+		return true;
 	}
 
 }
