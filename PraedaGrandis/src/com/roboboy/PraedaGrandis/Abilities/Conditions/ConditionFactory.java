@@ -68,6 +68,8 @@ public class ConditionFactory
 		case "islevel":			return new IsLevel(targeter, not, args);
 		case "israining":		return new IsRaining(targeter, not);
 		case "isthundering":	return new IsThundering(targeter, not);
+		case "ismount":			return new IsMount(targeter, not);
+		case "isriding":		return new IsRiding(targeter, not);
 		
 		default:				return null;
 		}

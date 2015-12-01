@@ -80,6 +80,9 @@ public class AbilityFactory
 		case "teleport":		return new TeleportAbility(slotType, actType, targeter, args);
 		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, args);
 		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, args);
+		case "mountholder":		return new MountHolderAbility(slotType, actType, targeter);
+		case "holdermount":		return new HolderMountAbility(slotType, actType, targeter);
+		case "eject":			return new EjectAbility(slotType, actType, targeter);
 		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, args);
 		
 		default:				return null;

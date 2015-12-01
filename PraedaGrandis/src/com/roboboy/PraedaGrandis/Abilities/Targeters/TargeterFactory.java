@@ -36,6 +36,8 @@ public class TargeterFactory
 		case "holder":		return new HolderTargeter();
 		case "activator":	return new ActivatorTargeter();
 		case "inradius":	return new InRadiusTargeter(Double.parseDouble(argument));
+		case "mount":		return new MountTargeter();
+		case "rider":		return new RiderTargeter();
 		case "default":		return new DefaultTargeter();
 		
 		default:			return null;
