@@ -61,6 +61,7 @@ public class ConditionFactory
 		case "isblocking":		return new IsBlocking(targeter, not);
 		case "issleeping":		return new IsSleeping(targeter, not);
 		case "iswearing":		return new IsWearing(targeter, not, args);
+		case "isholding":		return new IsHolding(targeter, not, args);
 		case "isvariable":		return new IsVariable(targeter, not, args);
 		case "ishealth":		return new IsHealth(targeter, not, args);
 		case "ishunger":		return new IsHunger(targeter, not, args);
