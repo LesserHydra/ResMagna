@@ -3,6 +3,7 @@ package com.roboboy.PraedaGrandis;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
@@ -21,11 +22,11 @@ public class AutoConvertItem
 		this.convertItem = convertItem;
 		
 		this.searchType = searchType;
-		this.searchName = searchName.replace('&', '§');
+		this.searchName = searchName.replace('&', ChatColor.COLOR_CHAR);
 		
 		List<String> convertedSearchLore = new ArrayList<String>();
 		for (String s : searchLore) {
-			convertedSearchLore.add(s.replace('&', '§'));
+			convertedSearchLore.add(s.replace('&', ChatColor.COLOR_CHAR));
 		}
 		this.searchLore = convertedSearchLore;
 	}

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -59,9 +60,9 @@ public class GrandItem
 	{
 		this.id = itemConfig.getName();
 		
-		name = itemConfig.getString("display", "").replace('&', '§');
+		name = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
 		for (String loreString : itemConfig.getStringList("lore")) {
-			lore.add(loreString.replace('&', '§'));
+			lore.add(loreString.replace('&', ChatColor.COLOR_CHAR));
 		}
 		
 		type = Material.matchMaterial(itemConfig.getString("type", "stone"));
@@ -69,7 +70,7 @@ public class GrandItem
 		amount = itemConfig.getInt("amount", 1);
 		
 		if (itemConfig.contains("leatherColor")) {
-			leatherColor = Color.fromRGB(itemConfig.getInt("leatherColor.red", -1), itemConfig.getInt("leatherColor.green", -1), itemConfig.getInt("leatherColor.blue", -1));
+			leatherColor = Color.fromRGB(itemConfig.getInt("leatherColor.red", 0), itemConfig.getInt("leatherColor.green", 0), itemConfig.getInt("leatherColor.blue", 0));
 		}
 		
 		//Enchantments
@@ -154,74 +155,6 @@ public class GrandItem
 		
 		return storage.getTarget();
 	}
-	
-	/*Kept for possible future use
-	public void addLore(String newLore)
-	{
-		lore.add(newLore.replace('&', '§'));
-	}
-	
-	public void addAttribute(String name, AttributeType type, Operation op, Double amount)
-	{
-		attributes.put(name, Attribute.newBuilder().name(name).type(type).operation(op).amount(amount).build());
-	}
-	
-	public void setEnchantmentLevel(Enchantment enchant, int level)
-	{
-		//TODO: Error handling
-		enchants.put(enchant, level);
-	}
-	
-	public void setName(String name)
-	{this.name = name.replace('&', '§');}
-	
-	public void setLore(List<String> newLoreList)
-	{
-		lore.clear();
-		for (String s : newLoreList) {
-			addLore(s);
-		}
-	}
-	
-	public void setType(Material type)
-	{this.type = type;}
-	public void setDurability(short durability)
-	{this.durability = durability;}
-	public void setAmount(int amount)
-	{this.amount = amount;}
-	public void setLeatherColor(int red, int green, int blue)
-	{
-		if (red >= 0 && red <= 255 && green >= 0 && green <= 255 && blue >= 0 && blue <= 255)
-			this.leatherColor = Color.fromRGB(red, green, blue);
-	}
-	
-	public void setUnbreakable(boolean unbreakable)
-	{this.unbreakable = unbreakable;}
-	
-	public void setHideUnbreakable(boolean hideUnbreakable)
-	{this.hideUnbreakable = hideUnbreakable;}
-	public void setHideEnchants(boolean hideEnchants)
-	{this.hideEnchants = hideEnchants;}
-	public void setHideAttributes(boolean hideAttributes)
-	{this.hideAttributes = hideAttributes;}
-	
-	public boolean getUpdateName()
-	{return updateName;}
-	public boolean getUpdateDurability()
-	{return updateDurability;}
-	public boolean getUpdateAmount()
-	{return updateAmount;}
-	public boolean getUpdateEnchantments()
-	{return updateEnchantments;}
-	
-	public void setUpdateName(boolean updateName)
-	{this.updateName = updateName;}
-	public void setUpdateDurability(boolean updateDurability)
-	{this.updateDurability = updateDurability;}
-	public void setUpdateAmount(boolean updateAmount)
-	{this.updateAmount = updateAmount;}
-	public void setUpdateEnchantments(boolean updateEnchantments)
-	{this.updateEnchantments = updateEnchantments;}*/
 
 	public ItemStack update(ItemStack item)
 	{
