@@ -1,12 +1,15 @@
 package com.roboboy.PraedaGrandis;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
@@ -54,6 +57,7 @@ public class ItemUpdater implements Listener
 		}
 	}
 	
+	//Keep items from being used in crafting
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onCraftingEvent(CraftItemEvent e) {
 		for (ItemStack item : e.getInventory().getMatrix()) {
@@ -62,6 +66,29 @@ public class ItemUpdater implements Listener
 				e.setCancelled(true);
 			}
 		}
+	}
+	
+	//Keeps persistant items from despawning
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onItemDespawn(ItemDespawnEvent e) {
+		Item item = e.getEntity();
+		if (!item.isCustomNameVisible()) return;
+		GrandItem gItem = plugin.itemHandler.matchItem(item.getItemStack());
+		if (gItem == null || !gItem.isPersistant()) return;
+		
+		e.setCancelled(true);
+		item.setTicksLived(1);
+	}
+	
+	//Gives thrown persistant items a custom name
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemDropped(PlayerDropItemEvent e) {
+		Item drop = e.getItemDrop();
+		GrandItem gItem = plugin.itemHandler.matchItem(drop.getItemStack());
+		if (gItem == null || !gItem.isPersistant()) return;
+		
+		drop.setCustomName(gItem.getDisplayName());
+		drop.setCustomNameVisible(true);
 	}
 	
 	private void updateItems(Player p)

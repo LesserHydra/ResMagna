@@ -39,6 +39,8 @@ public class GrandItem
 	private Map<Enchantment, Integer> enchants = new HashMap<>();
 	private List<GrandAttribute> attributes = new ArrayList<>();
 	
+	private boolean persistant;
+	
 	private boolean unbreakable;
 	private boolean hideEnchants;
 	private boolean hideAttributes;
@@ -91,6 +93,8 @@ public class GrandItem
 		for (String s : itemConfig.getStringList("attributes")) {
 			attributes.add(new GrandAttribute(new ConfigString(s)));
 		}
+		
+		persistant = itemConfig.getBoolean("options.persistant", false);
 		
 		unbreakable = itemConfig.getBoolean("options.unbreakable", false);
 		hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
@@ -275,5 +279,13 @@ public class GrandItem
 		for (AbilityTimer at : timers) {
 			at.activatePlayer(holder);
 		}
+	}
+	
+	public boolean isPersistant() {
+		return persistant;
+	}
+
+	public String getDisplayName() {
+		return name;
 	}
 }
