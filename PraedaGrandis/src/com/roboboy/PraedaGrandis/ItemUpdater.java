@@ -30,23 +30,30 @@ public class ItemUpdater implements Listener
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player p = e.getPlayer();
-		updateItems(p);
+		final Player p = e.getPlayer();
 		VariableHandler.registerPlayer(p);
+		
+		//Schedual items for updating
+		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				updateItems(p);
+			}
+		}, 1L);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(final InventoryClickEvent e)
 	{
-		if (e.getWhoClicked() instanceof Player) {
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-					updateItem(e.getCurrentItem());
-					updateItem(e.getCursor());
-				}
-			}, 1L);
-		}
+		if (!(e.getWhoClicked() instanceof Player)) return;
+		
+		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				updateItem(e.getCurrentItem());
+				updateItem(e.getCursor());
+			}
+		}, 1L);
 	}
 	
 	public void reload()
@@ -93,6 +100,8 @@ public class ItemUpdater implements Listener
 	
 	private void updateItems(Player p)
 	{
+		if (!p.isOnline()) return;
+		
 		for (ItemStack item : p.getInventory().getContents()) {
 			updateItem(item);
 		}
