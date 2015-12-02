@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -105,6 +106,22 @@ public class ItemUpdater implements Listener
 				p.updateInventory();
 			}
 		}.runTaskLater(plugin, 1);
+	}
+	
+	//Keeps broken persistant items from breaking blocks
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockBreak(BlockDamageEvent e) {
+		ItemStack item = e.getItemInHand();
+		
+		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		if (gItem == null || !gItem.isPersistant()) return;
+		
+		if (item.getDurability() == item.getType().getMaxDurability() + 1) e.setCancelled(true);
+		
+		final Player p = e.getPlayer();
+		new BukkitRunnable() { @Override public void run() {
+				p.updateInventory();
+		}}.runTaskLater(plugin, 1);
 	}
 	
 	//Gives thrown persistant items a custom name
