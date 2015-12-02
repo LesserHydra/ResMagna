@@ -10,8 +10,10 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 /**
@@ -85,6 +87,24 @@ public class ItemUpdater implements Listener
 		
 		e.setCancelled(true);
 		item.setTicksLived(1);
+	}
+	
+	//Keeps persistant items from breaking
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onItemBreak(PlayerItemBreakEvent e) {
+		final Player p = e.getPlayer();
+		final ItemStack item = e.getBrokenItem();
+		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		if (gItem == null || !gItem.isPersistant()) return;
+		
+		item.setAmount(1);
+		
+		new BukkitRunnable() {
+			@Override public void run() {
+				item.setDurability(item.getType().getMaxDurability());
+				p.updateInventory();
+			}
+		}.runTaskLater(plugin, 1);
 	}
 	
 	//Gives thrown persistant items a custom name
