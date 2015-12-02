@@ -3,6 +3,7 @@ package com.roboboy.PraedaGrandis;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,38 +57,13 @@ public class ItemHandler extends MultiConfig
 		}
 	}
 
-	public Map<GrandItem, ItemSlotType> getItemsFromPlayer(Player p)
+	public List<GrandItem> getItemsFromPlayer(Player p, ItemSlotType slotType)
 	{
-		Map<GrandItem, ItemSlotType> results = new HashMap<>();
+		List<GrandItem> results = new LinkedList<>();
 		
-		ItemStack[] inv = p.getInventory().getContents();
-		ItemStack[] armor = p.getInventory().getArmorContents();
-		
-		//Check armor
-		for (int i = 0; i < 4; i++) {
-			GrandItem gItem = matchItem(armor[i]);
-			if (gItem != null) {
-				results.put(gItem, ItemSlotType.getArmorSlotType(i));
-			}
-		}
-		
-		
-		//Check hotbar
-		for (int i = 0; i < 9; i++) {
-			ItemStack item = inv[i];
+		for (ItemStack item: slotType.getItems(p)) {
 			GrandItem gItem = matchItem(item);
-			if (gItem != null) {
-				results.put(gItem, (p.getInventory().getHeldItemSlot() == i ? ItemSlotType.HELD : ItemSlotType.HOTBAR));
-			}
-		}
-		
-		//Check remaining inventory
-		for (int i = 9; i < 36; i++) {
-			ItemStack item = inv[i];
-			GrandItem gItem = matchItem(item);
-			if (gItem != null) {
-				results.put(gItem, ItemSlotType.STORED);
-			}
+			if (gItem != null) results.add(gItem);
 		}
 		
 		return results;

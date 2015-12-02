@@ -2,12 +2,10 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
@@ -44,21 +42,17 @@ public class AbilityTimer
 					continue;
 				}
 				
-				ItemSlotType slotType = ItemSlotType.NONE;
+				boolean noneFound = true;
 				//Search through players GrandItems for the required one
-				for (Entry<GrandItem, ItemSlotType> entry : PraedaGrandis.plugin.itemHandler.getItemsFromPlayer(p).entrySet()) {
-					if (entry.getKey().equals(item)) {
-						slotType = entry.getValue();
+				for (GrandItem gItem : PraedaGrandis.plugin.itemHandler.getItemsFromPlayer(p, ability.getSlotType())) {
+					if (gItem.equals(item)) {
+						ability.activate(new Target(p, p, null));
+						noneFound = false;
 						break; //Stop searching
 					}
 				}
 				
-				if (slotType != ItemSlotType.NONE) {
-					ability.activate(slotType, new Target(p, p, null));
-				}
-				else {
-					it.remove(); //Deactivate player
-				}
+				if (noneFound) it.remove(); //Deactivate player
 			}
 			
 			//If no players are active, cancel the timer

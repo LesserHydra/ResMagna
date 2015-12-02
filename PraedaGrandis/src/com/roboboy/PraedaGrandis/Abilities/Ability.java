@@ -21,13 +21,11 @@ public abstract class Ability
 		this.targeter = targeter;
 	}
 	
-	public final void activate(ItemSlotType slot, Target target)
+	public final void activate(Target target)
 	{
 		//PraedaGrandis.plugin.getLogger().info("Item in " + slot.name() + " slot, asking for " + slotType.name());
-		if (slot.isSubtypeOf(slotType)) {
-			for (Target t : targeter.getTargets(target)) {
-				execute(t);
-			}
+		for (Target t : targeter.getTargets(target)) {
+			execute(t);
 		}
 	}
 	
@@ -35,6 +33,10 @@ public abstract class Ability
 	
 	public ActivatorType getActivator() {
 		return activator;
+	}
+	
+	public ItemSlotType getSlotType() {
+		return slotType;
 	}
 
 	public final void setTimerDelay(long timerDelay) {
