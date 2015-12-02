@@ -1,28 +1,85 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 public enum ItemSlotType
 {
 /*	Type		Parent			Explanation								*/
 /*----------------------------------------------------------------------*/
-	NONE		(null),			//Nowhere
-	ANY			(NONE),			//Anywhere on the player
+	NONE		(null) {		//Nowhere
+		@Override public List<ItemStack> getItems(Player p) {return Arrays.asList();}
+	},
 	
-	STORED		(ANY),			//Bulk inventory (not hotbar or armor)
+	ANY			(NONE) {		//Anywhere on the player
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList( ArrayUtils.addAll(p.getInventory().getContents(), p.getInventory().getArmorContents()) );
+		}
+	},
 	
-	WORN		(ANY),			//Any armor slot
-	HELMET		(WORN),			//Helmet slot
-	CHESTPLATE	(WORN),			//Chestplate slot
-	LEGGINGS	(WORN),			//Leggings slot
-	BOOTS		(WORN),			//Boots slot
+	STORED		(ANY) {			//Bulk inventory (not hotbar or armor)
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getContents());
+		}
+	},
 	
-	HOTBAR		(ANY),			//Anywhere on the hotbar
-	HELD		(HOTBAR);		//Held in hand
+	WORN		(ANY) {			//Any armor slot
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getArmorContents());
+		}
+	},
+	
+	HELMET		(WORN) {		//Helmet slot
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getHelmet());
+		}
+	},
+	
+	CHESTPLATE	(WORN) {		//Chestplate slot
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getChestplate());
+		}
+	},
+	
+	LEGGINGS	(WORN) {		//Leggings slot
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getLeggings());
+		}
+	},
+	
+	BOOTS		(WORN) {		//Boots slot
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getBoots());
+		}
+	},
+	
+	HOTBAR		(ANY) {			//Anywhere on the hotbar
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList( Arrays.copyOf(p.getInventory().getContents(), 9) );
+		}
+	},
+	
+	HELD		(HOTBAR) {		//Held in hand
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getItemInHand());
+		}
+	};
 	
 	private final ItemSlotType parent;
 	
 	private ItemSlotType(ItemSlotType parent) {
 		this.parent = parent;
 	}
+	
+	/**
+	 * Gets all items that match this slot type in a given player's inventory
+	 * @param p The player to get from
+	 * @return A fixed-size list with the resulting ItemStacks
+	 */
+	public abstract List<ItemStack> getItems(Player p);
 	
 	/**
 	 * Checks for supertype equivilence. For example, HELD is a subtype of HOTBAR,
