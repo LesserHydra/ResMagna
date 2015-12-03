@@ -41,6 +41,7 @@ public class GrandItem
 	private List<GrandAttribute> attributes = new ArrayList<>();
 	
 	private boolean persistant;
+	private boolean placeable;
 	
 	private boolean unbreakable;
 	private boolean hideEnchants;
@@ -96,6 +97,7 @@ public class GrandItem
 		}
 		
 		persistant = itemConfig.getBoolean("options.persistant", false);
+		placeable = itemConfig.getBoolean("options.placeable", false);
 		
 		unbreakable = itemConfig.getBoolean("options.unbreakable", false);
 		hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
@@ -220,5 +222,9 @@ public class GrandItem
 
 	public String getDisplayName() {
 		return name;
+	}
+
+	public boolean isPlaceable() {
+		return placeable;
 	}
 }
