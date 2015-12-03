@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -78,6 +79,18 @@ public class ItemUpdater implements Listener
 		}
 	}
 	
+	//Keeps items from being placed as blocks
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockPlace(BlockPlaceEvent e) {
+		ItemStack item = e.getItemInHand();
+		
+		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		if (gItem == null || gItem.isPlaceable()) return;
+		
+		e.setCancelled(true);
+		updateInventoryNextTick(e.getPlayer());
+	}
+
 	//Keeps persistant items from despawning
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onItemDespawn(ItemDespawnEvent e) {
@@ -93,19 +106,12 @@ public class ItemUpdater implements Listener
 	//Keeps persistant items from breaking
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onItemBreak(PlayerItemBreakEvent e) {
-		final Player p = e.getPlayer();
 		final ItemStack item = e.getBrokenItem();
 		GrandItem gItem = plugin.itemHandler.matchItem(item);
 		if (gItem == null || !gItem.isPersistant()) return;
 		
 		item.setAmount(1);
-		
-		new BukkitRunnable() {
-			@Override public void run() {
-				item.setDurability(item.getType().getMaxDurability());
-				p.updateInventory();
-			}
-		}.runTaskLater(plugin, 1);
+		updateInventoryNextTick(e.getPlayer());
 	}
 	
 	//Keeps broken persistant items from breaking blocks
@@ -115,13 +121,10 @@ public class ItemUpdater implements Listener
 		
 		GrandItem gItem = plugin.itemHandler.matchItem(item);
 		if (gItem == null || !gItem.isPersistant()) return;
+		if (item.getDurability() != item.getType().getMaxDurability() + 1) return;
 		
-		if (item.getDurability() == item.getType().getMaxDurability() + 1) e.setCancelled(true);
-		
-		final Player p = e.getPlayer();
-		new BukkitRunnable() { @Override public void run() {
-				p.updateInventory();
-		}}.runTaskLater(plugin, 1);
+		e.setCancelled(true);
+		updateInventoryNextTick(e.getPlayer());
 	}
 	
 	//Gives thrown persistant items a custom name
@@ -165,5 +168,11 @@ public class ItemUpdater implements Listener
 				}
 			}
 		}
+	}
+	
+	private void updateInventoryNextTick(final Player player) {
+		new BukkitRunnable() { @Override public void run() {
+			player.updateInventory();
+		}}.runTaskLater(plugin, 1);
 	}
 }
