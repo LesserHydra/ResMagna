@@ -7,15 +7,15 @@ import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
 
 public class VariableHandler
 {
-	final static private Map<Player, Map<String, Integer>> variables = new HashMap<Player, Map<String, Integer>>();
+	final static private Map<String, Map<String, Integer>> variables = new HashMap<>();
 	
 	static public void registerPlayer(Player p) {
-		if (variables.containsKey(p)) return;
-		variables.put(p, new HashMap<String, Integer>());
+		if (variables.containsKey(p.getName())) return;
+		variables.put(p.getName(), new HashMap<String, Integer>());
 	}
 	
 	static public int operate(Player p, String varName, VariableOperator operation, int number) {
-		Map<String, Integer> playerVars = variables.get(p);
+		Map<String, Integer> playerVars = variables.get(p.getName());
 		Integer value = playerVars.get(varName);
 		if (value == null) value = 0;
 		
@@ -30,7 +30,7 @@ public class VariableHandler
 	}
 	
 	static public int get(Player p, String varName) {
-		Integer value = variables.get(p).get(varName);
+		Integer value = variables.get(p.getName()).get(varName);
 		return (value == null ? 0 : value);
 	}
 }
