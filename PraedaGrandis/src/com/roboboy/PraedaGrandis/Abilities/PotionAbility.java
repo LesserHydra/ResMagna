@@ -19,7 +19,7 @@ public class PotionAbility extends Ability
 	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
 	{
 		super(slotType, activator, targeter);
-		if (args.size() > 2)
+		if (args.size() >= 2)
 		{
 			String[] potArgs = args.get(1).split(":");
 			if (potArgs.length == 3) {
