@@ -26,6 +26,11 @@ public class GrandAbilityHandler extends MultiConfig
 		super(p, folder);
 	}
 	
+	/**
+	 * Reloads the ability configuration files.<br>
+	 * <br>
+	 * <strong>The ConfigManager must be reloaded first.</strong>
+	 */
 	@Override
 	public void reload()
 	{

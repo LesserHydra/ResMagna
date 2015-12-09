@@ -60,6 +60,11 @@ public class ItemUpdater implements Listener
 		}, 1L);
 	}
 	
+	/**
+	 * Updates all items in each player's inventory.<br>
+	 * <br>
+	 * <strong>The ItemHandler must be reloaded first.</strong>
+	 */
 	public void reload()
 	{
 		for (Player p : plugin.getServer().getOnlinePlayers()) {

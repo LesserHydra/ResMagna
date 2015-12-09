@@ -26,6 +26,11 @@ public class ItemHandler extends MultiConfig
 		super(p, folder);
 	}
 	
+	/**
+	 * Reloads the item configuration files.<br>
+	 * <br>
+	 * <strong>The ConfigManager and AbilityHandler must be reloaded first.</strong>
+	 */
 	@Override
 	public void reload()
 	{

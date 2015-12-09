@@ -21,6 +21,19 @@ public class InventoryHandler implements Listener
 		this.plugin = plugin;
 	}
 	
+	/**
+	 * Forgets about previously handled inventories, and treats all
+	 * players as if they had just logged on.<br>
+	 * <br>
+	 * <strong>The ItemHandler must be reloaded first.</strong>
+	 */
+	public void reload() {
+		playerInventories.clear();
+		for (Player p : plugin.getServer().getOnlinePlayers()) {
+			registerPlayer(p);
+		}
+	}
+	
 	public GrandInventory getItemsFromPlayer(Player p) {
 		return playerInventories.get(p.getName());
 	}
@@ -28,19 +41,7 @@ public class InventoryHandler implements Listener
 	//Player logs in
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player p = e.getPlayer();
-		GrandInventory gInv = new GrandInventory();
-		playerInventories.put(p.getName(), gInv);
-		
-		//Read all grand items from player's inventory
-		for (ItemSlotType type : ItemSlotType.getUniqueTypes()) {
-			for (ItemStack item : type.getItems(p)) {
-				GrandItem gItem = plugin.itemHandler.matchItem(item);
-				if (gItem != null) {
-					gInv.addItem(gItem, type);
-				}
-			}
-		}
+		registerPlayer(e.getPlayer());
 	}
 	
 	//Player changes selected item
@@ -59,6 +60,19 @@ public class InventoryHandler implements Listener
 		if (newGrandItem != null) {
 			gInv.removeItem(newGrandItem, ItemSlotType.UNHELD);
 			gInv.addItem(newGrandItem, ItemSlotType.HELD);
+		}
+	}
+	
+	private void registerPlayer(Player p) {
+		GrandInventory gInv = new GrandInventory();
+		playerInventories.put(p.getName(), gInv);
+		
+		//Read all grand items from player's inventory
+		for (ItemSlotType type : ItemSlotType.getUniqueTypes()) {
+			for (ItemStack item : type.getItems(p)) {
+				GrandItem gItem = plugin.itemHandler.matchItem(item);
+				if (gItem != null) gInv.addItem(gItem, type);
+			}
 		}
 	}
 	
