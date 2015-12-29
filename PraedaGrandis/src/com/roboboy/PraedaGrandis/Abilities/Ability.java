@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import java.util.EnumSet;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
@@ -21,9 +22,11 @@ public abstract class Ability
 		this.targeter = targeter;
 	}
 	
-	public final void activate(Target target)
-	{
-		//PraedaGrandis.plugin.getLogger().info("Item in " + slot.name() + " slot, asking for " + slotType.name());
+	public final void activate(EnumSet<ItemSlotType> slotTypes, Target target) {
+		if (slotTypeIsRepresented(slotTypes)) this.activate(target);
+	}
+	
+	public final void activate(Target target) {
 		for (Target t : targeter.getTargets(target)) {
 			execute(t);
 		}
@@ -31,11 +34,11 @@ public abstract class Ability
 	
 	protected abstract void execute(Target target);
 	
-	public ActivatorType getActivator() {
+	public final ActivatorType getActivator() {
 		return activator;
 	}
 	
-	public ItemSlotType getSlotType() {
+	public final ItemSlotType getSlotType() {
 		return slotType;
 	}
 
@@ -45,5 +48,12 @@ public abstract class Ability
 	
 	public final long getTimerDelay() {
 		return timerDelay;
+	}
+	
+	private final boolean slotTypeIsRepresented(EnumSet<ItemSlotType> slotTypes) {
+		for (final ItemSlotType slot : slotTypes) {
+			if (slot.isSubtypeOf(this.slotType)) return true;
+		}
+		return false;
 	}
 }

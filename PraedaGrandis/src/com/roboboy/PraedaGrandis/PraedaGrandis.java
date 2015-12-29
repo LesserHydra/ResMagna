@@ -2,7 +2,6 @@ package com.roboboy.PraedaGrandis;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
@@ -18,6 +17,8 @@ public class PraedaGrandis extends JavaPlugin
 	
 	public ConfigManager configManager = new ConfigManager(this);
 	public ItemUpdater itemUpdater = new ItemUpdater(this);
+	public InventoryHandler inventoryHandler = new InventoryHandler(this);
+	public ActivatorListener activatorListener = new ActivatorListener(this);
 	public ItemHandler itemHandler;
 	public GrandAbilityHandler abilityHandler;
 	
@@ -29,7 +30,8 @@ public class PraedaGrandis extends JavaPlugin
 	{
 		plugin = this;
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
-		getServer().getPluginManager().registerEvents(new ActivatorListener(this), this);
+		getServer().getPluginManager().registerEvents(inventoryHandler, this);
+		getServer().getPluginManager().registerEvents(activatorListener, this);
 		
 		abilityHandler = new GrandAbilityHandler(this, configManager.abilityFolder);
 		itemHandler = new ItemHandler(this, configManager.itemFolder);
@@ -42,7 +44,7 @@ public class PraedaGrandis extends JavaPlugin
             @Override
             public void run() {
             	for (Player p : getServer().getOnlinePlayers()) {
-            		for (GrandItem item : itemHandler.getItemsFromPlayer(p, ItemSlotType.ANY)) {
+            		for (GrandItem item : inventoryHandler.getItemsFromPlayer(p).getItems()) {
             			item.activateTimers(p);
             		}
             	}
@@ -63,9 +65,10 @@ public class PraedaGrandis extends JavaPlugin
 	{
 		//HandlerList.unregisterAll(this);
 		configManager = new ConfigManager(this);
-		itemUpdater.reload();
 		abilityHandler.reload();
 		itemHandler.reload();
+		itemUpdater.reload();
+		inventoryHandler.reload();
 	}
 	
 	//TODO: Expand logging system

@@ -3,17 +3,14 @@ package com.roboboy.PraedaGrandis;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.MultiConfig;
 
@@ -62,7 +59,7 @@ public class ItemHandler extends MultiConfig
 		}
 	}
 
-	public List<GrandItem> getItemsFromPlayer(Player p, ItemSlotType slotType)
+	/*public List<GrandItem> getItemsFromPlayer(Player p, ItemSlotType slotType)
 	{
 		List<GrandItem> results = new LinkedList<>();
 		
@@ -72,7 +69,7 @@ public class ItemHandler extends MultiConfig
 		}
 		
 		return results;
-	}
+	}*/
 	
 	public GrandItem getItem(String itemName) {
 		return items.get(itemName.toLowerCase());

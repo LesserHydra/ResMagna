@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 
 public class GrandItem
 {
-	public final String id;
+	private final String id;
 	
 	private String name;
 	private List<String> lore = new ArrayList<>();
@@ -196,16 +197,12 @@ public class GrandItem
 		
 		return att.getStack();
 	}
-
-	public void activateAbilities(ActivatorType activatorType, ItemSlotType slot, Target target)
+	
+	public void activateAbilities(ActivatorType activatorType, EnumSet<ItemSlotType> slotTypes, Target target)
 	{
-		//PraedaGrandis.plugin.getLogger().info("Recieved " + activatorType.name() + " activator.");
 		for (Ability a : abilities) {
-			//PraedaGrandis.plugin.getLogger().info("  Checking an ability: " + a.getActivator().name());
-			if (activatorType.isSubtypeOf(a.getActivator())) {
-				//PraedaGrandis.plugin.getLogger().info("  Match!");
-				a.activate(slot, target);
-			}
+			if (!activatorType.isSubtypeOf(a.getActivator())) continue;
+			a.activate(slotTypes, target);
 		}
 	}
 	
@@ -227,4 +224,8 @@ public class GrandItem
 	public boolean isPlaceable() {
 		return placeable;
 	}
+	
+    public String getId() {
+        return this.id;
+    }
 }

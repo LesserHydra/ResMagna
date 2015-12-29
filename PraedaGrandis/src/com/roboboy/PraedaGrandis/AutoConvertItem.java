@@ -11,11 +11,11 @@ import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 public class AutoConvertItem
 {
-	public final GrandItem convertItem;
+	private final GrandItem convertItem;
 	
-	public final String searchName;
-	public final List<String> searchLore;
-	public final Material searchType;
+	private final String searchName;
+	private final List<String> searchLore;
+	private final Material searchType;
 	
 	public AutoConvertItem(GrandItem convertItem, String searchName, List<String> searchLore, Material searchType)
 	{
@@ -50,7 +50,7 @@ public class AutoConvertItem
 	public ItemStack convert(ItemStack item)
 	{
 		NBTStorage storage = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME);
-		storage.setData(convertItem.id);
+		storage.setData(convertItem.getId());
 		
 		UUID newID = UUID.randomUUID();
 		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);

@@ -27,7 +27,7 @@ public class DelayAbility extends Ability
 			@Override
 			public void run() {
 				for (Ability a : delayedAbilities) {
-					a.activate(ItemSlotType.ANY, target);
+					a.activate(target);
 				}
 			}
 		}, delayAmount);

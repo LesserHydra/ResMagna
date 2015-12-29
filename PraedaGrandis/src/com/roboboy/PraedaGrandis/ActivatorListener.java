@@ -1,7 +1,5 @@
 package com.roboboy.PraedaGrandis;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,7 +20,6 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
@@ -134,7 +131,6 @@ public class ActivatorListener implements Listener
 		activate(ActivatorType.PORTAL, e.getPlayer(), null);
 	}
 	
-	
 	/**
 	 * Sends an activator on the next tick
 	 * @param type Type of activator
@@ -148,10 +144,10 @@ public class ActivatorListener implements Listener
 			@Override
 			public void run() {
 				//holder.sendMessage(ChatColor.BLUE + "Activated by " + type.toString() + " activator");
-				Map<GrandItem, ItemSlotType> items = plugin.itemHandler.getItemsFromPlayer(holder);
-				for (Entry<GrandItem, ItemSlotType> entry : items.entrySet()) {
+				GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
+				for (GrandItem gItem : pInv.getItems()) {
 					//holder.sendMessage(ChatColor.BLUE + "Found GrandItem in slot " + entry.getValue());
-					entry.getKey().activateAbilities(type, entry.getValue(), new Target(holder, holder, activatorTarget));
+					gItem.activateAbilities(type, pInv.getSlotTypes(gItem), new Target(holder, holder, activatorTarget));
 				}
 			}
 		}, 1L);

@@ -1,10 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public enum ItemSlotType
 {
@@ -17,12 +20,6 @@ public enum ItemSlotType
 	ANY			(NONE) {		//Anywhere on the player
 		@Override public List<ItemStack> getItems(Player p) {
 			return Arrays.asList( ArrayUtils.addAll(p.getInventory().getContents(), p.getInventory().getArmorContents()) );
-		}
-	},
-	
-	STORED		(ANY) {			//Bulk inventory (not hotbar or armor)
-		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getContents());
 		}
 	},
 	
@@ -56,6 +53,13 @@ public enum ItemSlotType
 		}
 	},
 	
+	STORED		(ANY) {			//Bulk inventory (not hotbar or armor)
+		@Override public List<ItemStack> getItems(Player p) {
+			ItemStack[] invContents = p.getInventory().getContents();
+			return Arrays.asList( Arrays.copyOfRange(invContents, 9, invContents.length) );
+		}
+	},
+	
 	HOTBAR		(ANY) {			//Anywhere on the hotbar
 		@Override public List<ItemStack> getItems(Player p) {
 			return Arrays.asList( Arrays.copyOf(p.getInventory().getContents(), 9) );
@@ -66,9 +70,23 @@ public enum ItemSlotType
 		@Override public List<ItemStack> getItems(Player p) {
 			return Arrays.asList(p.getItemInHand());
 		}
+	},
+	
+	UNHELD		(HOTBAR) {		//Held in hand
+		@Override public List<ItemStack> getItems(Player p) {
+			PlayerInventory inv = p.getInventory();
+			return Arrays.asList( ArrayUtils.remove(Arrays.copyOf(inv.getContents(), 9), inv.getHeldItemSlot()) );
+		}
 	};
 	
 	private final ItemSlotType parent;
+	private EnumSet<ItemSlotType> children = EnumSet.noneOf(ItemSlotType.class);
+	
+	static {
+		for (ItemSlotType type : values()) {
+			if (!type.isNull()) type.parent.registerSubtype(type);
+		}
+	}
 	
 	private ItemSlotType(ItemSlotType parent) {
 		this.parent = parent;
@@ -89,31 +107,54 @@ public enum ItemSlotType
 	 */
 	public boolean isSubtypeOf(ItemSlotType supertype)
 	{
-		if (this == NONE) return false;			//Base case
+		if (isNull()) return false;				//Base case
 		
 		if (this == supertype) return true; 	//Is subtype of self
 		if (parent == supertype) return true;	//Is subtype of parent
 		return parent.isSubtypeOf(supertype);	//Is subtype of parent's parent, ect
 	}
 	
-	public static ItemSlotType getArmorSlotType(int i)
-	{
+	public boolean isNull() {
+		return (this == NONE);
+	}
+	
+	private void registerSubtype(final ItemSlotType subtype) {
+		if (isNull()) return;
+		children.add(subtype);
+		parent.registerSubtype(subtype);
+	}
+	
+	public static ItemSlotType getSlotType(SlotType slotType, int slotNumber, int heldSlotNumber) {
+		switch (slotType) {
+		case CONTAINER:		return STORED;
+		case ARMOR:			return getArmorSlotType(slotNumber);
+		case QUICKBAR:		return getHotbarSlotType(slotNumber, heldSlotNumber);
+		default:			return NONE;
+		}
+	}
+	
+	private static ItemSlotType getArmorSlotType(int i) {
 		switch (i) {
-		case 0: return HELMET;
-		case 1: return CHESTPLATE;
-		case 2: return LEGGINGS;
-		case 3: return BOOTS;
+		case 0: 	return HELMET;
+		case 1:		return CHESTPLATE;
+		case 2:		return LEGGINGS;
+		case 3:		return BOOTS;
+		
+		//Should be impossible
 		default: throw new IllegalArgumentException("Invalid armor slot (0-3): " + i);
 		}
 	}
 	
-	/*public static boolean matches(ItemSlotType toMatch, int slot, Player holder)
-	{
-		if (toMatch == HELD) return (slot == holder.getInventory().getHeldItemSlot());
-		if (toMatch == WORN) return (slot < 0);
-		if (toMatch == HOTBAR) return (slot >= 0 && slot < 9);
-		if (toMatch == STORED) return (slot >= 9);
-		
-		return true;
-	}*/
+	private static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
+		if (slotNumber == heldSlotNumber) return ItemSlotType.HELD;
+		return ItemSlotType.UNHELD;
+	}
+	
+	public static EnumSet<ItemSlotType> getUniqueTypes() {
+		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
+		for (ItemSlotType type : values()) {
+			if (type.children.isEmpty()) results.add(type);
+		}
+		return results;
+	}
 }

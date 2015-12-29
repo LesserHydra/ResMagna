@@ -116,7 +116,12 @@ public class ItemUpdater implements Listener
 		if (gItem == null || !gItem.isPersistant()) return;
 		
 		item.setAmount(1);
-		updateInventoryNextTick(e.getPlayer());
+		
+		final Player p = e.getPlayer();
+		new BukkitRunnable() { @Override public void run() {
+			item.setDurability((short) (item.getType().getMaxDurability() + 1));
+			p.updateInventory();
+		}}.runTaskLater(plugin, 1L);
 	}
 	
 	//Keeps broken persistant items from breaking blocks

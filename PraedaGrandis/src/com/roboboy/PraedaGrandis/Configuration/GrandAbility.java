@@ -6,7 +6,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
 import com.roboboy.PraedaGrandis.Abilities.DelayAbility;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
 import com.roboboy.PraedaGrandis.Abilities.Conditions.ConditionFactory;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
@@ -70,12 +69,12 @@ public class GrandAbility
 		
 		if (run) { //Run abilities
 			for (Ability a : abilities) {
-				a.activate(ItemSlotType.ANY, target);
+				a.activate(target);
 			}
 		}
 		else { //Run elseAbilities
 			for (Ability a : elseAbilities) {
-				a.activate(ItemSlotType.ANY, target);
+				a.activate(target);
 			}
 		}
 	}
