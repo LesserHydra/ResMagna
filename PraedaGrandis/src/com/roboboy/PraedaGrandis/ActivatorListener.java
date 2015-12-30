@@ -143,11 +143,9 @@ public class ActivatorListener implements Listener
 		PraedaGrandis.plugin.getServer().getScheduler().scheduleSyncDelayedTask(PraedaGrandis.plugin, new Runnable() {
 			@Override
 			public void run() {
-				//holder.sendMessage(ChatColor.BLUE + "Activated by " + type.toString() + " activator");
 				GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
-				for (GrandItem gItem : pInv.getItems()) {
-					//holder.sendMessage(ChatColor.BLUE + "Found GrandItem in slot " + entry.getValue());
-					gItem.activateAbilities(type, pInv.getSlotTypes(gItem), new Target(holder, holder, activatorTarget));
+				for (GrandInventory.InventoryElement element : pInv.getItems()) {
+					element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
 				}
 			}
 		}, 1L);

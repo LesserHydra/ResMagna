@@ -45,9 +45,9 @@ public class AbilityTimer
 				boolean noneFound = true;
 				//Search through players GrandItems for the required one
 				GrandInventory pInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer(p);
-				for (GrandItem gItem : pInv.getItems()) {
-					if (gItem.equals(item)) {
-						ability.activate(pInv.getSlotTypes(gItem), new Target(p, p, null));
+				for (GrandInventory.InventoryElement element : pInv.getItems()) {
+					if (item.equals(element.grandItem)) {
+						ability.activate(element.slotType, new Target(p, p, null));
 						noneFound = false;
 						break; //Stop searching
 					}

@@ -5,8 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
-
 
 public class PraedaGrandis extends JavaPlugin
 {
@@ -44,8 +42,8 @@ public class PraedaGrandis extends JavaPlugin
             @Override
             public void run() {
             	for (Player p : getServer().getOnlinePlayers()) {
-            		for (GrandItem item : inventoryHandler.getItemsFromPlayer(p).getItems()) {
-            			item.activateTimers(p);
+            		for (GrandInventory.InventoryElement element : inventoryHandler.getItemsFromPlayer(p).getItems()) {
+            			element.grandItem.activateTimers(p);
             		}
             	}
             }

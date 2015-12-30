@@ -1,44 +1,64 @@
 package com.roboboy.PraedaGrandis;
 
-import com.google.common.collect.*;
+import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Abilities.*;
 import com.roboboy.PraedaGrandis.Configuration.*;
 import java.util.*;
+import org.bukkit.inventory.ItemStack;
 
 public class GrandInventory
 {
-	private Map<String, EnumMultiset<ItemSlotType>> invMap = new HashMap<>();
-	
-	public void addItem(GrandItem gItem, ItemSlotType slotType) {
-		if (!invMap.containsKey(gItem.getId())) {
-			invMap.put(gItem.getId(), EnumMultiset.create(ItemSlotType.class));
+	/**
+	 * Represents an item in inventory along with its pre-determined GrandItem and the ItemSlotType it exists in.<br>
+	 */
+	public class InventoryElement
+	{
+		public final ItemStack item;
+		public final GrandItem grandItem;
+		public final ItemSlotType slotType;
+		
+		private InventoryElement(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+			this.item = item;
+			this.grandItem = grandItem;
+			this.slotType = slotType;
 		}
-		invMap.get(gItem.getId()).add(slotType);
 	}
 	
-	public void removeItem(GrandItem gItem, ItemSlotType slotType) {
-		if (!invMap.containsKey(gItem.getId())) return;
-		invMap.get(gItem.getId()).remove((Object)slotType);
+	private Map<UUID, InventoryElement> itemMap = new HashMap<>();
+	
+	/**
+	 * Records an item as existing in a given slot type in the represented inventory.<br>
+	 * <br>
+	 * The item must represent a valid grand item, and contain a UUID in the metadata.
+	 * @param item Item to add
+	 * @param grandItem Represented GrandItem
+	 * @param slotType Most unique SlotType to add to
+	 */
+	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+		InventoryElement element = new InventoryElement(item, grandItem, slotType);
+		itemMap.put(getItemUUID(item), element);
 	}
 	
-	public boolean contains(GrandItem gItem) {
-		return (invMap.containsKey(gItem.getId()) && !invMap.get(gItem.getId()).isEmpty());
+	/**
+	 * Stops recording an item as existing in the represented inventory.<br>
+	 * <br>
+	 * The item must represent a valid grand item, and contain a UUID in the metadata.
+	 * @param item Item to remove
+	 * @param grandItem Represented GrandItem
+	 */
+	public void removeItem(ItemStack item) {
+		itemMap.remove(getItemUUID(item));
 	}
 	
-	public boolean containsInSlotType(GrandItem gItem, ItemSlotType slotType) {
-		return (invMap.containsKey(gItem.getId()) && invMap.get(gItem.getId()).contains(slotType));
+	/**
+	 * Returns a list of all elements in this inventory
+	 * @return A list of all elements
+	 */
+	public List<InventoryElement> getItems() {
+		return new ArrayList<>(itemMap.values());
 	}
 	
-	public Set<GrandItem> getItems() {
-		Set<GrandItem> results = new HashSet<GrandItem>();
-		for (String itemID : invMap.keySet()) {
-			results.add(PraedaGrandis.plugin.itemHandler.getItem(itemID));
-		}
-		return results;
-	}
-	
-	public EnumSet<ItemSlotType> getSlotTypes(GrandItem gItem) {
-		if (!invMap.containsKey(gItem.getId())) return EnumSet.noneOf(ItemSlotType.class);
-		return EnumSet.copyOf(invMap.get(gItem.getId()).elementSet());
+	private UUID getItemUUID(ItemStack item) {
+		return UUID.fromString(NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_ID).getString(""));
 	}
 }

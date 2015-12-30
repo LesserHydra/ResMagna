@@ -1,7 +1,6 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +27,9 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 
 public class GrandItem
 {
-	private final String id;
+	private final String name;
 	
-	private String name;
+	private String displayName;
 	private List<String> lore = new ArrayList<>();
 	
 	private Material type;
@@ -60,9 +59,9 @@ public class GrandItem
 	
 	public GrandItem(ConfigurationSection itemConfig)
 	{
-		this.id = itemConfig.getName();
+		this.name = itemConfig.getName();
 		
-		name = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
+		displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
 		for (String loreString : itemConfig.getStringList("lore")) {
 			lore.add(loreString.replace('&', ChatColor.COLOR_CHAR));
 		}
@@ -131,7 +130,7 @@ public class GrandItem
 		
 		//Meta data stuff
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(name);
+		meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		meta.spigot().setUnbreakable(unbreakable);
 		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -149,7 +148,7 @@ public class GrandItem
 		
 		//NBT Name
 		NBTStorage storage = NBTStorage.newTarget(att.getStack(), PraedaGrandis.STORAGE_ITEM_NAME);
-		storage.setData(id);
+		storage.setData(name);
 		
 		//NBT ID
 		UUID newID = UUID.randomUUID();
@@ -175,7 +174,7 @@ public class GrandItem
 		}
 		
 		ItemMeta meta = item.getItemMeta();
-		if (updateName) meta.setDisplayName(name);
+		if (updateName) meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		meta.spigot().setUnbreakable(unbreakable);
 		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -198,16 +197,14 @@ public class GrandItem
 		return att.getStack();
 	}
 	
-	public void activateAbilities(ActivatorType activatorType, EnumSet<ItemSlotType> slotTypes, Target target)
-	{
+	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
 		for (Ability a : abilities) {
 			if (!activatorType.isSubtypeOf(a.getActivator())) continue;
-			a.activate(slotTypes, target);
+			a.activate(slotType, target);
 		}
 	}
 	
-	public void activateTimers(Player holder)
-	{
+	public void activateTimers(Player holder) {
 		for (AbilityTimer at : timers) {
 			at.activatePlayer(holder);
 		}
@@ -218,14 +215,32 @@ public class GrandItem
 	}
 
 	public String getDisplayName() {
-		return name;
+		return displayName;
 	}
 
 	public boolean isPlaceable() {
 		return placeable;
 	}
 	
-    public String getId() {
-        return this.id;
+    public String getName() {
+        return name;
     }
+    
+    /**
+     * Gets the hash code from the name string.
+     */
+    @Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+    /**
+     * Compares GrandItems by their names. No two GrandItems should ever have the same name.
+     */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof GrandItem)) return false;
+		return name.equals(((GrandItem)obj).name);
+	}
 }

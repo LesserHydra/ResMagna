@@ -53,16 +53,16 @@ public class InventoryHandler implements Listener
 		GrandInventory gInv = playerInventories.get(e.getPlayer().getName());
 		ItemStack[] playerItems = e.getPlayer().getInventory().getContents();
 		
-		GrandItem oldGrandItem = plugin.itemHandler.matchItem(playerItems[e.getPreviousSlot()]);
+		ItemStack oldItem = playerItems[e.getPreviousSlot()];
+		GrandItem oldGrandItem = plugin.itemHandler.matchItem(oldItem);
 		if (oldGrandItem != null) {
-			gInv.removeItem(oldGrandItem, ItemSlotType.HELD);
-			gInv.addItem(oldGrandItem, ItemSlotType.UNHELD);
+			gInv.putItem(oldItem, oldGrandItem, ItemSlotType.UNHELD);
 		}
 		
-		GrandItem newGrandItem = plugin.itemHandler.matchItem(playerItems[e.getNewSlot()]);
+		ItemStack newItem = playerItems[e.getNewSlot()];
+		GrandItem newGrandItem = plugin.itemHandler.matchItem(newItem);
 		if (newGrandItem != null) {
-			gInv.removeItem(newGrandItem, ItemSlotType.UNHELD);
-			gInv.addItem(newGrandItem, ItemSlotType.HELD);
+			gInv.putItem(newItem, newGrandItem, ItemSlotType.HELD);
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class InventoryHandler implements Listener
 		for (ItemSlotType type : ItemSlotType.getUniqueTypes()) {
 			for (ItemStack item : type.getItems(p)) {
 				GrandItem gItem = plugin.itemHandler.matchItem(item);
-				if (gItem != null) gInv.addItem(gItem, type);
+				if (gItem != null) gInv.putItem(item, gItem, type);
 			}
 		}
 	}
