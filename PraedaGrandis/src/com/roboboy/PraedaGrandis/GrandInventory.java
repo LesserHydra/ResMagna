@@ -14,17 +14,20 @@ public class GrandInventory
 	public class InventoryElement
 	{
 		public final ItemStack item;
+		public final UUID id;
 		public final GrandItem grandItem;
 		public final ItemSlotType slotType;
 		
-		private InventoryElement(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+		private InventoryElement(ItemStack item, UUID id, GrandItem grandItem, ItemSlotType slotType) {
 			this.item = item;
+			this.id = id;
 			this.grandItem = grandItem;
 			this.slotType = slotType;
 		}
 	}
 	
 	private Map<UUID, InventoryElement> itemMap = new HashMap<>();
+	private Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
 	
 	/**
 	 * Records an item as existing in a given slot type in the represented inventory.<br>
@@ -34,9 +37,21 @@ public class GrandInventory
 	 * @param grandItem Represented GrandItem
 	 * @param slotType Most unique SlotType to add to
 	 */
-	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
-		InventoryElement element = new InventoryElement(item, grandItem, slotType);
-		itemMap.put(getItemUUID(item), element);
+	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType)
+	{
+		//Construct new element
+		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
+		
+		//Put element on the itemMap
+		itemMap.put(element.id, element);
+		
+		//Get corresponding slotTypeMap for the given grandItem, initializing if null
+		Map<UUID, InventoryElement> items = grandItemMap.get(grandItem.getName());
+		if (items == null) {
+			items = new HashMap<>(4);
+			grandItemMap.put(grandItem.getName(), items);
+		}
+		items.put(element.id, element);
 	}
 	
 	/**
@@ -46,8 +61,15 @@ public class GrandInventory
 	 * @param item Item to remove
 	 * @param grandItem Represented GrandItem
 	 */
-	public void removeItem(ItemStack item) {
-		itemMap.remove(getItemUUID(item));
+	public void removeItem(ItemStack item, GrandItem grandItem) {
+		//Get and remove element from the itemMap
+		InventoryElement oldElement = itemMap.remove(getItemUUID(item));
+		
+		//Decrement value at old slot type
+		if (oldElement != null) {
+			Map<UUID, InventoryElement> items = grandItemMap.get(grandItem.getName());
+			items.remove(oldElement.id);
+		}
 	}
 	
 	/**
@@ -56,6 +78,16 @@ public class GrandInventory
 	 */
 	public List<InventoryElement> getItems() {
 		return new ArrayList<>(itemMap.values());
+	}
+	
+	public List<InventoryElement> getItems(String grandItemName) {
+		Map<UUID, InventoryElement> items = grandItemMap.get(grandItemName);
+		if (items == null) return Arrays.asList();
+		return new ArrayList<>(itemMap.values());
+	}
+	
+	public boolean containsGrandItem(String grandItemName) {
+		return grandItemMap.containsKey(grandItemName);
 	}
 	
 	private UUID getItemUUID(ItemStack item) {

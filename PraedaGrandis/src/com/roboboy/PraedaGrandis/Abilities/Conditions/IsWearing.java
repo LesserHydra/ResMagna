@@ -1,9 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
@@ -28,14 +26,19 @@ public class IsWearing extends Condition
 	protected boolean checkThis(Target target)
 	{
 		if (!(target.get() instanceof Player)) return false;
-		Set<String> toMatch = new HashSet<>(itemNames);
+		
 		GrandInventory gInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer((Player)target.get());
-		for (GrandInventory.InventoryElement element : gInv.getItems()) {
-			if (element.slotType.isSubtypeOf(ItemSlotType.WORN)) {
-				toMatch.remove(element.grandItem.getName());
-			}
+		for (String name : itemNames) {
+			if (!found(gInv.getItems(name))) return false;
 		}
-		return toMatch.isEmpty();
+		return true;
+	}
+	
+	private boolean found(List<GrandInventory.InventoryElement> elementList) {
+		for (GrandInventory.InventoryElement element : elementList) {
+			if (!element.slotType.isSubtypeOf(ItemSlotType.WORN)) return true;
+		}
+		return false;
 	}
 
 }
