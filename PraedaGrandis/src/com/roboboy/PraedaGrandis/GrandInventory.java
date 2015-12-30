@@ -4,6 +4,7 @@ import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Abilities.*;
 import com.roboboy.PraedaGrandis.Configuration.*;
 import java.util.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class GrandInventory
@@ -28,6 +29,20 @@ public class GrandInventory
 	
 	private Map<UUID, InventoryElement> itemMap = new HashMap<>();
 	private Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
+	
+	public void resetToPlayer(Player player) {
+		//Clear maps
+		itemMap.clear();
+		grandItemMap.clear();
+		
+		//Read all items from player's inventory
+		for (ItemSlotType slotType : ItemSlotType.getUniqueTypes()) {
+			for (ItemStack item : slotType.getItems(player)) {
+				GrandItem gItem = PraedaGrandis.plugin.itemHandler.matchItem(item);
+				if (gItem != null) putItem(item, gItem, slotType);
+			}
+		}
+	}
 	
 	/**
 	 * Records an item as existing in a given slot type in the represented inventory.<br>

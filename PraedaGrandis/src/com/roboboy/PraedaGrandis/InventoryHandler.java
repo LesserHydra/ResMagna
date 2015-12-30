@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
@@ -71,13 +70,13 @@ public class InventoryHandler implements Listener
 	public void onInventoryClick(InventoryClickEvent e)
 	{
 		if (!(e.getWhoClicked() instanceof Player)) return; //Is this even possible?
-		if (!e.getWhoClicked().getInventory().equals(e.getClickedInventory()) && e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) return;
+		Player p = (Player)e.getWhoClicked();
+		
+		if (!p.getInventory().equals(e.getClickedInventory()) && e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) return;
 		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK || e.getAction() == InventoryAction.UNKNOWN) return;
 		
-		final Player p = (Player) e.getWhoClicked();
-		new BukkitRunnable() { @Override public void run() {
-			registerPlayer(p);
-		}}.runTaskLater(plugin, 1);
+		playerInventories.get(p).resetToPlayer(p);
+		
 		/*if (!e.getWhoClicked().getInventory().equals(e.getClickedInventory())) return;
 		if (e.getAction() == InventoryAction.UNKNOWN || e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK) return;
 		
@@ -111,15 +110,8 @@ public class InventoryHandler implements Listener
 	
 	private void registerPlayer(Player p) {
 		GrandInventory gInv = new GrandInventory();
+		gInv.resetToPlayer(p);
 		playerInventories.put(p.getName(), gInv);
-		
-		//Read all grand items from player's inventory
-		for (ItemSlotType type : ItemSlotType.getUniqueTypes()) {
-			for (ItemStack item : type.getItems(p)) {
-				GrandItem gItem = plugin.itemHandler.matchItem(item);
-				if (gItem != null) gInv.putItem(item, gItem, type);
-			}
-		}
 	}
 	
 	//TODO: InventoryDragEvent, InventoryPickupItemEvent

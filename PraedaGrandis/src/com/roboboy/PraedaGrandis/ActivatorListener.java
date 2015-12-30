@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
@@ -140,15 +141,12 @@ public class ActivatorListener implements Listener
 	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget)
 	{
 		//Run one tick later, to avoid the infinite hunger bug
-		PraedaGrandis.plugin.getServer().getScheduler().scheduleSyncDelayedTask(PraedaGrandis.plugin, new Runnable() {
-			@Override
-			public void run() {
-				GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
-				for (GrandInventory.InventoryElement element : pInv.getItems()) {
-					element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
-				}
+		new BukkitRunnable() { @Override public void run() {
+			GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
+			for (GrandInventory.InventoryElement element : pInv.getItems()) {
+				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
 			}
-		}, 1L);
+		}}.runTaskLater(plugin, 1L);
 	}
 	
 	/**
