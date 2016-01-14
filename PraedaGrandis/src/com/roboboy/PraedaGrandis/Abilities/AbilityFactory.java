@@ -1,10 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
 {
@@ -52,12 +52,12 @@ public class AbilityFactory
 		if (timerDelay > 0) a.setTimerDelay(timerDelay);
 		
 		if (a != null) {
-			PraedaGrandis.log(s, LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tAbilityType: " + abilityName, LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tSlotType: " + slotType.name(), LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tActivatorType: " + actType.name(), LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tTimerDelay: " + timerDelay, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log(s, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tAbilityType: " + abilityName, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tSlotType: " + slotType.name(), LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tActivatorType: " + actType.name(), LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tTimerDelay: " + timerDelay, LogType.CONFIG_PARSING);
 		}
 		
 		return a;

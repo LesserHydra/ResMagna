@@ -1,11 +1,14 @@
 package com.roboboy.PraedaGrandis;
 
+import java.util.EnumSet;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 
 public class PraedaGrandis extends JavaPlugin
@@ -15,6 +18,7 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
+	public final GrandLogger logger = new GrandLogger(this, EnumSet.allOf(LogType.class));
 	public ConfigManager configManager = new ConfigManager(this);
 	public ItemUpdater itemUpdater = new ItemUpdater(this);
 	public InventoryHandler inventoryHandler = new InventoryHandler(this);
@@ -72,7 +76,7 @@ public class PraedaGrandis extends JavaPlugin
 	}
 	
 	//TODO: Expand logging system
-	static public void log(String s, LogType type) {
+	/*static public void log(String s, LogType type) {
 		plugin.getLogger().info(s);
-	}
+	}*/
 }

@@ -2,11 +2,11 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class PotionAbility extends Ability
 {
@@ -30,9 +30,9 @@ public class PotionAbility extends Ability
 			else
 			{
 				//Error
-				PraedaGrandis.log("Improper arguments in potion ability line:", LogType.CONFIG_ERRORS);
-				PraedaGrandis.log("  " + args.get(1), LogType.CONFIG_ERRORS);
-				PraedaGrandis.log("  Has " + potArgs.length + ", requires 3.", LogType.CONFIG_ERRORS);
+				PraedaGrandis.plugin.logger.log("Improper arguments in potion ability line:", LogType.CONFIG_ERRORS);
+				PraedaGrandis.plugin.logger.log("  " + args.get(1), LogType.CONFIG_ERRORS);
+				PraedaGrandis.plugin.logger.log("  Has " + potArgs.length + ", requires 3.", LogType.CONFIG_ERRORS);
 				type = PotionEffectType.ABSORPTION;
 				duration = 0;
 				amplifier = 0;
@@ -42,9 +42,9 @@ public class PotionAbility extends Ability
 		else
 		{
 			//Error
-			PraedaGrandis.log("Not enough arguments in potion ability line:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  Has " + args.size() + ", requires at least 2.", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("Not enough arguments in potion ability line:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  Has " + args.size() + ", requires at least 2.", LogType.CONFIG_ERRORS);
 			type = PotionEffectType.ABSORPTION;
 			duration = 0;
 			amplifier = 0;

@@ -1,10 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class ConditionFactory
 {	
@@ -37,10 +37,10 @@ public class ConditionFactory
 		Condition c = createCondition(cName, targeter, not, args);
 		
 		if (c != null) {
-			PraedaGrandis.log(s, LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tConditionType: " + cName, LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tInversed: " + not, LogType.CONFIG_PARSING);
-			PraedaGrandis.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log(s, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tConditionType: " + cName, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tInversed: " + not, LogType.CONFIG_PARSING);
+			PraedaGrandis.plugin.logger.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
 		}
 		
 		return c;

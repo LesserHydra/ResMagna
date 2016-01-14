@@ -1,7 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
@@ -9,6 +8,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class IsVariable extends Condition
 {
@@ -36,9 +36,9 @@ public class IsVariable extends Condition
 		}
 		else {
 			//Error
-			PraedaGrandis.log("Not enough arguments in variable ability line:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  Has " + args.size() + ", requires at least 4.", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("Not enough arguments in variable ability line:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  Has " + args.size() + ", requires at least 4.", LogType.CONFIG_ERRORS);
 			name = null;
 			conditional = null;
 			otherName = null;
