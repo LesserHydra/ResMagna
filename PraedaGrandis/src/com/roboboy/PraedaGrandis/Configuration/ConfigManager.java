@@ -26,6 +26,7 @@ public class ConfigManager
 	 * Reloads the main configuration file.
 	 */
 	public void reload() {
+		plugin.saveDefaultConfig();
 		FileConfiguration pluginConfig = plugin.getConfig();
 		
 		pluginFolder = plugin.getDataFolder();
