@@ -16,6 +16,8 @@ public class ConfigManager
 	private File itemFolder;
 	private File abilityFolder;
 	
+	private long timerHandlerDelay;
+	
 	public ConfigManager(PraedaGrandis p) {
 		plugin = p;
 	}
@@ -34,6 +36,8 @@ public class ConfigManager
 		
 		if (!itemFolder.exists()) itemFolder.mkdir();
 		if (!abilityFolder.exists()) abilityFolder.mkdir();
+		
+		timerHandlerDelay = pluginConfig.getLong("timerCheckDelay", 80L);
 	}
 	
 	public File getAbilityFolder() {
@@ -42,5 +46,9 @@ public class ConfigManager
 	
 	public File getItemFolder() {
 		return itemFolder;
+	}
+
+	public long getTimerHandlerDelay(){
+		return timerHandlerDelay;
 	}
 }

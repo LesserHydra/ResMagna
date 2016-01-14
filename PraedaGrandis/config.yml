@@ -1,3 +1,6 @@
+# Every x ticks, timers will be started for all custom items in each players' inventory.
+timerCheckDelay: 80L #Default: 80L
+
 # Configuration folder names
 Folders:
   # Custom items folder
