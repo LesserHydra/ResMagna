@@ -39,15 +39,6 @@ public class PraedaGrandis extends JavaPlugin
 		reload();
 		
 		getCommand(MainCommandExecutor.COMMAND_NAME).setExecutor(new MainCommandExecutor());
-		
-		//Timer checker
-		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
-			for (Player p : getServer().getOnlinePlayers()) {
-        		for (GrandItem item : inventoryHandler.getItemsFromPlayer(p).getItems()) {
-        			item.activateTimers(p);
-        		}
-        	}
-		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
 	}
 
 	//Plugin disable
@@ -66,6 +57,16 @@ public class PraedaGrandis extends JavaPlugin
 		itemHandler.reload();
 		itemUpdater.reload();
 		inventoryHandler.reload();
+		
+		//Timer checker
+		if (timerCheckingTask != null) timerCheckingTask.cancel();
+		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
+			for (Player p : getServer().getOnlinePlayers()) {
+        		for (GrandItem item : inventoryHandler.getItemsFromPlayer(p).getItems()) {
+        			item.activateTimers(p);
+        		}
+        	}
+		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
 	}
 	
 	//TODO: Expand logging system
