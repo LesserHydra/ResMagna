@@ -10,12 +10,20 @@ public enum LogType
 	ACTIVATORS		("[ACT]", Level.INFO),
 	DEBUG			("[DBG]", Level.INFO);
 
-	private final String	typeString;
+	private final String	prefix;
 	private final Level		level;
 	
-	private LogType(String typeString, Level level) {
-		this.typeString = typeString;
+	private LogType(String prefix, Level level) {
+		this.prefix = prefix;
 		this.level = level;
+	}
+	
+	/**
+	 * Returns a message prefix for this type, ex: [CFG]
+	 * @return Message prefix for this type
+	 */
+	public String getPrefix() {
+		return prefix;
 	}
 	
 	/**
@@ -24,14 +32,5 @@ public enum LogType
 	 */
 	public Level getLevel() {
 		return level;
-	}
-	
-	/**
-	 * Returns a message prefix for this type, ex: [CFG]
-	 * @return Message prefix for this type
-	 */
-	@Override
-	public String toString() {
-		return typeString;
 	}
 }
