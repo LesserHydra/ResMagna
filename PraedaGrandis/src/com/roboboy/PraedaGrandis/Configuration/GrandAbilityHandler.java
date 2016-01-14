@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,19 +10,16 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.CustomAbility;
 
 /**
- * Loads all custom ability configuration files.
- * 
+ * Loads and stores all GrandAbilities
  * @author roboboy
- *
  */
 public class GrandAbilityHandler extends MultiConfig
 {
 	public Map<String, GrandAbility> customAbilities = new HashMap<String, GrandAbility>();
-	
 	public Set<CustomAbility> toBeUpdated = new HashSet<>();
 
-	public GrandAbilityHandler(PraedaGrandis p, File folder){
-		super(p, folder);
+	public GrandAbilityHandler(PraedaGrandis plugin){
+		super(plugin);
 	}
 	
 	/**
@@ -32,17 +28,18 @@ public class GrandAbilityHandler extends MultiConfig
 	 * <strong>The ConfigManager must be reloaded first.</strong>
 	 */
 	@Override
-	public void reload()
-	{
+	public void reload() {
 		customAbilities.clear();
-		super.reload();
+		super.reload(plugin.configManager.getAbilityFolder());
 	}
 	
+	/**
+	 * Loads GrandAbilities from a single configuration file
+	 */
 	@Override
 	protected void loadConfig(FileConfiguration config)
 	{
-		for (String key : config.getKeys(false))
-		{
+		for (String key : config.getKeys(false)) {
 			ConfigurationSection abilityConfig = config.getConfigurationSection(key);
 			customAbilities.put(key.toLowerCase(), new GrandAbility(abilityConfig));
 		}

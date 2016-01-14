@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +13,17 @@ import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.MultiConfig;
 
+/**
+ * Loads and stores all GrandItems
+ * @author roboboy
+ */
 public class ItemHandler extends MultiConfig
 {
 	private Map<String, GrandItem> items = new HashMap<String, GrandItem>();
 	private List<AutoConvertItem> convertItems = new ArrayList<AutoConvertItem>();
 	
-	public ItemHandler(PraedaGrandis p, File folder) {
-		super(p, folder);
+	public ItemHandler(PraedaGrandis plugin) {
+		super(plugin);
 	}
 	
 	/**
@@ -29,18 +32,19 @@ public class ItemHandler extends MultiConfig
 	 * <strong>The ConfigManager and AbilityHandler must be reloaded first.</strong>
 	 */
 	@Override
-	public void reload()
-	{
+	public void reload() {
 		items.clear();
 		convertItems.clear();
-		super.reload();
+		super.reload(plugin.configManager.getItemFolder());
 	}
 	
+	/**
+	 * Loads GrandItems from a single configuration file
+	 */
 	@Override
 	protected void loadConfig(FileConfiguration config)
 	{
-		for (String key : config.getKeys(false))
-		{
+		for (String key : config.getKeys(false)) {
 			ConfigurationSection itemConfig = config.getConfigurationSection(key);
 			ConfigurationSection autoconvertSection = itemConfig.getConfigurationSection("autoconvert"); //TODO: Move to seperate file
 			
@@ -58,18 +62,6 @@ public class ItemHandler extends MultiConfig
 			}
 		}
 	}
-
-	/*public List<GrandItem> getItemsFromPlayer(Player p, ItemSlotType slotType)
-	{
-		List<GrandItem> results = new LinkedList<>();
-		
-		for (ItemStack item: slotType.getItems(p)) {
-			GrandItem gItem = matchItem(item);
-			if (gItem != null) results.add(gItem);
-		}
-		
-		return results;
-	}*/
 	
 	public GrandItem getItem(String itemName) {
 		return items.get(itemName.toLowerCase());
@@ -78,7 +70,7 @@ public class ItemHandler extends MultiConfig
 	public GrandItem matchItem(ItemStack item)
 	{
 		if (item == null || item.getType() == Material.AIR) return null;
-		String id = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME).getString("");//.toLowerCase();
+		String id = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME).getString("");
 		return items.get(id.toLowerCase());
 	}
 

@@ -15,12 +15,12 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
-	public ConfigManager configManager = new ConfigManager(this);
-	public ItemUpdater itemUpdater = new ItemUpdater(this);
-	public InventoryHandler inventoryHandler = new InventoryHandler(this);
-	public ActivatorListener activatorListener = new ActivatorListener(this);
-	public ItemHandler itemHandler;
-	public GrandAbilityHandler abilityHandler;
+	public final ConfigManager configManager = new ConfigManager(this);
+	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
+	public final ItemHandler itemHandler = new ItemHandler(this);
+	public final ItemUpdater itemUpdater = new ItemUpdater(this);
+	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
+	public final ActivatorListener activatorListener = new ActivatorListener(this);
 	
 	private long timerHandlerDelay = 80L;
 	
@@ -33,8 +33,6 @@ public class PraedaGrandis extends JavaPlugin
 		getServer().getPluginManager().registerEvents(inventoryHandler, this);
 		getServer().getPluginManager().registerEvents(activatorListener, this);
 		
-		abilityHandler = new GrandAbilityHandler(this, configManager.abilityFolder);
-		itemHandler = new ItemHandler(this, configManager.itemFolder);
 		reload();
 		
 		getCommand(MainCommandExecutor.COMMAND_NAME).setExecutor(new MainCommandExecutor());
@@ -61,10 +59,8 @@ public class PraedaGrandis extends JavaPlugin
 		plugin = null;
 	}
 	
-	public void reload()
-	{
-		//HandlerList.unregisterAll(this);
-		configManager = new ConfigManager(this);
+	public void reload() {
+		configManager.reload();
 		abilityHandler.reload();
 		itemHandler.reload();
 		itemUpdater.reload();

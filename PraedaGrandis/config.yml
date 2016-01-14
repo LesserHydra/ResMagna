@@ -1,2 +1,6 @@
-itemFolder: Items
-abilityFolder: Abilities
+# Configuration folder names
+Folders:
+  # Custom items folder
+  items: Items #Default: Items
+  # Custom abilities folder
+  abilities: Abilities #Default: Abilities
