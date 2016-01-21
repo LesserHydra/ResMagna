@@ -2,20 +2,22 @@ package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityArguments
 {
+	static private final Pattern argumentPattern = Pattern.compile("([\\w]+)\\s*=\\s*(([\\w\\.@+-]+)|(\\(.*\\)))");
+	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
 	public AbilityArguments(String argumentString) {
-		//TODO: Rewrite argument parsing
-		ConfigString parsedString = new ConfigString(argumentString.substring(1, argumentString.length()), ',');
-		for (String s : parsedString) {
-			String[] splitS = s.trim().split("=");
-			argumentMap.put(splitS[0].trim(), splitS[1].trim());
+		Matcher argumentMatcher = argumentPattern.matcher(argumentString);
+		while (argumentMatcher.find()) {
+			argumentMap.put(argumentMatcher.group(1), argumentMatcher.group(2));
 		}
 	}
 	
