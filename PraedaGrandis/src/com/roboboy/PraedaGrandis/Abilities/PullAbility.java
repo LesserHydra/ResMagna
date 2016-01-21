@@ -3,15 +3,15 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
 
 public class PullAbility extends Ability
 {
 	final private double forceAmount;
 	
-	public PullAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
+	public PullAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
 		super(slotType, activator, targeter);
-		forceAmount = Double.parseDouble(args.get(1));
+		forceAmount = args.getDouble("force", 0D, true);
 	}
 
 	@Override

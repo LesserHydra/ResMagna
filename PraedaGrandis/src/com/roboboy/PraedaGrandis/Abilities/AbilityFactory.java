@@ -3,6 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
 import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
@@ -46,8 +47,14 @@ public class AbilityFactory
 			slotType = ItemSlotType.ANY;
 		}
 		
+		AbilityArguments abilityArgs = null;
+		int abilArgIndex = args.contains("{");
+		if (abilArgIndex != -1) {
+			abilityArgs = new AbilityArguments(args.get(abilArgIndex));
+		}
+		
 		//Choose proper ability by name
-		Ability a = constructAbility(abilityName, slotType, actType, targeter, args);
+		Ability a = constructAbility(abilityName, slotType, actType, targeter, abilityArgs);
 		
 		if (timerDelay > 0) a.setTimerDelay(timerDelay);
 		
@@ -63,29 +70,28 @@ public class AbilityFactory
 		return a;
 	}
 	
-	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, ConfigString args)
+	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, AbilityArguments abilityArgs)
 	{
 		switch (name) {
-		case "custom":			return new CustomAbility(slotType, actType, targeter, args);
-		case "delay":			return new DelayAbility(slotType, actType, targeter, args);
-		case "variable":		return new VariableAbility(slotType, actType, targeter, args);
-		case "heal":			return new HealAbility(slotType, actType, targeter, args);
-		case "damage":			return new DamageAbility(slotType, actType, targeter, args);
-		case "pull":			return new PullAbility(slotType, actType, targeter, args);
-		case "push":			return new PushAbility(slotType, actType, targeter, args);
-		case "fling":			return new FlingAbility(slotType, actType, targeter, args);
-		case "sound":			return new SoundAbility(slotType, actType, targeter, args);
-		case "particle":		return new ParticleAbility(slotType, actType, targeter, args);
-		case "potion":			return new PotionAbility(slotType, actType, targeter, args);
-		case "teleport":		return new TeleportAbility(slotType, actType, targeter, args);
-		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, args);
-		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, args);
+		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
+		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
+		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
+		case "pull":			return new PullAbility(slotType, actType, targeter, abilityArgs);
+		case "push":			return new PushAbility(slotType, actType, targeter, abilityArgs);
+		case "fling":			return new FlingAbility(slotType, actType, targeter, abilityArgs);
+		case "sound":			return new SoundAbility(slotType, actType, targeter, abilityArgs);
+		case "particle":		return new ParticleAbility(slotType, actType, targeter, abilityArgs);
+		case "potion":			return new PotionAbility(slotType, actType, targeter, abilityArgs);
+		case "teleport":		return new TeleportAbility(slotType, actType, targeter, abilityArgs);
+		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, abilityArgs);
+		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, abilityArgs);
 		case "mountholder":		return new MountHolderAbility(slotType, actType, targeter);
 		case "holdermount":		return new HolderMountAbility(slotType, actType, targeter);
 		case "eject":			return new EjectAbility(slotType, actType, targeter);
-		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, args);
+		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, abilityArgs);
 		
-		default:				return null;
+		case "variable":		return new VariableAbility(slotType, actType, targeter, abilityArgs);
+		default:				return new CustomAbility(name, slotType, actType, targeter);
 		}
 	}
 }

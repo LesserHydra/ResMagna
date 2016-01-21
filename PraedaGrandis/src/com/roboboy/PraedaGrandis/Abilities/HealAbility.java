@@ -3,15 +3,15 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
 
 public class HealAbility extends Ability
 {
 	final private double healAmount;
 	
-	public HealAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
+	public HealAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
 		super(slotType, activator, targeter);
-		healAmount = Double.parseDouble(args.get(1));
+		healAmount = args.getDouble("amount", 0D, true);
 	}
 
 	@Override

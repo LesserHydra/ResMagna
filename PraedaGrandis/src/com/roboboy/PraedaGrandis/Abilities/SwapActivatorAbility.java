@@ -4,22 +4,24 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
 
 public class SwapActivatorAbility extends Ability
 {
 	final private boolean swapFacing;
 	
-	public SwapActivatorAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
+	public SwapActivatorAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
 		super(slotType, activator, targeter);
-		swapFacing = Boolean.parseBoolean(args.get(1));
+		swapFacing = args.getBoolean("swapFacing", false, false);
 	}
 
 	@Override
 	protected void execute(Target target) {
 		Location targetLoc = target.get().getLocation();
 		Location activatorLoc = target.getActivator().getLocation();
-		if (swapFacing) {
+		
+		//Preserve old facing directions
+		if (!swapFacing) {
 			Vector temp = targetLoc.getDirection();
 			targetLoc.setDirection(activatorLoc.getDirection());
 			activatorLoc.setDirection(temp);

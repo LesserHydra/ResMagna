@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class GhostBlockAbility extends Ability
@@ -14,15 +14,15 @@ public class GhostBlockAbility extends Ability
 	private final byte data;
 	private final GrandLocation location;
 	
-	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
+	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args)
 	{
 		super(slotType, activator, targeter);
 		
-		//TODO: Error handling. Must be three arguments (condition name + 2 args)
-		String[] blockStrings = args.get(1).split(":");
+		String[] blockStrings = args.get("block", "stone:0", true).split(":");
 		material = Material.matchMaterial(blockStrings[0]);
 		data = Byte.parseByte(blockStrings[1]);
-		location = new GrandLocation(args.get(2));
+		
+		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
 	}
 
 	@SuppressWarnings("deprecation")
