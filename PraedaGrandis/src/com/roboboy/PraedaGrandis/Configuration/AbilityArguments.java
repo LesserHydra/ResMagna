@@ -10,11 +10,12 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityArguments
 {
-	static private final Pattern argumentPattern = Pattern.compile("([\\w]+)\\s*=\\s*(([\\w\\.@+-]+)|(\\(.*\\)))");
+	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*(([\\w\\.@+-]+)|(\\(.*\\)))"); //http://fiddle.re/33ag76
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
 	public AbilityArguments(String argumentString) {
+		if (argumentString == null) return;
 		Matcher argumentMatcher = argumentPattern.matcher(argumentString);
 		while (argumentMatcher.find()) {
 			argumentMap.put(argumentMatcher.group(1), argumentMatcher.group(2));

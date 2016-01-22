@@ -1,5 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
@@ -9,69 +11,54 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
 {
-	public static Ability build(String s)
-	{
-		ConfigString args = new ConfigString(s);
+	//(\w+)\s*(\{.*\})?\s*(@(\w+)(\((.*)\))?)?\s*(~on(\w+)(\((.*)\))?:(\w+))?
+	static private final Pattern abilityLinePattern = Pattern.compile("(\\w+)\\s*(\\{.*\\})?\\s*(@(\\w+)(\\((.*)\\))?)?\\s*(~on(\\w+)(\\((.*)\\))?:(\\w+))?");
+	
+	public static Ability build(String abilityLine) {
+		Matcher lineMatcher = abilityLinePattern.matcher(abilityLine);
 		
-		//Cannot be empty
-		if (args.size() == 0) return null;
+		//Improper format
+		if (!lineMatcher.matches()) {
+			PraedaGrandis.plugin.logger.log("Invalid ability line format:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + abilityLine, LogType.CONFIG_ERRORS);
+			return null;
+		}
 		
 		//Get name
-		String abilityName = args.get(0);
+		String abilityName = lineMatcher.group(1);
 		
-		//Targeter
-		Targeter targeter;
-		int targeterIndex = args.contains(TargeterFactory.PREFIX);
-		if (targeterIndex != -1) {
-			targeter = TargeterFactory.build(args.get(targeterIndex));
-		}
-		else {
-			targeter = TargeterFactory.getDefault();
-		}
+		//Get Targeter
+		String targeterName = lineMatcher.group(4);
+		if (targeterName == null) targeterName = "default";
+		String targeterArgument = lineMatcher.group(6);
+		Targeter targeter = TargeterFactory.build(targeterName, targeterArgument);
 		
-		//Activator & Slot
-		ActivatorType actType;
+		//Get activator
+		String activatorName = lineMatcher.group(8);
+		ActivatorType actType = ActivatorType.NONE;
+		if (activatorName != null) actType = ActivatorType.valueOf(activatorName); //TODO: Error handling/logging
+		
+		//Get activator argument
+		String activatorArgument = lineMatcher.group(10);
 		long timerDelay = -1;
-		ItemSlotType slotType;
-		int actIndex = args.contains("~on");
-		if (actIndex != -1) {
-			String[] actStrings = args.get(actIndex).replace("~on", "").toUpperCase().split(":");
-			String[] actTypeStrings = actStrings[0].replace(")", "").split("\\("); //Seperate timer argument (special case)
-			
-			actType = ActivatorType.valueOf(actTypeStrings[0]); //Activator type
-			if (actTypeStrings.length == 2) timerDelay = Long.parseLong(actTypeStrings[1]); //Timer delay (special case)
-			slotType = (actStrings.length == 2 ? ItemSlotType.valueOf(actStrings[1]) : ItemSlotType.ANY); //Spot type
-		}
-		else {
-			actType = ActivatorType.NONE;
-			slotType = ItemSlotType.ANY;
-		}
+		if (activatorArgument != null) timerDelay = Long.parseLong(activatorArgument); //TODO: Error handling/logging
 		
-		AbilityArguments abilityArgs = null;
-		int abilArgIndex = args.contains("{");
-		if (abilArgIndex != -1) {
-			abilityArgs = new AbilityArguments(args.get(abilArgIndex));
-		}
+		//Get slot type
+		String slotTypeName = lineMatcher.group(11);
+		ItemSlotType slotType = ItemSlotType.ANY;
+		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName); //TODO: Error handling/logging
 		
-		//Choose proper ability by name
+		//Get ability arguments
+		String argumentsString = lineMatcher.group(2);
+		AbilityArguments abilityArgs = new AbilityArguments(argumentsString);
+		
+		//Construct ability by name
 		Ability a = constructAbility(abilityName, slotType, actType, targeter, abilityArgs);
-		
 		if (timerDelay > 0) a.setTimerDelay(timerDelay);
-		
-		if (a != null) {
-			PraedaGrandis.plugin.logger.log(s, LogType.CONFIG_PARSING);
-			PraedaGrandis.plugin.logger.log("\tAbilityType: " + abilityName, LogType.CONFIG_PARSING);
-			PraedaGrandis.plugin.logger.log("\tTargeterType: " + targeter.getClass().getSimpleName(), LogType.CONFIG_PARSING);
-			PraedaGrandis.plugin.logger.log("\tSlotType: " + slotType.name(), LogType.CONFIG_PARSING);
-			PraedaGrandis.plugin.logger.log("\tActivatorType: " + actType.name(), LogType.CONFIG_PARSING);
-			PraedaGrandis.plugin.logger.log("\tTimerDelay: " + timerDelay, LogType.CONFIG_PARSING);
-		}
-		
 		return a;
 	}
 	
-	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, AbilityArguments abilityArgs)
-	{
+	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, AbilityArguments abilityArgs) {
 		switch (name) {
 		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
@@ -94,4 +81,5 @@ public class AbilityFactory
 		default:				return new CustomAbility(name, slotType, actType, targeter);
 		}
 	}
+	
 }
