@@ -1,48 +1,57 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class VariableAbility extends Ability
-{	
+{
+	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
+	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
+	
 	final private String 			name;
 	final private VariableOperator	operator;
 	final private String			otherName;
 	final private int				number;
 	
-	public VariableAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
+	public VariableAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, String variableLine)
 	{
 		super(slotType, activator, targeter);
-		if (args.size() > 3) {
-			name = args.get(1);
-			operator = VariableOperator.fromSymbol(args.get(2));
-			
-			//Third argument can be an integer or the name of a variable
-			if (Tools.isInteger(args.get(3))) {
-				number = Integer.parseInt(args.get(3));
-				otherName = null;
-			}
-			else {
-				number = 0;
-				otherName = args.get(3);
-			}
+		
+		//Match
+		Matcher lineMatcher = variableLinePattern.matcher(variableLine);
+		if (!lineMatcher.matches()) {
+			PraedaGrandis.plugin.logger.log("Invalid variable line format:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			name = "";
+			operator = VariableOperator.SET;
+			number = 0;
+			otherName = null;
+			return;
+		}
+		
+		//Get variable name
+		name = lineMatcher.group(1);
+		
+		//Get operator
+		operator = VariableOperator.fromSymbol(lineMatcher.group(2));
+		
+		//Operand may be an integer or the name of a variable
+		String operand = lineMatcher.group(3);
+		if (Tools.isInteger(operand)) {
+			number = Integer.parseInt(operand);
+			otherName = null;
 		}
 		else {
-			//Error
-			PraedaGrandis.plugin.logger.log("Not enough arguments in variable ability line:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  Has " + args.size() + ", requires at least 4.", LogType.CONFIG_ERRORS);
-			name = null;
-			operator = null;
-			otherName = null;
 			number = 0;
+			otherName = operand;
 		}
 	}
 

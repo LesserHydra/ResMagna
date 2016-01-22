@@ -10,7 +10,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityArguments
 {
-	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*(([\\w\\.@+-]+)|(\\(.*\\)))"); //http://fiddle.re/33ag76
+	//(\w+)\s*=\s*((?:[\w\.@+-]+)|(?:\([^\n\(\)]*\)))
+	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.@+-]+)|(?:\\([^\\n\\(\\)]*\\)))");
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
