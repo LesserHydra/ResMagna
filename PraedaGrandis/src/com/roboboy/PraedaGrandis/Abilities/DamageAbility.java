@@ -19,7 +19,7 @@ public class DamageAbility extends Ability
 		damageAmount = args.getDouble("amount", 0D, true);
 		fromHolder = args.getBoolean("fromHolder", true, false);
 		//TODO: Verify valid cause
-		cause = DamageCause.valueOf(args.get("cause", "", true).toUpperCase());
+		cause = DamageCause.valueOf(args.get("cause", "CUSTOM", true).toUpperCase());
 	}
 	
 	@Override

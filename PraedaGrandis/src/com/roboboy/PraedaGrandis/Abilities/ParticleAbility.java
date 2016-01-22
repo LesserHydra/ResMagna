@@ -24,11 +24,11 @@ public class ParticleAbility extends Ability
 		//TODO: Verify name
 		particleEffect = ParticleEffect.fromName(args.get("name", "", true));
 		amount = args.getInteger("amount", 1, true);
-		centerLocation = args.getLocation("center", new GrandLocation(0D, 0D, 0D, true, true, true), true);
 		
-		offsetX = args.getFloat("offsetX", 0F, false);
-		offsetY = args.getFloat("offsetY", 0F, false);
-		offsetZ = args.getFloat("offsetZ", 0F, false);
+		centerLocation = args.getLocation("center", new GrandLocation(0D, 0D, 0D, true, true, true), false);
+		offsetX = args.getFloat("spreadX", 0F, false);
+		offsetY = args.getFloat("spreadY", 0F, false);
+		offsetZ = args.getFloat("spreadZ", 0F, false);
 		speed = args.getFloat("speed", 0F, false);
 		range = args.getDouble("range", 60D, false);
 	}
