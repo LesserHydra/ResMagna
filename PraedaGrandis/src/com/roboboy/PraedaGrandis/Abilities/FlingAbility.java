@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class FlingAbility extends Ability
@@ -12,7 +12,7 @@ public class FlingAbility extends Ability
 	final private double forceAmount;
 	final private GrandLocation targetLocation;
 
-	public FlingAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public FlingAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		forceAmount = args.getDouble("force", 0D, true);
 		targetLocation = args.getLocation("targetLocation", null, false);

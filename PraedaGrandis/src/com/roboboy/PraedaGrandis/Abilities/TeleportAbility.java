@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class TeleportAbility extends Ability
@@ -19,7 +19,7 @@ public class TeleportAbility extends Ability
 	final private GrandLocation location;
 	final private int radius;
 	
-	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
 		radius = args.getInteger("radius", 0, false);

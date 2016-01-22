@@ -2,7 +2,7 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import com.roboboy.PraedaGrandis.Configuration.GrandMaterial;
 
@@ -11,12 +11,11 @@ public class IsBlock extends Condition
 	private final GrandMaterial materials;
 	private final GrandLocation location;
 	
-	public IsBlock(Targeter targeter, boolean not, ConfigString args)
+	public IsBlock(Targeter targeter, boolean not, BlockArguments args)
 	{
 		super(targeter, not);
-		//TODO: Error handling. Must be three arguments (condition name + 2 args)
-		materials = new GrandMaterial(args.get(1));
-		location = new GrandLocation(args.get(2));
+		materials = new GrandMaterial(args.get("types", "", true));
+		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
 	}
 
 	@Override

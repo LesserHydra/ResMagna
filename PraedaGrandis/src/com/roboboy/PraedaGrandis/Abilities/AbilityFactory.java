@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
@@ -28,7 +28,7 @@ public class AbilityFactory
 		
 		//Get ability arguments, if exist
 		String argumentsString = lineMatcher.group(2);
-		AbilityArguments abilityArgs = new AbilityArguments(argumentsString);
+		BlockArguments abilityArgs = new BlockArguments(argumentsString);
 		
 		//Get unenclosed arguments, if exist
 		String variableArgs = lineMatcher.group(3);
@@ -60,7 +60,7 @@ public class AbilityFactory
 		return a;
 	}
 	
-	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, AbilityArguments abilityArgs, String variableArgs) {
+	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, BlockArguments abilityArgs, String variableArgs) {
 		switch (name) {
 		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);

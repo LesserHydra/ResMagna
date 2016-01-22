@@ -6,7 +6,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class DamageAbility extends Ability
 {
@@ -14,7 +14,7 @@ public class DamageAbility extends Ability
 	final private boolean fromHolder;
 	final private DamageCause cause;
 	
-	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		damageAmount = args.getDouble("amount", 0D, true);
 		fromHolder = args.getBoolean("fromHolder", true, false);

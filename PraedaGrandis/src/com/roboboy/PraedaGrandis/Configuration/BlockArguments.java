@@ -8,14 +8,14 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class AbilityArguments
+public class BlockArguments
 {
 	//(\w+)\s*=\s*((?:[\w\.@+-]+)|(?:\([^\n\(\)]*\)))
 	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.@+-]+)|(?:\\([^\\n\\(\\)]*\\)))");
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
-	public AbilityArguments(String argumentString) {
+	public BlockArguments(String argumentString) {
 		if (argumentString == null) return;
 		Matcher argumentMatcher = argumentPattern.matcher(argumentString);
 		while (argumentMatcher.find()) {

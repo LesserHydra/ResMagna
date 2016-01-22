@@ -4,7 +4,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class PotionAbility extends Ability
 {
@@ -14,7 +14,7 @@ public class PotionAbility extends Ability
 	final int amplifier;
 
 	//LATER: Add options for force, ambient, and particles.
-	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args)
+	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
 		

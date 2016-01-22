@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.darkblade12.particleeffect.ParticleEffect;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class ParticleAbility extends Ability
@@ -17,7 +17,7 @@ public class ParticleAbility extends Ability
 	final private GrandLocation centerLocation;
 	final private double range;
 
-	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args)
+	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
 		

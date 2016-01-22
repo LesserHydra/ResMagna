@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class GhostBlockAbility extends Ability
@@ -14,7 +14,7 @@ public class GhostBlockAbility extends Ability
 	private final byte data;
 	private final GrandLocation location;
 	
-	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args)
+	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
 		

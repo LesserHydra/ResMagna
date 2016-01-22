@@ -11,16 +11,17 @@ import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class IsWearing extends Condition
 {
 	final private List<String> itemNames = new ArrayList<>();
 
-	protected IsWearing(Targeter targeter, boolean not, ConfigString args)
+	protected IsWearing(Targeter targeter, boolean not, BlockArguments args)
 	{
 		super(targeter, not);
-		for (String s : args.get(1).replace("(", "").replace(")", "").replace(",", "").split(" ")) {
+		//TODO: Error handling/logging
+		for (String s : args.get("names", "", true).replace("(", "").replace(")", "").replace(",", "").split(" ")) {
 			itemNames.add(s);
 		}
 	}

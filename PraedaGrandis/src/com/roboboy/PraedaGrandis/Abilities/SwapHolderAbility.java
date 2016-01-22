@@ -4,13 +4,13 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class SwapHolderAbility extends Ability
 {
 	final private boolean swapFacing;
 	
-	public SwapHolderAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public SwapHolderAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		swapFacing = args.getBoolean("swapFacing", false, false);
 	}

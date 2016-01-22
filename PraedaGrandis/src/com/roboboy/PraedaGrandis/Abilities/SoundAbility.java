@@ -4,7 +4,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class SoundAbility extends Ability
 {
@@ -12,7 +12,7 @@ public class SoundAbility extends Ability
 	final private float volume;
 	final private float pitch;
 
-	public SoundAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public SoundAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		//TODO: Check for valid sound
 		sound = Sound.valueOf(args.get("name", "", true).toUpperCase());

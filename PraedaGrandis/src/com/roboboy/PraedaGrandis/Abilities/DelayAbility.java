@@ -5,14 +5,14 @@ import java.util.List;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.AbilityArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class DelayAbility extends Ability
 {
 	final private long delayAmount;
 	final private List<Ability> delayedAbilities = new ArrayList<>();
 	
-	public DelayAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, AbilityArguments args) {
+	public DelayAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		delayAmount = args.getLong("ticks", 0, true);
 	}
