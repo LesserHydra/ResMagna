@@ -84,8 +84,9 @@ public enum ItemSlotType
 	
 	static {
 		for (ItemSlotType type : values()) {
+			if (type.isNull()) continue;
 			type.children = EnumSet.noneOf(ItemSlotType.class);
-			if (!type.isNull()) type.parent.registerSubtype(type);
+			type.parent.registerSubtype(type);
 		}
 	}
 	
@@ -115,6 +116,18 @@ public enum ItemSlotType
 		return parent.isSubtypeOf(supertype);	//Is subtype of parent's parent, ect
 	}
 	
+	public EnumSet<ItemSlotType> getSupertypes() {
+		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
+		
+		ItemSlotType type = this;
+		while (!type.isNull()) {
+			results.add(type);
+			type = type.parent;
+		}
+		
+		return results;
+	}
+	
 	public boolean isNull() {
 		return (this == NONE);
 	}
@@ -136,17 +149,17 @@ public enum ItemSlotType
 	
 	private static ItemSlotType getArmorSlotType(int i) {
 		switch (i) {
-		case 0: 	return HELMET;
-		case 1:		return CHESTPLATE;
-		case 2:		return LEGGINGS;
-		case 3:		return BOOTS;
+		case 39: 	return HELMET;
+		case 38:	return CHESTPLATE;
+		case 37:	return LEGGINGS;
+		case 36:	return BOOTS;
 		
 		//Should be impossible
-		default: throw new IllegalArgumentException("Invalid armor slot (0-3): " + i);
+		default: throw new IllegalArgumentException("Invalid armor slot (36-39): " + i);
 		}
 	}
 	
-	private static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
+	public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
 		if (slotNumber == heldSlotNumber) return ItemSlotType.HELD;
 		return ItemSlotType.UNHELD;
 	}
@@ -154,6 +167,7 @@ public enum ItemSlotType
 	public static EnumSet<ItemSlotType> getUniqueTypes() {
 		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
 		for (ItemSlotType type : values()) {
+			if (type.isNull()) continue;
 			if (type.children.isEmpty()) results.add(type);
 		}
 		return results;
