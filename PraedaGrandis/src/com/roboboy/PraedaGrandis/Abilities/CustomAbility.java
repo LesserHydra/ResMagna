@@ -3,7 +3,6 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbility;
 
 public class CustomAbility extends Ability
@@ -11,10 +10,10 @@ public class CustomAbility extends Ability
 	final private String name;
 	private GrandAbility grandAbility;
 	
-	public CustomAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
+	public CustomAbility(String name, ItemSlotType slotType, ActivatorType activator, Targeter targeter)
 	{
 		super(slotType, activator, targeter);
-		name = args.get(1);
+		this.name = name;
 		findGrandAbility(false);
 	}
 	

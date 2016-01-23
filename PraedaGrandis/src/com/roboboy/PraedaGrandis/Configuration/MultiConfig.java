@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
@@ -11,6 +12,13 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
  */
 public abstract class MultiConfig
 {
+	static private final FilenameFilter YAML_FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return (name.endsWith(".yaml") || name.endsWith(".yml"));
+        }
+    };
+	
 	protected final PraedaGrandis plugin;
 	
 	protected MultiConfig(PraedaGrandis plugin) {
@@ -24,7 +32,7 @@ public abstract class MultiConfig
 	 * @param configFolder
 	 */
 	protected final void reload(File configFolder) {
-		for (File file : configFolder.listFiles()) {
+		for (File file : configFolder.listFiles(YAML_FILTER)) {
 			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 			loadConfig(config);
 		}

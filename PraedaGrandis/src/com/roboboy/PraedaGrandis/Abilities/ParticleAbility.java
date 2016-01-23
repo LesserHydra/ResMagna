@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.darkblade12.particleeffect.ParticleEffect;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class ParticleAbility extends Ability
@@ -17,18 +17,20 @@ public class ParticleAbility extends Ability
 	final private GrandLocation centerLocation;
 	final private double range;
 
-	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
+	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
 		
-		particleEffect = ParticleEffect.fromName(args.get(1));
-		offsetX = Float.parseFloat(args.get(2));
-		offsetY = Float.parseFloat(args.get(3));
-		offsetZ = Float.parseFloat(args.get(4));
-		speed = Float.parseFloat(args.get(5));
-		amount = Integer.parseInt(args.get(6));
-		centerLocation = new GrandLocation(args.get(7));
-		range = Double.parseDouble(args.get(8));
+		//TODO: Verify name
+		particleEffect = ParticleEffect.fromName(args.get("name", "", true));
+		amount = args.getInteger("amount", 1, true);
+		
+		centerLocation = args.getLocation("center", new GrandLocation(0D, 0D, 0D, true, true, true), false);
+		offsetX = args.getFloat("spreadX", 0F, false);
+		offsetY = args.getFloat("spreadY", 0F, false);
+		offsetZ = args.getFloat("spreadZ", 0F, false);
+		speed = args.getFloat("speed", 0F, false);
+		range = args.getDouble("range", 60D, false);
 	}
 
 	@Override

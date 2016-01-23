@@ -9,20 +9,20 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class TeleportAbility extends Ability
 {
-	final private Random randomGenerator = new Random();
+	final private static Random randomGenerator = new Random();
 	
-	final private int radius;
 	final private GrandLocation location;
+	final private int radius;
 	
-	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args) {
+	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		radius = Integer.parseInt(args.get(1));
-		location = new GrandLocation(args.get(2));
+		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
+		radius = args.getInteger("radius", 0, false);
 	}
 
 	@Override

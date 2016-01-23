@@ -114,6 +114,8 @@ public class GrandItem
 		for (String abilityString : itemConfig.getStringList("abilities"))
 		{
 			Ability a = AbilityFactory.build(abilityString);
+			if (a == null) continue;
+			
 			if (a.getActivator() != ActivatorType.TIMER) {
 				abilities.add(a);
 			}
