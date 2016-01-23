@@ -80,10 +80,11 @@ public enum ItemSlotType
 	};
 	
 	private final ItemSlotType parent;
-	private EnumSet<ItemSlotType> children = EnumSet.noneOf(ItemSlotType.class);
+	private EnumSet<ItemSlotType> children;
 	
 	static {
 		for (ItemSlotType type : values()) {
+			type.children = EnumSet.noneOf(ItemSlotType.class);
 			if (!type.isNull()) type.parent.registerSubtype(type);
 		}
 	}

@@ -1,48 +1,57 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.LogType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class IsVariable extends Condition
 {
+	//(\w+)\s*([=<>]+)\s*(\w+)
+	static private final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
+	
 	final private String 				name;
 	final private VariableConditional	conditional;
 	final private String				otherName;
 	final private int					number;
 	
-	public IsVariable(Targeter targeter, boolean not, ConfigString args)
+	public IsVariable(Targeter targeter, boolean not, String variableLine)
 	{
 		super(targeter, not);
-		if (args.size() > 3) {
-			name = args.get(1);
-			conditional = VariableConditional.fromSymbol(args.get(2));
-			
-			//Third argument can be an integer or the name of a variable
-			if (Tools.isInteger(args.get(3))) {
-				number = Integer.parseInt(args.get(3));
-				otherName = null;
-			}
-			else {
-				number = 0;
-				otherName = args.get(3);
-			}
+		
+		//Match
+		Matcher lineMatcher = isVariableLinePattern.matcher(variableLine);
+		if (!lineMatcher.matches()) {
+			PraedaGrandis.plugin.logger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			name = "";
+			conditional = VariableConditional.EQUAL;
+			number = 0;
+			otherName = null;
+			return;
+		}
+		
+		//Get variable name
+		name = lineMatcher.group(1);
+		
+		//Get operator
+		conditional = VariableConditional.fromSymbol(lineMatcher.group(2));
+		
+		//Operand may be an integer or the name of a variable
+		String operand = lineMatcher.group(3);
+		if (Tools.isInteger(operand)) {
+			number = Integer.parseInt(operand);
+			otherName = null;
 		}
 		else {
-			//Error
-			PraedaGrandis.log("Not enough arguments in variable ability line:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  Has " + args.size() + ", requires at least 4.", LogType.CONFIG_ERRORS);
-			name = null;
-			conditional = null;
-			otherName = null;
 			number = 0;
+			otherName = operand;
 		}
 	}
 

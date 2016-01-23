@@ -2,11 +2,9 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import com.roboboy.PraedaGrandis.LogType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class PotionAbility extends Ability
 {
@@ -16,39 +14,14 @@ public class PotionAbility extends Ability
 	final int amplifier;
 
 	//LATER: Add options for force, ambient, and particles.
-	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, ConfigString args)
+	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
-		if (args.size() >= 2)
-		{
-			String[] potArgs = args.get(1).split(":");
-			if (potArgs.length == 3) {
-				type = PotionEffectType.getByName(potArgs[0]);
-				duration = Integer.parseInt(potArgs[1]);
-				amplifier = Integer.parseInt(potArgs[2]);
-			}
-			else
-			{
-				//Error
-				PraedaGrandis.log("Improper arguments in potion ability line:", LogType.CONFIG_ERRORS);
-				PraedaGrandis.log("  " + args.get(1), LogType.CONFIG_ERRORS);
-				PraedaGrandis.log("  Has " + potArgs.length + ", requires 3.", LogType.CONFIG_ERRORS);
-				type = PotionEffectType.ABSORPTION;
-				duration = 0;
-				amplifier = 0;
-			}
-			//potionEffect = new PotionEffect(PotionEffectType.getByName(potArgs[0]), Integer.parseInt(potArgs[1]), Integer.parseInt(potArgs[2]), true, false);
-		}
-		else
-		{
-			//Error
-			PraedaGrandis.log("Not enough arguments in potion ability line:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  " + args.getOriginalString(), LogType.CONFIG_ERRORS);
-			PraedaGrandis.log("  Has " + args.size() + ", requires at least 2.", LogType.CONFIG_ERRORS);
-			type = PotionEffectType.ABSORPTION;
-			duration = 0;
-			amplifier = 0;
-		}
+		
+		//TODO: Verify name
+		type = PotionEffectType.getByName(args.get("name", "ABSORPTION", true));
+		duration = args.getInteger("duration", 0, true);
+		amplifier = args.getInteger("amplifier", 0, false);
 	}
 	
 	@Override

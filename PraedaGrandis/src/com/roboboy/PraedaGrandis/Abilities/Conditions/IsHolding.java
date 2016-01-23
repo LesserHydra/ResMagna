@@ -7,16 +7,16 @@ import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.ConfigString;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class IsHolding extends Condition
 {
 	final private String itemName;
 
-	protected IsHolding(Targeter targeter, boolean not, ConfigString args)
-	{
+	protected IsHolding(Targeter targeter, boolean not, BlockArguments args) {
 		super(targeter, not);
-		itemName = args.get(1);
+		//TODO: Error handling/logging
+		itemName = args.get("name", "", true);
 	}
 
 	@Override

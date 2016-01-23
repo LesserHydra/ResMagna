@@ -9,7 +9,11 @@ public class ConfigString implements Iterable<String>
 	private final String originalString;
 	private final List<String> elements = new ArrayList<String>();
 	
-	public ConfigString(String s)
+	public ConfigString(String s) {
+		this(s, ' '); //Default delimiter is a space
+	}
+	
+	public ConfigString(String s, char delimiter)
 	{
 		originalString = s;
 		
@@ -21,13 +25,13 @@ public class ConfigString implements Iterable<String>
 		{
 			char c = s.charAt(i);
 			
-			if (c == '(') { //Open bracket
+			if (c == '(' || c == '{') { //Open bracket
 				open++;
 			}
 			else if (open > 0) { //Searching for the close bracket
-				if (c == ')') open--;
+				if (c == ')' || c == '}') open--;
 			}
-			else if (c == ' ') { //Spaces otherwise
+			else if (c == delimiter) { //Delimiter otherwise
 				if (startI != i) elements.add(s.substring(startI, i)); //Don't add blank spaces
 				startI = i + 1;
 			}
@@ -70,22 +74,4 @@ public class ConfigString implements Iterable<String>
 		
 		return -1;
 	}
-
-	/*private String parseBrackets(String s, char openChar, char closeChar)
-	{
-		int open = 0;
-		for (int i = 0; i < s.length(); i++)
-		{
-			if (s.charAt(i) == openChar) open++;
-			if (s.charAt(i) == closeChar)
-			{
-				open--;
-				if (open == 0) return s.substring(s.indexOf(openChar), i);
-				if (open < 0) break;
-			}
-		}
-		
-		return null;
-	}*/
-	
 }
