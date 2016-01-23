@@ -23,7 +23,7 @@ public class ConditionFactory
 		}
 		
 		//Get condition name and NOT opperator
-		String conditionName = lineMatcher.group(1);
+		String conditionName = lineMatcher.group(1).toLowerCase();
 		boolean not = conditionLine.startsWith("~");
 		
 		//Get condition arguments, if exist
@@ -37,7 +37,7 @@ public class ConditionFactory
 		String targeterName = lineMatcher.group(4);
 		if (targeterName == null) targeterName = "default";
 		String targeterArgument = lineMatcher.group(5);
-		Targeter targeter = TargeterFactory.build(targeterName, targeterArgument);
+		Targeter targeter = TargeterFactory.build(targeterName.toLowerCase(), targeterArgument);
 		
 		//Construct condition by name
 		Condition c = createCondition(conditionName, targeter, not, conditionArgs, variableArgsString);

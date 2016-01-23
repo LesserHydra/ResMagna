@@ -24,7 +24,7 @@ public class AbilityFactory
 		}
 		
 		//Get ability name
-		String abilityName = lineMatcher.group(1);
+		String abilityName = lineMatcher.group(1).toLowerCase();
 		
 		//Get ability arguments, if exist
 		String argumentsString = lineMatcher.group(2);
@@ -37,12 +37,12 @@ public class AbilityFactory
 		String targeterName = lineMatcher.group(4);
 		if (targeterName == null) targeterName = "default";
 		String targeterArgument = lineMatcher.group(5);
-		Targeter targeter = TargeterFactory.build(targeterName, targeterArgument);
+		Targeter targeter = TargeterFactory.build(targeterName.toLowerCase(), targeterArgument);
 		
 		//Get activator
 		String activatorName = lineMatcher.group(6);
 		ActivatorType actType = ActivatorType.NONE;
-		if (activatorName != null) actType = ActivatorType.valueOf(activatorName); //TODO: Error handling/logging
+		if (activatorName != null) actType = ActivatorType.valueOf(activatorName.toUpperCase()); //TODO: Error handling/logging
 		
 		//Get activator argument
 		String activatorArgument = lineMatcher.group(7);
@@ -52,7 +52,7 @@ public class AbilityFactory
 		//Get slot type
 		String slotTypeName = lineMatcher.group(8);
 		ItemSlotType slotType = ItemSlotType.ANY;
-		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName); //TODO: Error handling/logging
+		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName.toUpperCase()); //TODO: Error handling/logging
 		
 		//Construct ability by name
 		Ability a = constructAbility(abilityName, slotType, actType, targeter, abilityArgs, variableArgs);
