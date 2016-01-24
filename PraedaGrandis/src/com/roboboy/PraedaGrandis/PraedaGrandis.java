@@ -70,8 +70,4 @@ public class PraedaGrandis extends JavaPlugin
 		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
 	}
 	
-	//TODO: Expand logging system
-	/*static public void log(String s, LogType type) {
-		plugin.getLogger().info(s);
-	}*/
 }

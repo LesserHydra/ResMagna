@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -51,6 +52,15 @@ public class ActivatorListener implements Listener
 		ActivatorType interactType = getInteractActivator(target);
 		
 		if (!interactType.isNull()) activate(interactType, e.getPlayer(), target);
+	}
+	
+	/*----------Break----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemBreak(PlayerItemBreakEvent e) {
+		GrandItem gItem = plugin.itemHandler.matchItem(e.getBrokenItem());
+		if (gItem == null) return;
+		
+		activate(ActivatorType.BREAK, e.getPlayer(), null);
 	}
 	
 	

@@ -112,8 +112,8 @@ public enum ItemSlotType
 		if (isNull()) return false;				//Base case
 		
 		if (this == supertype) return true; 	//Is subtype of self
-		if (parent == supertype) return true;	//Is subtype of parent
-		return parent.isSubtypeOf(supertype);	//Is subtype of parent's parent, ect
+		//if (parent == supertype) return true;	//Is subtype of parent
+		return parent.isSubtypeOf(supertype);	//Is subtype of parent, ect
 	}
 	
 	public EnumSet<ItemSlotType> getSupertypes() {
@@ -154,7 +154,7 @@ public enum ItemSlotType
 		case 37:	return LEGGINGS;
 		case 36:	return BOOTS;
 		
-		//Should be impossible
+		//Should be impossible, unless inventory structure changes (aka Minecraft 1.9)
 		default: throw new IllegalArgumentException("Invalid armor slot (36-39): " + i);
 		}
 	}
