@@ -69,13 +69,13 @@ public class InventoryHandler implements Listener
 		}
 	}
 	
-	//Player 
+	//Player "clicks" with inventory open
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(InventoryClickEvent e)
 	{
-		if (!(e.getWhoClicked() instanceof Player)) return; //Is this even possible?
-		
+		if (!(e.getWhoClicked() instanceof Player)) return;
 		Player p = (Player)e.getWhoClicked();
+		
 		if (e instanceof InventoryCreativeEvent) {
 			resetInventoryNextTick(p);
 			return;
@@ -93,19 +93,10 @@ public class InventoryHandler implements Listener
 		
 		//if (currentGrandItem == null && cursorGrandItem == null) return;
 		
-		p.sendMessage("------------------------------");
-		p.sendMessage("  Action: " + e.getAction());
-		if (currentGrandItem != null) p.sendMessage("  Current: " + currentGrandItem.getName());
-		if (cursorGrandItem != null) p.sendMessage("  Cursor: " + cursorGrandItem.getName());
-		p.sendMessage("  ClickedSlotType: " + clickedSlotType);
-		p.sendMessage("  SlotNumber: " + e.getSlot());
-		//p.sendMessage("  RawSlotNumber: " + e.getRawSlot());
-		
 		//Clicked on other inventory
 		if (!inv.equals(e.getClickedInventory())) {
 			//TODO: Figure out where the item will be moved to
 			if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-				p.sendMessage("  Item moved into inventory from other");
 				resetInventoryNextTick(p);
 			}
 			return;
@@ -118,7 +109,6 @@ public class InventoryHandler implements Listener
 			//Current item is shift-clicked to another place in inventory
 			if (topInventoryType == InventoryType.CRAFTING || topInventoryType == InventoryType.WORKBENCH) {
 				//TODO: Figure out where the item will be moved to
-				p.sendMessage("  Current item is shift-clicked to another place in inventory");
 				resetInventoryNextTick(p);
 			}
 			//Current item is shift-clicked to another inventory
@@ -127,7 +117,6 @@ public class InventoryHandler implements Listener
 					|| topInventoryType == InventoryType.ENCHANTING || topInventoryType == InventoryType.ENDER_CHEST
 					|| topInventoryType == InventoryType.HOPPER){
 				//TODO: Check for failure (inventory is full)
-				p.sendMessage("  Current item is shift-clicked to another inventory");
 				gInv.removeItem(currentItem);
 			}
 			//TODO: Handle cases where only certain items are put into the other inventory
@@ -142,7 +131,6 @@ public class InventoryHandler implements Listener
 				|| e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PICKUP_ONE
 				|| e.getAction() == InventoryAction.PICKUP_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)
 				) {
-			p.sendMessage("  Current item is removed from inventory");
 			gInv.removeItem(currentItem);
 		}
 		
@@ -150,7 +138,6 @@ public class InventoryHandler implements Listener
 		if (cursorGrandItem != null && (
 				e.getAction() == InventoryAction.PLACE_ALL || e.getAction() == InventoryAction.PLACE_ONE
 				|| e.getAction() == InventoryAction.PLACE_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
-			p.sendMessage("  Cursor item is added to inventory");
 			gInv.putItem(cursorItem, cursorGrandItem, clickedSlotType);
 		}
 		
@@ -160,22 +147,15 @@ public class InventoryHandler implements Listener
 			GrandItem hotbarGrandItem = plugin.itemHandler.matchItem(hotbarItem);
 			ItemSlotType hotbarSlotType = ItemSlotType.getHotbarSlotType(e.getHotbarButton(), inv.getHeldItemSlot());
 			
-			if (hotbarGrandItem != null) p.sendMessage("  Hotbar: " + hotbarGrandItem.getName());
-			p.sendMessage("  HotbarSlotType: " + hotbarSlotType);
-			p.sendMessage("  Current item is swapped with hotbar item");
-			
 			if (currentGrandItem != null) gInv.putItem(currentItem, currentGrandItem, hotbarSlotType);
 			if (hotbarGrandItem != null) gInv.putItem(hotbarItem, hotbarGrandItem, clickedSlotType);
 		}
 		
 		//Current item displaces hotbar item, which is readded to inventory 
 		if (e.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
-			p.sendMessage("  Current item displaces hotbar item, which is readded to inventory ");
 			//TODO: Figure out where the items will be moved to
 			resetInventoryNextTick(p);
 		}
-		
-		p.sendMessage("------------------------------");
 	}
 	
 	private void registerPlayer(Player p) {
