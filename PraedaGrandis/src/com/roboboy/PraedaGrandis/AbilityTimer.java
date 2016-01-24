@@ -80,4 +80,11 @@ public class AbilityTimer
 			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);;
 		}
 	}
+	
+	public void stopTimer() {
+		if (running) {
+			timer.cancel();
+			running = false;
+		}
+	}
 }

@@ -212,6 +212,15 @@ public class GrandItem
 		}
 	}
 	
+	/**
+	 * Cancels all running ability timers
+	 */
+	public void stopTimers() {
+		for (AbilityTimer at : timers) {
+			at.stopTimer();
+		}
+	}
+	
 	public boolean isPersistant() {
 		return persistant;
 	}
@@ -245,4 +254,5 @@ public class GrandItem
 		if (!(obj instanceof GrandItem)) return false;
 		return name.equals(((GrandItem)obj).name);
 	}
+	
 }
