@@ -9,9 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -67,6 +70,43 @@ public class InventoryHandler implements Listener
 		if (newGrandItem != null) {
 			gInv.putItem(newItem, newGrandItem, ItemSlotType.HELD);
 		}
+	}
+	
+	//Player picks up an item
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemPickup(PlayerPickupItemEvent e) {
+		ItemStack item = e.getItem().getItemStack();
+		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		if (grandItem == null) return;
+		
+		//TODO: Figure out where the item will added to
+		resetInventoryNextTick(e.getPlayer());
+	}
+	
+	//Player drops an item
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemDrop(PlayerDropItemEvent e) {
+		ItemStack item = e.getItemDrop().getItemStack();
+		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		if (grandItem == null) return;
+		
+		Player player = e.getPlayer();
+		GrandInventory gInv = playerInventories.get(player.getName());
+		gInv.removeItem(item);
+	}
+	
+	//Player drags with inventory open
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onInventoryDrag(InventoryDragEvent e) {
+		if (!(e.getWhoClicked() instanceof Player)) return;
+		Player player = (Player)e.getWhoClicked();
+		
+		ItemStack cursorItem = e.getOldCursor();
+		GrandItem grandCursorItem = plugin.itemHandler.matchItem(cursorItem);
+		if (grandCursorItem == null) return;
+		
+		//TODO: Figure out where the item will added to
+		resetInventoryNextTick(player);
 	}
 	
 	//Player "clicks" with inventory open
@@ -170,7 +210,6 @@ public class InventoryHandler implements Listener
 		}}.runTaskLater(plugin, 1L);
 	}
 	
-	//TODO: InventoryDragEvent, InventoryPickupItemEvent, PlayerDropItemEvent
-	//TODO: Others as needed
+	//TODO: Armor equipping by right clicking or dispenser
 	
 }
