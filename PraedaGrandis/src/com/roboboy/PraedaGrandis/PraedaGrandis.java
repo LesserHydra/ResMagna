@@ -49,7 +49,7 @@ public class PraedaGrandis extends JavaPlugin
 	public void onDisable()
 	{
 		//Cancel timer checker
-		timerCheckingTask.cancel();
+		if (timerCheckingTask != null) timerCheckingTask.cancel();
 		//Set plugin to null
 		plugin = null;
 	}

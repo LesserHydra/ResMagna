@@ -25,7 +25,7 @@ public class ParticleAbility extends Ability
 		particleEffect = ParticleEffect.fromName(args.get("name", "", true));
 		amount = args.getInteger("amount", 1, true);
 		
-		centerLocation = args.getLocation("center", new GrandLocation(0D, 0D, 0D, true, true, true), false);
+		centerLocation = args.getLocation("location", new GrandLocation(0D, 0D, 0D, true, true, true), false);
 		offsetX = args.getFloat("spreadX", 0F, false);
 		offsetY = args.getFloat("spreadY", 0F, false);
 		offsetZ = args.getFloat("spreadZ", 0F, false);

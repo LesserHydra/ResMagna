@@ -10,8 +10,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class ConditionFactory
 {
-	//~?(\w+)\s*(?:(\{.*\})|(\b[\w\s=<>]+\b))?\s*(?:@(\w+)(?:\((.*)\))?)?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(\\{.*\\})|(\\b[\\w\\s=<>]+\\b))?\\s*(?:@(\\w+)(?:\\((.*)\\))?)?");
+	//~?(\w+)\s*(?:(\{.*\})|([\w\s=<>\.]*[\w\.]))?\s*(?:@(\w+)(?:\((.*)\))?)?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(\\{.*\\})|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(?:@(\\w+)(?:\\((.*)\\))?)?");
 	
 	public static Condition build(String conditionLine) {
 		//Match
