@@ -65,6 +65,7 @@ public class AbilityFactory
 		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
 		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
+		case "ignite":			return new IgniteAbility(slotType, actType, targeter, abilityArgs);
 		case "pull":			return new PullAbility(slotType, actType, targeter, abilityArgs);
 		case "push":			return new PushAbility(slotType, actType, targeter, abilityArgs);
 		case "fling":			return new FlingAbility(slotType, actType, targeter, abilityArgs);
@@ -72,6 +73,7 @@ public class AbilityFactory
 		case "particle":		return new ParticleAbility(slotType, actType, targeter, abilityArgs);
 		case "potion":			return new PotionAbility(slotType, actType, targeter, abilityArgs);
 		case "teleport":		return new TeleportAbility(slotType, actType, targeter, abilityArgs);
+		case "spin":			return new SpinAbility(slotType, actType, targeter, abilityArgs);
 		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, abilityArgs);
 		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, abilityArgs);
 		case "mountholder":		return new MountHolderAbility(slotType, actType, targeter);

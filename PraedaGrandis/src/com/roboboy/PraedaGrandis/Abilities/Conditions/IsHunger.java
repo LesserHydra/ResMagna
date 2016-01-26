@@ -12,11 +12,11 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class IsHunger extends Condition
 {
-	//([=<>]+)\s*(\w+)
-	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*(\\w+)");
+	//([=<>]+)\s*([\w\.]+)
+	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*([\\w]+)");
 	
 	final private VariableConditional	conditional;
-	final private float					number;
+	final private int					number;
 
 	public IsHunger(Targeter targeter, boolean not, String argLine)
 	{
@@ -37,13 +37,13 @@ public class IsHunger extends Condition
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(2);
-		if (!Tools.isFloat(operand)) {
+		if (!Tools.isInteger(operand)) {
 			PraedaGrandis.plugin.logger.log("Invalid hunger condition operand:", LogType.CONFIG_ERRORS);
 			PraedaGrandis.plugin.logger.log("  " + argLine, LogType.CONFIG_ERRORS);
 			number = 0;
 			return;
 		}
-		number = Float.parseFloat(operand);
+		number = Integer.parseInt(operand);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class IsHunger extends Condition
 	{
 		if (!(target.get() instanceof Player)) return false;
 		Player p = (Player) target.get();
-		return conditional.check(p.getSaturation(), number);
+		return conditional.check(p.getFoodLevel(), number);
 	}
 
 }

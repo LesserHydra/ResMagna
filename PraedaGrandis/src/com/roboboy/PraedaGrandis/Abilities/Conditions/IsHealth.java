@@ -12,8 +12,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class IsHealth extends Condition
 {
-	//([=<>]+)\s*(\w+)
-	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*(\\w+)");
+	//([=<>]+)\s*([\w\.]+)
+	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*([\\w\\.]+)");
 	
 	private final VariableConditional	conditional;
 	private final double				number;
