@@ -50,7 +50,7 @@ public class AutoConvertItem
 	public ItemStack convert(ItemStack item)
 	{
 		NBTStorage storage = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME);
-		storage.setData(convertItem.getId());
+		storage.setData(convertItem.getName());
 		
 		UUID newID = UUID.randomUUID();
 		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);

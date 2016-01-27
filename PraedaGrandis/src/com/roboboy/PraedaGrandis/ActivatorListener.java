@@ -15,10 +15,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
@@ -50,6 +52,15 @@ public class ActivatorListener implements Listener
 		ActivatorType interactType = getInteractActivator(target);
 		
 		if (!interactType.isNull()) activate(interactType, e.getPlayer(), target);
+	}
+	
+	/*----------Break----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemBreak(PlayerItemBreakEvent e) {
+		GrandItem gItem = plugin.itemHandler.matchItem(e.getBrokenItem());
+		if (gItem == null) return;
+		
+		activate(ActivatorType.BREAK, e.getPlayer(), null);
 	}
 	
 	
@@ -140,17 +151,12 @@ public class ActivatorListener implements Listener
 	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget)
 	{
 		//Run one tick later, to avoid the infinite hunger bug
-		PraedaGrandis.plugin.getServer().getScheduler().scheduleSyncDelayedTask(PraedaGrandis.plugin, new Runnable() {
-			@Override
-			public void run() {
-				//holder.sendMessage(ChatColor.BLUE + "Activated by " + type.toString() + " activator");
-				GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
-				for (GrandItem gItem : pInv.getItems()) {
-					//holder.sendMessage(ChatColor.BLUE + "Found GrandItem in slot " + entry.getValue());
-					gItem.activateAbilities(type, pInv.getSlotTypes(gItem), new Target(holder, holder, activatorTarget));
-				}
+		new BukkitRunnable() { @Override public void run() {
+			GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
+			for (GrandInventory.InventoryElement element : pInv.getItems()) {
+				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
 			}
-		}, 1L);
+		}}.runTaskLater(plugin, 1L);
 	}
 	
 	/**

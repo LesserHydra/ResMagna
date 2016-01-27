@@ -33,6 +33,10 @@ public class ItemHandler extends MultiConfig
 	 */
 	@Override
 	public void reload() {
+		//Cancel all running ability timers
+		for (GrandItem item : items.values()) {
+			item.stopTimers();
+		}
 		items.clear();
 		convertItems.clear();
 		super.reload(plugin.configManager.getItemFolder());

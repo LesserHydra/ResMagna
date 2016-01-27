@@ -2,6 +2,7 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -42,18 +43,14 @@ public class AbilityTimer
 					continue;
 				}
 				
-				boolean noneFound = true;
-				//Search through players GrandItems for the required one
+				//Activate for every matching item in player inventory
 				GrandInventory pInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer(p);
-				for (GrandItem gItem : pInv.getItems()) {
-					if (gItem.equals(item)) {
-						ability.activate(pInv.getSlotTypes(gItem), new Target(p, p, null));
-						noneFound = false;
-						break; //Stop searching
-					}
+				List<GrandInventory.InventoryElement> elements = pInv.getItems(item.getName());
+				for (GrandInventory.InventoryElement element : elements) {
+					ability.activate(element.slotType, new Target(p, p, null));
 				}
 				
-				if (noneFound) it.remove(); //Deactivate player
+				if (elements.isEmpty()) it.remove(); //Deactivate player
 			}
 			
 			//If no players are active, cancel the timer
@@ -81,6 +78,13 @@ public class AbilityTimer
 			running = true;
 			timer = new TimerRunnable(); //It seems you must construct a new instance every time
 			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);;
+		}
+	}
+	
+	public void stopTimer() {
+		if (running) {
+			timer.cancel();
+			running = false;
 		}
 	}
 }

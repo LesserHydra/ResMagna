@@ -7,9 +7,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
-
 
 public class PraedaGrandis extends JavaPlugin
 {
@@ -65,15 +63,11 @@ public class PraedaGrandis extends JavaPlugin
 		if (timerCheckingTask != null) timerCheckingTask.cancel();
 		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
 			for (Player p : getServer().getOnlinePlayers()) {
-        		for (GrandItem item : inventoryHandler.getItemsFromPlayer(p).getItems()) {
-        			item.activateTimers(p);
+        		for (GrandInventory.InventoryElement element : inventoryHandler.getItemsFromPlayer(p).getItems()) {
+        			element.grandItem.activateTimers(p);
         		}
         	}
 		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
 	}
 	
-	//TODO: Expand logging system
-	/*static public void log(String s, LogType type) {
-		plugin.getLogger().info(s);
-	}*/
 }

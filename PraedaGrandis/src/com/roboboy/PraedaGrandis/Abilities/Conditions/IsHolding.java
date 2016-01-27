@@ -1,10 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import com.comphenix.attribute.NBTStorage;
+import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -20,15 +19,12 @@ public class IsHolding extends Condition
 	}
 
 	@Override
-	protected boolean checkThis(Target target)
-	{
-		if (target.get() instanceof Player)
-		{
-			ItemStack item = ((Player) target.get()).getItemInHand();
-			if (item != null && item.getType() != Material.AIR) {
-				String id = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME).getString("").toLowerCase();
-				if (id.toLowerCase().equals(itemName)) return true;
-			}
+	protected boolean checkThis(Target target) {
+		if (!(target.get() instanceof Player)) return false;
+		
+		GrandInventory gInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer((Player)target.get());
+		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
+			if (element.slotType == ItemSlotType.HELD) return true;
 		}
 		return false;
 	}

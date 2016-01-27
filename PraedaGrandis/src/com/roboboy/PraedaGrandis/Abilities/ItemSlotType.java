@@ -84,8 +84,9 @@ public enum ItemSlotType
 	
 	static {
 		for (ItemSlotType type : values()) {
+			if (type.isNull()) continue;
 			type.children = EnumSet.noneOf(ItemSlotType.class);
-			if (!type.isNull()) type.parent.registerSubtype(type);
+			type.parent.registerSubtype(type);
 		}
 	}
 	
@@ -111,8 +112,20 @@ public enum ItemSlotType
 		if (isNull()) return false;				//Base case
 		
 		if (this == supertype) return true; 	//Is subtype of self
-		if (parent == supertype) return true;	//Is subtype of parent
-		return parent.isSubtypeOf(supertype);	//Is subtype of parent's parent, ect
+		//if (parent == supertype) return true;	//Is subtype of parent
+		return parent.isSubtypeOf(supertype);	//Is subtype of parent, ect
+	}
+	
+	public EnumSet<ItemSlotType> getSupertypes() {
+		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
+		
+		ItemSlotType type = this;
+		while (!type.isNull()) {
+			results.add(type);
+			type = type.parent;
+		}
+		
+		return results;
 	}
 	
 	public boolean isNull() {
@@ -136,17 +149,17 @@ public enum ItemSlotType
 	
 	private static ItemSlotType getArmorSlotType(int i) {
 		switch (i) {
-		case 0: 	return HELMET;
-		case 1:		return CHESTPLATE;
-		case 2:		return LEGGINGS;
-		case 3:		return BOOTS;
+		case 39: 	return HELMET;
+		case 38:	return CHESTPLATE;
+		case 37:	return LEGGINGS;
+		case 36:	return BOOTS;
 		
-		//Should be impossible
-		default: throw new IllegalArgumentException("Invalid armor slot (0-3): " + i);
+		//Should be impossible, unless inventory structure changes (aka Minecraft 1.9)
+		default: throw new IllegalArgumentException("Invalid armor slot (36-39): " + i);
 		}
 	}
 	
-	private static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
+	public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
 		if (slotNumber == heldSlotNumber) return ItemSlotType.HELD;
 		return ItemSlotType.UNHELD;
 	}
@@ -154,6 +167,7 @@ public enum ItemSlotType
 	public static EnumSet<ItemSlotType> getUniqueTypes() {
 		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
 		for (ItemSlotType type : values()) {
+			if (type.isNull()) continue;
 			if (type.children.isEmpty()) results.add(type);
 		}
 		return results;

@@ -11,18 +11,21 @@ public enum ActivatorType
 	
 	TIMER			(NONE),					//Special case; not event driven		NA
 	
-	THROW			(NONE),					//Egg, snowball, enderpearl, ect.
-	DROP			(NONE),					//Pressed Q
+	THROW			(NONE),					//Egg, snowball, enderpearl, ect.		NA
+	DROP			(NONE),					//Pressed Q								NA
+	
+	EQUIP			(NONE),					//Item moved into specified slotType	NA
+	UNEQUIP			(NONE),					//Item moved from specified slotType	NA
 	
 	MOVE			(NONE),					//Owner location changed
 	MOVEWALK		(MOVE),					//Owner walking
 	MOVEUP			(MOVE),
 	MOVEDOWN		(MOVE),
 	
-	TELEPORT		(MOVE),					//Owner teleported
-	PORTAL			(TELEPORT),				//Owner about to go through portal
+	TELEPORT		(MOVE),					//Owner teleported						NA
+	PORTAL			(TELEPORT),				//Owner about to go through portal		NA
 	
-	LOOK			(NONE),					//Owner direction changed
+	LOOK			(NONE),					//Owner direction changed				NA
 	
 	CLICK			(NONE),					//Owner clicked							What was clicked
 	CLICKLEFT		(CLICK),				//Owner left-clicked					NA
@@ -31,7 +34,7 @@ public enum ActivatorType
 	INTERACTPLAYER	(INTERACT),				//Owner right-clicked on a player		.
 	INTERACTMOB		(INTERACT),				//Owner right-clicked on a mob			.
 	
-	BREAK			(NONE),
+	BREAK			(NONE),					//Item breaks							NA
 	
 	ATTACK			(NONE),					//Owner attacked something				What was attacked
 	ATTACKPLAYER	(ATTACK),				//Owner attacked player					.
