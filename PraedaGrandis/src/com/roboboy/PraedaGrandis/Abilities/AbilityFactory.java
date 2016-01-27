@@ -66,6 +66,7 @@ public class AbilityFactory
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
 		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
 		case "ignite":			return new IgniteAbility(slotType, actType, targeter, abilityArgs);
+		case "disarm":			return new DisarmAbility(slotType, actType, targeter, abilityArgs);
 		case "pull":			return new PullAbility(slotType, actType, targeter, abilityArgs);
 		case "push":			return new PushAbility(slotType, actType, targeter, abilityArgs);
 		case "fling":			return new FlingAbility(slotType, actType, targeter, abilityArgs);
