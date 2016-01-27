@@ -1,8 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
@@ -22,6 +24,11 @@ public class ProjectileAbility extends Ability
 	
 	private final float fireballYield;
 	private final boolean fireballFire;
+	private final boolean skullCharged;
+	
+	private final double arrowDamage;
+	private final boolean arrowCritical;
+	private final int arrowKnockback;
 	
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
@@ -34,17 +41,23 @@ public class ProjectileAbility extends Ability
 		
 		fireballYield = args.getFloat("fireballYield", 0F, false);
 		fireballFire = args.getBoolean("fireballFire", false, false);
+		skullCharged = args.getBoolean("skullCharged", false, false);
+		
+		arrowDamage = args.getDouble("arrowDamage", 0D, false);
+		arrowCritical = args.getBoolean("arrowCritical", false, false);
+		arrowKnockback = args.getInteger("arrowKnockback", 0, false);
 	}
 
 	@Override
 	protected void execute(Target target) {
-		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass());
+		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), calculateVelocity(target.get().getLocation()));
 		projectile.setBounce(bounce);
-		setProjectileVelocity(projectile, calculateVelocity(target.get().getLocation()));
+		//setProjectileVelocity(projectile, calculateVelocity(target.get().getLocation()));
 		
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitGrandAbilityName));
 		
 		setFireballProperties(projectile);
+		setArrowProperties(projectile);
 	}
 
 	private void setFireballProperties(Projectile projectile) {
@@ -52,6 +65,15 @@ public class ProjectileAbility extends Ability
 		Fireball fireball = (Fireball) projectile;
 		fireball.setYield(fireballYield);
 		fireball.setIsIncendiary(fireballFire);
+		if (fireball instanceof WitherSkull) ((WitherSkull) fireball).setCharged(skullCharged);
+	}
+	
+	private void setArrowProperties(Projectile projectile) {
+		if (!(projectile instanceof Arrow)) return;
+		Arrow arrow = (Arrow) projectile;
+		arrow.spigot().setDamage(arrowDamage);
+		arrow.setCritical(arrowCritical);
+		arrow.setKnockbackStrength(arrowKnockback);
 	}
 
 	private Vector calculateVelocity(Location currentLocation) {
@@ -68,14 +90,14 @@ public class ProjectileAbility extends Ability
 			.multiply(velocity);
 	}
 	
-	private void setProjectileVelocity(Projectile projectile, Vector velocityVector){
+	/*private void setProjectileVelocity(Projectile projectile, Vector velocityVector){
 		//Fireball type projectiles use direction instead of velocity
-		/*if (projectile instanceof Fireball) {
+		if (projectile instanceof Fireball) {
 			((Fireball) projectile).setDirection(velocityVector);
 			return;
-		}*/
+		}
 		//All other projectiles
 		projectile.setVelocity(velocityVector);
-	}
+	}*/
 
 }
