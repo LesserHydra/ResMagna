@@ -12,6 +12,7 @@ import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 public class PraedaGrandis extends JavaPlugin
 {
 	public static PraedaGrandis plugin;
+	public static final String META_GRANDABILITY_PREFIX = "PG.GrandAbility.";
 	public static final String STORAGE_ITEM_NAME = "PraedaGrandis.GrandItemName";
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
@@ -24,6 +25,7 @@ public class PraedaGrandis extends JavaPlugin
 	public final ItemUpdater itemUpdater = new ItemUpdater(this);
 	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
 	public final ActivatorListener activatorListener = new ActivatorListener(this);
+	public final ProjectileListener projectileListener = new ProjectileListener(this);
 	
 	private BukkitTask timerCheckingTask;
 	
@@ -35,6 +37,7 @@ public class PraedaGrandis extends JavaPlugin
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
 		getServer().getPluginManager().registerEvents(inventoryHandler, this);
 		getServer().getPluginManager().registerEvents(activatorListener, this);
+		getServer().getPluginManager().registerEvents(projectileListener, this);
 		
 		//Initial (re)load
 		reload();
