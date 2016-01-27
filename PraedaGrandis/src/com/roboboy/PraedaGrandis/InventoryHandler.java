@@ -1,28 +1,48 @@
 package com.roboboy.PraedaGrandis;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.material.Dispenser;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 public class InventoryHandler implements Listener
 {
+	static private final EnumSet<Material> clickStealers = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
+			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
+			Material.ENDER_CHEST, Material.ANVIL, Material.BED_BLOCK, Material.FENCE_GATE, Material.SPRUCE_FENCE_GATE,
+			Material.BIRCH_FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.DARK_OAK_FENCE_GATE,
+			Material.IRON_DOOR_BLOCK, Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
+			Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.TRAP_DOOR,
+			Material.IRON_TRAPDOOR, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.REDSTONE_COMPARATOR_OFF,
+			Material.REDSTONE_COMPARATOR_ON, Material.FENCE, Material.SPRUCE_FENCE, Material.BIRCH_FENCE, Material.JUNGLE_FENCE,
+			Material.DARK_OAK_FENCE, Material.ACACIA_FENCE, Material.NETHER_FENCE, Material.BREWING_STAND, Material.CAULDRON,
+			Material.SIGN_POST, Material.WALL_SIGN, Material.SIGN);
+	
 	private final PraedaGrandis plugin;
 	private Map<String, GrandInventory> playerInventories = new HashMap<>();
 	
@@ -198,6 +218,71 @@ public class InventoryHandler implements Listener
 		}
 	}
 	
+	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+		
+		ItemStack item = e.getItem();
+		if (item == null) return;
+		
+		ArmorType newArmorType = ArmorType.fromMaterial(item.getType());
+		if (newArmorType.isNull() || newArmorType == ArmorType.BLOCK) return;
+		
+		Player player = e.getPlayer();
+		if (!newArmorType.isEmpty(player)) return;
+		
+		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		if (grandItem == null) return;
+		
+		if (e.getClickedBlock() != null && !player.isSneaking()) {
+			//Some blocks have actions when you right click them which stops the client from equipping the armor in hand.
+			if (clickStealers.contains(e.getClickedBlock().getType())) return;
+		}
+		
+		GrandInventory gInv = playerInventories.get(player.getName());
+		gInv.putItem(item, grandItem, newArmorType.getItemSlotType());
+	}
+	
+	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
+	@EventHandler
+	public void onDispenserFire(BlockDispenseEvent e) {
+		ItemStack item = e.getItem();
+		if (item == null) return;
+		
+		ArmorType type = ArmorType.fromMaterial(item.getType());
+		if (type.isNull()) return;
+		
+		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		if (grandItem == null) return;
+		
+		Location loc = e.getBlock().getLocation();
+		BlockFace directionFacing = ((Dispenser) e.getBlock().getState().getData()).getFacing();
+		Block targetBlock = e.getBlock().getRelative(directionFacing);
+		
+		for (Player p : loc.getWorld().getPlayers()) {
+			if (!type.isEmpty(p)) continue;
+			if (!playerIsTouchingBlock(targetBlock, p)) continue;
+			
+			GrandInventory gInv = playerInventories.get(p.getName());
+			gInv.putItem(item, grandItem, type.getItemSlotType());
+			return; //TODO: What happens if two players are valid?
+		}
+	}
+	
+	private boolean playerIsTouchingBlock(Block block, Player player) {
+		Location playerLocation = player.getLocation();
+		double playerX = playerLocation.getX();
+		double playerY = playerLocation.getY();
+		double playerZ = playerLocation.getZ();
+		
+		if (playerX < block.getX() - 0.3 || playerX > block.getX() + 1.3)	return false;
+		if (playerZ < block.getZ() - 0.3 || playerZ > block.getZ() + 1.3)	return false;
+		if (playerY < block.getY() - 1.8 || playerY > block.getY())			return false;
+		
+		return true;
+	}
+	
 	private void registerPlayer(Player p) {
 		GrandInventory gInv = new GrandInventory();
 		gInv.resetToPlayer(p);
@@ -209,7 +294,5 @@ public class InventoryHandler implements Listener
 			playerInventories.get(p.getName()).resetToPlayer(p);
 		}}.runTaskLater(plugin, 1L);
 	}
-	
-	//TODO: Armor equipping by right clicking or dispenser
 	
 }
