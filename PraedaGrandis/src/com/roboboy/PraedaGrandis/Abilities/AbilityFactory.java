@@ -65,6 +65,7 @@ public class AbilityFactory
 		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
 		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
+		case "explosion":		return new ExplosionAbility(slotType, actType, targeter, abilityArgs);
 		case "ignite":			return new IgniteAbility(slotType, actType, targeter, abilityArgs);
 		case "pull":			return new PullAbility(slotType, actType, targeter, abilityArgs);
 		case "push":			return new PushAbility(slotType, actType, targeter, abilityArgs);
