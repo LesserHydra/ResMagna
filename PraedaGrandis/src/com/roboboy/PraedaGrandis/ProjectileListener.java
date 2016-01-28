@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis;
 
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -29,13 +29,8 @@ public class ProjectileListener implements Listener
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		ArmorStand marker = projectile.getWorld().spawn(projectile.getLocation(), ArmorStand.class);
-		marker.setMarker(true);
-		marker.setVisible(false);
-		
+		LivingEntity marker = MarkerBuilder.buildMarker(projectile.getLocation());
 		onHitAbility.run(new Target(marker, holder, marker));
-		
-		marker.remove();
 	}
 
 	private GrandAbility getGrandAbilityFromMeta(Projectile entity, String key) {
