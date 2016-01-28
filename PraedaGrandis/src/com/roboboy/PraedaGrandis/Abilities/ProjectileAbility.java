@@ -18,6 +18,7 @@ public class ProjectileAbility extends Ability
 {
 	private final ProjectileType projectileType;
 	private final double velocity;
+	private final double randomSpread;
 	private final GrandLocation targetLocation;
 	private final String onHitGrandAbilityName;
 	private final boolean bounce;
@@ -35,6 +36,7 @@ public class ProjectileAbility extends Ability
 		
 		projectileType = ProjectileType.fromString(args.get("type", "", true));
 		velocity = args.getDouble("velocity", 1D, false);
+		randomSpread = args.getDouble("randomspread", 0D, false);
 		bounce = args.getBoolean("bounce", false, false);
 		targetLocation = args.getLocation("targetlocation", null, false);
 		onHitGrandAbilityName = args.get("onhit", null, false);
@@ -50,7 +52,12 @@ public class ProjectileAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), calculateVelocity(target.get().getLocation()));
+		Vector randomVector = new Vector(PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,
+				PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5);
+		randomVector.multiply(randomSpread);
+		Vector projectileVelocity = calculateVelocity(target.get().getLocation()).add(randomVector);
+		
+		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
 		//setProjectileVelocity(projectile, calculateVelocity(target.get().getLocation()));
 		
