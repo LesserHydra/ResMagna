@@ -26,9 +26,9 @@ public class ParticleAbility extends Ability
 		amount = args.getInteger("amount", 1, true);
 		
 		centerLocation = args.getLocation("location", new GrandLocation(0D, 0D, 0D, true, true, true), false);
-		offsetX = args.getFloat("spreadX", 0F, false);
-		offsetY = args.getFloat("spreadY", 0F, false);
-		offsetZ = args.getFloat("spreadZ", 0F, false);
+		offsetX = args.getFloat("spreadx", 0F, false);
+		offsetY = args.getFloat("spready", 0F, false);
+		offsetZ = args.getFloat("spreadz", 0F, false);
 		speed = args.getFloat("speed", 0F, false);
 		range = args.getDouble("range", 60D, false);
 	}

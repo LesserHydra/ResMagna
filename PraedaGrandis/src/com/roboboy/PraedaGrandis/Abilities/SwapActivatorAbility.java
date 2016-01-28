@@ -12,7 +12,7 @@ public class SwapActivatorAbility extends Ability
 	
 	public SwapActivatorAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		swapFacing = args.getBoolean("swapFacing", false, false);
+		swapFacing = args.getBoolean("swapfacing", false, false);
 	}
 
 	@Override

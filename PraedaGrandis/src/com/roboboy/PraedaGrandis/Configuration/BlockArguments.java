@@ -19,7 +19,7 @@ public class BlockArguments
 		if (argumentString == null) return;
 		Matcher argumentMatcher = argumentPattern.matcher(argumentString);
 		while (argumentMatcher.find()) {
-			argumentMap.put(argumentMatcher.group(1), argumentMatcher.group(2));
+			argumentMap.put(argumentMatcher.group(1).toLowerCase(), argumentMatcher.group(2));
 		}
 	}
 	

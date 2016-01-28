@@ -15,7 +15,7 @@ public class FlingAbility extends Ability
 	public FlingAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		forceAmount = args.getDouble("force", 0D, true);
-		targetLocation = args.getLocation("targetLocation", null, false);
+		targetLocation = args.getLocation("targetlocation", null, false);
 	}
 
 	@Override

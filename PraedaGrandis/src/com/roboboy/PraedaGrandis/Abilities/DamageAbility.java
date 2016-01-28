@@ -17,7 +17,7 @@ public class DamageAbility extends Ability
 	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		damageAmount = args.getDouble("amount", 0D, true);
-		fromHolder = args.getBoolean("fromHolder", true, false);
+		fromHolder = args.getBoolean("fromholder", true, false);
 		//TODO: Verify valid cause
 		cause = DamageCause.valueOf(args.get("cause", "CUSTOM", true).toUpperCase());
 	}

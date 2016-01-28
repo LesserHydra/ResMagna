@@ -27,9 +27,9 @@ public class TeleportAbility extends Ability
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
-		spreadH = args.getInteger("spreadH", 0, false);
-		spreadV = args.getInteger("spreadV", 0, false);
-		includeCenter = args.getBoolean("includeCenter", true, false);
+		spreadH = args.getInteger("spreadh", 0, false);
+		spreadV = args.getInteger("spreadv", 0, false);
+		includeCenter = args.getBoolean("includecenter", true, false);
 		ender = args.getBoolean("ender", false, false);
 		
 		String dimensionString = args.get("dimension", null, false);

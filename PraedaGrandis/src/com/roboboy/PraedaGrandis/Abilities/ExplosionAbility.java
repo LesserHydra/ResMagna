@@ -21,7 +21,7 @@ public class ExplosionAbility extends Ability
 		
 		power = args.getFloat("yield", 0F, true);
 		setFire = args.getBoolean("fire", false, false);
-		breakBlocks = args.getBoolean("breakBlocks", true, false);
+		breakBlocks = args.getBoolean("breakblocks", true, false);
 		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), false);
 	}
 
