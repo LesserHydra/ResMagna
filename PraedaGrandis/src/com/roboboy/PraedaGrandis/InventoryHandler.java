@@ -1,10 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -31,18 +29,7 @@ import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 public class InventoryHandler implements Listener
-{
-	static private final EnumSet<Material> clickStealers = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
-			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
-			Material.ENDER_CHEST, Material.ANVIL, Material.BED_BLOCK, Material.FENCE_GATE, Material.SPRUCE_FENCE_GATE,
-			Material.BIRCH_FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.DARK_OAK_FENCE_GATE,
-			Material.IRON_DOOR_BLOCK, Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
-			Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.TRAP_DOOR,
-			Material.IRON_TRAPDOOR, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON, Material.REDSTONE_COMPARATOR_OFF,
-			Material.REDSTONE_COMPARATOR_ON, Material.FENCE, Material.SPRUCE_FENCE, Material.BIRCH_FENCE, Material.JUNGLE_FENCE,
-			Material.DARK_OAK_FENCE, Material.ACACIA_FENCE, Material.NETHER_FENCE, Material.BREWING_STAND, Material.CAULDRON,
-			Material.SIGN_POST, Material.WALL_SIGN, Material.SIGN);
-	
+{	
 	private final PraedaGrandis plugin;
 	private Map<String, GrandInventory> playerInventories = new HashMap<>();
 	
@@ -237,7 +224,7 @@ public class InventoryHandler implements Listener
 		
 		if (e.getClickedBlock() != null && !player.isSneaking()) {
 			//Some blocks have actions when you right click them which stops the client from equipping the armor in hand.
-			if (clickStealers.contains(e.getClickedBlock().getType())) return;
+			if (PraedaGrandis.CLICK_STEALERS.contains(e.getClickedBlock().getType())) return;
 		}
 		
 		GrandInventory gInv = playerInventories.get(player.getName());

@@ -38,6 +38,9 @@ public class ActivatorListener implements Listener
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 	public void onPlayerClick(PlayerInteractEvent e) {
 		ActivatorType clickType = getClickActivator(e.getAction());
+		if (e.getClickedBlock() != null && !e.getPlayer().isSneaking()) {
+			if (PraedaGrandis.CLICK_STEALERS.contains(e.getClickedBlock().getType())) return;
+		}
 		if (!clickType.isNull()) activate(clickType, e.getPlayer(), null);
 	}
 	
