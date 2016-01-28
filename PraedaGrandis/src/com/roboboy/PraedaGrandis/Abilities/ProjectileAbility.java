@@ -36,16 +36,16 @@ public class ProjectileAbility extends Ability
 		projectileType = ProjectileType.fromString(args.get("type", "", true));
 		velocity = args.getDouble("velocity", 1D, false);
 		bounce = args.getBoolean("bounce", false, false);
-		targetLocation = args.getLocation("targetLocation", null, false);
-		onHitGrandAbilityName = args.get("onHit", null, false);
+		targetLocation = args.getLocation("targetlocation", null, false);
+		onHitGrandAbilityName = args.get("onhit", null, false);
 		
-		fireballYield = args.getFloat("fireballYield", 0F, false);
-		fireballFire = args.getBoolean("fireballFire", false, false);
-		skullCharged = args.getBoolean("skullCharged", false, false);
+		fireballYield = args.getFloat("fireballyield", 0F, false);
+		fireballFire = args.getBoolean("fireballfire", false, false);
+		skullCharged = args.getBoolean("skullcharged", false, false);
 		
-		arrowDamage = args.getDouble("arrowDamage", 0D, false);
-		arrowCritical = args.getBoolean("arrowCritical", false, false);
-		arrowKnockback = args.getInteger("arrowKnockback", 0, false);
+		arrowDamage = args.getDouble("arrowdamage", 0D, false);
+		arrowCritical = args.getBoolean("arrowcritical", false, false);
+		arrowKnockback = args.getInteger("arrowknockback", 0, false);
 	}
 
 	@Override
