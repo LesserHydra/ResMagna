@@ -21,6 +21,7 @@ public class ProjectileAbility extends Ability
 	private final double randomSpread;
 	private final GrandLocation targetLocation;
 	private final String onHitGrandAbilityName;
+	private final boolean flaming;
 	private final boolean bounce;
 	
 	private final float fireballYield;
@@ -30,6 +31,9 @@ public class ProjectileAbility extends Ability
 	private final double arrowDamage;
 	private final boolean arrowCritical;
 	private final int arrowKnockback;
+	private final boolean arrowKeepHit;
+	private final boolean arrowRemove;
+	private final boolean arrowPickup;
 	
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
@@ -37,7 +41,9 @@ public class ProjectileAbility extends Ability
 		projectileType = ProjectileType.fromString(args.get("type", "", true));
 		velocity = args.getDouble("velocity", 1D, false);
 		randomSpread = args.getDouble("randomspread", 0D, false);
+		
 		bounce = args.getBoolean("bounce", false, false);
+		flaming = args.getBoolean("flaming", false, false);
 		targetLocation = args.getLocation("targetlocation", null, false);
 		onHitGrandAbilityName = args.get("onhit", null, false);
 		
@@ -48,6 +54,9 @@ public class ProjectileAbility extends Ability
 		arrowDamage = args.getDouble("arrowdamage", 0D, false);
 		arrowCritical = args.getBoolean("arrowcritical", false, false);
 		arrowKnockback = args.getInteger("arrowknockback", 0, false);
+		arrowKeepHit = args.getBoolean("arrowkeephit", false, false);
+		arrowRemove = args.getBoolean("arrowremove", false, false);
+		arrowPickup = args.getBoolean("arrowpickup", false, false);
 	}
 
 	@Override
@@ -59,6 +68,7 @@ public class ProjectileAbility extends Ability
 		
 		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
+		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
 		//setProjectileVelocity(projectile, calculateVelocity(target.get().getLocation()));
 		
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitGrandAbilityName));
@@ -81,6 +91,9 @@ public class ProjectileAbility extends Ability
 		arrow.spigot().setDamage(arrowDamage);
 		arrow.setCritical(arrowCritical);
 		arrow.setKnockbackStrength(arrowKnockback);
+		if (arrowKeepHit) arrow.setMetadata("PG_ArrowKeepHitAbility", new FixedMetadataValue(PraedaGrandis.plugin, true));
+		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnHit", new FixedMetadataValue(PraedaGrandis.plugin, true));
+		if (!arrowPickup) arrow.setMetadata("PG_ArrowStopPickup", new FixedMetadataValue(PraedaGrandis.plugin, true));
 	}
 
 	private Vector calculateVelocity(Location currentLocation) {
