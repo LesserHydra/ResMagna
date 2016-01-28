@@ -9,9 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -137,10 +137,10 @@ public class ItemUpdater implements Listener
 		updateInventoryNextTick(e.getPlayer());
 	}
 	
-	//Gives thrown persistant items a custom name
+	//Gives dropped persistant items a custom name
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onItemDropped(PlayerDropItemEvent e) {
-		Item drop = e.getItemDrop();
+	public void onItemDropped(ItemSpawnEvent e) {
+		Item drop = e.getEntity();
 		GrandItem gItem = plugin.itemHandler.matchItem(drop.getItemStack());
 		if (gItem == null || !gItem.isPersistant()) return;
 		
