@@ -1,6 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -25,8 +28,20 @@ public class ExplosionAbility extends Ability
 	@Override
 	protected void execute(Target target) {
 		Location loc = location.calculate(target.get().getLocation());
+		ArmorStand marker = loc.getWorld().spawn(new Location(loc.getWorld(), 0D, 0D, 0D), ArmorStand.class);
+		marker.setVisible(false);
+		marker.setMarker(true);
+		marker.teleport(loc);
+		float damageRadius = power * 2;
+		double damageRadiusSquared = damageRadius * damageRadius;
+		//Mark entities in radius as damaged by holder
+		for (Entity entity : marker.getNearbyEntities(damageRadius, damageRadius, damageRadius)) {
+			if (!(entity instanceof LivingEntity)) continue;
+			if (loc.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
+			((LivingEntity)entity).damage(0D, target.getHolder());
+		}
+		marker.remove();
 		loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks);
-		
 	}
 
 }
