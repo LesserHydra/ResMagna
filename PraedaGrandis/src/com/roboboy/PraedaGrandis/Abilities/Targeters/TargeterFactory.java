@@ -19,7 +19,7 @@ public class TargeterFactory
 		switch (name) {
 		case "holder":		return new HolderTargeter();
 		case "activator":	return new ActivatorTargeter();
-		case "inradius":	return new InRadiusTargeter(Double.parseDouble(argument)); //TODO: Error logging/handling
+		case "inbb":		return new InBoundingBox(Double.parseDouble(argument)); //TODO: Error logging/handling
 		case "mount":		return new MountTargeter();
 		case "rider":		return new RiderTargeter();
 		case "default":		return new DefaultTargeter();
