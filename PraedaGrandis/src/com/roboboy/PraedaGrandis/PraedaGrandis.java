@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis;
 
 import java.util.EnumSet;
+import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +14,7 @@ import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 
 public class PraedaGrandis extends JavaPlugin
 {
+	static public final Random RANDOM_GENERATOR = new Random();
 	static public final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
 			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
 			Material.ENDER_CHEST, Material.ANVIL, Material.BED_BLOCK, Material.FENCE_GATE, Material.SPRUCE_FENCE_GATE,

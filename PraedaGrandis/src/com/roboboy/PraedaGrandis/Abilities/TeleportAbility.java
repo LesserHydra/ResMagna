@@ -2,12 +2,12 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -15,8 +15,6 @@ import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 public class TeleportAbility extends Ability
 {
-	final private static Random randomGenerator = new Random();
-	
 	final private GrandLocation location;
 	final private String worldSuffix;
 	final private int spreadH;
@@ -61,7 +59,7 @@ public class TeleportAbility extends Ability
 		
 		if (spreadH > 0 || spreadV > 0) {
 			List<Location> safe = getSafeInRadius(centerLoc);
-			if (!safe.isEmpty()) centerLoc = safe.get(randomGenerator.nextInt(safe.size()));
+			if (!safe.isEmpty()) centerLoc = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
 		}
 		
 		centerLoc.add(0.5, 0, 0.5);
