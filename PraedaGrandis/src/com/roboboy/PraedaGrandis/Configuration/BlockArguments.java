@@ -6,12 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class BlockArguments
 {
-	//(\w+)\s*=\s*((?:[\w\.@+-]+)|(?:\([^\n\(\)]*\)))
-	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.@+-]+)|(?:\\([^\\n\\(\\)]*\\)))");
+	//(\w+)\s*=\s*((?:[\w\.+\-=]+)|(?:\([^\n\(\)]*\))|(?:@\w+(?:\([^@\n]*\))?))
+	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.+\\-=]+)|(?:\\([^\\n\\(\\)]*\\))|(?:@\\w+(?:\\([^@\\n]*\\))?))");
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
@@ -175,5 +177,29 @@ public class BlockArguments
 		}
 		
 		return new GrandLocation(value);
+	}
+	
+	/**
+	 * Gets the Targeter associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * @param key All-lowercase key
+	 * @param fallback Value to default to if none found
+	 * @param required Whether or not a value is required
+	 * @return Targeter value of argument, or fallback if none exists
+	 */
+	public Targeter getTargeter(String key, Targeter fallback, boolean required) {
+		String value = argumentMap.get(key);
+		
+		if (value == null) {
+			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			return fallback;
+		}
+		
+		Targeter result = TargeterFactory.build(value);
+		if (result == null) {
+			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
+			return fallback;
+		}
+		
+		return result;
 	}
 }

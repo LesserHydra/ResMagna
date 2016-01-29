@@ -10,8 +10,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class ConditionFactory
 {
-	//~?(\w+)\s*(?:(\{.*\})|([\w\s=<>\.]*[\w\.]))?\s*(?:@(\w+)(?:\((.*)\))?)?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(\\{.*\\})|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(?:@(\\w+)(?:\\((.*)\\))?)?");
+	//~?(\w+)\s*(?:(\{.*\})|([\w\s=<>\.]*[\w\.]))?\s*(@\w+(?:\(.*\))?)?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(\\{.*\\})|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+(?:\\(.*\\))?)?");
 	
 	public static Condition build(String conditionLine) {
 		//Match
@@ -34,10 +34,8 @@ public class ConditionFactory
 		String variableArgsString = lineMatcher.group(3);
 		
 		//Get Targeter
-		String targeterName = lineMatcher.group(4);
-		if (targeterName == null) targeterName = "default";
-		String targeterArgument = lineMatcher.group(5);
-		Targeter targeter = TargeterFactory.build(targeterName.toLowerCase(), targeterArgument);
+		String targeterString = lineMatcher.group(4);
+		Targeter targeter = TargeterFactory.build(targeterString);
 		
 		//Construct condition by name
 		Condition c = createCondition(conditionName, targeter, not, conditionArgs, variableArgsString);
