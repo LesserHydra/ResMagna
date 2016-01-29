@@ -74,10 +74,8 @@ public class AbilityFactory
 		case "potion":			return new PotionAbility(slotType, actType, targeter, abilityArgs);
 		case "teleport":		return new TeleportAbility(slotType, actType, targeter, abilityArgs);
 		case "spin":			return new SpinAbility(slotType, actType, targeter, abilityArgs);
-		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, abilityArgs);
-		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, abilityArgs);
-		case "mountholder":		return new MountHolderAbility(slotType, actType, targeter);
-		case "holdermount":		return new HolderMountAbility(slotType, actType, targeter);
+		case "swap":			return new SwapAbility(slotType, actType, targeter, abilityArgs);
+		case "mount":			return new MountAbility(slotType, actType, targeter, abilityArgs);
 		case "eject":			return new EjectAbility(slotType, actType, targeter);
 		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, abilityArgs);
 		case "projectile":		return new ProjectileAbility(slotType, actType, targeter, abilityArgs);
