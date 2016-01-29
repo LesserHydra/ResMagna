@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
@@ -35,6 +36,8 @@ public class ProjectileAbility extends Ability
 	private final boolean arrowRemove;
 	private final boolean arrowPickup;
 	
+	private final String onPotionSplash;
+	
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
@@ -57,6 +60,8 @@ public class ProjectileAbility extends Ability
 		arrowKeepHit = args.getBoolean("arrowkeephit", false, false);
 		arrowRemove = args.getBoolean("arrowremove", false, false);
 		arrowPickup = args.getBoolean("arrowpickup", false, false);
+		
+		onPotionSplash = args.get("onsplash", null, false);
 	}
 
 	@Override
@@ -69,12 +74,12 @@ public class ProjectileAbility extends Ability
 		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
-		//setProjectileVelocity(projectile, calculateVelocity(target.get().getLocation()));
 		
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitGrandAbilityName));
 		
 		setFireballProperties(projectile);
 		setArrowProperties(projectile);
+		setPotionProperties(projectile);
 	}
 
 	private void setFireballProperties(Projectile projectile) {
@@ -95,6 +100,11 @@ public class ProjectileAbility extends Ability
 		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnHit", new FixedMetadataValue(PraedaGrandis.plugin, true));
 		if (!arrowPickup) arrow.setMetadata("PG_ArrowStopPickup", new FixedMetadataValue(PraedaGrandis.plugin, true));
 	}
+	
+	private void setPotionProperties(Projectile projectile) {
+		if (!(projectile instanceof ThrownPotion)) return;
+		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnPotionSplash", new FixedMetadataValue(PraedaGrandis.plugin, onPotionSplash));
+	}
 
 	private Vector calculateVelocity(Location currentLocation) {
 		if (targetLocation != null) {
@@ -109,15 +119,5 @@ public class ProjectileAbility extends Ability
 			//...with length of forceAmount
 			.multiply(velocity);
 	}
-	
-	/*private void setProjectileVelocity(Projectile projectile, Vector velocityVector){
-		//Fireball type projectiles use direction instead of velocity
-		if (projectile instanceof Fireball) {
-			((Fireball) projectile).setDirection(velocityVector);
-			return;
-		}
-		//All other projectiles
-		projectile.setVelocity(velocityVector);
-	}*/
 
 }

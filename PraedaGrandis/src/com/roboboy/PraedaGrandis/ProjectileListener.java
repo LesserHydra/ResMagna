@@ -5,9 +5,11 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.metadata.MetadataValue;
@@ -36,6 +38,22 @@ public class ProjectileListener implements Listener
 		
 		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit")) runGrandAbility(projectile);
 		if (projectile.hasMetadata("PG_ArrowRemoveOnHit")) projectile.remove();
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPotionSplash(PotionSplashEvent event) {
+		ThrownPotion projectile = event.getPotion();
+		GrandAbility onSplashAbility = getGrandAbilityFromMeta(projectile, "OnPotionSplash");
+		if (onSplashAbility == null) return;
+		
+		Player holder = null;
+		ProjectileSource source = projectile.getShooter();
+		if (source instanceof Player) holder = (Player) source;
+		LivingEntity marker = MarkerBuilder.buildMarker(projectile.getLocation());
+		
+		for (LivingEntity hitEntity : event.getAffectedEntities()) {
+			onSplashAbility.run(new Target(hitEntity, holder, marker));
+		}
 	}
 
 	private void runGrandAbility(Projectile projectile)
