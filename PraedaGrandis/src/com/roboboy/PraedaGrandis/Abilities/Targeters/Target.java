@@ -43,12 +43,11 @@ public class Target
 	}
 	
 	/**
-	 * Save an entity to all Targets sharing a saved target map
+	 * Save the currently targeted entity to all Targets sharing a saved target map
 	 * @param saveName Save name
-	 * @param toSave LivingEntity to save
 	 */
-	public void save(String saveName, LivingEntity toSave) {
-		savedTargets.put(saveName, toSave);
+	public void save(String saveName) {
+		savedTargets.put(saveName, currentTarget);
 	}
 	
 	/**

@@ -42,6 +42,7 @@ public class TargeterFactory
 		switch (targeterName) {
 		case "none":			return new NoneTargeter();
 		case "current":			return new CurrentTargeter();
+		case "saved":			return new SavedTargeter(targeterArgs);
 		case "holder":			return new HolderTargeter();
 		case "activator":		return new ActivatorTargeter();
 		case "mount":			return new MountTargeter();
