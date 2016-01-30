@@ -61,6 +61,7 @@ public class AbilityFactory
 	private static Ability constructAbility(String name, ItemSlotType slotType, ActivatorType actType, Targeter targeter, BlockArguments abilityArgs, String variableArgs) {
 		switch (name) {
 		case "delay":			return new DelayAbility(slotType, actType, targeter, abilityArgs);
+		case "savetarget":		return new SaveTargetAbility(slotType, actType, targeter, abilityArgs);
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
 		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
 		case "explosion":		return new ExplosionAbility(slotType, actType, targeter, abilityArgs);
