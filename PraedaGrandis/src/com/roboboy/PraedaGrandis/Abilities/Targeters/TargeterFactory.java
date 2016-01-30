@@ -13,7 +13,7 @@ public class TargeterFactory
 	
 	public static Targeter build(String targeterString) {
 		//Default targeter
-		if (targeterString == null) return new DefaultTargeter();
+		if (targeterString == null) return new CurrentTargeter();
 		
 		//Match
 		Matcher lineMatcher = targeterPattern.matcher(targeterString);
@@ -40,8 +40,8 @@ public class TargeterFactory
 	private static Targeter constructTargeter(String targeterName, BlockArguments targeterArgs)
 	{
 		switch (targeterName) {
-		case "self":			return new DefaultTargeter();
 		case "none":			return new NoneTargeter();
+		case "current":			return new CurrentTargeter();
 		case "holder":			return new HolderTargeter();
 		case "activator":		return new ActivatorTargeter();
 		case "mount":			return new MountTargeter();
