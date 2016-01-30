@@ -1,9 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.HolderTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -11,38 +13,49 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 public class DamageAbility extends Ability
 {
 	final private double damageAmount;
-	final private boolean fromHolder;
+	final private Targeter damagerTargeter;
 	final private DamageCause cause;
 	
 	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		damageAmount = args.getDouble("amount", 0D, true);
-		fromHolder = args.getBoolean("fromholder", true, false);
+		damagerTargeter = args.getTargeter("damager", new HolderTargeter(), false);
 		//TODO: Verify valid cause
-		cause = DamageCause.valueOf(args.get("cause", "CUSTOM", true).toUpperCase());
+		cause = DamageCause.valueOf(args.get("cause", "CUSTOM", false).toUpperCase());
 	}
 	
 	@Override
 	protected void execute(Target target) {
-		EntityDamageEvent event = createDamageEvent(target);
+		//Get damagerTarget
+		Target damagerTarget = damagerTargeter.getRandomTarget(target);
+		if (damagerTarget == null) return;
 		
+		//Get damager & damagee
+		LivingEntity targetEntity = target.get();
+		LivingEntity damagerEntity = damagerTarget.get();
+		
+		//Create and call event
+		EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		target.get().setLastDamageCause(event);
 		
-		if (!event.isCancelled()) damageTarget(target, event.getFinalDamage());
+		//If it wasn't canceled, damage the target
+		if (!event.isCancelled()) {
+			damageTarget(targetEntity, damagerEntity, event.getFinalDamage());
+			targetEntity.setLastDamageCause(event);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
-	private EntityDamageEvent createDamageEvent(Target target) {
-		if (fromHolder) return new EntityDamageByEntityEvent(target.getHolder(), target.get(), cause, damageAmount);
-		return new EntityDamageEvent(target.get(), cause, damageAmount);
+	private EntityDamageEvent createDamageEvent(LivingEntity damagee, LivingEntity damager) {
+		if (damager != null) return new EntityDamageByEntityEvent(damager, damagee, cause, damageAmount);
+		return new EntityDamageEvent(damagee, cause, damageAmount);
 	}
 	
-	private void damageTarget(Target target, double amount) {
-		if (fromHolder) {
-			target.get().damage(amount, target.getHolder());
+	private void damageTarget(LivingEntity damagee, LivingEntity damager, double amount) {
+		if (damager != null) {
+			damagee.damage(amount, damager);
 			return;
 		}
-		target.get().damage(amount);
+		damagee.damage(amount);
 	}
 }
