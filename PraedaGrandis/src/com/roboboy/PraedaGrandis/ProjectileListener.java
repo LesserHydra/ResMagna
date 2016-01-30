@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -33,11 +35,24 @@ public class ProjectileListener implements Listener
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onProjectileHit(ProjectileHitEvent event) {
+	public void onProjectileHitEntity(EntityDamageByEntityEvent event) {
+		if (!(event.getDamager() instanceof Projectile)) return;
+		Projectile projectile = (Projectile) event.getDamager();
+		
+		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit")) runHitAbility(projectile, event.getEntity());
+		if (projectile.hasMetadata("PG_ArrowRemoveOnHit")) projectile.remove();
+		
+		if (!projectile.hasMetadata("PG_ArrowKeepHit")) projectile.removeMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", plugin);
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onProjectileEnd(ProjectileHitEvent event) {
 		Projectile projectile = event.getEntity();
 		
-		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit")) runGrandAbility(projectile);
-		if (projectile.hasMetadata("PG_ArrowRemoveOnHit")) projectile.remove();
+		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd")) runEndAbility(projectile);
+		if (projectile.hasMetadata("PG_ArrowRemoveOnEnd")) projectile.remove();
+		
+		if (!projectile.hasMetadata("PG_ArrowKeepEnd")) projectile.removeMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", plugin);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -55,19 +70,31 @@ public class ProjectileListener implements Listener
 			onSplashAbility.run(new Target(hitEntity, holder, marker));
 		}
 	}
-
-	private void runGrandAbility(Projectile projectile)
+	
+	private void runHitAbility(Projectile projectile, Entity damagee)
 	{
+		if (!(damagee instanceof LivingEntity)) return;
+		LivingEntity livingDamagee = (LivingEntity) damagee;
+		
 		GrandAbility onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
 		if (onHitAbility == null) return;
 		
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		LivingEntity marker = MarkerBuilder.buildMarker(projectile.getLocation());
-		onHitAbility.run(new Target(marker, holder, marker));
+		onHitAbility.run(new Target(livingDamagee, holder, livingDamagee));
+	}
+	
+	private void runEndAbility(Projectile projectile)
+	{
+		GrandAbility onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
+		if (onEndAbility == null) return;
 		
-		if (!projectile.hasMetadata("PG_ArrowKeepHitAbility")) projectile.removeMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", plugin);
+		Player holder = null;
+		ProjectileSource source = projectile.getShooter();
+		if (source instanceof Player) holder = (Player) source;
+		LivingEntity marker = MarkerBuilder.buildMarker(projectile.getLocation());
+		onEndAbility.run(new Target(marker, holder, marker));
 	}
 
 	private GrandAbility getGrandAbilityFromMeta(Projectile entity, String key) {

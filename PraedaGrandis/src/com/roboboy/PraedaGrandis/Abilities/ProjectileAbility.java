@@ -21,7 +21,8 @@ public class ProjectileAbility extends Ability
 	private final double velocity;
 	private final double randomSpread;
 	private final GrandLocation targetLocation;
-	private final String onHitGrandAbilityName;
+	private final String onHitName;
+	private final String onEndName;
 	private final boolean flaming;
 	private final boolean bounce;
 	
@@ -33,6 +34,7 @@ public class ProjectileAbility extends Ability
 	private final boolean arrowCritical;
 	private final int arrowKnockback;
 	private final boolean arrowKeepHit;
+	private final boolean arrowKeepEnd;
 	private final boolean arrowRemove;
 	private final boolean arrowPickup;
 	
@@ -48,7 +50,8 @@ public class ProjectileAbility extends Ability
 		bounce = args.getBoolean("bounce", false, false);
 		flaming = args.getBoolean("flaming", false, false);
 		targetLocation = args.getLocation("targetlocation", null, false);
-		onHitGrandAbilityName = args.get("onhit", null, false);
+		onHitName = args.get("onhit", null, false);
+		onEndName = args.get("onend", null, false);
 		
 		fireballYield = args.getFloat("fireballyield", 0F, false);
 		fireballFire = args.getBoolean("fireballfire", false, false);
@@ -58,6 +61,7 @@ public class ProjectileAbility extends Ability
 		arrowCritical = args.getBoolean("arrowcritical", false, false);
 		arrowKnockback = args.getInteger("arrowknockback", 0, false);
 		arrowKeepHit = args.getBoolean("arrowkeephit", false, false);
+		arrowKeepEnd = args.getBoolean("arrowkeepend", false, false);
 		arrowRemove = args.getBoolean("arrowremove", false, false);
 		arrowPickup = args.getBoolean("arrowpickup", false, false);
 		
@@ -75,7 +79,8 @@ public class ProjectileAbility extends Ability
 		projectile.setBounce(bounce);
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
 		
-		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitGrandAbilityName));
+		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitName));
+		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(PraedaGrandis.plugin, onEndName));
 		
 		setFireballProperties(projectile);
 		setArrowProperties(projectile);
@@ -96,8 +101,9 @@ public class ProjectileAbility extends Ability
 		arrow.spigot().setDamage(arrowDamage);
 		arrow.setCritical(arrowCritical);
 		arrow.setKnockbackStrength(arrowKnockback);
-		if (arrowKeepHit) arrow.setMetadata("PG_ArrowKeepHitAbility", new FixedMetadataValue(PraedaGrandis.plugin, true));
-		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnHit", new FixedMetadataValue(PraedaGrandis.plugin, true));
+		if (arrowKeepHit) arrow.setMetadata("PG_ArrowKeepHit", new FixedMetadataValue(PraedaGrandis.plugin, true));
+		if (arrowKeepEnd) arrow.setMetadata("PG_ArrowKeepEnd", new FixedMetadataValue(PraedaGrandis.plugin, true));
+		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnEnd", new FixedMetadataValue(PraedaGrandis.plugin, true));
 		if (!arrowPickup) arrow.setMetadata("PG_ArrowStopPickup", new FixedMetadataValue(PraedaGrandis.plugin, true));
 	}
 	
