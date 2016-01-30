@@ -38,14 +38,14 @@ public class ExplosionAbility extends Ability
 		LivingEntity marker = MarkerBuilder.buildMarker(loc);
 		LivingEntity damagerEntity = damagerTarget.get();
 		
-		//Mark entities in radius as damaged by damagerTarget, if exists
+		//Mark entities in radius as damaged by damagerEntity, if exists
 		if (damagerEntity != null) {
 			float damageRadius = power * 2;
 			double damageRadiusSquared = damageRadius * damageRadius;
 			for (Entity entity : marker.getNearbyEntities(damageRadius, damageRadius, damageRadius)) {
 				if (!(entity instanceof LivingEntity)) continue;
 				if (loc.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
-				((LivingEntity)entity).damage(0D, target.getHolder());
+				((LivingEntity)entity).damage(0D, damagerEntity);
 			}
 		}
 		
