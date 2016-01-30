@@ -1,15 +1,17 @@
 package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 
-public class MountTargeter implements Targeter
+public class MountTargeter extends Targeter
 {
 	@Override
-	public MultiTarget getTargets(Target currentTarget) {
+	public List<Target> getTargets(Target currentTarget) {
 		Entity mount = currentTarget.get().getVehicle();
 		if (!(mount instanceof LivingEntity)) mount = null;
-		return new MultiTarget((LivingEntity)mount, currentTarget);
+		return Arrays.asList(currentTarget.target((LivingEntity)mount));
 	}
 }

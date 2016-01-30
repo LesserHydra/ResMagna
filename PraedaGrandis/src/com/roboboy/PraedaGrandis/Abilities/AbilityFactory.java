@@ -10,8 +10,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
 {
-	//(\w+)\s*(?:(\{.*\})|(\b[\w\s=+\-*/%]+\b))?\s*(?:@(\w+)(?:\((.*)\))?)?\s*(?:~on(\w+)(?:\((.*)\))?:(\w+))?
-	static private final Pattern abilityLinePattern = Pattern.compile("(\\w+)\\s*(?:(\\{.*\\})|(\\b[\\w\\s=+\\-*/%]+\\b))?\\s*(?:@(\\w+)(?:\\((.*)\\))?)?\\s*(?:~on(\\w+)(?:\\((.*)\\))?:(\\w+))?");
+	//(\w+)\s*(?:(\{.*\})|(\b[\w\s=+\-*/%]+\b))?\s*(@\w+(?:\([^~\n]*\))?)?\s*(?:~on(\w+)(?:\((.*)\))?:(\w+))?
+	static private final Pattern abilityLinePattern = Pattern.compile("(\\w+)\\s*(?:(\\{.*\\})|(\\b[\\w\\s=+\\-*/%]+\\b))?\\s*(@\\w+(?:\\([^~\\n]*\\))?)?\\s*(?:~on(\\w+)(?:\\((.*)\\))?:(\\w+))?");
 	
 	public static Ability build(String abilityLine) {
 		Matcher lineMatcher = abilityLinePattern.matcher(abilityLine);
@@ -34,23 +34,21 @@ public class AbilityFactory
 		String variableArgs = lineMatcher.group(3);
 		
 		//Get Targeter
-		String targeterName = lineMatcher.group(4);
-		if (targeterName == null) targeterName = "default";
-		String targeterArgument = lineMatcher.group(5);
-		Targeter targeter = TargeterFactory.build(targeterName.toLowerCase(), targeterArgument);
+		String targeterString = lineMatcher.group(4);
+		Targeter targeter = TargeterFactory.build(targeterString);
 		
 		//Get activator
-		String activatorName = lineMatcher.group(6);
+		String activatorName = lineMatcher.group(5);
 		ActivatorType actType = ActivatorType.NONE;
 		if (activatorName != null) actType = ActivatorType.valueOf(activatorName.toUpperCase()); //TODO: Error handling/logging
 		
 		//Get activator argument
-		String activatorArgument = lineMatcher.group(7);
+		String activatorArgument = lineMatcher.group(6);
 		long timerDelay = -1;
 		if (activatorArgument != null) timerDelay = Long.parseLong(activatorArgument); //TODO: Error handling/logging
 		
 		//Get slot type
-		String slotTypeName = lineMatcher.group(8);
+		String slotTypeName = lineMatcher.group(7);
 		ItemSlotType slotType = ItemSlotType.ANY;
 		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName.toUpperCase()); //TODO: Error handling/logging
 		
@@ -76,10 +74,8 @@ public class AbilityFactory
 		case "potion":			return new PotionAbility(slotType, actType, targeter, abilityArgs);
 		case "teleport":		return new TeleportAbility(slotType, actType, targeter, abilityArgs);
 		case "spin":			return new SpinAbility(slotType, actType, targeter, abilityArgs);
-		case "swapholder":		return new SwapHolderAbility(slotType, actType, targeter, abilityArgs);
-		case "swapactivator":	return new SwapActivatorAbility(slotType, actType, targeter, abilityArgs);
-		case "mountholder":		return new MountHolderAbility(slotType, actType, targeter);
-		case "holdermount":		return new HolderMountAbility(slotType, actType, targeter);
+		case "swap":			return new SwapAbility(slotType, actType, targeter, abilityArgs);
+		case "mount":			return new MountAbility(slotType, actType, targeter, abilityArgs);
 		case "eject":			return new EjectAbility(slotType, actType, targeter);
 		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, abilityArgs);
 		case "projectile":		return new ProjectileAbility(slotType, actType, targeter, abilityArgs);

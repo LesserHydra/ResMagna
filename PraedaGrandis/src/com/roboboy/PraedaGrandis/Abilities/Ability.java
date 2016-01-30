@@ -20,17 +20,13 @@ public abstract class Ability
 		this.targeter = targeter;
 	}
 	
-	/*public final void activate(EnumSet<ItemSlotType> slotTypes, Target target) {
-		if (slotTypeIsRepresented(slotTypes)) activate(target);
-	}*/
-	
 	public final void activate(ItemSlotType type, Target target) {
 		if (type.isSubtypeOf(slotType)) activate(target);
 	}
 	
 	public final void activate(Target target) {
 		for (Target t : targeter.getTargets(target)) {
-			execute(t);
+			if (t.get() != null) execute(t);
 		}
 	}
 	

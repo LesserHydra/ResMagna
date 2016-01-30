@@ -1,9 +1,12 @@
 package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
-public class ActivatorTargeter implements Targeter
+import java.util.Arrays;
+import java.util.List;
+
+public class ActivatorTargeter extends Targeter
 {
 	@Override
-	public MultiTarget getTargets(Target currentTarget) {
-		return new MultiTarget(currentTarget.getActivator(), currentTarget);
+	public List<Target> getTargets(Target currentTarget) {
+		return Arrays.asList(currentTarget.targetActivator());
 	}
 }
