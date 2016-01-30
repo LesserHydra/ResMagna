@@ -40,11 +40,12 @@ public class TargeterFactory
 	private static Targeter constructTargeter(String targeterName, BlockArguments targeterArgs)
 	{
 		switch (targeterName) {
+		case "self":			return new DefaultTargeter();
+		case "none":			return new NoneTargeter();
 		case "holder":			return new HolderTargeter();
 		case "activator":		return new ActivatorTargeter();
 		case "mount":			return new MountTargeter();
 		case "rider":			return new RiderTargeter();
-		case "self":			return new DefaultTargeter();
 		
 		case "onlineplayers":	return new OnlinePlayersTargeter();
 		case "boundingbox":		return new BoundingBoxTargeter(targeterArgs);

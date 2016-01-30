@@ -3,10 +3,10 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsNull extends Condition
+public class IsNone extends Condition
 {
 
-	protected IsNull(Targeter targeter, boolean not) {
+	protected IsNone(Targeter targeter, boolean not) {
 		super(targeter, not);
 	}
 

@@ -48,7 +48,7 @@ public class ConditionFactory
 	private static Condition createCondition(String name, Targeter targeter, boolean not, BlockArguments args, String varArgsString)
 	{
 		switch (name) {
-		case "isnull":			return new IsNull(targeter, not);
+		case "isnone":			return new IsNone(targeter, not);
 		case "isholder":		return new IsHolder(targeter, not);
 		case "isplayer":		return new IsPlayer(targeter, not);
 		case "ismob":			return new IsMob(targeter, not);
