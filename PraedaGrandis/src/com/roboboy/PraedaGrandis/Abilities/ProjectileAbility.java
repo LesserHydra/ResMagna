@@ -70,10 +70,13 @@ public class ProjectileAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
+		Location calculatedLocation = targetLocation.calculate(target);
+		if (calculatedLocation == null) return;
+		
 		Vector randomVector = new Vector(PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,
 				PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5);
 		randomVector.multiply(randomSpread);
-		Vector projectileVelocity = calculateVelocity(target.get().getLocation()).add(randomVector);
+		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.get().getLocation()).add(randomVector);
 		
 		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
@@ -112,18 +115,11 @@ public class ProjectileAbility extends Ability
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnPotionSplash", new FixedMetadataValue(PraedaGrandis.plugin, onPotionSplash));
 	}
 
-	private Vector calculateVelocity(Location currentLocation) {
-		if (targetLocation != null) {
-			//Force vector pointing to targetLocation...
-			return targetLocation.calculate(currentLocation).toVector().subtract(currentLocation.toVector())
-				//...with length of forceAmount
-				.normalize().multiply(velocity);
-		}
-		
-		//Entity facing direction...
-		return currentLocation.getDirection()
+	private Vector calculateVelocity(Location calculatedLocation, Location targetLocation) {
+		//Force vector pointing to targetLocation...
+		return calculatedLocation.toVector().subtract(targetLocation.toVector())
 			//...with length of forceAmount
-			.multiply(velocity);
+			.normalize().multiply(velocity);
 	}
 
 }

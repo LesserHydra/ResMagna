@@ -28,7 +28,7 @@ public class FlingAbility extends Ability
 			//Old velocity plus new force vector
 			targetEntity.setVelocity(targetEntity.getVelocity().add(
 					//Force vector pointing to targetLocation...
-					targetLocation.calculate(currentLocation).toVector().subtract(
+					targetLocation.calculate(target).toVector().subtract(
 							currentLocation.toVector())
 					//...with length of forceAmount
 					.normalize().multiply(forceAmount)));
