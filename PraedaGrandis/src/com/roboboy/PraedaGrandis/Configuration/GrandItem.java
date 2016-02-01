@@ -93,7 +93,8 @@ public class GrandItem
 		
 		//Attributes
 		for (String s : itemConfig.getStringList("attributes")) {
-			attributes.add(new GrandAttribute(new ConfigString(s)));
+			GrandAttribute att = GrandAttribute.fromString(s);
+			if (att != null) attributes.add(att);
 		}
 		
 		persistant = itemConfig.getBoolean("options.persistant", false);
