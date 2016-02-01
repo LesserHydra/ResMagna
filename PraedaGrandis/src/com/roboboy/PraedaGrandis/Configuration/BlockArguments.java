@@ -12,8 +12,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class BlockArguments
 {
-	//(\w+)\s*=\s*((?:[\w\.+\-=]+)|(?:\([^\n\(\)]*\))|(?:@\w+(?:\([^@\n]*\))?))
-	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.+\\-=]+)|(?:\\([^\\n\\(\\)]*\\))|(?:@\\w+(?:\\([^@\\n]*\\))?))");
+	//(\w+)\s*=\s*((?:[\w\.+\-=]+)|\((?:@\w+(?:\s*(?:\(.*\)))?\s*\|)?\s*(?:[^\(\)\n]+)?\)|(?:@\w+(?:\([^@\n]*\))?))
+	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.+\\-=]+)|\\((?:@\\w+(?:\\s*(?:\\(.*\\)))?\\s*\\|)?\\s*(?:[^\\(\\)\\n]+)?\\)|(?:@\\w+(?:\\([^@\\n]*\\))?))");
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
@@ -168,11 +168,6 @@ public class BlockArguments
 		
 		if (value == null) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
-			return fallback;
-		}
-		
-		if (!Tools.isLocation(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected location).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		

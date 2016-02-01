@@ -67,7 +67,7 @@ public enum LocationComponentType
 	static public LocationComponentType fromString(String typeString) {
 		typeString = typeString.toUpperCase();
 		for (LocationComponentType type : values()) {
-			if (type.identifier.equals(typeString));
+			if (type.identifier.equals(typeString)) return type;
 		}
 		return null;
 	}

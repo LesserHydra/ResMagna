@@ -23,11 +23,10 @@ public class GrandLocation
 	static private final Pattern componentPattern = Pattern.compile("([~a-zA-Z]+=?)([+-]?[\\d\\.]+)?");
 	
 	private final Targeter locationTargeter;
-	private final List<Pair<LocationComponentType, Double>> componentList;
+	private final List<Pair<LocationComponentType, Double>> componentList = new LinkedList<>();
 	
 	public GrandLocation() {
 		locationTargeter = new CurrentTargeter();
-		componentList = new LinkedList<>();
 	}
 	
 	/**
@@ -45,14 +44,17 @@ public class GrandLocation
 		if (!lineMatcher.matches()) {
 			PraedaGrandis.plugin.logger.log("Invalid location format:", LogType.CONFIG_ERRORS);
 			PraedaGrandis.plugin.logger.log("  " + locString, LogType.CONFIG_ERRORS);
+			locationTargeter = new CurrentTargeter();
+			return;
 		}
 		
-		//Get Targeter
+		//Get Targeter, or default if none exist
 		locationTargeter = TargeterFactory.build(lineMatcher.group(1));
 		
-		//Get components
-		Matcher componentMatcher = componentPattern.matcher(lineMatcher.group(2));
-		componentList = new LinkedList<>();
+		//Get components, if exist
+		String componentsString = lineMatcher.group(2);
+		if (componentsString == null) return;
+		Matcher componentMatcher = componentPattern.matcher(componentsString);
 		while (componentMatcher.find()) {
 			//Get component type
 			String componentTypeString = componentMatcher.group(1);
@@ -79,8 +81,7 @@ public class GrandLocation
 	public Location calculate(Target mainTarget) {
 		//Get new target from targeter
 		Target newTarget = locationTargeter.getRandomTarget(mainTarget);
-		if (newTarget == null) return null;
-		if (newTarget.get() == null) return null;
+		if (newTarget == null || newTarget.get() == null) return null;
 		
 		//Modify according to components
 		Location finalLoc = newTarget.get().getLocation();
