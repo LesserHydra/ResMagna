@@ -15,14 +15,14 @@ public class IsBlock extends Condition
 	{
 		super(targeter, not);
 		materials = new GrandMaterial(args.get("types", "", true));
-		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
+		location = args.getLocation("location", new GrandLocation(), false);
 	}
 
 	@Override
 	public boolean checkThis(Target target)
 	{
 		//Material blockType = location.calculate(target.getLocation()).getBlock().getType();
-		if (materials.contains(location.calculate(target.get().getLocation()).getBlock().getType())) {
+		if (materials.contains(location.calculate(target).getBlock().getType())) {
 			return true;
 		}
 		else return false;

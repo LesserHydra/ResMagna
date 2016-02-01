@@ -1,28 +1,32 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Tools;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GrandLocation
 {
-	private final static Pattern locComponentPattern = Pattern.compile("(~?([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))|~([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))?)");
+	//\((?:(@\w+(?:\s*(?:\(.*\)))?)\s*\|)?\s*(.+)?\)
+	static private final Pattern formatPattern = Pattern.compile("\\((?:(@\\w+(?:\\s*(?:\\(.*\\)))?)\\s*\\|)?\\s*(.+)?\\)");
+	//([~a-zA-Z]+=?)([+-]?[\d\.]+)?
+	static private final Pattern componentPattern = Pattern.compile("([~a-zA-Z]+=?)([+-]?[\\d\\.]+)?");
 	
-	private final double x;
-	private final double y;
-	private final double z;
+	private final Targeter locationTargeter;
+	private final List<Pair<LocationComponentType, Double>> componentList = new LinkedList<>();
 	
-	private final boolean relX;
-	private final boolean relY;
-	private final boolean relZ;
-	
-	public GrandLocation(double x, double y, double z, boolean relX, boolean relY, boolean relZ) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.relX = relX;
-		this.relY = relY;
-		this.relZ = relZ;
+	public GrandLocation() {
+		locationTargeter = new CurrentTargeter();
 	}
 	
 	/**
@@ -35,36 +39,57 @@ public class GrandLocation
 	 * @param locString String to construct from
 	 */
 	public GrandLocation(String locString) {
-		Matcher match = locComponentPattern.matcher(locString);
+		//Match
+		Matcher lineMatcher = formatPattern.matcher(locString);
+		if (!lineMatcher.matches()) {
+			PraedaGrandis.plugin.logger.log("Invalid location format:", LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  " + locString, LogType.CONFIG_ERRORS);
+			locationTargeter = new CurrentTargeter();
+			return;
+		}
 		
-		//X component
-		match.find();
-		relX = (match.group(0).charAt(0) == '~');
-		x = getComponentValue(match.group(2));
+		//Get Targeter, or default if none exist
+		locationTargeter = TargeterFactory.build(lineMatcher.group(1));
 		
-		//Y component
-		match.find();
-		relY = (match.group(0).charAt(0) == '~');
-		y = getComponentValue(match.group(2));
-		
-		//Z component
-		match.find();
-		relZ = (match.group(0).charAt(0) == '~');
-		z = getComponentValue(match.group(2));
+		//Get components, if exist
+		String componentsString = lineMatcher.group(2);
+		if (componentsString == null) return;
+		Matcher componentMatcher = componentPattern.matcher(componentsString);
+		while (componentMatcher.find()) {
+			//Get component type
+			String componentTypeString = componentMatcher.group(1);
+			LocationComponentType componentType = LocationComponentType.fromString(componentTypeString);
+			if (componentType == null) {
+				PraedaGrandis.plugin.logger.log("Invalid location component type: " + componentTypeString, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			//Get modifier
+			String componentDoubleString = componentMatcher.group(2);
+			if (componentDoubleString == null) continue;
+			if (!Tools.isFloat(componentDoubleString)) {
+				PraedaGrandis.plugin.logger.log("Invalid location component modifier: " + componentDoubleString, LogType.CONFIG_ERRORS);
+				PraedaGrandis.plugin.logger.log("Expected a floating point value.", LogType.CONFIG_ERRORS);
+				continue;
+			}
+			Double componentDouble = Double.parseDouble(componentDoubleString);
+			
+			componentList.add(new ImmutablePair<>(componentType, componentDouble));
+		}
 	}
 	
-	public Location calculate(Location relativeLocation) {
-		Location finalLoc = relativeLocation.clone();
-		finalLoc.add(x, y, z);
-		if (!relX) finalLoc.setX(x);
-		if (!relY) finalLoc.setY(y);
-		if (!relZ) finalLoc.setZ(z);
+	public Location calculate(Target mainTarget) {
+		//Get new target from targeter
+		Target newTarget = locationTargeter.getRandomTarget(mainTarget);
+		if (newTarget == null || newTarget.get() == null) return null;
 		
+		//Modify according to components
+		Location finalLoc = newTarget.get().getLocation();
+		for (Pair<LocationComponentType, Double> componentPair : componentList) {
+			componentPair.getLeft().modify(finalLoc, componentPair.getRight());
+		}
+		
+		//Return result
 		return finalLoc;
-	}
-	
-	private double getComponentValue(String valueString) {
-		if (valueString == null) return 0;
-		return Double.parseDouble(valueString);
 	}
 }

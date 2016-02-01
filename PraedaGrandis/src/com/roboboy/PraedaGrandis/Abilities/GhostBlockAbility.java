@@ -22,7 +22,7 @@ public class GhostBlockAbility extends Ability
 		material = Material.matchMaterial(blockStrings[0]);
 		data = Byte.parseByte(blockStrings[1]);
 		
-		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
+		location = args.getLocation("location", new GrandLocation(), true);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -33,7 +33,7 @@ public class GhostBlockAbility extends Ability
 		if (e instanceof Player)
 		{
 			Player p = (Player) e;
-			p.sendBlockChange(location.calculate(p.getLocation()), material, data);
+			p.sendBlockChange(location.calculate(target), material, data);
 		}
 	}
 

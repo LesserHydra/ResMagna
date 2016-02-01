@@ -24,7 +24,7 @@ public class TeleportAbility extends Ability
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), true);
+		location = args.getLocation("location", new GrandLocation(), false);
 		spreadH = args.getInteger("spreadh", 0, false);
 		spreadV = args.getInteger("spreadv", 0, false);
 		includeCenter = args.getBoolean("includecenter", true, false);
@@ -47,7 +47,8 @@ public class TeleportAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		Location centerLoc = location.calculate(target.get().getLocation());
+		Location centerLoc = location.calculate(target);
+		if (centerLoc == null) return;
 		
 		if (worldSuffix != null) {
 			String worldName = getBaseWorldName(centerLoc.getWorld().getName()) + worldSuffix;

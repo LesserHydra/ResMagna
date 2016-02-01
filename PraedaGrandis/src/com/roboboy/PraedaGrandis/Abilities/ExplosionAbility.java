@@ -24,7 +24,7 @@ public class ExplosionAbility extends Ability
 		power = args.getFloat("yield", 0F, true);
 		setFire = args.getBoolean("fire", false, false);
 		breakBlocks = args.getBoolean("breakblocks", true, false);
-		location = args.getLocation("location", new GrandLocation(0, 0, 0, true, true, true), false);
+		location = args.getLocation("location", new GrandLocation(), false);
 		damagerTargeter = args.getTargeter("damager", new NoneTargeter(), false);
 	}
 
@@ -34,8 +34,10 @@ public class ExplosionAbility extends Ability
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
 		if (damagerTarget == null) return;
 		
-		Location loc = location.calculate(target.get().getLocation());
-		LivingEntity marker = MarkerBuilder.buildMarker(loc);
+		Location calculatedLocation = location.calculate(target);
+		if (calculatedLocation == null) return;
+		
+		LivingEntity marker = MarkerBuilder.buildMarker(calculatedLocation);
 		LivingEntity damagerEntity = damagerTarget.get();
 		
 		//Mark entities in radius as damaged by damagerEntity, if exists
@@ -44,13 +46,13 @@ public class ExplosionAbility extends Ability
 			double damageRadiusSquared = damageRadius * damageRadius;
 			for (Entity entity : marker.getNearbyEntities(damageRadius, damageRadius, damageRadius)) {
 				if (!(entity instanceof LivingEntity)) continue;
-				if (loc.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
+				if (calculatedLocation.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
 				((LivingEntity)entity).damage(0D, damagerEntity);
 			}
 		}
 		
 		//Create explosion
-		loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks);
+		calculatedLocation.getWorld().createExplosion(calculatedLocation.getX(), calculatedLocation.getY(), calculatedLocation.getZ(), power, setFire, breakBlocks);
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import org.bukkit.Location;
 import com.darkblade12.particleeffect.ParticleEffect;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
@@ -25,7 +26,7 @@ public class ParticleAbility extends Ability
 		particleEffect = ParticleEffect.fromName(args.get("name", "", true));
 		amount = args.getInteger("amount", 1, true);
 		
-		centerLocation = args.getLocation("location", new GrandLocation(0D, 0D, 0D, true, true, true), false);
+		centerLocation = args.getLocation("location", new GrandLocation(), false);
 		offsetX = args.getFloat("spreadx", 0F, false);
 		offsetY = args.getFloat("spready", 0F, false);
 		offsetZ = args.getFloat("spreadz", 0F, false);
@@ -34,9 +35,11 @@ public class ParticleAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target)
-	{
-		particleEffect.display(offsetX, offsetY, offsetZ, speed, amount, centerLocation.calculate(target.get().getLocation()), range);
+	protected void execute(Target target) {
+		Location calculatedLocation = centerLocation.calculate(target);
+		if (calculatedLocation == null) return;
+		
+		particleEffect.display(offsetX, offsetY, offsetZ, speed, amount, calculatedLocation, range);
 	}
 
 }
