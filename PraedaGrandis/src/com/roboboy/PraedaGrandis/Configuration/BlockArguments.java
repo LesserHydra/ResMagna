@@ -12,16 +12,27 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class BlockArguments
 {
-	//(\w+)\s*=\s*((?:[\w\.+\-=]+)|\((?:@\w+(?:\s*(?:\(.*\)))?\s*\|)?\s*(?:[^\(\)\n]+)?\)|(?:@\w+(?:\([^@\n]*\))?))
-	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*((?:[\\w\\.+\\-=]+)|\\((?:@\\w+(?:\\s*(?:\\(.*\\)))?\\s*\\|)?\\s*(?:[^\\(\\)\\n]+)?\\)|(?:@\\w+(?:\\([^@\\n]*\\))?))");
+	//(\w+)\s*=\s*([^,;\s\n\(]*(?:\s*\((\$[\d]+)\))?)
+	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*([^,;\\s\\n\\(]*(?:\\s*\\((\\$[\\d]+)\\))?)");
 	
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
 	public BlockArguments(String argumentString) {
 		if (argumentString == null) return;
-		Matcher argumentMatcher = argumentPattern.matcher(argumentString);
+		
+		//TODO: Temporary, until ability & condition factories get updated
+		argumentString = argumentString.replace("{", "").replace("}", "");
+		
+		GroupingParser groupParser = new GroupingParser(argumentString);
+		String simplifiedArgumentString = groupParser.getSimplifiedString();
+		
+		Matcher argumentMatcher = argumentPattern.matcher(simplifiedArgumentString);
 		while (argumentMatcher.find()) {
-			argumentMap.put(argumentMatcher.group(1).toLowerCase(), argumentMatcher.group(2));
+			String argumentName = argumentMatcher.group(1).toLowerCase();
+			String argumentValue = argumentMatcher.group(2);
+			String argumentValueGroupID = argumentMatcher.group(3);
+			argumentValue = groupParser.readdGrouping(argumentValue, argumentValueGroupID);
+			argumentMap.put(argumentName, argumentValue);
 		}
 	}
 	
@@ -34,7 +45,7 @@ public class BlockArguments
 	 */
 	public String get(String key, String fallback, boolean required) {
 		String result = argumentMap.get(key);
-		if (result == null) {
+		if (result == null || result.isEmpty()) {
 			result = fallback;
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 		}
@@ -51,7 +62,7 @@ public class BlockArguments
 	public boolean getBoolean(String key, boolean fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -74,7 +85,7 @@ public class BlockArguments
 	public int getInteger(String key, int fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -97,7 +108,7 @@ public class BlockArguments
 	public long getLong(String key, long fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -120,7 +131,7 @@ public class BlockArguments
 	public float getFloat(String key, float fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -143,7 +154,7 @@ public class BlockArguments
 	public double getDouble(String key, double fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -166,7 +177,7 @@ public class BlockArguments
 	public GrandLocation getLocation(String key, GrandLocation fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
@@ -184,7 +195,7 @@ public class BlockArguments
 	public Targeter getTargeter(String key, Targeter fallback, boolean required) {
 		String value = argumentMap.get(key);
 		
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
