@@ -35,7 +35,8 @@ public class GrandAttribute
 			return null;
 		}
 		
-		String nameString = lineMatcher.group(1);
+		//Name
+		String nameString = lineMatcher.group(1).toLowerCase();
 		
 		//AttributeType
 		AttributeType attributeType = getTypeFromName(nameString);
