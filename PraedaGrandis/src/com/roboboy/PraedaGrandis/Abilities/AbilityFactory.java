@@ -6,20 +6,25 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
 {
-	//(\w+)\s*(?:(\{.*\})|(\b[\w\s=+\-*/%]+\b))?\s*(@\w+(?:\([^~\n]*\))?)?\s*(?:~on(\w+)(?:\((.*)\))?:(\w+))?
-	static private final Pattern abilityLinePattern = Pattern.compile("(\\w+)\\s*(?:(\\{.*\\})|(\\b[\\w\\s=+\\-*/%]+\\b))?\\s*(@\\w+(?:\\([^~\\n]*\\))?)?\\s*(?:~on(\\w+)(?:\\((.*)\\))?:(\\w+))?");
+	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w\s=+\-*/%]+\b))?\s*(@\w+\s*(?:\((\$[\d]+)\))?)?\s*(?:~on(\w+)(?:\((\$[\d]+)\))?:(\w+))?
+	static private final Pattern abilityLinePattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?\\s*(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)?\\s*(?:~on(\\w+)(?:\\((\\$[\\d]+)\\))?:(\\w+))?");
 	
 	public static Ability build(String abilityLine) {
-		Matcher lineMatcher = abilityLinePattern.matcher(abilityLine);
+		//Remove groupings
+		GroupingParser groupParser = new GroupingParser(abilityLine);
+		String simplifiedLine = groupParser.getSimplifiedString();
 		
 		//Improper format
+		Matcher lineMatcher = abilityLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
 			PraedaGrandis.plugin.logger.log("Invalid ability line format:", LogType.CONFIG_ERRORS);
 			PraedaGrandis.plugin.logger.log("  " + abilityLine, LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -27,28 +32,30 @@ public class AbilityFactory
 		String abilityName = lineMatcher.group(1).toLowerCase();
 		
 		//Get ability arguments, if exist
-		String argumentsString = lineMatcher.group(2);
-		BlockArguments abilityArgs = new BlockArguments(argumentsString);
+		String argumentsGroupID = lineMatcher.group(2);
+		BlockArguments abilityArgs = new BlockArguments(groupParser.getGroupingByIdentifier(argumentsGroupID));
 		
 		//Get unenclosed arguments, if exist
 		String variableArgs = lineMatcher.group(3);
 		
 		//Get Targeter
 		String targeterString = lineMatcher.group(4);
+		String targeterArgumentsGroupID = lineMatcher.group(5);
+		targeterString = groupParser.readdGrouping(targeterString, targeterArgumentsGroupID);
 		Targeter targeter = TargeterFactory.build(targeterString);
 		
 		//Get activator
-		String activatorName = lineMatcher.group(5);
+		String activatorName = lineMatcher.group(6);
 		ActivatorType actType = ActivatorType.NONE;
 		if (activatorName != null) actType = ActivatorType.valueOf(activatorName.toUpperCase()); //TODO: Error handling/logging
 		
 		//Get activator argument
-		String activatorArgument = lineMatcher.group(6);
+		String activatorArgument = groupParser.getGroupingByIdentifier(lineMatcher.group(7));
 		long timerDelay = -1;
 		if (activatorArgument != null) timerDelay = Long.parseLong(activatorArgument); //TODO: Error handling/logging
 		
 		//Get slot type
-		String slotTypeName = lineMatcher.group(7);
+		String slotTypeName = lineMatcher.group(8);
 		ItemSlotType slotType = ItemSlotType.ANY;
 		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName.toUpperCase()); //TODO: Error handling/logging
 		

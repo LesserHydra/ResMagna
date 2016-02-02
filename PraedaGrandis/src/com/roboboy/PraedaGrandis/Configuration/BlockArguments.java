@@ -20,9 +20,6 @@ public class BlockArguments
 	public BlockArguments(String argumentString) {
 		if (argumentString == null) return;
 		
-		//TODO: Temporary, until ability & condition factories get updated
-		argumentString = argumentString.replace("{", "").replace("}", "");
-		
 		GroupingParser groupParser = new GroupingParser(argumentString);
 		String simplifiedArgumentString = groupParser.getSimplifiedString();
 		

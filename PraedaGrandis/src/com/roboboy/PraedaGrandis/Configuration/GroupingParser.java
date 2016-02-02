@@ -8,8 +8,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GroupingParser
 {
-	static private final List<Character> OPENING_CHARS = Arrays.asList('(', '{', '[', '<');
-	static private final List<Character> CLOSING_CHARS = Arrays.asList(')', '}', ']', '>');
+	static private final List<Character> OPENING_CHARS = Arrays.asList('(', '{', '[');
+	static private final List<Character> CLOSING_CHARS = Arrays.asList(')', '}', ']');
 	
 	private final String simplifiedString;
 	private final List<String> groupingList = new ArrayList<String>();
