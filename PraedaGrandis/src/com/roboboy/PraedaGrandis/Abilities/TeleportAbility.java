@@ -60,7 +60,7 @@ public class TeleportAbility extends Ability
 		
 		if (spreadH > 0 || spreadV > 0) {
 			List<Location> safe = getSafeInRadius(centerLoc);
-			if (!safe.isEmpty()) return;
+			if (safe.isEmpty()) return;
 			centerLoc = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
 			centerLoc.add(0.5, 0, 0.5);
 		}
