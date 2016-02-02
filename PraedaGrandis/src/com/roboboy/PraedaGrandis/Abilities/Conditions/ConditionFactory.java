@@ -6,19 +6,25 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class ConditionFactory
 {
-	//~?(\w+)\s*(?:(\{.*\})|([\w\s=<>\.]*[\w\.]))?\s*(@\w+(?:\(.*\))?)?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(\\{.*\\})|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+(?:\\(.*\\))?)?");
+	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w\s=<>\.]*[\w\.]))?\s*(@\w+\s*(?:\((\$[\d]+)\))?)?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)?");
 	
 	public static Condition build(String conditionLine) {
+		//Remove groupings
+		GroupingParser groupParser = new GroupingParser(conditionLine);
+		String simplifiedLine = groupParser.getSimplifiedString();
+		
 		//Match
-		Matcher lineMatcher = conditionLinePattern.matcher(conditionLine);
+		Matcher lineMatcher = conditionLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
 			PraedaGrandis.plugin.logger.log("Invalid condition line format:", LogType.CONFIG_ERRORS);
 			PraedaGrandis.plugin.logger.log("  " + conditionLine, LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -27,14 +33,16 @@ public class ConditionFactory
 		boolean not = conditionLine.startsWith("~");
 		
 		//Get condition arguments, if exist
-		String argumentsString = lineMatcher.group(2);
-		BlockArguments conditionArgs = new BlockArguments(argumentsString);
+		String argumentsGroupID = lineMatcher.group(2);
+		BlockArguments conditionArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID));
 		
 		//Get unenclosed arguments, if exist
 		String variableArgsString = lineMatcher.group(3);
 		
 		//Get Targeter
 		String targeterString = lineMatcher.group(4);
+		String targeterArgumentsGroupID = lineMatcher.group(5);
+		targeterString = groupParser.readdGrouping(targeterString, targeterArgumentsGroupID);
 		Targeter targeter = TargeterFactory.build(targeterString);
 		
 		//Construct condition by name
