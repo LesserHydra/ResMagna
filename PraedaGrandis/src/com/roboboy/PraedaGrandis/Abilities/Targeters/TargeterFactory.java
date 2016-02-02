@@ -32,7 +32,7 @@ public class TargeterFactory
 		String targeterName = lineMatcher.group(1).toLowerCase();
 		
 		//Get targeter arguments, if exist
-		String argumentsString = groupingParser.getGroupingByIdentifier(lineMatcher.group(2));
+		String argumentsString = groupingParser.getGrouping(lineMatcher.group(2));
 		BlockArguments targeterArgs = new BlockArguments(argumentsString);
 		
 		//Construct targeter by name

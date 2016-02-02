@@ -54,14 +54,14 @@ public class GroupingParser
 		return simplifiedString;
 	}
 	
-	public String getGroupingByIdentifier(String identifier) {
+	public String getGrouping(String identifier) {
 		if (identifier == null || !identifier.startsWith("$")) return null;
 		int index = Integer.parseInt(identifier.substring(1));
 		return groupingList.get(index);
 	}
 	
 	public String readdGrouping(String string, String identifier) {
-		String grouping = getGroupingByIdentifier(identifier);
+		String grouping = getGrouping(identifier);
 		if (grouping == null) return string;
 		return string.replace(identifier, grouping);
 	}

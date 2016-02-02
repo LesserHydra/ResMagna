@@ -33,7 +33,7 @@ public class AbilityFactory
 		
 		//Get ability arguments, if exist
 		String argumentsGroupID = lineMatcher.group(2);
-		BlockArguments abilityArgs = new BlockArguments(groupParser.getGroupingByIdentifier(argumentsGroupID));
+		BlockArguments abilityArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID));
 		
 		//Get unenclosed arguments, if exist
 		String variableArgs = lineMatcher.group(3);
@@ -50,7 +50,7 @@ public class AbilityFactory
 		if (activatorName != null) actType = ActivatorType.valueOf(activatorName.toUpperCase()); //TODO: Error handling/logging
 		
 		//Get activator argument
-		String activatorArgument = groupParser.getGroupingByIdentifier(lineMatcher.group(7));
+		String activatorArgument = groupParser.getGrouping(lineMatcher.group(7));
 		long timerDelay = -1;
 		if (activatorArgument != null) timerDelay = Long.parseLong(activatorArgument); //TODO: Error handling/logging
 		
