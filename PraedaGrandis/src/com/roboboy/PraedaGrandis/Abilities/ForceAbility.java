@@ -16,7 +16,7 @@ public class ForceAbility extends Ability
 	public ForceAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		forceAmount = args.getDouble("amount", 0D, true);
-		targetLocation = args.getLocation("targetlocation", new GrandLocation("(F+1)"), false);
+		targetLocation = args.getLocation("targetlocation", new GrandLocation("F+1"), false);
 	}
 
 	@Override

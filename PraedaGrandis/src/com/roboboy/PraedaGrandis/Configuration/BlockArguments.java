@@ -179,7 +179,7 @@ public class BlockArguments
 			return fallback;
 		}
 		
-		return new GrandLocation(value);
+		return new GrandLocation(value.substring(1, value.length()-1));
 	}
 	
 	/**

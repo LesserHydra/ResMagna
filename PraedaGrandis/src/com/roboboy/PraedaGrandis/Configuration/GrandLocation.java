@@ -17,8 +17,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GrandLocation
 {
-	//\((?:(@\w+(?:\s*(?:\(.*\)))?)\s*\|)?\s*(.+)?\)
-	static private final Pattern formatPattern = Pattern.compile("\\((?:(@\\w+(?:\\s*(?:\\(.*\\)))?)\\s*\\|)?\\s*(.+)?\\)");
+	//(?:(@\w+\s*(?:\((\$[\d]+)\))?)\s*)?(?:\|\s*)?(.+)?
+	static private final Pattern formatPattern = Pattern.compile("(?:(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)\\s*)?(?:\\|\\s*)?(.+)?");
 	//([~a-zA-Z]+=?)([+-]?[\d\.]+)?
 	static private final Pattern componentPattern = Pattern.compile("([~a-zA-Z]+=?)([+-]?[\\d\\.]+)?");
 	
@@ -29,30 +29,29 @@ public class GrandLocation
 		locationTargeter = new CurrentTargeter();
 	}
 	
-	/**
-	 * Constructs a GrandLocation from the given string. The string must have already been checked for validity.<br>
-	 * <pre>Format is as follows:
-	 * Enclosed in brackets ("()")
-	 * Three components:
-	 *  Either a tilda ("~"), denoting relativity, or a floating value
-	 *  Float may be prefixed with a tilda, denoting relativity</pre>
-	 * @param locString String to construct from
-	 */
 	public GrandLocation(String locString) {
+		//Remove groupings
+		GroupingParser groupParser = new GroupingParser(locString);
+		String simplifiedString = groupParser.getSimplifiedString();
+		
 		//Match
-		Matcher lineMatcher = formatPattern.matcher(locString);
+		Matcher lineMatcher = formatPattern.matcher(simplifiedString);
 		if (!lineMatcher.matches()) {
 			PraedaGrandis.plugin.logger.log("Invalid location format:", LogType.CONFIG_ERRORS);
 			PraedaGrandis.plugin.logger.log("  " + locString, LogType.CONFIG_ERRORS);
+			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedString, LogType.CONFIG_ERRORS);
 			locationTargeter = new CurrentTargeter();
 			return;
 		}
 		
 		//Get Targeter, or default if none exist
-		locationTargeter = TargeterFactory.build(lineMatcher.group(1));
+		String targeterString = lineMatcher.group(1);
+		String targeterArgumentsGroupID = lineMatcher.group(2);
+		targeterString = groupParser.readdGrouping(targeterString, targeterArgumentsGroupID);
+		locationTargeter = TargeterFactory.build(targeterString);
 		
 		//Get components, if exist
-		String componentsString = lineMatcher.group(2);
+		String componentsString = lineMatcher.group(3);
 		if (componentsString == null) return;
 		Matcher componentMatcher = componentPattern.matcher(componentsString);
 		while (componentMatcher.find()) {
