@@ -62,6 +62,7 @@ public class ConditionFactory
 		case "ismob":			return new IsMob(targeter, not);
 		case "issneaking":		return new IsSneaking(targeter, not);
 		case "issprinting":		return new IsSprinting(targeter, not);
+		case "isburning":		return new IsBurning(targeter, not);
 		case "isonground":		return new IsOnGround(targeter, not);
 		case "issheltered":		return new IsSheltered(targeter, not);
 		case "isblocking":		return new IsBlocking(targeter, not);
