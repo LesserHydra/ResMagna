@@ -6,7 +6,6 @@ public class Tools
 {
 	private static Pattern integerPattern = Pattern.compile("[+-]?\\d+");
 	private static Pattern floatPattern = Pattern.compile("[+-]?((\\d+(\\.\\d*)?)|(\\.\\d+))");
-	public final static Pattern locationPattern = Pattern.compile("\\(\\s*(~?([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))|~([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))?)\\s+(~?([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))|~([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))?)\\s+(~?([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))|~([+-]?((\\d+(\\.\\d*)?)|(\\.\\d+)))?)\\s*\\)");
 	
 	/**
 	 * Checks if a given string represents a boolean.
@@ -36,14 +35,5 @@ public class Tools
 	 */
 	public static boolean isFloat(String str) {
 		return floatPattern.matcher(str).matches();
-	}
-	
-	/**
-	 * Checks if a given string represents a GrandLocation.
-	 * @param str - String to check
-	 * @return True if string represents a GrandLocation, false otherwise.
-	 */
-	public static boolean isLocation(String str) {
-		return locationPattern.matcher(str).matches();
 	}
 }
