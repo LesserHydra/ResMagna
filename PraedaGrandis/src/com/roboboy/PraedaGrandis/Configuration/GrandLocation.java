@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
@@ -90,5 +91,10 @@ public class GrandLocation
 		
 		//Return result
 		return finalLoc;
+	}
+	
+	public Vector calculateDirection(Target mainTarget, Location fromLocation) {
+		Location toLocation = calculate(mainTarget);
+		return toLocation.toVector().subtract(fromLocation.toVector());
 	}
 }
