@@ -81,6 +81,7 @@ public class ProjectileAbility extends Ability
 		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
+		projectile.setMetadata("PG_Projectile", new FixedMetadataValue(PraedaGrandis.plugin, true));
 		
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitName));
 		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(PraedaGrandis.plugin, onEndName));

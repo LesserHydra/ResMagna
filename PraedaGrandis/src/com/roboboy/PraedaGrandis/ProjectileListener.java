@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
@@ -68,6 +69,15 @@ public class ProjectileListener implements Listener
 		
 		for (LivingEntity hitEntity : event.getAffectedEntities()) {
 			onSplashAbility.run(new Target(hitEntity, holder, marker));
+		}
+	}
+	
+	//Remove projectiles that have been unloaded
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onProjectileUnload(ChunkUnloadEvent event) {
+		for (Entity entity : event.getChunk().getEntities()) {
+			if (!(entity instanceof Projectile)) continue;
+			if (entity.hasMetadata("PG_Projectile")) entity.remove();
 		}
 	}
 	
