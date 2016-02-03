@@ -64,6 +64,8 @@ public class PraedaGrandis extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
+		//Remove projectiles spawned by ProjectileAbility
+		projectileListener.removeAbilityProjectiles();
 		//Cancel timer checker
 		if (timerCheckingTask != null) timerCheckingTask.cancel();
 		//Set plugin to null

@@ -1,6 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -78,6 +80,16 @@ public class ProjectileListener implements Listener
 		for (Entity entity : event.getChunk().getEntities()) {
 			if (!(entity instanceof Projectile)) continue;
 			if (entity.hasMetadata("PG_Projectile")) entity.remove();
+		}
+	}
+	
+	//Remove projectiles on plugin disable
+	public void removeAbilityProjectiles() {
+		for (World world : Bukkit.getWorlds()) {
+			for (Entity entity : world.getEntities()) {
+				if (!(entity instanceof Projectile)) continue;
+				if (entity.hasMetadata("PG_Projectile")) entity.remove();
+			}
 		}
 	}
 	
