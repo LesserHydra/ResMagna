@@ -23,43 +23,42 @@ public class GrandAbility
 	List<Ability> elseAbilities = new ArrayList<Ability>();
 	
 	public GrandAbility(ConfigurationSection abilitySection)
-	{
-		DelayAbility currentDelayAbility = null;
-		
+	{	
 		//Conditions (if)
-		for (String s : abilitySection.getStringList("if"))
-		{
+		for (String s : abilitySection.getStringList("if")) {
 			Condition c = ConditionFactory.build(s);
 			if (c != null) conditions.add(c);
 		}
 		
 		//Abilities (then)
-		for (String s : abilitySection.getStringList("then"))
-		{
-			//Construct ability
-			Ability a = AbilityFactory.build(s);
-			if (a == null) continue;
-			
-			//Add to delay ability if exists
-			if (currentDelayAbility != null) currentDelayAbility.addAbility(a);
-			//Otherwise, add to ability list
-			else abilities.add(a);
-			
-			//Following abilities are assigned to this DelayAbility
-			if (a instanceof DelayAbility) {
-				currentDelayAbility = (DelayAbility) a;
-			}
+		DelayAbility currentDelayAbility = null;
+		for (String s : abilitySection.getStringList("then")) {
+			currentDelayAbility = constructAbility(s, currentDelayAbility, abilities);
 		}
 		
 		//Otherwise (else)
-		for (String s : abilitySection.getStringList("else"))
-		{
-			Ability a = AbilityFactory.build(s);
-			if (a != null) elseAbilities.add(a);
+		currentDelayAbility = null;
+		for (String s : abilitySection.getStringList("else")) {
+			currentDelayAbility = constructAbility(s, currentDelayAbility, elseAbilities);
 		}
 	}
 	
-	public void run(Target target) //TODO: Add GrandLocation argument.
+	private DelayAbility constructAbility(String abilityString, DelayAbility delayAbility, List<Ability> addToList) {
+		//Construct ability
+		Ability ability = AbilityFactory.build(abilityString);
+		if (ability == null) return delayAbility;
+		
+		//Add to delay ability if exists
+		if (delayAbility != null) delayAbility.addAbility(ability);
+		//Otherwise, add to ability list
+		else addToList.add(ability);
+		
+		//Following abilities are assigned to this DelayAbility
+		if (ability instanceof DelayAbility) delayAbility = (DelayAbility) ability;
+		return delayAbility;
+	}
+
+	public void run(Target target)
 	{
 		//Check conditions
 		boolean run = true;
