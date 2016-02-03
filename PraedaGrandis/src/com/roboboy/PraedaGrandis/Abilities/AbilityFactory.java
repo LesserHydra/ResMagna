@@ -83,6 +83,7 @@ public class AbilityFactory
 		case "swap":			return new SwapAbility(slotType, actType, targeter, abilityArgs);
 		case "mount":			return new MountAbility(slotType, actType, targeter, abilityArgs);
 		case "eject":			return new EjectAbility(slotType, actType, targeter);
+		case "temporaryblock":	return new TemporaryBlockAbility(slotType, actType, targeter, abilityArgs);
 		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, abilityArgs);
 		case "projectile":		return new ProjectileAbility(slotType, actType, targeter, abilityArgs);
 		
