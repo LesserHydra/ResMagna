@@ -2,15 +2,17 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class DelayAbility extends Ability
+class DelayAbility extends Ability
 {
-	final private long delayAmount;
-	final private List<Ability> delayedAbilities = new ArrayList<>();
+	private final long delayAmount;
+	private final List<Ability> delayedAbilities = new ArrayList<>();
 	
 	public DelayAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);

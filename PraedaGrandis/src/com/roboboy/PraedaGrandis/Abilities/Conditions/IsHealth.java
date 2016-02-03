@@ -10,10 +10,10 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class IsHealth extends Condition
+class IsHealth extends Condition
 {
 	//([=<>]+)\s*([\w\.]+)
-	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*([\\w\\.]+)");
+	private static final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*([\\w\\.]+)");
 	
 	private final VariableConditional	conditional;
 	private final double				number;

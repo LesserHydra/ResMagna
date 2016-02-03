@@ -2,15 +2,17 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class SoundAbility extends Ability
+class SoundAbility extends Ability
 {
-	final private Sound sound;
-	final private float volume;
-	final private float pitch;
+	private final Sound sound;
+	private final float volume;
+	private final float pitch;
 
 	public SoundAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);

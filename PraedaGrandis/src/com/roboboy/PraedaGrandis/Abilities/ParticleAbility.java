@@ -2,21 +2,23 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Location;
 import com.darkblade12.particleeffect.ParticleEffect;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-public class ParticleAbility extends Ability
+class ParticleAbility extends Ability
 {
-	final private ParticleEffect particleEffect;
-	final private float offsetX;
-	final private float offsetY;
-	final private float offsetZ;
-	final private float speed;
-	final private int amount;
-	final private GrandLocation centerLocation;
-	final private double range;
+	private final ParticleEffect particleEffect;
+	private final float offsetX;
+	private final float offsetY;
+	private final float offsetZ;
+	private final float speed;
+	private final int amount;
+	private final GrandLocation centerLocation;
+	private final double range;
 
 	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{

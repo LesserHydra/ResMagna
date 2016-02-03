@@ -8,6 +8,8 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
@@ -15,7 +17,7 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import com.roboboy.PraedaGrandis.Configuration.ProjectileType;
 
-public class ProjectileAbility extends Ability
+class ProjectileAbility extends Ability
 {
 	private final ProjectileType projectileType;
 	private final double velocity;

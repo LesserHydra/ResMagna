@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsSleeping extends Condition
+class IsSleeping extends Condition
 {
 	public IsSleeping(Targeter targeter, boolean not) {
 		super(targeter, not);

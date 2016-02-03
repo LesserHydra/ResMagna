@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Dispenser;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 public class InventoryHandler implements Listener

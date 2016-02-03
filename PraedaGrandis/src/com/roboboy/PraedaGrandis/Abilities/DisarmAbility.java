@@ -2,11 +2,13 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Location;
 import org.bukkit.inventory.EntityEquipment;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class DisarmAbility extends Ability
+class DisarmAbility extends Ability
 {
 	private final boolean held;
 	private final boolean helmet;

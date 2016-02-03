@@ -10,13 +10,13 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class IsExp extends Condition
+class IsExp extends Condition
 {
 	//([=<>]+)\s*(\w+)
-	static private final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*(\\w+)");
+	private static final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*(\\w+)");
 	
-	final private VariableConditional	conditional;
-	final private int					number;
+	private final VariableConditional	conditional;
+	private final int					number;
 
 	public IsExp(Targeter targeter, boolean not, String argLine)
 	{

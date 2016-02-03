@@ -11,15 +11,15 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class IsVariable extends Condition
+class IsVariable extends Condition
 {
 	//(\w+)\s*([=<>]+)\s*(\w+)
-	static private final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
+	private static final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
 	
-	final private String 				name;
-	final private VariableConditional	conditional;
-	final private String				otherName;
-	final private int					number;
+	private final String 				name;
+	private final VariableConditional	conditional;
+	private final String				otherName;
+	private final int					number;
 	
 	public IsVariable(Targeter targeter, boolean not, String variableLine)
 	{
