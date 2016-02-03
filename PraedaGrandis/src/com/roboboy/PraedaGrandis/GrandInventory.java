@@ -1,9 +1,13 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Abilities.*;
-import com.roboboy.PraedaGrandis.Configuration.*;
-import java.util.*;
+import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
