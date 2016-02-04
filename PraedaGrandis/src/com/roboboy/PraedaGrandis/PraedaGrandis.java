@@ -30,9 +30,6 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
-	private final ConfigManager configManager = ConfigManager.getInstance();
-	private final InventoryHandler inventoryHandler = InventoryHandler.getInstance();
-	
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
 	private final ActivatorListener activatorListener = new ActivatorListener(this);
 	private final ProjectileListener projectileListener = new ProjectileListener(this);
@@ -45,7 +42,7 @@ public class PraedaGrandis extends JavaPlugin
 	{
 		plugin = this;
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
-		getServer().getPluginManager().registerEvents(inventoryHandler, this);
+		getServer().getPluginManager().registerEvents(InventoryHandler.getInstance(), this);
 		getServer().getPluginManager().registerEvents(activatorListener, this);
 		getServer().getPluginManager().registerEvents(projectileListener, this);
 		
@@ -68,19 +65,19 @@ public class PraedaGrandis extends JavaPlugin
 	}
 	
 	public void reload() {
-		configManager.reload();
+		ConfigManager.getInstance().reload();
 		itemUpdater.reload();
-		inventoryHandler.reload();
+		InventoryHandler.getInstance().reload();
 		
 		//Timer checker
 		if (timerCheckingTask != null) timerCheckingTask.cancel();
 		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
 			for (Player p : getServer().getOnlinePlayers()) {
-        		for (GrandInventory.InventoryElement element : inventoryHandler.getItemsFromPlayer(p).getItems()) {
+        		for (GrandInventory.InventoryElement element : InventoryHandler.getInstance().getItemsFromPlayer(p).getItems()) {
         			element.grandItem.activateTimers(p);
         		}
         	}
-		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
+		}}.runTaskTimer(plugin, 0L, ConfigManager.getInstance().getTimerHandlerDelay());
 	}
 	
 }
