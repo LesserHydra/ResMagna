@@ -36,10 +36,11 @@ public class PraedaGrandis extends JavaPlugin
 	
 	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
 	public final ItemHandler itemHandler = new ItemHandler(this);
-	public final ItemUpdater itemUpdater = new ItemUpdater(this);
 	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
-	public final ActivatorListener activatorListener = new ActivatorListener(this);
-	public final ProjectileListener projectileListener = new ProjectileListener(this);
+	
+	private final ItemUpdater itemUpdater = new ItemUpdater(this);
+	private final ActivatorListener activatorListener = new ActivatorListener(this);
+	private final ProjectileListener projectileListener = new ProjectileListener(this);
 	
 	private BukkitTask timerCheckingTask;
 	
