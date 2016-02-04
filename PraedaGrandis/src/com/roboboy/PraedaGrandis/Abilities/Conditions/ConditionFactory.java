@@ -2,11 +2,11 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class ConditionFactory
@@ -22,9 +22,9 @@ public class ConditionFactory
 		//Match
 		Matcher lineMatcher = conditionLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid condition line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + conditionLine, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid condition line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + conditionLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -48,7 +48,7 @@ public class ConditionFactory
 		//Construct condition by name
 		Condition c = createCondition(conditionName, targeter, not, conditionArgs, variableArgsString);
 		if (c == null) {
-			PraedaGrandis.plugin.logger.log("Invalid condition name: " + conditionName, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid condition name: " + conditionName, LogType.CONFIG_ERRORS);
 		}
 		return c;
 	}

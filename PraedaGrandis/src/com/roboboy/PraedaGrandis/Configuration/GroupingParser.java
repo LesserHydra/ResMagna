@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GroupingParser
@@ -23,8 +23,8 @@ public class GroupingParser
 			
 			int closingIndex = findClosingChar(string, i, bracketKind);
 			if (closingIndex == -1) {
-				PraedaGrandis.plugin.logger.log("Unclosed bracket at index " + i + ":", LogType.CONFIG_ERRORS);
-				PraedaGrandis.plugin.logger.log("  " + string, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Unclosed bracket at index " + i + ":", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  " + string, LogType.CONFIG_ERRORS);
 				continue;
 			}
 			

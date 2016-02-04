@@ -3,12 +3,12 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 class IsVariable extends Condition
@@ -28,8 +28,8 @@ class IsVariable extends Condition
 		//Match
 		Matcher lineMatcher = isVariableLinePattern.matcher(variableLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			name = "";
 			conditional = VariableConditional.EQUAL;
 			number = 0;

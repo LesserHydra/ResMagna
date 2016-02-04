@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class BlockArguments
@@ -44,7 +44,7 @@ public class BlockArguments
 		String result = argumentMap.get(key);
 		if (result == null || result.isEmpty()) {
 			result = fallback;
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 		}
 		return result;
 	}
@@ -60,12 +60,12 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		if (!Tools.isBoolean(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected boolean).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected boolean).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -83,12 +83,12 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		if (!Tools.isInteger(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected integer).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected integer).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -106,12 +106,12 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		if (!Tools.isInteger(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected long).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected long).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -129,12 +129,12 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		if (!Tools.isFloat(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected float).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected float).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -152,12 +152,12 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		if (!Tools.isFloat(value)) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected double).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected double).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -175,7 +175,7 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -193,13 +193,13 @@ public class BlockArguments
 		String value = argumentMap.get(key);
 		
 		if (value == null || value.isEmpty()) {
-			if (required) PraedaGrandis.plugin.logger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		Targeter result = TargeterFactory.build(value);
 		if (result == null) {
-			PraedaGrandis.plugin.logger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		

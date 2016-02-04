@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class AbilityFactory
@@ -24,9 +24,9 @@ public class AbilityFactory
 		//Improper format
 		Matcher lineMatcher = abilityLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid ability line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + abilityLine, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid ability line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + abilityLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 /**
@@ -71,7 +72,7 @@ public class GrandAbilityHandler extends MultiConfig
 	private void handleRequest(FunctionRunner requester, String requestName) {
 		GrandAbility result = customAbilities.get(requestName);
 		requester.returnRequest(result);
-		if (result == null) PraedaGrandis.plugin.logger.log("Requested custom ability not found: " + requestName, LogType.CONFIG_ERRORS);
+		if (result == null) GrandLogger.log("Requested custom ability not found: " + requestName, LogType.CONFIG_ERRORS);
 	}
 	
 }

@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 import com.comphenix.attribute.Attributes.Attribute;
 import com.comphenix.attribute.Attributes.AttributeType;
 import com.comphenix.attribute.Attributes.Operation;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GrandAttribute
@@ -30,8 +30,8 @@ public class GrandAttribute
 		//Match line
 		Matcher lineMatcher = LINE_PATTERN.matcher(attributeLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid attribute line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid attribute line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -41,8 +41,8 @@ public class GrandAttribute
 		//AttributeType
 		AttributeType attributeType = getTypeFromName(nameString);
 		if (attributeType == null) {
-			PraedaGrandis.plugin.logger.log("Invalid attribute type: " + nameString, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid attribute type: " + nameString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -51,8 +51,8 @@ public class GrandAttribute
 		boolean isPercentage = "%".equals(lineMatcher.group(4));
 		Operation operationType = getOperation(operationString, isPercentage);
 		if (operationType == null) {
-			PraedaGrandis.plugin.logger.log("Invalid attribute operation: " + operationString, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid attribute operation: " + operationString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -89,8 +89,8 @@ public class GrandAttribute
 	
 	private static double getOperand(String operandString, String operationString, boolean operandIsPercentage) {
 		if (!Tools.isFloat(operandString)) {
-			PraedaGrandis.plugin.logger.log("Invalid attribute line operand: " + operandString, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("Expected floating point value.", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid attribute line operand: " + operandString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Expected floating point value.", LogType.CONFIG_ERRORS);
 			return 0D;
 		}
 		

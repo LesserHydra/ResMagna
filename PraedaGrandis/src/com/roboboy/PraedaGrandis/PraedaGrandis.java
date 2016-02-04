@@ -11,7 +11,6 @@ import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
-import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 
 public class PraedaGrandis extends JavaPlugin
 {
@@ -34,7 +33,6 @@ public class PraedaGrandis extends JavaPlugin
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
 	public final ConfigManager configManager = new ConfigManager(this);
-	public final GrandLogger logger = new GrandLogger(this);
 	
 	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
 	public final ItemHandler itemHandler = new ItemHandler(this);
