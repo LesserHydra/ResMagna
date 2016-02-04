@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 
 public class PraedaGrandis extends JavaPlugin

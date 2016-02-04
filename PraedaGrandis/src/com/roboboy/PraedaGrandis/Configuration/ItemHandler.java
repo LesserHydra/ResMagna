@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis;
+package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
-import com.roboboy.PraedaGrandis.Configuration.MultiConfig;
+import com.roboboy.PraedaGrandis.AutoConvertItem;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 
 /**
  * Loads and stores all GrandItems

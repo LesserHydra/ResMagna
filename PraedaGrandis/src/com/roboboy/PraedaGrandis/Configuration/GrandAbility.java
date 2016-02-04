@@ -16,7 +16,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
  * @author roboboy
  *
  */
-public class GrandAbility
+class GrandAbility
 {
 	List<Condition> conditions = new ArrayList<Condition>();
 	List<Ability> abilities = new ArrayList<Ability>();

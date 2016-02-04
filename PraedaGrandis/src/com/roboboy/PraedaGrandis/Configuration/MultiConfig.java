@@ -10,9 +10,9 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
  * A class that handles all configuration files in a folder
  * @author roboboy
  */
-public abstract class MultiConfig
+abstract class MultiConfig
 {
-	static private final FilenameFilter YAML_FILTER = new FilenameFilter() {
+	private static final FilenameFilter YAML_FILTER = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return (name.endsWith(".yaml") || name.endsWith(".yml"));
