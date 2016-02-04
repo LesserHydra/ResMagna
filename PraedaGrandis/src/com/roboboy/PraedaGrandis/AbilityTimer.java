@@ -44,7 +44,7 @@ public class AbilityTimer
 				}
 				
 				//Activate for every matching item in player inventory
-				GrandInventory pInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer(p);
+				GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(p);
 				List<GrandInventory.InventoryElement> elements = pInv.getItems(item.getName());
 				for (GrandInventory.InventoryElement element : elements) {
 					ability.activate(element.slotType, new Target(p, p, null));

@@ -12,8 +12,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class PGGiveSubCommand implements SubCommand
 {
@@ -22,7 +22,7 @@ public class PGGiveSubCommand implements SubCommand
 		//Parse arguments
 		if (args.length != 3) return;
 		Player givePlayer = Bukkit.getPlayer(args[1]);
-		GrandItem giveItem = PraedaGrandis.plugin.itemHandler.getItem(args[2]);
+		GrandItem giveItem = ItemHandler.getInstance().getItem(args[2]);
 		
 		//Return if player or item does not exist
 		if (givePlayer == null || giveItem == null) {
@@ -45,7 +45,7 @@ public class PGGiveSubCommand implements SubCommand
 		if (args.length != 3) return new ArrayList<>();	//Nothing
 		
 		List<String> results = new LinkedList<String>();
-		for (String s : PraedaGrandis.plugin.itemHandler.getItemNames()) {
+		for (String s : ItemHandler.getInstance().getItemNames()) {
 			if (s.startsWith(args[2].toLowerCase())) results.add(s);
 		}
 		//Sorted for convenience

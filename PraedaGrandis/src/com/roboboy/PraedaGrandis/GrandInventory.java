@@ -1,9 +1,14 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Abilities.*;
-import com.roboboy.PraedaGrandis.Configuration.*;
-import java.util.*;
+import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,7 +43,7 @@ public class GrandInventory
 		//Read all items from player's inventory
 		for (ItemSlotType slotType : ItemSlotType.getUniqueTypes()) {
 			for (ItemStack item : slotType.getItems(player)) {
-				GrandItem gItem = PraedaGrandis.plugin.itemHandler.matchItem(item);
+				GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 				if (gItem != null) putItem(item, gItem, slotType);
 			}
 		}

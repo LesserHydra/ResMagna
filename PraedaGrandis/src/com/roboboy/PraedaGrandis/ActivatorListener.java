@@ -21,9 +21,9 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class ActivatorListener implements Listener
 {
@@ -60,7 +60,7 @@ public class ActivatorListener implements Listener
 	/*----------Break----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onItemBreak(PlayerItemBreakEvent e) {
-		GrandItem gItem = plugin.itemHandler.matchItem(e.getBrokenItem());
+		GrandItem gItem = ItemHandler.getInstance().matchItem(e.getBrokenItem());
 		if (gItem == null) return;
 		
 		activate(ActivatorType.BREAK, e.getPlayer(), null);
@@ -155,7 +155,7 @@ public class ActivatorListener implements Listener
 	{
 		//Run one tick later, to avoid the infinite hunger bug
 		new BukkitRunnable() { @Override public void run() {
-			GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
+			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
 			for (GrandInventory.InventoryElement element : pInv.getItems()) {
 				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
 			}

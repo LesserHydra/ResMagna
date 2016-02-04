@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsSheltered extends Condition
+class IsSheltered extends Condition
 {
 	public IsSheltered(Targeter targeter, boolean not) {
 		super(targeter, not);

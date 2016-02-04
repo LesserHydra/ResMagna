@@ -20,7 +20,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.GrandAbility;
+import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 
 public class ProjectileListener implements Listener
 {
@@ -61,7 +61,7 @@ public class ProjectileListener implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPotionSplash(PotionSplashEvent event) {
 		ThrownPotion projectile = event.getPotion();
-		GrandAbility onSplashAbility = getGrandAbilityFromMeta(projectile, "OnPotionSplash");
+		FunctionRunner onSplashAbility = getGrandAbilityFromMeta(projectile, "OnPotionSplash");
 		if (onSplashAbility == null) return;
 		
 		Player holder = null;
@@ -98,7 +98,7 @@ public class ProjectileListener implements Listener
 		if (!(damagee instanceof LivingEntity)) return;
 		LivingEntity livingDamagee = (LivingEntity) damagee;
 		
-		GrandAbility onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
+		FunctionRunner onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
 		if (onHitAbility == null) return;
 		
 		Player holder = null;
@@ -109,7 +109,7 @@ public class ProjectileListener implements Listener
 	
 	private void runEndAbility(Projectile projectile)
 	{
-		GrandAbility onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
+		FunctionRunner onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
 		if (onEndAbility == null) return;
 		
 		Player holder = null;
@@ -119,7 +119,7 @@ public class ProjectileListener implements Listener
 		onEndAbility.run(new Target(marker, holder, marker));
 	}
 
-	private GrandAbility getGrandAbilityFromMeta(Projectile entity, String key) {
+	private FunctionRunner getGrandAbilityFromMeta(Projectile entity, String key) {
 		MetadataValue gMeta = null;
 		for (MetadataValue md : entity.getMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + key)) {
 			if (md.getOwningPlugin() == PraedaGrandis.plugin) {
@@ -128,6 +128,6 @@ public class ProjectileListener implements Listener
 			}
 		}
 		if (gMeta == null) return null;
-		return plugin.abilityHandler.customAbilities.get(gMeta.asString().toLowerCase());
+		return new FunctionRunner(gMeta.asString().toLowerCase());
 	}
 }

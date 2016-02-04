@@ -3,6 +3,8 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.MarkerBuilder;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
@@ -10,7 +12,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-public class ExplosionAbility extends Ability
+class ExplosionAbility extends Ability
 {
 	private final float power;
 	private final boolean setFire;

@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsThundering extends Condition
+class IsThundering extends Condition
 {
 	public IsThundering(Targeter targeter, boolean not) {
 		super(targeter, not);

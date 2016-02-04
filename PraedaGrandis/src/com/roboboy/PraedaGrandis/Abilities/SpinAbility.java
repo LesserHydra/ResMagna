@@ -3,17 +3,19 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class SpinAbility extends Ability
+class SpinAbility extends Ability
 {
-	final private int degrees;
-	final private int duration;
-	final private long updateDelay;
-	final private boolean reverse;
+	private final int degrees;
+	private final int duration;
+	private final long updateDelay;
+	private final boolean reverse;
 	
 	public SpinAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);

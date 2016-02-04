@@ -4,26 +4,19 @@ import java.io.File;
 import java.io.FilenameFilter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 
 /**
  * A class that handles all configuration files in a folder
  * @author roboboy
  */
-public abstract class MultiConfig
+abstract class MultiConfig
 {
-	static private final FilenameFilter YAML_FILTER = new FilenameFilter() {
+	private static final FilenameFilter YAML_FILTER = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return (name.endsWith(".yaml") || name.endsWith(".yml"));
         }
     };
-	
-	protected final PraedaGrandis plugin;
-	
-	protected MultiConfig(PraedaGrandis plugin) {
-		this.plugin = plugin;
-	}
 	
 	/**
 	 * Calls {@link #loadConfig(FileConfiguration) loadConfig} for every configuration file in the given folder<br>

@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsSneaking extends Condition
+class IsSneaking extends Condition
 {
 	
 	protected IsSneaking(Targeter targeter, boolean not) {
