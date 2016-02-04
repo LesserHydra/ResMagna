@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsSprinting extends Condition
+class IsSprinting extends Condition
 {
 	protected IsSprinting(Targeter targeter, boolean not) {
 		super(targeter, not);

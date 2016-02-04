@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 /**
  * Updates all items in player inventory on login and reload. Updates
@@ -77,7 +78,7 @@ public class ItemUpdater implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onCraftingEvent(CraftItemEvent e) {
 		for (ItemStack item : e.getInventory().getMatrix()) {
-			GrandItem gItem = plugin.itemHandler.matchItem(item);
+			GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 			if (gItem != null) {
 				e.setCancelled(true);
 			}
@@ -89,7 +90,7 @@ public class ItemUpdater implements Listener
 	public void onBlockPlace(BlockPlaceEvent e) {
 		ItemStack item = e.getItemInHand();
 		
-		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 		if (gItem == null || gItem.isPlaceable()) return;
 		
 		e.setCancelled(true);
@@ -101,7 +102,7 @@ public class ItemUpdater implements Listener
 	public void onItemDespawn(ItemDespawnEvent e) {
 		Item item = e.getEntity();
 		if (!item.isCustomNameVisible()) return;
-		GrandItem gItem = plugin.itemHandler.matchItem(item.getItemStack());
+		GrandItem gItem = ItemHandler.getInstance().matchItem(item.getItemStack());
 		if (gItem == null || !gItem.isPersistant()) return;
 		
 		e.setCancelled(true);
@@ -112,7 +113,7 @@ public class ItemUpdater implements Listener
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onItemBreak(PlayerItemBreakEvent e) {
 		final ItemStack item = e.getBrokenItem();
-		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 		if (gItem == null || !gItem.isPersistant()) return;
 		
 		item.setAmount(1);
@@ -129,7 +130,7 @@ public class ItemUpdater implements Listener
 	public void onBlockBreak(BlockDamageEvent e) {
 		ItemStack item = e.getItemInHand();
 		
-		GrandItem gItem = plugin.itemHandler.matchItem(item);
+		GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 		if (gItem == null || !gItem.isPersistant()) return;
 		if (item.getDurability() != item.getType().getMaxDurability() + 1) return;
 		
@@ -141,7 +142,7 @@ public class ItemUpdater implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onItemDropped(ItemSpawnEvent e) {
 		Item drop = e.getEntity();
-		GrandItem gItem = plugin.itemHandler.matchItem(drop.getItemStack());
+		GrandItem gItem = ItemHandler.getInstance().matchItem(drop.getItemStack());
 		if (gItem == null || !gItem.isPersistant()) return;
 		
 		drop.setCustomName(gItem.getDisplayName());
@@ -166,13 +167,13 @@ public class ItemUpdater implements Listener
 	{
 		if (item != null && item.getType() != Material.AIR)
 		{
-			GrandItem gItem = plugin.itemHandler.matchItem(item);
+			GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 			if (gItem != null) {
 				gItem.update(item);
 			}
 			else
 			{
-				AutoConvertItem cItem = plugin.itemHandler.matchConvertItem(item);
+				AutoConvertItem cItem = ItemHandler.getInstance().matchConvertItem(item);
 				if (cItem != null) {
 					cItem.convert(item);
 				}

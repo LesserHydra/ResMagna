@@ -3,23 +3,25 @@ package com.roboboy.PraedaGrandis.Abilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class VariableAbility extends Ability
+class VariableAbility extends Ability
 {
 	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
 	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
 	
-	final private String 			name;
-	final private VariableOperator	operator;
-	final private String			otherName;
-	final private int				number;
+	private final String 			name;
+	private final VariableOperator	operator;
+	private final String			otherName;
+	private final int				number;
 	
 	public VariableAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, String variableLine)
 	{
@@ -28,8 +30,8 @@ public class VariableAbility extends Ability
 		//Match
 		Matcher lineMatcher = variableLinePattern.matcher(variableLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid variable line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid variable line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			name = "";
 			operator = VariableOperator.SET;
 			number = 0;

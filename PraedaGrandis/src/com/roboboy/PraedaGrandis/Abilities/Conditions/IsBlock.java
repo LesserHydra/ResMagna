@@ -6,7 +6,7 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import com.roboboy.PraedaGrandis.Configuration.GrandMaterial;
 
-public class IsBlock extends Condition
+class IsBlock extends Condition
 {
 	private final GrandMaterial materials;
 	private final GrandLocation location;

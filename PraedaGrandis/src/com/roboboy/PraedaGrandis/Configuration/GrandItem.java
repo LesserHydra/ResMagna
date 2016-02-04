@@ -18,11 +18,11 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import com.comphenix.attribute.Attributes;
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.AbilityTimer;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
-import com.roboboy.PraedaGrandis.Abilities.ActivatorType;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 
 public class GrandItem

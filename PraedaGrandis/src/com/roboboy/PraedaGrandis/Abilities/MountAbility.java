@@ -1,11 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class MountAbility extends Ability
+class MountAbility extends Ability
 {
 	private final Targeter otherTargeter;
 	

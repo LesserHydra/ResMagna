@@ -2,16 +2,18 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class PotionAbility extends Ability
+class PotionAbility extends Ability
 {
 	//final PotionEffect potionEffect;
-	final PotionEffectType type;
-	final int duration;
-	final int amplifier;
+	private final PotionEffectType type;
+	private final int duration;
+	private final int amplifier;
 
 	//LATER: Add options for force, ambient, and particles.
 	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)

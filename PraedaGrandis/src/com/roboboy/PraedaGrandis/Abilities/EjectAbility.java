@@ -1,9 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class EjectAbility extends Ability
+class EjectAbility extends Ability
 {
 	public EjectAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter) {
 		super(slotType, activator, targeter);

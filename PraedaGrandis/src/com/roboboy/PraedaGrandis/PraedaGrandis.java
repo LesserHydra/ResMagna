@@ -9,13 +9,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
-import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
-import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 
 public class PraedaGrandis extends JavaPlugin
 {
-	static public final Random RANDOM_GENERATOR = new Random();
-	static public final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
+	public static final Random RANDOM_GENERATOR = new Random();
+	public static final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
 			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
 			Material.ENDER_CHEST, Material.ANVIL, Material.BED_BLOCK, Material.FENCE_GATE, Material.SPRUCE_FENCE_GATE,
 			Material.BIRCH_FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.DARK_OAK_FENCE_GATE,
@@ -32,15 +30,9 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
-	public final ConfigManager configManager = new ConfigManager(this);
-	public final GrandLogger logger = new GrandLogger(this);
-	
-	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
-	public final ItemHandler itemHandler = new ItemHandler(this);
-	public final ItemUpdater itemUpdater = new ItemUpdater(this);
-	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
-	public final ActivatorListener activatorListener = new ActivatorListener(this);
-	public final ProjectileListener projectileListener = new ProjectileListener(this);
+	private final ItemUpdater itemUpdater = new ItemUpdater(this);
+	private final ActivatorListener activatorListener = new ActivatorListener(this);
+	private final ProjectileListener projectileListener = new ProjectileListener(this);
 	
 	private BukkitTask timerCheckingTask;
 	
@@ -50,7 +42,7 @@ public class PraedaGrandis extends JavaPlugin
 	{
 		plugin = this;
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
-		getServer().getPluginManager().registerEvents(inventoryHandler, this);
+		getServer().getPluginManager().registerEvents(InventoryHandler.getInstance(), this);
 		getServer().getPluginManager().registerEvents(activatorListener, this);
 		getServer().getPluginManager().registerEvents(projectileListener, this);
 		
@@ -73,21 +65,19 @@ public class PraedaGrandis extends JavaPlugin
 	}
 	
 	public void reload() {
-		configManager.reload();
-		abilityHandler.reload();
-		itemHandler.reload();
+		ConfigManager.getInstance().reload();
 		itemUpdater.reload();
-		inventoryHandler.reload();
+		InventoryHandler.getInstance().reload();
 		
 		//Timer checker
 		if (timerCheckingTask != null) timerCheckingTask.cancel();
 		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
 			for (Player p : getServer().getOnlinePlayers()) {
-        		for (GrandInventory.InventoryElement element : inventoryHandler.getItemsFromPlayer(p).getItems()) {
+        		for (GrandInventory.InventoryElement element : InventoryHandler.getInstance().getItemsFromPlayer(p).getItems()) {
         			element.grandItem.activateTimers(p);
         		}
         	}
-		}}.runTaskTimer(plugin, 0L, configManager.getTimerHandlerDelay());
+		}}.runTaskTimer(plugin, 0L, ConfigManager.getInstance().getTimerHandlerDelay());
 	}
 	
 }

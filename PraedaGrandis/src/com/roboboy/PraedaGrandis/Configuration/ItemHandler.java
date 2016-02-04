@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis;
+package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
-import com.roboboy.PraedaGrandis.Configuration.MultiConfig;
+import com.roboboy.PraedaGrandis.AutoConvertItem;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 /**
  * Loads and stores all GrandItems
@@ -19,12 +21,14 @@ import com.roboboy.PraedaGrandis.Configuration.MultiConfig;
  */
 public class ItemHandler extends MultiConfig
 {
+	private static ItemHandler instance = new ItemHandler();
+	private ItemHandler() {}
+	public static ItemHandler getInstance() {
+		return instance;
+	}
+	
 	private Map<String, GrandItem> items = new HashMap<String, GrandItem>();
 	private List<AutoConvertItem> convertItems = new ArrayList<AutoConvertItem>();
-	
-	public ItemHandler(PraedaGrandis plugin) {
-		super(plugin);
-	}
 	
 	/**
 	 * Reloads the item configuration files.<br>
@@ -39,7 +43,7 @@ public class ItemHandler extends MultiConfig
 		}
 		items.clear();
 		convertItems.clear();
-		super.reload(plugin.configManager.getItemFolder());
+		super.reload(ConfigManager.getInstance().getItemFolder());
 	}
 	
 	/**
@@ -83,7 +87,7 @@ public class ItemHandler extends MultiConfig
 		if (item == null || item.getType() == Material.AIR) return null;
 		for (AutoConvertItem convert : convertItems) {
 			if (convert.match(item)) {
-				plugin.getLogger().info("Converting item!");
+				GrandLogger.log("Converting item!", LogType.DEBUG); //TODO: Change to something more appropriate
 				return convert;
 			}
 		}	

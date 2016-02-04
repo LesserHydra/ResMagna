@@ -3,23 +3,23 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class IsVariable extends Condition
+class IsVariable extends Condition
 {
 	//(\w+)\s*([=<>]+)\s*(\w+)
-	static private final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
+	private static final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
 	
-	final private String 				name;
-	final private VariableConditional	conditional;
-	final private String				otherName;
-	final private int					number;
+	private final String 				name;
+	private final VariableConditional	conditional;
+	private final String				otherName;
+	private final int					number;
 	
 	public IsVariable(Targeter targeter, boolean not, String variableLine)
 	{
@@ -28,8 +28,8 @@ public class IsVariable extends Condition
 		//Match
 		Matcher lineMatcher = isVariableLinePattern.matcher(variableLine);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			name = "";
 			conditional = VariableConditional.EQUAL;
 			number = 0;

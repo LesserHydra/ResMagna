@@ -3,15 +3,17 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class SwapAbility extends Ability
+class SwapAbility extends Ability
 {
 	private final Targeter otherTargeter;
-	final private boolean swapFacing;
+	private final boolean swapFacing;
 	
 	public SwapAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);

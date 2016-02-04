@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import com.roboboy.PraedaGrandis.Abilities.ItemSlotType;
 
 public enum ArmorType
 {

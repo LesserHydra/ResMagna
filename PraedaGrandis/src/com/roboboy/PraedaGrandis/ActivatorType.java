@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis.Abilities;
+package com.roboboy.PraedaGrandis;
 
 /**
  * Activators

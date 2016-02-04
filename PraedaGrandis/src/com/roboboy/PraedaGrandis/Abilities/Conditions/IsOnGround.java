@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public class IsOnGround extends Condition
+class IsOnGround extends Condition
 {
 	public IsOnGround(Targeter targeter, boolean not) {
 		super(targeter, not);

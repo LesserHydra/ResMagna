@@ -8,12 +8,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GrandLocation
@@ -38,9 +38,9 @@ public class GrandLocation
 		//Match
 		Matcher lineMatcher = formatPattern.matcher(simplifiedString);
 		if (!lineMatcher.matches()) {
-			PraedaGrandis.plugin.logger.log("Invalid location format:", LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  " + locString, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("  Simplified: " + simplifiedString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid location format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + locString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Simplified: " + simplifiedString, LogType.CONFIG_ERRORS);
 			locationTargeter = new CurrentTargeter();
 			return;
 		}
@@ -60,7 +60,7 @@ public class GrandLocation
 			String componentTypeString = componentMatcher.group(1);
 			LocationComponentType componentType = LocationComponentType.fromString(componentTypeString);
 			if (componentType == null) {
-				PraedaGrandis.plugin.logger.log("Invalid location component type: " + componentTypeString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Invalid location component type: " + componentTypeString, LogType.CONFIG_ERRORS);
 				continue;
 			}
 			
@@ -68,8 +68,8 @@ public class GrandLocation
 			String componentDoubleString = componentMatcher.group(2);
 			if (componentDoubleString == null) continue;
 			if (!Tools.isFloat(componentDoubleString)) {
-				PraedaGrandis.plugin.logger.log("Invalid location component modifier: " + componentDoubleString, LogType.CONFIG_ERRORS);
-				PraedaGrandis.plugin.logger.log("Expected a floating point value.", LogType.CONFIG_ERRORS);
+				GrandLogger.log("Invalid location component modifier: " + componentDoubleString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Expected a floating point value.", LogType.CONFIG_ERRORS);
 				continue;
 			}
 			Double componentDouble = Double.parseDouble(componentDoubleString);

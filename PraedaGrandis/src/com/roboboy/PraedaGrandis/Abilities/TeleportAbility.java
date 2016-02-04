@@ -7,20 +7,22 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-public class TeleportAbility extends Ability
+class TeleportAbility extends Ability
 {
-	final private GrandLocation location;
-	final private String worldSuffix;
-	final private int spreadH;
-	final private int spreadV;
-	final private boolean includeCenter;
-	final private boolean ender;
+	private final GrandLocation location;
+	private final String worldSuffix;
+	private final int spreadH;
+	private final int spreadV;
+	private final boolean includeCenter;
+	private final boolean ender;
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
