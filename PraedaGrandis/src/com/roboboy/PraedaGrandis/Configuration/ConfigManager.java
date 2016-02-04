@@ -11,8 +11,11 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
  * @author roboboy
  */
 public class ConfigManager
-{
-	private PraedaGrandis plugin;
+{	
+	private static ConfigManager instance = new ConfigManager();
+	public static ConfigManager getInstance() {
+		return instance;
+	}
 	
 	private File pluginFolder;
 	private File itemFolder;
@@ -22,19 +25,15 @@ public class ConfigManager
 	
 	private EnumSet<LogType> enabledLogTypes;
 	
-	public ConfigManager(PraedaGrandis p) {
-		plugin = p;
-	}
-	
 	/**
 	 * Reloads the main configuration file.
 	 */
 	public void reload() {
-		plugin.saveDefaultConfig();
-		plugin.reloadConfig();
-		FileConfiguration pluginConfig = plugin.getConfig();
+		PraedaGrandis.plugin.saveDefaultConfig();
+		PraedaGrandis.plugin.reloadConfig();
+		FileConfiguration pluginConfig = PraedaGrandis.plugin.getConfig();
 		
-		pluginFolder = plugin.getDataFolder();
+		pluginFolder = PraedaGrandis.plugin.getDataFolder();
 		if (!pluginFolder.exists()) pluginFolder.mkdir();
 		
 		//Folders

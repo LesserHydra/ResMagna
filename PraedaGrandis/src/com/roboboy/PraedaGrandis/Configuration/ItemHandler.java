@@ -39,7 +39,7 @@ public class ItemHandler extends MultiConfig
 		}
 		items.clear();
 		convertItems.clear();
-		super.reload(plugin.configManager.getItemFolder());
+		super.reload(ConfigManager.getInstance().getItemFolder());
 	}
 	
 	/**

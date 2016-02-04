@@ -32,7 +32,7 @@ public class PraedaGrandis extends JavaPlugin
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
-	public final ConfigManager configManager = new ConfigManager(this);
+	private final ConfigManager configManager = ConfigManager.getInstance();
 	
 	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
 	public final ItemHandler itemHandler = new ItemHandler(this);

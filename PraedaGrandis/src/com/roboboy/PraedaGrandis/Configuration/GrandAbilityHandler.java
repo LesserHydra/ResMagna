@@ -44,7 +44,7 @@ public class GrandAbilityHandler extends MultiConfig
 	public void reload() {
 		fullyLoaded = false;
 		customAbilities.clear();
-		super.reload(plugin.configManager.getAbilityFolder());
+		super.reload(ConfigManager.getInstance().getAbilityFolder());
 		
 		//Finish custom abilities after all GrandAbilities are constructed
 		fullyLoaded = true;

@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Logging;
 
 import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
 
 public class GrandLogger
 {
@@ -10,7 +11,7 @@ public class GrandLogger
 	 * @param type LogType of message
 	 */
 	public static void log(String message, LogType type) {
-		if (!PraedaGrandis.plugin.configManager.getEnabledLogTypes().contains(type)) return;
+		if (!ConfigManager.getInstance().getEnabledLogTypes().contains(type)) return;
 		PraedaGrandis.plugin.getLogger().log(type.getLevel(), type.getPrefix() + " " + message);
 	}
 }
