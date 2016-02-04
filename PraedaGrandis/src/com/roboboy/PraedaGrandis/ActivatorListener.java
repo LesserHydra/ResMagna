@@ -155,7 +155,7 @@ public class ActivatorListener implements Listener
 	{
 		//Run one tick later, to avoid the infinite hunger bug
 		new BukkitRunnable() { @Override public void run() {
-			GrandInventory pInv = plugin.inventoryHandler.getItemsFromPlayer(holder);
+			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
 			for (GrandInventory.InventoryElement element : pInv.getItems()) {
 				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
 			}

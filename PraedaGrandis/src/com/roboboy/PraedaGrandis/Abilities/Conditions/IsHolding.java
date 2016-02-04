@@ -2,8 +2,8 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.GrandInventory;
+import com.roboboy.PraedaGrandis.InventoryHandler;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -22,7 +22,7 @@ class IsHolding extends Condition
 	protected boolean checkThis(Target target) {
 		if (!(target.get() instanceof Player)) return false;
 		
-		GrandInventory gInv = PraedaGrandis.plugin.inventoryHandler.getItemsFromPlayer((Player)target.get());
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.get());
 		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
 			if (element.slotType == ItemSlotType.HELD) return true;
 		}

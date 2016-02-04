@@ -30,12 +30,13 @@ import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class InventoryHandler implements Listener
 {	
-	private final PraedaGrandis plugin;
-	private Map<String, GrandInventory> playerInventories = new HashMap<>();
-	
-	public InventoryHandler(PraedaGrandis plugin) {
-		this.plugin = plugin;
+	private static InventoryHandler instance = new InventoryHandler();
+	private InventoryHandler() {}
+	public static InventoryHandler getInstance() {
+		return instance;
 	}
+	
+	private Map<String, GrandInventory> playerInventories = new HashMap<>();
 	
 	/**
 	 * Forgets about previously handled inventories, and treats all
@@ -45,7 +46,7 @@ public class InventoryHandler implements Listener
 	 */
 	public void reload() {
 		playerInventories.clear();
-		for (Player p : plugin.getServer().getOnlinePlayers()) {
+		for (Player p : PraedaGrandis.plugin.getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
 	}
@@ -279,7 +280,7 @@ public class InventoryHandler implements Listener
 	private void resetInventoryNextTick(final Player p) {
 		new BukkitRunnable() { @Override public void run() {
 			playerInventories.get(p.getName()).resetToPlayer(p);
-		}}.runTaskLater(plugin, 1L);
+		}}.runTaskLater(PraedaGrandis.plugin, 1L);
 	}
 	
 }

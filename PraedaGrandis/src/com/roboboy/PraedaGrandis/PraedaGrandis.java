@@ -35,7 +35,7 @@ public class PraedaGrandis extends JavaPlugin
 	private final ConfigManager configManager = ConfigManager.getInstance();
 	private final GrandAbilityHandler abilityHandler = GrandAbilityHandler.getInstance();
 	private final ItemHandler itemHandler = ItemHandler.getInstance();
-	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
+	private final InventoryHandler inventoryHandler = InventoryHandler.getInstance();
 	
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
 	private final ActivatorListener activatorListener = new ActivatorListener(this);
