@@ -85,8 +85,8 @@ class ProjectileAbility extends Ability
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
 		projectile.setMetadata("PG_Projectile", new FixedMetadataValue(PraedaGrandis.plugin, true));
 		
-		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitName));
-		projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(PraedaGrandis.plugin, onEndName));
+		if (onHitName != null) projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(PraedaGrandis.plugin, onHitName));
+		if (onEndName != null) projectile.setMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(PraedaGrandis.plugin, onEndName));
 		
 		setFireballProperties(projectile);
 		setArrowProperties(projectile);

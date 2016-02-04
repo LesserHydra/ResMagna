@@ -9,7 +9,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class DelayAbility extends Ability
+public class DelayAbility extends Ability
 {
 	private final long delayAmount;
 	private final List<Ability> delayedAbilities = new ArrayList<>();

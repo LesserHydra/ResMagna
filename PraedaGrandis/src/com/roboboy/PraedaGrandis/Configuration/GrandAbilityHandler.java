@@ -71,13 +71,7 @@ public class GrandAbilityHandler extends MultiConfig
 	private void handleRequest(FunctionRunner requester, String requestName) {
 		GrandAbility result = customAbilities.get(requestName);
 		requester.returnRequest(result);
-		if (result == null) {
-			PraedaGrandis.plugin.logger.log("Requested custom ability not found: " + requestName, LogType.CONFIG_ERRORS);
-			PraedaGrandis.plugin.logger.log("Registered:", LogType.CONFIG_ERRORS);
-			for (String s : customAbilities.keySet()) {
-				PraedaGrandis.plugin.logger.log("    - " + s, LogType.CONFIG_ERRORS);
-			}
-		}
+		if (result == null) PraedaGrandis.plugin.logger.log("Requested custom ability not found: " + requestName, LogType.CONFIG_ERRORS);
 	}
 	
 }
