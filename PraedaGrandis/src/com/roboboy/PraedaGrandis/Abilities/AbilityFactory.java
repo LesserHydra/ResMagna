@@ -87,6 +87,7 @@ public class AbilityFactory
 		case "eject":			return new EjectAbility(slotType, actType, targeter);
 		case "ghostblock":		return new GhostBlockAbility(slotType, actType, targeter, abilityArgs);
 		case "projectile":		return new ProjectileAbility(slotType, actType, targeter, abilityArgs);
+		case "beam":			return new BeamAbility(slotType, actType, targeter, abilityArgs);
 		
 		case "variable":		return new VariableAbility(slotType, actType, targeter, variableArgs);
 		default:				return new CustomAbility(name, slotType, actType, targeter);

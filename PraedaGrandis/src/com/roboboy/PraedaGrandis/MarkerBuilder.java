@@ -10,6 +10,7 @@ public class MarkerBuilder
 		ArmorStand marker = location.getWorld().spawn(new Location(location.getWorld(), 0D, 0D, 0D), ArmorStand.class);
 		marker.setVisible(false);
 		marker.setMarker(true);
+		marker.setGravity(false);
 		marker.teleport(location);
 		marker.remove();
 		return marker;
