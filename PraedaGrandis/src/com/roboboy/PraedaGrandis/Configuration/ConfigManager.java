@@ -13,6 +13,7 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 public class ConfigManager
 {	
 	private static ConfigManager instance = new ConfigManager();
+	private ConfigManager() {}
 	public static ConfigManager getInstance() {
 		return instance;
 	}

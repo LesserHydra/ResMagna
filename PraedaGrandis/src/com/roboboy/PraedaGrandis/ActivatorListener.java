@@ -23,6 +23,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class ActivatorListener implements Listener
 {
@@ -59,7 +60,7 @@ public class ActivatorListener implements Listener
 	/*----------Break----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onItemBreak(PlayerItemBreakEvent e) {
-		GrandItem gItem = plugin.itemHandler.matchItem(e.getBrokenItem());
+		GrandItem gItem = ItemHandler.getInstance().matchItem(e.getBrokenItem());
 		if (gItem == null) return;
 		
 		activate(ActivatorType.BREAK, e.getPlayer(), null);

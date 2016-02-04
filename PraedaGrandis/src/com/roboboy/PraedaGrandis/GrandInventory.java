@@ -2,6 +2,7 @@ package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class GrandInventory
 		//Read all items from player's inventory
 		for (ItemSlotType slotType : ItemSlotType.getUniqueTypes()) {
 			for (ItemStack item : slotType.getItems(player)) {
-				GrandItem gItem = PraedaGrandis.plugin.itemHandler.matchItem(item);
+				GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 				if (gItem != null) putItem(item, gItem, slotType);
 			}
 		}

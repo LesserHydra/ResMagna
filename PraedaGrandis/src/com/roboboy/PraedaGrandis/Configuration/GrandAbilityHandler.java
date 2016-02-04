@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
@@ -18,14 +17,16 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
  */
 public class GrandAbilityHandler extends MultiConfig
 {
+	private static GrandAbilityHandler instance = new GrandAbilityHandler();
+	private GrandAbilityHandler() {}
+	public static GrandAbilityHandler getInstance() {
+		return instance;
+	}
+	
 	private Map<String, GrandAbility> customAbilities = new HashMap<String, GrandAbility>();
 	private List< Pair<FunctionRunner, String> > requestList = new LinkedList<>();
 	
 	private boolean fullyLoaded = false;
-
-	public GrandAbilityHandler(PraedaGrandis plugin){
-		super(plugin);
-	}
 	
 	public void requestFunction(FunctionRunner requester, String requestName) {
 		if (!fullyLoaded) {

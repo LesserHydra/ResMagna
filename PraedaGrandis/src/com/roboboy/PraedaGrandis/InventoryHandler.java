@@ -26,6 +26,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Dispenser;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class InventoryHandler implements Listener
 {	
@@ -66,13 +67,13 @@ public class InventoryHandler implements Listener
 		ItemStack[] playerItems = e.getPlayer().getInventory().getContents();
 		
 		ItemStack oldItem = playerItems[e.getPreviousSlot()];
-		GrandItem oldGrandItem = plugin.itemHandler.matchItem(oldItem);
+		GrandItem oldGrandItem = ItemHandler.getInstance().matchItem(oldItem);
 		if (oldGrandItem != null) {
 			gInv.putItem(oldItem, oldGrandItem, ItemSlotType.UNHELD);
 		}
 		
 		ItemStack newItem = playerItems[e.getNewSlot()];
-		GrandItem newGrandItem = plugin.itemHandler.matchItem(newItem);
+		GrandItem newGrandItem = ItemHandler.getInstance().matchItem(newItem);
 		if (newGrandItem != null) {
 			gInv.putItem(newItem, newGrandItem, ItemSlotType.HELD);
 		}
@@ -82,7 +83,7 @@ public class InventoryHandler implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onItemPickup(PlayerPickupItemEvent e) {
 		ItemStack item = e.getItem().getItemStack();
-		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
 		if (grandItem == null) return;
 		
 		//TODO: Figure out where the item will added to
@@ -93,7 +94,7 @@ public class InventoryHandler implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onItemDrop(PlayerDropItemEvent e) {
 		ItemStack item = e.getItemDrop().getItemStack();
-		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
 		if (grandItem == null) return;
 		
 		Player player = e.getPlayer();
@@ -108,7 +109,7 @@ public class InventoryHandler implements Listener
 		Player player = (Player)e.getWhoClicked();
 		
 		ItemStack cursorItem = e.getOldCursor();
-		GrandItem grandCursorItem = plugin.itemHandler.matchItem(cursorItem);
+		GrandItem grandCursorItem = ItemHandler.getInstance().matchItem(cursorItem);
 		if (grandCursorItem == null) return;
 		
 		//TODO: Figure out where the item will added to
@@ -133,8 +134,8 @@ public class InventoryHandler implements Listener
 		GrandInventory gInv = playerInventories.get(p.getName());
 		ItemStack currentItem = e.getCurrentItem();
 		ItemStack cursorItem = e.getCursor();
-		GrandItem currentGrandItem = plugin.itemHandler.matchItem(currentItem);
-		GrandItem cursorGrandItem = plugin.itemHandler.matchItem(cursorItem);
+		GrandItem currentGrandItem = ItemHandler.getInstance().matchItem(currentItem);
+		GrandItem cursorGrandItem = ItemHandler.getInstance().matchItem(cursorItem);
 		ItemSlotType clickedSlotType = ItemSlotType.getSlotType(e.getSlotType(), e.getSlot(), inv.getHeldItemSlot());
 		
 		//if (currentGrandItem == null && cursorGrandItem == null) return;
@@ -190,7 +191,7 @@ public class InventoryHandler implements Listener
 		//Current item is swapped with hotbar item
 		if (e.getAction() == InventoryAction.HOTBAR_SWAP) {
 			ItemStack hotbarItem = inv.getItem(e.getHotbarButton());
-			GrandItem hotbarGrandItem = plugin.itemHandler.matchItem(hotbarItem);
+			GrandItem hotbarGrandItem = ItemHandler.getInstance().matchItem(hotbarItem);
 			ItemSlotType hotbarSlotType = ItemSlotType.getHotbarSlotType(e.getHotbarButton(), inv.getHeldItemSlot());
 			
 			if (currentGrandItem != null) gInv.putItem(currentItem, currentGrandItem, hotbarSlotType);
@@ -218,7 +219,7 @@ public class InventoryHandler implements Listener
 		Player player = e.getPlayer();
 		if (!newArmorType.isEmpty(player)) return;
 		
-		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
 		if (grandItem == null) return;
 		
 		if (e.getClickedBlock() != null && !player.isSneaking()) {
@@ -239,7 +240,7 @@ public class InventoryHandler implements Listener
 		ArmorType type = ArmorType.fromMaterial(item.getType());
 		if (type.isNull()) return;
 		
-		GrandItem grandItem = plugin.itemHandler.matchItem(item);
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
 		if (grandItem == null) return;
 		
 		Location loc = e.getBlock().getLocation();

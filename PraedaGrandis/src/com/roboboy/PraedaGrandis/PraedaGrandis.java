@@ -14,8 +14,8 @@ import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class PraedaGrandis extends JavaPlugin
 {
-	static public final Random RANDOM_GENERATOR = new Random();
-	static public final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
+	public static final Random RANDOM_GENERATOR = new Random();
+	public static final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
 			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
 			Material.ENDER_CHEST, Material.ANVIL, Material.BED_BLOCK, Material.FENCE_GATE, Material.SPRUCE_FENCE_GATE,
 			Material.BIRCH_FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.DARK_OAK_FENCE_GATE,
@@ -33,9 +33,8 @@ public class PraedaGrandis extends JavaPlugin
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
 	private final ConfigManager configManager = ConfigManager.getInstance();
-	
-	public final GrandAbilityHandler abilityHandler = new GrandAbilityHandler(this);
-	public final ItemHandler itemHandler = new ItemHandler(this);
+	private final GrandAbilityHandler abilityHandler = GrandAbilityHandler.getInstance();
+	private final ItemHandler itemHandler = ItemHandler.getInstance();
 	public final InventoryHandler inventoryHandler = new InventoryHandler(this);
 	
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
