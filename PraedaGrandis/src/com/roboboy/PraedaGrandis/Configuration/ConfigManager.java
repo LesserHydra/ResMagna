@@ -51,6 +51,10 @@ public class ConfigManager
 		for (LogType type : LogType.values()) {
 			if (pluginConfig.getBoolean("EnabledLogTypes." + type.name(), false)) enabledLogTypes.add(type);
 		}
+		
+		//MultiConfigs
+		GrandAbilityHandler.getInstance().reload();
+		ItemHandler.getInstance().reload();
 	}
 	
 	public File getAbilityFolder() {

@@ -9,8 +9,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import com.roboboy.PraedaGrandis.Commands.MainCommandExecutor;
 import com.roboboy.PraedaGrandis.Configuration.ConfigManager;
-import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
-import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
 public class PraedaGrandis extends JavaPlugin
 {
@@ -33,8 +31,6 @@ public class PraedaGrandis extends JavaPlugin
 	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
 	private final ConfigManager configManager = ConfigManager.getInstance();
-	private final GrandAbilityHandler abilityHandler = GrandAbilityHandler.getInstance();
-	private final ItemHandler itemHandler = ItemHandler.getInstance();
 	private final InventoryHandler inventoryHandler = InventoryHandler.getInstance();
 	
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
@@ -73,8 +69,6 @@ public class PraedaGrandis extends JavaPlugin
 	
 	public void reload() {
 		configManager.reload();
-		abilityHandler.reload();
-		itemHandler.reload();
 		itemUpdater.reload();
 		inventoryHandler.reload();
 		
