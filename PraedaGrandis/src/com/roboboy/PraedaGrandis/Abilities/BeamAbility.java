@@ -47,8 +47,8 @@ public class BeamAbility extends Ability
 		maxDistance = args.getDouble("maxdistance", 50D, false);
 		maxTicks = args.getLong("maxticks", 200L, false);
 		
-		ignoreBlocks = args.getBoolean("ignoreblocks", true, false);
-		ignoreEntities = args.getBoolean("ignoreentities", true, false);
+		ignoreBlocks = args.getBoolean("ignoreblocks", false, false);
+		ignoreEntities = args.getBoolean("ignoreentities", false, false);
 		
 		double spread = args.getDouble("spread", 0.5, false);
 		spreadX = args.getDouble("spreadx", spread, false);
