@@ -7,6 +7,7 @@ public class FunctionRunner
 	private GrandAbility function;
 	
 	public FunctionRunner(String functionName) {
+		if (functionName == null) return;
 		GrandAbilityHandler.getInstance().requestFunction(this, functionName);
 	}
 	
