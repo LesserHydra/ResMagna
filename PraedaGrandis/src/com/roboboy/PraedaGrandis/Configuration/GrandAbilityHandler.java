@@ -29,6 +29,7 @@ public class GrandAbilityHandler extends MultiConfig
 	private boolean fullyLoaded = false;
 	
 	public void requestFunction(FunctionRunner requester, String requestName) {
+		requestName = requestName.toLowerCase();
 		if (!fullyLoaded) {
 			requestList.add(new ImmutablePair<FunctionRunner, String>(requester, requestName));
 			return;
