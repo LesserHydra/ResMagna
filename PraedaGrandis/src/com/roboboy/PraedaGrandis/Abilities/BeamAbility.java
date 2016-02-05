@@ -58,9 +58,11 @@ public class BeamAbility extends Ability
 		originLocation = args.getLocation("originlocation", new GrandLocation(), false);
 		targetLocation = args.getLocation("targetlocation", new GrandLocation(), false);
 		
+		String onHitString = args.get("onhit", null, false);
+		onHitBlock = new FunctionRunner(args.get("onhitblock", onHitString, false));
+		onHitEntity = new FunctionRunner(args.get("onhitentity", onHitString, false));
+		
 		onStep = new FunctionRunner(args.get("onstep", null, false));
-		onHitBlock = new FunctionRunner(args.get("onhitblock", null, false));
-		onHitEntity = new FunctionRunner(args.get("onhitentity", null, false));
 		onEnd = new FunctionRunner(args.get("onend", null, false));
 	}
 
