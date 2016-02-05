@@ -74,6 +74,7 @@ public class AbilityFactory
 		case "heal":			return new HealAbility(slotType, actType, targeter, abilityArgs);
 		case "damage":			return new DamageAbility(slotType, actType, targeter, abilityArgs);
 		case "explosion":		return new ExplosionAbility(slotType, actType, targeter, abilityArgs);
+		case "lightning":		return new LightningAbility(slotType, actType, targeter, abilityArgs);
 		case "ignite":			return new IgniteAbility(slotType, actType, targeter, abilityArgs);
 		case "disarm":			return new DisarmAbility(slotType, actType, targeter, abilityArgs);
 		case "force":			return new ForceAbility(slotType, actType, targeter, abilityArgs);
