@@ -93,7 +93,9 @@ public class BeamAbility extends Ability
 		@Override
 		public void run() {
 			//Update, one step at a time
+			marker = MarkerBuilder.buildPersistantMarker(marker.getLocation());
 			boolean done = stepBeam();
+			marker.remove();
 			//Update total number of ticks
 			totalTicks += delay;
 			//End beam, if appropriate
@@ -104,7 +106,7 @@ public class BeamAbility extends Ability
 			//Update, one step at a time
 			for (int i = 0; i < numSteps; i++) {
 				//Move beam
-				marker = MarkerBuilder.buildInstantMarker(marker.getLocation().add(velocity)); //TODO: Need more efficient system
+				marker.teleport(marker.getLocation().add(velocity));
 				beamTarget = beamTarget.target(marker);
 				totalDistance += speed;
 				//Run onStep
