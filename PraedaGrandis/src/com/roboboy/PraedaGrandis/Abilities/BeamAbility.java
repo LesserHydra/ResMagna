@@ -41,6 +41,7 @@ public class BeamAbility extends Ability
 	
 	public BeamAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
+		
 		speed = args.getDouble("speed", 0D, true);
 		numSteps = args.getInteger("numsteps", 1, false);
 		delay = args.getLong("delay", 10L, false);
@@ -68,7 +69,7 @@ public class BeamAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		new BeamTimer(target);
+		new BeamTimer(target).runTaskTimer(PraedaGrandis.plugin, 0L, delay);
 	}
 	
 	private class BeamTimer extends BukkitRunnable {
@@ -87,32 +88,31 @@ public class BeamAbility extends Ability
 			
 			marker = MarkerBuilder.buildInstantMarker(startLocation);
 			beamTarget = target;
-			
-			runTaskTimer(PraedaGrandis.plugin, 0L, delay);
 		}
 		
 		@Override
 		public void run() {
 			//Update, one step at a time
-			for (int i = 0; i < numSteps; i++) {
-				stepBeam();
-				if (checkForEnd()) {
-					stopBeam();
-					return;
-				}
-			}
-			//Finish beam
+			boolean done = stepBeam();
+			//Update total number of ticks
 			totalTicks += delay;
-			if (totalTicks >= maxTicks) stopBeam();
+			//End beam, if appropriate
+			if (done || totalTicks >= maxTicks) stopBeam();
 		}
 
-		private void stepBeam() {
-			//Move beam
-			marker = MarkerBuilder.buildInstantMarker(marker.getLocation().add(velocity)); //TODO: Need more efficient system
-			beamTarget = beamTarget.target(marker);
-			totalDistance += speed;
-			//Run onStep
-			onStep.run(beamTarget);
+		private boolean stepBeam() {
+			//Update, one step at a time
+			for (int i = 0; i < numSteps; i++) {
+				//Move beam
+				marker = MarkerBuilder.buildInstantMarker(marker.getLocation().add(velocity)); //TODO: Need more efficient system
+				beamTarget = beamTarget.target(marker);
+				totalDistance += speed;
+				//Run onStep
+				onStep.run(beamTarget);
+				//Check for end, and run appropriate hit abilities
+				if (checkForEnd()) return true;
+			}
+			return false;
 		}
 		
 		private void stopBeam() {
