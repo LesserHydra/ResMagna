@@ -3,11 +3,16 @@ package com.roboboy.PraedaGrandis.Configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GroupingParser
 {
+	//[\(\{\[](.*)[\)\}\]]
+	private static final Pattern bracketedStringPattern = Pattern.compile("[\\(\\{\\[](.*)[\\)\\}\\]]");
+	
 	static private final List<Character> OPENING_CHARS = Arrays.asList('(', '{', '[');
 	static private final List<Character> CLOSING_CHARS = Arrays.asList(')', '}', ']');
 	
@@ -64,6 +69,12 @@ public class GroupingParser
 		String grouping = getGrouping(identifier);
 		if (grouping == null) return string;
 		return string.replace(identifier, grouping);
+	}
+
+	public static String removeBrackets(String originalString) {
+		Matcher matcher = bracketedStringPattern.matcher(originalString);
+		if (matcher.matches()) return matcher.group(1);
+		return originalString;
 	}
 	
 }

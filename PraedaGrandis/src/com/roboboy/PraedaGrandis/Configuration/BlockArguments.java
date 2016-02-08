@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Color;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
@@ -200,6 +201,23 @@ public class BlockArguments
 		Targeter result = TargeterFactory.build(value);
 		if (result == null) {
 			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
+			return fallback;
+		}
+		
+		return result;
+	}
+
+	public Color getColor(String key, Color fallback, boolean required) {
+		String value = argumentMap.get(key);
+		
+		if (value == null || value.isEmpty()) {
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			return fallback;
+		}
+		
+		Color result = ColorParser.build(value);
+		if (result == null) {
+			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected RGB color).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
