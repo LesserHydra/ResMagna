@@ -21,15 +21,24 @@ class TeleportAbility extends Ability
 	private final String worldSuffix;
 	private final int spreadH;
 	private final int spreadV;
+	private final int attempts;
 	private final boolean includeCenter;
+	private final boolean failSafe;
+	private final boolean perfectSpread;
 	private final boolean ender;
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		location = args.getLocation("location", new GrandLocation(), false);
-		spreadH = args.getInteger("spreadh", 0, false);
-		spreadV = args.getInteger("spreadv", 0, false);
+		
+		int spread = args.getInteger("spread", 0, false);
+		spreadH = args.getInteger("spreadh", spread, false);
+		spreadV = args.getInteger("spreadv", spread, false);
+		
+		attempts = args.getInteger("attempts", 32, false);
 		includeCenter = args.getBoolean("includecenter", true, false);
+		failSafe = args.getBoolean("failsafe", false, false);
+		perfectSpread = args.getBoolean("perfectspread", false, false);
 		ender = args.getBoolean("ender", false, false);
 		
 		String dimensionString = args.get("dimension", null, false);
@@ -60,19 +69,37 @@ class TeleportAbility extends Ability
 			centerLoc.setWorld(world);
 		}
 		
-		if (spreadH > 0 || spreadV > 0) {
-			List<Location> safe = getSafeInRadius(centerLoc);
-			if (safe.isEmpty()) return;
-			centerLoc = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
-			centerLoc.add(0.5, 0, 0.5);
-		}
+		if (spreadH > 0 || spreadV > 0) centerLoc = getSpread(centerLoc);
+		if (failSafe && !isSafe(centerLoc)) return;
 		
 		centerLoc.setDirection(target.get().getLocation().getDirection());
 		target.get().teleport(centerLoc);
 	}
 
-	private String getBaseWorldName(String worldName)
-	{
+	private Location getSpread(Location center) {
+		if (perfectSpread) return getSpreadFromSafe(center);
+		
+		for (int i = 0; i < attempts; i++) {
+			Location random = center.clone().add(getRandomComponent(spreadH), getRandomComponent(spreadV), getRandomComponent(spreadH));
+			if (isSafe(random)) return random.getBlock().getLocation().add(0.5, 0, 0.5);
+		}
+		
+		return center;
+	}
+	
+	private int getRandomComponent(int spread){
+		return PraedaGrandis.RANDOM_GENERATOR.nextInt(spread+1)-spread/2;
+	}
+
+	private Location getSpreadFromSafe(Location centerLoc) {
+		List<Location> safe = getSafeInRadius(centerLoc);
+		if (safe.isEmpty()) return centerLoc;
+		Location result = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
+		result.add(0.5, 0, 0.5);
+		return result;
+	}
+
+	private String getBaseWorldName(String worldName) {
 		if (worldName.endsWith("_nether")) return worldName.replace("_nether", "");
 		if (worldName.endsWith("_the_end")) return worldName.replace("_the_end", "");
 		return worldName;
