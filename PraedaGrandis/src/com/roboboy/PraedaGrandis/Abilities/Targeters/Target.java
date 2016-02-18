@@ -44,6 +44,36 @@ public class Target
 	}
 	
 	/**
+	 * Construct a fresh Target with a new save map
+	 * @param currentTarget
+	 * @param holder
+	 * @param activatorTarget
+	 */
+	public Target(LivingEntity currentTarget, Player holder, Location activatorTarget)
+	{
+		this.currentTarget = new TargetEntity(currentTarget);
+		this.holder = holder;
+		this.activatorTarget = new TargetEntity(activatorTarget);
+		
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/**
+	 * Construct a fresh Target with a new save map
+	 * @param currentTarget
+	 * @param holder
+	 * @param activatorTarget
+	 */
+	public Target(Location currentTarget, Player holder, Location activatorTarget)
+	{
+		this.currentTarget = new TargetEntity(currentTarget);
+		this.holder = holder;
+		this.activatorTarget = new TargetEntity(activatorTarget);
+		
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/**
 	 * Construct a new Target sharing a saved target map
 	 * @param currentTarget
 	 * @param holder
