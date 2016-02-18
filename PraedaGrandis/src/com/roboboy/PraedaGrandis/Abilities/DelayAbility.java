@@ -16,7 +16,9 @@ public class DelayAbility extends Ability
 	
 	public DelayAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		delayAmount = args.getLong("ticks", 0, true);
+		
+		long delayAmount = args.getLong(null, 0, false);
+		this.delayAmount = args.getLong("ticks", delayAmount, false);
 	}
 	
 	public void addAbility(Ability a) {

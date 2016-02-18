@@ -13,9 +13,12 @@ public class BoundingBoxTargeter extends Targeter
 	private final double z;
 	
 	public BoundingBoxTargeter(BlockArguments args) {
-		x = args.getDouble("x", 0D, true);
-		y = args.getDouble("y", 0D, true);
-		z = args.getDouble("z", 0D, true);
+		double radius = args.getDouble(null, 0D, false);
+		radius = args.getDouble("r", radius, false);
+		
+		x = args.getDouble("x", radius, false);
+		y = args.getDouble("y", radius, false);
+		z = args.getDouble("z", radius, false);
 	}
 	
 	@Override
