@@ -14,11 +14,11 @@ class TargetEntity
 	}
 	
 	public TargetEntity(LivingEntity targetEntity) {
-		if (targetEntity != null) this.targetLocation = targetEntity.getLocation();
 		this.targetEntity = targetEntity;
 	}
 	
 	public Location getLocation() {
+		if (targetLocation == null && targetEntity != null) return targetEntity.getLocation();
 		return targetLocation;
 	}
 	
