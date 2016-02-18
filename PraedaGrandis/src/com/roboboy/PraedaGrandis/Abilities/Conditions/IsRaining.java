@@ -11,6 +11,6 @@ class IsRaining extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return target.get().getWorld().hasStorm();
+		return target.getLocation().getWorld().hasStorm();
 	}
 }

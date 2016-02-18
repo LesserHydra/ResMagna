@@ -78,9 +78,9 @@ class ProjectileAbility extends Ability
 		Vector randomVector = new Vector(PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,
 				PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5);
 		randomVector.multiply(randomSpread);
-		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.get().getLocation()).add(randomVector);
+		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.getLocation()).add(randomVector);
 		
-		Projectile projectile = target.get().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
+		Projectile projectile = target.getEntity().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
 		projectile.setMetadata("PG_Projectile", new FixedMetadataValue(PraedaGrandis.plugin, true));

@@ -11,6 +11,6 @@ class IsRiding extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return target.get().isInsideVehicle();
+		return target.getEntity().isInsideVehicle();
 	}
 }

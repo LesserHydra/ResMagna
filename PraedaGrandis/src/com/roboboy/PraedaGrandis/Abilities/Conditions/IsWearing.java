@@ -29,9 +29,9 @@ class IsWearing extends Condition
 	@Override
 	protected boolean checkThis(Target target)
 	{
-		if (!(target.get() instanceof Player)) return false;
+		if (!(target.getEntity() instanceof Player)) return false;
 		
-		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.get());
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.getEntity());
 		for (String name : itemNames) {
 			if (!found(gInv.getItems(name))) return false;
 		}

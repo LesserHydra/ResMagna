@@ -26,8 +26,8 @@ class SwapAbility extends Ability
 		Target otherTarget = otherTargeter.getRandomTarget(target);
 		if (otherTarget == null) return;
 		
-		LivingEntity targetEntity = target.get();
-		LivingEntity otherEntity = otherTarget.get();
+		LivingEntity targetEntity = target.getEntity();
+		LivingEntity otherEntity = otherTarget.getEntity();
 		
 		Location targetLoc = targetEntity.getLocation();
 		Location otherLoc = otherEntity.getLocation();

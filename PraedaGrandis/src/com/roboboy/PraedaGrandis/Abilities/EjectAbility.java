@@ -13,7 +13,7 @@ class EjectAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		target.get().eject();
+		target.getEntity().eject();
 	}
 
 }

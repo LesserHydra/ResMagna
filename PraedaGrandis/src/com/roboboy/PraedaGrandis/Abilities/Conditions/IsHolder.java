@@ -12,7 +12,7 @@ class IsHolder extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get().equals(target.getHolder()));
+		return (target.getEntity().equals(target.getHolder()));
 	}
 
 }

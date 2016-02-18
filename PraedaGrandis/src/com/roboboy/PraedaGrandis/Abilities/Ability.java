@@ -28,7 +28,7 @@ public abstract class Ability
 	
 	public final void activate(Target target) {
 		for (Target t : targeter.getTargets(target)) {
-			if (t.get() != null) execute(t);
+			if (t.getEntity() != null) execute(t);
 		}
 	}
 	

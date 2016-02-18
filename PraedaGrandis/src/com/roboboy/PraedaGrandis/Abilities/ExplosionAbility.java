@@ -40,7 +40,7 @@ class ExplosionAbility extends Ability
 		if (calculatedLocation == null) return;
 		
 		LivingEntity marker = MarkerBuilder.buildInstantMarker(calculatedLocation);
-		LivingEntity damagerEntity = damagerTarget.get();
+		LivingEntity damagerEntity = damagerTarget.getEntity();
 		
 		//Mark entities in radius as damaged by damagerEntity, if exists
 		if (damagerEntity != null) {

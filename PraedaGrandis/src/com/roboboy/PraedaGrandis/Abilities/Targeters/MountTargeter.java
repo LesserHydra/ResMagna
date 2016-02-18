@@ -10,7 +10,7 @@ public class MountTargeter extends Targeter
 {
 	@Override
 	public List<Target> getTargets(Target currentTarget) {
-		Entity mount = currentTarget.get().getVehicle();
+		Entity mount = currentTarget.getEntity().getVehicle();
 		if (!(mount instanceof LivingEntity)) mount = null;
 		return Arrays.asList(currentTarget.target((LivingEntity)mount));
 	}

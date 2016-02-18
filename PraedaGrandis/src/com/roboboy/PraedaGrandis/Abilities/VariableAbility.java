@@ -60,9 +60,9 @@ class VariableAbility extends Ability
 	@Override
 	protected void execute(Target target)
 	{
-		if (!(target.get() instanceof Player)) return;
+		if (!(target.getEntity() instanceof Player)) return;
 		
-		Player p = (Player) target.get();
+		Player p = (Player) target.getEntity();
 		VariableHandler.operate(p, name, operator, (otherName != null ? VariableHandler.get(p, otherName) : number));
 	}
 

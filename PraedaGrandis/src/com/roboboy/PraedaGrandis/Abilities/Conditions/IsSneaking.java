@@ -14,8 +14,8 @@ class IsSneaking extends Condition
 	@Override
 	public boolean checkThis(Target target)
 	{
-		if (target.get() instanceof Player)
-			return ((Player)target.get()).isSneaking();
+		if (target.getEntity() instanceof Player)
+			return ((Player)target.getEntity()).isSneaking();
 		else return false;
 	}
 

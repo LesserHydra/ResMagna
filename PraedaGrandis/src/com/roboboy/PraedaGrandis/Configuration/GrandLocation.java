@@ -81,10 +81,10 @@ public class GrandLocation
 	public Location calculate(Target mainTarget) {
 		//Get new target from targeter
 		Target newTarget = locationTargeter.getRandomTarget(mainTarget);
-		if (newTarget == null || newTarget.get() == null) return null;
+		if (newTarget == null || newTarget.getEntity() == null) return null;
 		
 		//Modify according to components
-		Location finalLoc = newTarget.get().getLocation();
+		Location finalLoc = newTarget.getEntity().getLocation();
 		for (Pair<LocationComponentType, Double> componentPair : componentList) {
 			componentPair.getLeft().modify(finalLoc, componentPair.getRight());
 		}

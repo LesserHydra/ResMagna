@@ -24,7 +24,7 @@ class LightningAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		Location location = getLocation(target.get().getLocation());
+		Location location = getLocation(target.getLocation());
 		if (effectOnly) location.getWorld().strikeLightningEffect(location);
 		else location.getWorld().strikeLightning(location);
 	}

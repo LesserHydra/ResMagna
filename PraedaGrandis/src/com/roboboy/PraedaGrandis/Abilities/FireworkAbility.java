@@ -49,7 +49,7 @@ class FireworkAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		final Firework firework = target.get().getWorld().spawn(target.get().getLocation(), Firework.class);
+		final Firework firework = target.getLocation().getWorld().spawn(target.getLocation(), Firework.class);
 		FireworkMeta meta = firework.getFireworkMeta();
 		meta.addEffect(effect);
 		if (power >= 0) meta.setPower(power);

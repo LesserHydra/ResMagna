@@ -29,8 +29,8 @@ class DisarmAbility extends Ability
 	@Override
 	protected void execute(Target target)
 	{
-		Location entityLocation = target.get().getLocation();
-		EntityEquipment equipment = target.get().getEquipment();
+		Location entityLocation = target.getEntity().getLocation();
+		EntityEquipment equipment = target.getEntity().getEquipment();
 		
 		if (held) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInHand());

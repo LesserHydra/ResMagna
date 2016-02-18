@@ -10,7 +10,7 @@ public class RiderTargeter extends Targeter
 {
 	@Override
 	public List<Target> getTargets(Target currentTarget) {
-		Entity rider = currentTarget.get().getPassenger();
+		Entity rider = currentTarget.getEntity().getPassenger();
 		if (!(rider instanceof LivingEntity)) rider = null;
 		return Arrays.asList(currentTarget.target((LivingEntity)rider));
 	}

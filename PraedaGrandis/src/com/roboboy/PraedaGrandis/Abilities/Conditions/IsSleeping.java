@@ -12,8 +12,8 @@ class IsSleeping extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		if (target.get() instanceof Player)
-			return ((Player)target.get()).isSleeping();
+		if (target.getEntity() instanceof Player)
+			return ((Player)target.getEntity()).isSleeping();
 		else return false;
 	}
 }

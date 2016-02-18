@@ -27,7 +27,7 @@ class SpinAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		final LivingEntity targetEntity = target.get();
+		final LivingEntity targetEntity = target.getEntity();
 		new SpinTimer(targetEntity).runTaskTimer(PraedaGrandis.plugin, 0L, updateDelay);
 	}
 

@@ -11,6 +11,6 @@ class IsThundering extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return target.get().getWorld().isThundering();
+		return target.getLocation().getWorld().isThundering();
 	}
 }

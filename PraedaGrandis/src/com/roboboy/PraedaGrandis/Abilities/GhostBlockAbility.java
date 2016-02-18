@@ -31,7 +31,7 @@ class GhostBlockAbility extends Ability
 	@Override
 	protected void execute(Target target)
 	{
-		LivingEntity e = target.get();
+		LivingEntity e = target.getEntity();
 		if (e instanceof Player)
 		{
 			Player p = (Player) e;
