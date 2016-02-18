@@ -17,8 +17,11 @@ class IsWearing extends Condition
 	protected IsWearing(Targeter targeter, boolean not, BlockArguments args)
 	{
 		super(targeter, not);
+		
 		//TODO: Error handling/logging
-		for (String s : args.get("names", "", true).replace("(", "").replace(")", "").replace(",", "").split(" ")) {
+		String namesString = args.get(null, "", false);
+		namesString = args.get("names", namesString, false);
+		for (String s : namesString.replace("(", "").replace(")", "").replace(",", "").split(" ")) {
 			itemNames.add(s);
 		}
 	}

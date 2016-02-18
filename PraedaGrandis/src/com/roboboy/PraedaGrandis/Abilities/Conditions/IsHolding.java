@@ -14,8 +14,10 @@ class IsHolding extends Condition
 
 	public IsHolding(Targeter targeter, boolean not, BlockArguments args) {
 		super(targeter, not);
+		
 		//TODO: Error handling/logging
-		itemName = args.get("name", "", true);
+		String itemName = args.get(null, "", false);
+		this.itemName = args.get("name", itemName, false);
 	}
 
 	@Override
