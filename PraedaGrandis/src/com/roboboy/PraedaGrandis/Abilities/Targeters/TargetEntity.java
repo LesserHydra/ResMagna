@@ -26,5 +26,9 @@ class TargetEntity
 		if (targetEntity == null && targetLocation != null) targetEntity = MarkerBuilder.buildInstantMarker(targetLocation);
 		return targetEntity;
 	}
+
+	public boolean isNull() {
+		return (targetLocation == null && targetEntity == null);
+	}
 	
 }

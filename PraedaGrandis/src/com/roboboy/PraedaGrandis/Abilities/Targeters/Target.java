@@ -83,6 +83,14 @@ public class Target
 	}
 	
 	/**
+	 * Checks to see if nothing is currently targeted
+	 * @return True if there is no current target
+	 */
+	public boolean isNull(){
+		return currentTarget.isNull();
+	}
+	
+	/**
 	 * Get the holder player
 	 * @return Holder player
 	 */
@@ -140,4 +148,5 @@ public class Target
 	public Target targetActivator() {
 		return new Target(activatorTarget, holder, activatorTarget, savedTargets);
 	}
+	
 }
