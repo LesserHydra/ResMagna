@@ -53,6 +53,7 @@ public class TargeterFactory
 		case "activator":		return new ActivatorTargeter();
 		case "mount":			return new MountTargeter();
 		case "rider":			return new RiderTargeter();
+		case "location":		return new LocationTargeter(targeterArgs);
 		
 		case "onlineplayers":	return new OnlinePlayersTargeter();
 		case "boundingbox":		return new BoundingBoxTargeter(targeterArgs);
