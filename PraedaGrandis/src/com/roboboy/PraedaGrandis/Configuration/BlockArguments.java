@@ -32,6 +32,8 @@ public class BlockArguments
 			argumentValue = groupParser.readdGrouping(argumentValue, argumentValueGroupID);
 			argumentMap.put(argumentName, argumentValue);
 		}
+		
+		if (argumentMap.isEmpty()) argumentMap.put(null, argumentString);
 	}
 	
 	/**
