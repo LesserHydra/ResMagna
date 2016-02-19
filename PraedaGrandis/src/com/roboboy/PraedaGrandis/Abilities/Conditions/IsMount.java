@@ -12,6 +12,6 @@ class IsMount extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get().getPassenger() instanceof LivingEntity);
+		return (target.getEntity().getPassenger() instanceof LivingEntity);
 	}
 }

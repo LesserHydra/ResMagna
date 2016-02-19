@@ -22,9 +22,9 @@ class IsHolding extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		if (!(target.get() instanceof Player)) return false;
+		if (!(target.getEntity() instanceof Player)) return false;
 		
-		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.get());
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.getEntity());
 		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
 			if (element.slotType == ItemSlotType.HELD) return true;
 		}

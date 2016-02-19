@@ -13,7 +13,7 @@ class IsMob extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get() instanceof Creature);
+		return (target.getEntity() instanceof Creature);
 	}
 
 }

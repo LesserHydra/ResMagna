@@ -24,7 +24,7 @@ public class BoundingBoxTargeter extends Targeter
 	@Override
 	public List<Target> getTargets(Target currentTarget)
 	{
-		LivingEntity targetEntity = currentTarget.get();
+		LivingEntity targetEntity = currentTarget.getEntity();
 		List<Target> results = new LinkedList<>();
 		
 		//For all entities in bounding box

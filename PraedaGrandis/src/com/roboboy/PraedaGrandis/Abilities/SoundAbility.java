@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
@@ -24,8 +24,8 @@ class SoundAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		LivingEntity entityTarget = target.get();
-		entityTarget.getWorld().playSound(entityTarget.getLocation(), sound, volume, pitch);
+		Location targetLocation = target.getLocation();
+		targetLocation.getWorld().playSound(targetLocation, sound, volume, pitch);
 	}
 
 }

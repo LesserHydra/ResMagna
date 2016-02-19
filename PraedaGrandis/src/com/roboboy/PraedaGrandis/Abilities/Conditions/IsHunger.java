@@ -49,8 +49,8 @@ class IsHunger extends Condition
 	@Override
 	protected boolean checkThis(Target target)
 	{
-		if (!(target.get() instanceof Player)) return false;
-		Player p = (Player) target.get();
+		if (!(target.getEntity() instanceof Player)) return false;
+		Player p = (Player) target.getEntity();
 		return conditional.check(p.getFoodLevel(), number);
 	}
 

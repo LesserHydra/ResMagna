@@ -67,10 +67,9 @@ public class ProjectileListener implements Listener
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		LivingEntity marker = MarkerBuilder.buildInstantMarker(projectile.getLocation());
 		
 		for (LivingEntity hitEntity : event.getAffectedEntities()) {
-			onSplashAbility.run(new Target(hitEntity, holder, marker));
+			onSplashAbility.run(new Target(hitEntity, holder, projectile.getLocation()));
 		}
 	}
 	
@@ -115,8 +114,7 @@ public class ProjectileListener implements Listener
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		LivingEntity marker = MarkerBuilder.buildInstantMarker(projectile.getLocation());
-		onEndAbility.run(new Target(marker, holder, marker));
+		onEndAbility.run(new Target(projectile.getLocation(), holder, projectile.getLocation()));
 	}
 
 	private FunctionRunner getGrandAbilityFromMeta(Projectile entity, String key) {

@@ -13,7 +13,7 @@ class IsPlayer extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get() instanceof Player);
+		return (target.getEntity() instanceof Player);
 	}
 
 }

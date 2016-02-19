@@ -8,7 +8,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.MarkerBuilder;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
@@ -76,26 +75,24 @@ public class BeamAbility extends Ability
 		private final LivingEntity shooter;
 		private final Vector velocity;
 		
-		private LivingEntity marker;
+		private Location currentLocation;
 		private Target beamTarget;
 		private double totalDistance = 0;
 		private double totalTicks = 0;
 		
 		BeamTimer(Target target) {
-			shooter = target.get();
+			shooter = target.getEntity();
 			Location startLocation = originLocation.calculate(target);
 			velocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
 			
-			marker = MarkerBuilder.buildInstantMarker(startLocation);
+			currentLocation = startLocation;
 			beamTarget = target;
 		}
 		
 		@Override
 		public void run() {
 			//Update, one step at a time
-			marker = MarkerBuilder.buildPersistantMarker(marker.getLocation());
 			boolean done = stepBeam();
-			marker.remove();
 			//Update total number of ticks
 			totalTicks += delay;
 			//End beam, if appropriate
@@ -106,8 +103,8 @@ public class BeamAbility extends Ability
 			//Update, one step at a time
 			for (int i = 0; i < numSteps; i++) {
 				//Move beam
-				marker.teleport(marker.getLocation().add(velocity));
-				beamTarget = beamTarget.target(marker);
+				currentLocation = currentLocation.add(velocity);
+				beamTarget = beamTarget.target(currentLocation);
 				totalDistance += speed;
 				//Run onStep
 				onStep.run(beamTarget);
@@ -118,7 +115,6 @@ public class BeamAbility extends Ability
 		}
 		
 		private void stopBeam() {
-			marker.remove();
 			onEnd.run(beamTarget);
 			cancel();
 		}
@@ -131,7 +127,7 @@ public class BeamAbility extends Ability
 		}
 		
 		private boolean hitBlock() {
-			Material blockType = marker.getLocation().getBlock().getType();
+			Material blockType = currentLocation.getBlock().getType();
 			if (!blockType.isSolid()) return false;
 			onHitBlock.run(beamTarget);
 			return true;
@@ -139,7 +135,7 @@ public class BeamAbility extends Ability
 		
 		private boolean hitEntity() {
 			boolean hit = false;
-			for (Entity entity : marker.getNearbyEntities(spreadX, spreadY, spreadZ)) {
+			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {
 				if (entity.equals(shooter)) continue;
 				if (!(entity instanceof LivingEntity)) continue;
 				onHitEntity.run(beamTarget.target((LivingEntity) entity));

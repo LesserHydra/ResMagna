@@ -21,7 +21,7 @@ class MountAbility extends Ability
 		Target otherTarget = otherTargeter.getRandomTarget(target);
 		if (otherTarget == null) return;
 		
-		otherTarget.get().setPassenger(target.get());
+		otherTarget.getEntity().setPassenger(target.getEntity());
 	}
 
 }

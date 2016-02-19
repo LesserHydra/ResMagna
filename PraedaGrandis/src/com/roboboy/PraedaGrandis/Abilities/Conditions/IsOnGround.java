@@ -11,6 +11,6 @@ class IsOnGround extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return target.get().isOnGround();
+		return target.getEntity().isOnGround();
 	}
 }

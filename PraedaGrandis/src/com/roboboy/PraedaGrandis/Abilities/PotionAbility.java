@@ -27,9 +27,9 @@ class PotionAbility extends Ability
 	}
 	
 	@Override
-	protected void execute(final Target target)
+	protected void execute(Target target)
 	{
 		//PraedaGrandis.log("Applying " + type + " lvl" + amplifier + " to " + target.get().getType().toString() + " for " + + duration + " ticks.", LogType.TOO_MUCH_INFO);
-		target.get().addPotionEffect(new PotionEffect(type, duration, amplifier, true, false), true);
+		target.getEntity().addPotionEffect(new PotionEffect(type, duration, amplifier, true, false), true);
 	}
 }

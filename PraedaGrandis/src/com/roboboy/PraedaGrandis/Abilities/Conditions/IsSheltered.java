@@ -12,7 +12,7 @@ class IsSheltered extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		Location targetLocation = target.get().getLocation();
-		return targetLocation.getBlockY() < target.get().getWorld().getHighestBlockYAt(targetLocation);
+		Location targetLocation = target.getLocation();
+		return targetLocation.getBlockY() < targetLocation.getWorld().getHighestBlockYAt(targetLocation);
 	}
 }

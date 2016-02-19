@@ -13,8 +13,8 @@ class IsSprinting extends Condition
 	@Override
 	public boolean checkThis(Target target)
 	{
-		if (target.get() instanceof Player)
-			return ((Player)target.get()).isSprinting();
+		if (target.getEntity() instanceof Player)
+			return ((Player)target.getEntity()).isSprinting();
 		else return false;
 	}
 

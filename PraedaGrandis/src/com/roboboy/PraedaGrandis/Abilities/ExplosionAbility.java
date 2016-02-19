@@ -5,7 +5,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.MarkerBuilder;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
@@ -39,14 +38,13 @@ class ExplosionAbility extends Ability
 		Location calculatedLocation = location.calculate(target);
 		if (calculatedLocation == null) return;
 		
-		LivingEntity marker = MarkerBuilder.buildInstantMarker(calculatedLocation);
-		LivingEntity damagerEntity = damagerTarget.get();
+		LivingEntity damagerEntity = damagerTarget.getEntity();
 		
 		//Mark entities in radius as damaged by damagerEntity, if exists
 		if (damagerEntity != null) {
 			float damageRadius = power * 2;
 			double damageRadiusSquared = damageRadius * damageRadius;
-			for (Entity entity : marker.getNearbyEntities(damageRadius, damageRadius, damageRadius)) {
+			for (Entity entity : calculatedLocation.getWorld().getNearbyEntities(calculatedLocation, damageRadius, damageRadius, damageRadius)) {
 				if (!(entity instanceof LivingEntity)) continue;
 				if (calculatedLocation.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
 				((LivingEntity)entity).damage(0D, damagerEntity);

@@ -2,15 +2,16 @@ package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class Target
 {
-	private final LivingEntity currentTarget;
+	private final TargetEntity currentTarget;
 	private final Player holder;
-	private final LivingEntity activatorTarget;
-	private final Map<String, LivingEntity> savedTargets;
+	private final TargetEntity activatorTarget;
+	private final Map<String, TargetEntity> savedTargets;
 	
 	/**
 	 * Construct a fresh Target with a new save map
@@ -20,9 +21,54 @@ public class Target
 	 */
 	public Target(LivingEntity currentTarget, Player holder, LivingEntity activatorTarget)
 	{
-		this.currentTarget = currentTarget;
+		this.currentTarget = new TargetEntity(currentTarget);
 		this.holder = holder;
-		this.activatorTarget = activatorTarget;
+		this.activatorTarget = new TargetEntity(activatorTarget);
+		
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/**
+	 * Construct a fresh Target with a new save map
+	 * @param currentTarget
+	 * @param holder
+	 * @param activatorTarget
+	 */
+	public Target(Location currentTarget, Player holder, LivingEntity activatorTarget)
+	{
+		this.currentTarget = new TargetEntity(currentTarget);
+		this.holder = holder;
+		this.activatorTarget = new TargetEntity(activatorTarget);
+		
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/**
+	 * Construct a fresh Target with a new save map
+	 * @param currentTarget
+	 * @param holder
+	 * @param activatorTarget
+	 */
+	public Target(LivingEntity currentTarget, Player holder, Location activatorTarget)
+	{
+		this.currentTarget = new TargetEntity(currentTarget);
+		this.holder = holder;
+		this.activatorTarget = new TargetEntity(activatorTarget);
+		
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/**
+	 * Construct a fresh Target with a new save map
+	 * @param currentTarget
+	 * @param holder
+	 * @param activatorTarget
+	 */
+	public Target(Location currentTarget, Player holder, Location activatorTarget)
+	{
+		this.currentTarget = new TargetEntity(currentTarget);
+		this.holder = holder;
+		this.activatorTarget = new TargetEntity(activatorTarget);
 		
 		this.savedTargets = new HashMap<>();
 	}
@@ -34,7 +80,7 @@ public class Target
 	 * @param activatorTarget
 	 * @param savedTargets Custom save map to share
 	 */
-	private Target(LivingEntity currentTarget, Player holder, LivingEntity activatorTarget, Map<String, LivingEntity> savedTargets)
+	private Target(TargetEntity currentTarget, Player holder, TargetEntity activatorTarget, Map<String, TargetEntity> savedTargets)
 	{
 		this.currentTarget = currentTarget;
 		this.holder = holder;
@@ -54,8 +100,24 @@ public class Target
 	 * Get the currently targeted entity
 	 * @return Current target entity
 	 */
-	public LivingEntity get() {
-		return currentTarget;
+	public LivingEntity getEntity() {
+		return currentTarget.getEntity();
+	}
+	
+	/**
+	 * Get the currently targeted location
+	 * @return Current target location
+	 */
+	public Location getLocation() {
+		return currentTarget.getLocation();
+	}
+	
+	/**
+	 * Checks to see if nothing is currently targeted
+	 * @return True if there is no current target
+	 */
+	public boolean isNull(){
+		return currentTarget.isNull();
 	}
 	
 	/**
@@ -71,7 +133,7 @@ public class Target
 	 * @return Activator entity
 	 */
 	public LivingEntity getActivator() {
-		return activatorTarget;
+		return activatorTarget.getEntity();
 	}
 	
 	/**
@@ -80,7 +142,16 @@ public class Target
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target target(LivingEntity newTarget) {
-		return new Target(newTarget, holder, activatorTarget, savedTargets);
+		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
+	}
+	
+	/**
+	 * Set currently targeted entity to an arbitrary location
+	 * @param newTarget Location to target
+	 * @return Newly constructed Target sharing saved target map
+	 */
+	public Target target(Location newTarget) {
+		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
 	}
 	
 	/**
@@ -97,7 +168,7 @@ public class Target
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target targetHolder() {
-		return new Target(holder, holder, activatorTarget, savedTargets);
+		return new Target(new TargetEntity(holder), holder, activatorTarget, savedTargets);
 	}
 	
 	/**
@@ -107,4 +178,5 @@ public class Target
 	public Target targetActivator() {
 		return new Target(activatorTarget, holder, activatorTarget, savedTargets);
 	}
+	
 }

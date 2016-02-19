@@ -12,7 +12,7 @@ class IsBurning extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get().getFireTicks() > 0);
+		return (target.getEntity().getFireTicks() > 0);
 	}
 
 }

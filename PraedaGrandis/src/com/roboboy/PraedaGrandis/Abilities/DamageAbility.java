@@ -33,8 +33,8 @@ class DamageAbility extends Ability
 		if (damagerTarget == null) return;
 		
 		//Get damager & damagee
-		LivingEntity targetEntity = target.get();
-		LivingEntity damagerEntity = damagerTarget.get();
+		LivingEntity targetEntity = target.getEntity();
+		LivingEntity damagerEntity = damagerTarget.getEntity();
 		
 		//Create and call event
 		EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);

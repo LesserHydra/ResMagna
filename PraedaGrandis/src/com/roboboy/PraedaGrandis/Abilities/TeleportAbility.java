@@ -72,8 +72,8 @@ class TeleportAbility extends Ability
 		if (spreadH > 0 || spreadV > 0) centerLoc = getSpread(centerLoc);
 		if (failSafe && !isSafe(centerLoc)) return;
 		
-		centerLoc.setDirection(target.get().getLocation().getDirection());
-		target.get().teleport(centerLoc);
+		centerLoc.setDirection(target.getEntity().getLocation().getDirection());
+		target.getEntity().teleport(centerLoc);
 	}
 
 	private Location getSpread(Location center) {

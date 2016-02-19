@@ -12,7 +12,7 @@ class IsNone extends Condition
 
 	@Override
 	protected boolean checkThis(Target target) {
-		return (target.get() == null);
+		return (target.getEntity() == null);
 	}
 
 }

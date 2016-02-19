@@ -27,7 +27,7 @@ class ForceAbility extends Ability
 		if (calculatedTargetLocation == null) return;
 		
 		//Old velocity plus new force vector
-		LivingEntity targetEntity = target.get();
+		LivingEntity targetEntity = target.getEntity();
 		targetEntity.setVelocity(targetEntity.getVelocity().add(getForceVector(targetEntity.getLocation(), calculatedTargetLocation)));
 	}
 	
