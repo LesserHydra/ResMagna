@@ -160,7 +160,9 @@ public class Target
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target targetSaved(String saveName) {
-		return new Target(savedTargets.get(saveName), holder, activatorTarget, savedTargets);
+		TargetEntity saved = savedTargets.get(saveName);
+		if (saved == null) saved = new TargetEntity((LivingEntity)null);
+		return new Target(saved, holder, activatorTarget, savedTargets);
 	}
 	
 	/**
