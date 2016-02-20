@@ -19,11 +19,11 @@ class DisarmAbility extends Ability
 	public DisarmAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		held = args.getBoolean("held", false, false);
-		helmet = args.getBoolean("helmet", false, false);
-		chestplate = args.getBoolean("chestplate", false, false);
-		leggings = args.getBoolean("leggings", false, false);
-		boots = args.getBoolean("boots", false, false);
+		held = args.getBoolean(false, false,		"held", "hld");
+		helmet = args.getBoolean(false, false,		"helmet", "helm", "hlm");
+		chestplate = args.getBoolean(false, false,	"chestplate", "chest", "cst");
+		leggings = args.getBoolean(false, false, 	"leggings", "legs", "lgs");
+		boots = args.getBoolean(false, false,		"boots", "shoes", "bts");
 	}
 
 	@Override

@@ -13,7 +13,7 @@ class HealAbility extends Ability
 	
 	public HealAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		healAmount = args.getDouble("amount", 0D, true);
+		healAmount = args.getDouble(0D, true,	"amount", "a", null);
 	}
 
 	@Override

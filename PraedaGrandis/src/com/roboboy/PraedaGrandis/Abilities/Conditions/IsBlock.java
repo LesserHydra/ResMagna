@@ -14,8 +14,8 @@ class IsBlock extends Condition
 	public IsBlock(Targeter targeter, boolean not, BlockArguments args)
 	{
 		super(targeter, not);
-		materials = new GrandMaterial(args.getString("types", "", true));
-		location = args.getLocation("location", new GrandLocation(), false);
+		materials = new GrandMaterial(args.getString("", true,		"materials", "types", "material", "type", "mat", "m", "t"));
+		location = args.getLocation(new GrandLocation(), false,		"location", "loc", "l");
 	}
 
 	@Override

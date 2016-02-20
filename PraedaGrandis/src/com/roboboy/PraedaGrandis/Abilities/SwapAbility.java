@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -17,8 +17,8 @@ class SwapAbility extends Ability
 	
 	public SwapAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		otherTargeter = args.getTargeter("other", new CurrentTargeter(), true);
-		swapFacing = args.getBoolean("swapfacing", false, false);
+		otherTargeter = args.getTargeter(new NoneTargeter(), true,	"mount", "other", "target", "m", null);
+		swapFacing = args.getBoolean(false, false,					"swapfacing", "facing", "f");
 	}
 
 	@Override

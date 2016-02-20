@@ -11,7 +11,7 @@ class LocationTargeter extends Targeter
 	private final GrandLocation grandLocation;
 	
 	public LocationTargeter(BlockArguments args) {
-		grandLocation = args.getLocation(null, new GrandLocation(), true);
+		grandLocation = args.getLocation(new GrandLocation(), true,		"location", "loc", "l", null);
 	}
 	
 	@Override

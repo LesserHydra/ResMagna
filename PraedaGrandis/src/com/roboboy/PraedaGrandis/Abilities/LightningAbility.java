@@ -17,9 +17,9 @@ class LightningAbility extends Ability
 	
 	public LightningAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		effectOnly = args.getBoolean("effectonly", false, false);
-		snap = args.getBoolean("snap", false, false);
-		hitCeiling = args.getBoolean("hitceiling", false, false);
+		effectOnly = args.getBoolean(false, false,		"effectonly", "iseffect", "effect", "e");
+		snap = args.getBoolean(false, false,			"snaptofloor", "snap", "floor");
+		hitCeiling = args.getBoolean(false, false,		"hitceiling", "ceiling");
 	}
 
 	@Override

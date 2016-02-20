@@ -19,10 +19,10 @@ class SpinAbility extends Ability
 	
 	public SpinAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		degrees = args.getInteger("degrees", 0, true);
-		duration = args.getInteger("duration", 0, true);
-		updateDelay = args.getLong("updateDelay", 5, false);
-		reverse = args.getBoolean("reverse", false, false);
+		degrees = args.getInteger(0, true,			"degrees", "amount", "deg", "a");
+		duration = args.getInteger(0, true, 		"duration", "ticks", "time", "dur", "d", "t");
+		updateDelay = args.getLong(5, false,		"updateDelay", "delay", "ud");
+		reverse = args.getBoolean(false, false,		"reverse", "r");
 	}
 
 	@Override

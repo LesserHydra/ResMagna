@@ -19,8 +19,9 @@ class TeleportAbility extends Ability
 {
 	private final GrandLocation location;
 	private final String worldSuffix;
-	private final int spreadH;
-	private final int spreadV;
+	private final int spreadX;
+	private final int spreadY;
+	private final int spreadZ;
 	private final int attempts;
 	private final boolean includeCenter;
 	private final boolean failSafe;
@@ -29,19 +30,22 @@ class TeleportAbility extends Ability
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		location = args.getLocation("location", new GrandLocation(), false);
+		location = args.getLocation(new GrandLocation(), true,		"location", "loc", "l", null);
 		
-		int spread = args.getInteger("spread", 0, false);
-		spreadH = args.getInteger("spreadh", spread, false);
-		spreadV = args.getInteger("spreadv", spread, false);
+		int spread = args.getInteger(0, false,			"spread", "sprd");
+		int spreadH = args.getInteger(spread, false,	"spreadh", "sprdh", "sh");
+		int spreadV = args.getInteger(spread, false,	"spreadv", "sprdv", "sv");
+		spreadX = args.getInteger(spreadH, false,		"spreadx", "sx");
+		spreadY = args.getInteger(spreadV, false,		"spready", "sy");
+		spreadZ = args.getInteger(spreadH, false,		"spreadz", "sz");
 		
-		attempts = args.getInteger("attempts", 32, false);
-		includeCenter = args.getBoolean("includecenter", true, false);
-		failSafe = args.getBoolean("failsafe", false, false);
-		perfectSpread = args.getBoolean("perfectspread", false, false);
-		ender = args.getBoolean("ender", false, false);
+		attempts = args.getInteger(32, false,			"numberofattempts", "numattempts", "attempts", "tries", "try", "att");
+		includeCenter = args.getBoolean(false, false,	"includecenter", "center");
+		failSafe = args.getBoolean(false, false,		"failsafe", "mustbesafe", "safe");
+		perfectSpread = args.getBoolean(false, false,	"perfectspread", "perfect");
+		ender = args.getBoolean(false, false,			"movetofloor", "floor");
 		
-		String dimensionString = args.getString("dimension", null, false);
+		String dimensionString = args.getString(null, false,	"dimension"); //TODO: Move to GrandLocation
 		worldSuffix = getWorldSuffix(dimensionString);
 	}
 
@@ -69,7 +73,7 @@ class TeleportAbility extends Ability
 			centerLoc.setWorld(world);
 		}
 		
-		if (spreadH > 0 || spreadV > 0) centerLoc = getSpread(centerLoc);
+		if (spreadX > 0 || spreadY > 0 || spreadZ > 0) centerLoc = getSpread(centerLoc);
 		if (failSafe && !isSafe(centerLoc)) return;
 		
 		centerLoc.setDirection(target.getEntity().getLocation().getDirection());
@@ -80,7 +84,7 @@ class TeleportAbility extends Ability
 		if (perfectSpread) return getSpreadFromSafe(center);
 		
 		for (int i = 0; i < attempts; i++) {
-			Location random = center.clone().add(getRandomComponent(spreadH), getRandomComponent(spreadV), getRandomComponent(spreadH));
+			Location random = center.clone().add(getRandomComponent(spreadX), getRandomComponent(spreadY), getRandomComponent(spreadZ));
 			if (isSafe(random)) return random.getBlock().getLocation().add(0.5, 0, 0.5);
 		}
 		
@@ -112,16 +116,16 @@ class TeleportAbility extends Ability
 		int centerY = center.getBlockY();
 		int centerZ = center.getBlockZ();
 		
-		int minX = centerX - spreadH;
-		int maxX = centerX + spreadH;
+		int minX = centerX - spreadX;
+		int maxX = centerX + spreadX;
 		for (int x = minX; x <= maxX; x++) {
 			
-			int minZ = centerZ - spreadH;
-			int maxZ = centerZ + spreadH;
+			int minZ = centerZ - spreadZ;
+			int maxZ = centerZ + spreadZ;
 			for (int z = minZ; z <= maxZ; z++) {
 				
-				int minY = Math.max(1, centerY - spreadV);
-				int maxY = Math.min(centerY + spreadV, center.getWorld().getHighestBlockYAt(x, z) + 1);
+				int minY = Math.max(1, centerY - spreadY);
+				int maxY = Math.min(centerY + spreadY, center.getWorld().getHighestBlockYAt(x, z) + 1);
 				for (int y = minY; y <= maxY; y++) {
 					
 					if (!includeCenter && x == centerX && z == centerZ && y == centerY) continue;

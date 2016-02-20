@@ -8,17 +8,17 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 public class BoundingBoxTargeter extends Targeter
 {
-	private final double x;
-	private final double y;
-	private final double z;
+	private final double spreadX;
+	private final double spreadY;
+	private final double spreadZ;
 	
 	public BoundingBoxTargeter(BlockArguments args) {
-		double radius = args.getDouble(null, 0D, false);
-		radius = args.getDouble("r", radius, false);
-		
-		x = args.getDouble("x", radius, false);
-		y = args.getDouble("y", radius, false);
-		z = args.getDouble("z", radius, false);
+		double spread = args.getDouble(0.5, false,		"spread", "radius", "sprd", "r");
+		double spreadH = args.getDouble(spread, false,	"spreadh", "sprdh", "sh", "rh");
+		double spreadV = args.getDouble(spread, false,	"spreadv", "sprdv", "sv", "rv");
+		spreadX = args.getDouble(spreadH, false,		"spreadx", "sx", "x");
+		spreadY = args.getDouble(spreadV, false,		"spready", "sy", "y");
+		spreadZ = args.getDouble(spreadH, false,		"spreadz", "sz", "z");
 	}
 	
 	@Override
@@ -28,7 +28,7 @@ public class BoundingBoxTargeter extends Targeter
 		List<Target> results = new LinkedList<>();
 		
 		//For all entities in bounding box
-		for (Entity e : targetEntity.getNearbyEntities(x, y, z)) {
+		for (Entity e : targetEntity.getNearbyEntities(spreadX, spreadY, spreadZ)) {
 			//If living and not target entity, add
 			if (!(e instanceof LivingEntity) || e.equals(targetEntity)) continue;
 			results.add(currentTarget.target((LivingEntity) e));

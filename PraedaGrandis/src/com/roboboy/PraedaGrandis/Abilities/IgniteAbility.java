@@ -13,8 +13,7 @@ class IgniteAbility extends Ability
 	
 	public IgniteAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		int duration = args.getInteger(null, 0, false);
-		this.duration = args.getInteger("duration", duration, false);
+		duration = args.getInteger(0, false,	"duration", "time", "ticks", "d", "t", null);
 	}
 
 	@Override

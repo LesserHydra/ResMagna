@@ -25,15 +25,22 @@ class ParticleAbility extends Ability
 		super(slotType, activator, targeter);
 		
 		//TODO: Verify name
-		particleEffect = ParticleEffect.fromName(args.getString("name", "", true));
-		amount = args.getInteger("amount", 1, true);
+		particleEffect = ParticleEffect.fromName(args.getString("", true,	"particlename", "particle", "name", "type", "n"));
+		amount = args.getInteger(1, true,									"amount", "amnt", "a");
 		
-		centerLocation = args.getLocation("location", new GrandLocation(), false);
-		offsetX = args.getFloat("spreadx", 0F, false);
-		offsetY = args.getFloat("spready", 0F, false);
-		offsetZ = args.getFloat("spreadz", 0F, false);
-		speed = args.getFloat("speed", 0F, false);
-		range = args.getDouble("range", 60D, false);
+		centerLocation = args.getLocation(new GrandLocation(), false,	"location", "loc", "l");
+		
+		
+		float spread = args.getFloat(0.5F, false,		"spread", "radius", "sprd", "r");
+		float spreadH = args.getFloat(spread, false,	"spreadh", "sprdh", "sh", "rh");
+		float spreadV = args.getFloat(spread, false,	"spreadv", "sprdv", "sv", "rv");
+		offsetX = args.getFloat(spreadH, false,			"spreadx", "sx", "x");
+		offsetY = args.getFloat(spreadV, false,			"spready", "sy", "y");
+		offsetZ = args.getFloat(spreadH, false,			"spreadz", "sz", "z");
+		
+		
+		speed = args.getFloat(0F, false,	"speed", "s");
+		range = args.getDouble(60D, false,	"range", "r");
 	}
 
 	@Override

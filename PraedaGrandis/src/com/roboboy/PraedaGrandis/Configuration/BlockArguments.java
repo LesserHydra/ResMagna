@@ -44,8 +44,8 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Raw string value of argument, or fallback if none exists
 	 */
-	public String getString(String key, String fallback, boolean required) {
-		String result = findValue(key, required);
+	public String getString(String fallback, boolean required, String... keys) {
+		String result = findValue(keys, required);
 		if (result == null) return fallback;
 		return result;
 	}
@@ -57,12 +57,12 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Boolean value of argument, or fallback if none exists
 	 */
-	public boolean getBoolean(String key, boolean fallback, boolean required) {
-		String value = findValue(key, required);
+	public boolean getBoolean(boolean fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		if (!Tools.isBoolean(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected boolean).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected boolean).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -76,12 +76,12 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Integer value of argument, or fallback if none exists
 	 */
-	public int getInteger(String key, int fallback, boolean required) {
-		String value = findValue(key, required);
+	public int getInteger(int fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected integer).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected integer).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -95,12 +95,12 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Long value of argument, or fallback if none exists
 	 */
-	public long getLong(String key, long fallback, boolean required) {
-		String value = findValue(key, required);
+	public long getLong(long fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected long).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected long).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -114,12 +114,12 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Float value of argument, or fallback if none exists
 	 */
-	public float getFloat(String key, float fallback, boolean required) {
-		String value = findValue(key, required);
+	public float getFloat(float fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected float).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected float).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -133,12 +133,12 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Double value of argument, or fallback if none exists
 	 */
-	public double getDouble(String key, double fallback, boolean required) {
-		String value = findValue(key, required);
+	public double getDouble(double fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected double).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected double).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -152,8 +152,8 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return GrandLocation value of argument, or fallback if none exists
 	 */
-	public GrandLocation getLocation(String key, GrandLocation fallback, boolean required) {
-		String value = findValue(key, required);
+	public GrandLocation getLocation(GrandLocation fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		return new GrandLocation(value.substring(1, value.length()-1));
@@ -166,26 +166,26 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Targeter value of argument, or fallback if none exists
 	 */
-	public Targeter getTargeter(String key, Targeter fallback, boolean required) {
-		String value = findValue(key, required);
+	public Targeter getTargeter(Targeter fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		Targeter result = TargeterFactory.build(value);
 		if (result == null) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
 		return result;
 	}
 
-	public Color getColor(String key, Color fallback, boolean required) {
-		String value = findValue(key, required);
+	public Color getColor(Color fallback, boolean required, String... keys) {
+		String value = findValue(keys, required);
 		if (value == null) return fallback;
 		
 		Color result = ColorParser.build(value);
 		if (result == null) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + key + "\" is invalid (Expected RGB color).", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected RGB color).", LogType.CONFIG_ERRORS);
 			return fallback;
 		}
 		
@@ -199,9 +199,9 @@ public class BlockArguments
 	 * @param required Whether or not a value is required
 	 * @return Enum type value of argument, or fallback if none exists
 	 */
-	public <T extends Enum<T>> T getEnum(String key, T fallback, boolean required) {
+	public <T extends Enum<T>> T getEnum(T fallback, boolean required, String... keys) {
 		//Get value from map
-		String lookupName = findValue(key, required);
+		String lookupName = findValue(keys, required);
 		if (lookupName == null) return fallback;
 		
 		//Find enum from value
@@ -212,16 +212,20 @@ public class BlockArguments
 		}
 		
 		//Invalid enum type name
-		GrandLogger.log("Value \"" + lookupName + "\" for \"" + key + "\" is invalid (Expected " + enumClass.getSimpleName() + ").", LogType.CONFIG_ERRORS);
+		GrandLogger.log("Value \"" + lookupName + "\" for \"" + keys + "\" is invalid (Expected " + enumClass.getSimpleName() + ").", LogType.CONFIG_ERRORS);
 		return fallback;
 	}
 	
-	private String findValue(String key, boolean required) {
+	private String findValue(String[] keys, boolean required) {
 		//Get value from map
-		String result = argumentMap.get(key);
+		String result = null;
+		for (String key : keys) {
+			result = argumentMap.get(key);
+			if (result != null) break;
+		}
 		//Not found
 		if (result == null || result.isEmpty()) {
-			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			if (required) GrandLogger.log("Missing required value for \"" + keys[0] + "\".", LogType.CONFIG_ERRORS);
 			return null;
 		}
 		//Return result

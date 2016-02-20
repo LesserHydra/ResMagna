@@ -2,7 +2,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -13,7 +13,7 @@ class MountAbility extends Ability
 	
 	public MountAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		otherTargeter = args.getTargeter("other", new CurrentTargeter(), true);
+		otherTargeter = args.getTargeter(new NoneTargeter(), true,	"mount", "other", "target", "t", null);
 	}
 
 	@Override

@@ -16,10 +16,10 @@ class SoundAbility extends Ability
 
 	public SoundAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		//TODO: Check for valid sound
-		sound = args.getEnum("name", Sound.CLICK, true);
-		volume = args.getFloat("volume", 1F, false);
-		pitch = args.getFloat("pitch", 1F, false);
+		
+		sound = args.getEnum(Sound.CLICK, true,		"soundname", "sound", "name", "s", "n", null);
+		volume = args.getFloat(1F, false,			"volume", "v");
+		pitch = args.getFloat(1F, false,			"pitch", "p");
 	}
 
 	@Override

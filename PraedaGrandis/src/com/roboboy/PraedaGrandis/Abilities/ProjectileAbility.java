@@ -45,29 +45,30 @@ class ProjectileAbility extends Ability
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		projectileType = args.getEnum("type", ProjectileType.NONE, true);
-		velocity = args.getDouble("velocity", 1D, false);
-		randomSpread = args.getDouble("randomspread", 0D, false);
+		projectileType = args.getEnum(ProjectileType.NONE, true,	"projectiletype", "projectile", "type", "proj");
 		
-		bounce = args.getBoolean("bounce", false, false);
-		flaming = args.getBoolean("flaming", false, false);
-		targetLocation = args.getLocation("targetlocation", new GrandLocation("F+1"), false);
-		onHitName = args.getString("onhit", null, false);
-		onEndName = args.getString("onend", null, false);
+		velocity = args.getDouble(1D, false,		"velocity", "vel", "v");
+		randomSpread = args.getDouble(0D, false,	"randomspread", "spread");
 		
-		fireballYield = args.getFloat("fireballyield", 0F, false);
-		fireballFire = args.getBoolean("fireballfire", false, false);
-		skullCharged = args.getBoolean("skullcharged", false, false);
+		bounce = args.getBoolean(false, false,		"bounce");
+		flaming = args.getBoolean(false, false,		"flaming");
+		targetLocation = args.getLocation(new GrandLocation("F+1"), false,	"targetlocation", "target");
+		onHitName = args.getString(null, false, 	"onhit", "hit");
+		onEndName = args.getString(null, false,		"onend", "end");
 		
-		arrowDamage = args.getDouble("arrowdamage", 0D, false);
-		arrowCritical = args.getBoolean("arrowcritical", false, false);
-		arrowKnockback = args.getInteger("arrowknockback", 0, false);
-		arrowKeepHit = args.getBoolean("arrowkeephit", false, false);
-		arrowKeepEnd = args.getBoolean("arrowkeepend", false, false);
-		arrowRemove = args.getBoolean("arrowremove", false, false);
-		arrowPickup = args.getBoolean("arrowpickup", false, false);
+		fireballYield = args.getFloat(0F, false,		"fireballyield", "fireyield", "fbyield");
+		fireballFire = args.getBoolean(false, false,	"fireballfire", "firefire", "fbfire");
+		skullCharged = args.getBoolean(false, false,	"skullcharged", "skullcharge", "fbcharge");
 		
-		onPotionSplash = args.getString("onsplash", null, false);
+		arrowDamage = args.getDouble(0D, false,			"arrowdamage", "arrowd", "arrd");
+		arrowCritical = args.getBoolean(false, false,	"arrowcritical", "arrowcrit", "arrcrit");
+		arrowKnockback = args.getInteger(0, false,		"arrowknockback", "arrowknock", "arrknock", "arrkb");
+		arrowKeepHit = args.getBoolean(false, false,	"arrowkeephit", "arrowkhit", "arrkhit");
+		arrowKeepEnd = args.getBoolean(false, false,	"arrowkeepend", "arrowkend", "arrkend");
+		arrowRemove = args.getBoolean(false, false,		"arrowremoveonhit", "arrowremove", "arrowrem", "arrrem");
+		arrowPickup = args.getBoolean(false, false,		"arrowcanbepickedup", "arrowpickup", "arrpickup", "arrpick");
+		
+		onPotionSplash = args.getString(null, false,	"onpotionsplash", "onpotsplash", "onsplash", "splash");
 	}
 
 	@Override
