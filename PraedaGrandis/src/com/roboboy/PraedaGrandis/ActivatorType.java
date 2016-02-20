@@ -34,6 +34,8 @@ public enum ActivatorType
 	INTERACTPLAYER	(INTERACT),				//Owner right-clicked on a player		.
 	INTERACTMOB		(INTERACT),				//Owner right-clicked on a mob			.
 	
+	BLOCKBREAK		(NONE),					//Owner breaks a block					Location of block broken
+	
 	BREAK			(NONE),					//Item breaks							NA
 	
 	ATTACK			(NONE),					//Owner attacked something				What was attacked
