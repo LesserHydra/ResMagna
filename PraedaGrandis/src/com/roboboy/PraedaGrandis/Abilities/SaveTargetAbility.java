@@ -13,7 +13,7 @@ class SaveTargetAbility extends Ability
 	public SaveTargetAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		saveName = args.getString("", true,		"savename", "save", "name", "sn", "n", null);
+		saveName = args.getString(true, "",		"savename", "save", "name", "sn", "n", null);
 	}
 
 	@Override

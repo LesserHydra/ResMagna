@@ -30,22 +30,22 @@ class TeleportAbility extends Ability
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		location = args.getLocation(new GrandLocation(), true,		"location", "loc", "l", null);
+		location = args.getLocation(true, new GrandLocation(),		"location", "loc", "l", null);
 		
-		int spread = args.getInteger(0, false,			"spread", "sprd");
-		int spreadH = args.getInteger(spread, false,	"spreadh", "sprdh", "sh");
-		int spreadV = args.getInteger(spread, false,	"spreadv", "sprdv", "sv");
-		spreadX = args.getInteger(spreadH, false,		"spreadx", "sx");
-		spreadY = args.getInteger(spreadV, false,		"spready", "sy");
-		spreadZ = args.getInteger(spreadH, false,		"spreadz", "sz");
+		int spread = args.getInteger(false, 0,			"spread", "sprd");
+		int spreadH = args.getInteger(false, spread,	"spreadh", "sprdh", "sh");
+		int spreadV = args.getInteger(false, spread,	"spreadv", "sprdv", "sv");
+		spreadX = args.getInteger(false, spreadH,		"spreadx", "sx");
+		spreadY = args.getInteger(false, spreadV,		"spready", "sy");
+		spreadZ = args.getInteger(false, spreadH,		"spreadz", "sz");
 		
-		attempts = args.getInteger(32, false,			"numberofattempts", "numattempts", "attempts", "tries", "try", "att");
+		attempts = args.getInteger(false, 32,			"numberofattempts", "numattempts", "attempts", "tries", "try", "att");
 		includeCenter = args.getBoolean(false, false,	"includecenter", "center");
 		failSafe = args.getBoolean(false, false,		"failsafe", "mustbesafe", "safe");
 		perfectSpread = args.getBoolean(false, false,	"perfectspread", "perfect");
 		ender = args.getBoolean(false, false,			"movetofloor", "floor");
 		
-		String dimensionString = args.getString(null, false,	"dimension"); //TODO: Move to GrandLocation
+		String dimensionString = args.getString(false, null,	"dimension"); //TODO: Move to GrandLocation
 		worldSuffix = getWorldSuffix(dimensionString);
 	}
 

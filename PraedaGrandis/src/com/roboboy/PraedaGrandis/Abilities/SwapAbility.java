@@ -17,7 +17,7 @@ class SwapAbility extends Ability
 	
 	public SwapAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		otherTargeter = args.getTargeter(new NoneTargeter(), true,	"mount", "other", "target", "m", null);
+		otherTargeter = args.getTargeter(true, new NoneTargeter(),	"mount", "other", "target", "m", null);
 		swapFacing = args.getBoolean(false, false,					"swapfacing", "facing", "f");
 	}
 

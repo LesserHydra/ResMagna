@@ -16,7 +16,7 @@ class IsHolding extends Condition
 		super(targeter, not);
 		
 		//TODO: Error handling/logging
-		this.itemName = args.getString("", true,	"name", "n", null);
+		this.itemName = args.getString(true, "",	"name", "n", null);
 	}
 
 	@Override

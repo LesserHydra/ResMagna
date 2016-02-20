@@ -25,22 +25,22 @@ class ParticleAbility extends Ability
 		super(slotType, activator, targeter);
 		
 		//TODO: Verify name
-		particleEffect = ParticleEffect.fromName(args.getString("", true,	"particlename", "particle", "name", "type", "n"));
-		amount = args.getInteger(1, true,									"amount", "amnt", "a");
+		particleEffect = ParticleEffect.fromName(args.getString(true, "",	"particlename", "particle", "name", "type", "n"));
+		amount = args.getInteger(true, 1,									"amount", "amnt", "a");
 		
-		centerLocation = args.getLocation(new GrandLocation(), false,	"location", "loc", "l");
-		
-		
-		float spread = args.getFloat(0.5F, false,		"spread", "radius", "sprd", "r");
-		float spreadH = args.getFloat(spread, false,	"spreadh", "sprdh", "sh", "rh");
-		float spreadV = args.getFloat(spread, false,	"spreadv", "sprdv", "sv", "rv");
-		offsetX = args.getFloat(spreadH, false,			"spreadx", "sx", "x");
-		offsetY = args.getFloat(spreadV, false,			"spready", "sy", "y");
-		offsetZ = args.getFloat(spreadH, false,			"spreadz", "sz", "z");
+		centerLocation = args.getLocation(false, new GrandLocation(),	"location", "loc", "l");
 		
 		
-		speed = args.getFloat(0F, false,	"speed", "s");
-		range = args.getDouble(60D, false,	"range", "r");
+		float spread = args.getFloat(false, 0.5F,		"spread", "radius", "sprd", "r");
+		float spreadH = args.getFloat(false, spread,	"spreadh", "sprdh", "sh", "rh");
+		float spreadV = args.getFloat(false, spread,	"spreadv", "sprdv", "sv", "rv");
+		offsetX = args.getFloat(false, spreadH,			"spreadx", "sx", "x");
+		offsetY = args.getFloat(false, spreadV,			"spready", "sy", "y");
+		offsetZ = args.getFloat(false, spreadH,			"spreadz", "sz", "z");
+		
+		
+		speed = args.getFloat(false, 0F,	"speed", "s");
+		range = args.getDouble(false, 60D,	"range", "r");
 	}
 
 	@Override

@@ -39,26 +39,26 @@ public class BlockArguments
 	
 	/**
 	 * Gets the string associated with the given key. Logs an error if required and none found.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Raw string value of argument, or fallback if none exists
 	 */
-	public String getString(String fallback, boolean required, String... keys) {
-		String result = findValue(keys, required);
+	public String getString(boolean required, String fallback, String... keys) {
+		String result = findValue(required, keys);
 		if (result == null) return fallback;
 		return result;
 	}
 	
 	/**
 	 * Gets the boolean associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Boolean value of argument, or fallback if none exists
 	 */
-	public boolean getBoolean(boolean fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public boolean getBoolean(boolean required, boolean fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		if (!Tools.isBoolean(value)) {
@@ -71,13 +71,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the integer associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Integer value of argument, or fallback if none exists
 	 */
-	public int getInteger(int fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public int getInteger(boolean required, int fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
@@ -90,13 +90,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the long associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Long value of argument, or fallback if none exists
 	 */
-	public long getLong(long fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public long getLong(boolean required, long fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
@@ -109,13 +109,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the float associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Float value of argument, or fallback if none exists
 	 */
-	public float getFloat(float fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public float getFloat(boolean required, float fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
@@ -128,13 +128,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the double associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Double value of argument, or fallback if none exists
 	 */
-	public double getDouble(double fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public double getDouble(boolean required, double fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
@@ -147,13 +147,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the GrandLocation associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return GrandLocation value of argument, or fallback if none exists
 	 */
-	public GrandLocation getLocation(GrandLocation fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public GrandLocation getLocation(boolean required, GrandLocation fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		return new GrandLocation(value.substring(1, value.length()-1));
@@ -161,13 +161,13 @@ public class BlockArguments
 	
 	/**
 	 * Gets the Targeter associated with the given key. Logs an error if required and none found, or if invalid format.
-	 * @param key All-lowercase key
-	 * @param fallback Value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Targeter value of argument, or fallback if none exists
 	 */
-	public Targeter getTargeter(Targeter fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public Targeter getTargeter(boolean required, Targeter fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		Targeter result = TargeterFactory.build(value);
@@ -179,8 +179,8 @@ public class BlockArguments
 		return result;
 	}
 
-	public Color getColor(Color fallback, boolean required, String... keys) {
-		String value = findValue(keys, required);
+	public Color getColor(boolean required, Color fallback, String... keys) {
+		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
 		Color result = ColorParser.build(value);
@@ -194,14 +194,14 @@ public class BlockArguments
 	
 	/**
 	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.
-	 * @param key All-lowercase key
-	 * @param fallback Non-null value to default to if none found
 	 * @param required Whether or not a value is required
+	 * @param fallback Non-null value to default to if none found
+	 * @param key All-lowercase key
 	 * @return Enum type value of argument, or fallback if none exists
 	 */
-	public <T extends Enum<T>> T getEnum(T fallback, boolean required, String... keys) {
+	public <T extends Enum<T>> T getEnum(boolean required, T fallback, String... keys) {
 		//Get value from map
-		String lookupName = findValue(keys, required);
+		String lookupName = findValue(required, keys);
 		if (lookupName == null) return fallback;
 		
 		//Find enum from value
@@ -216,7 +216,7 @@ public class BlockArguments
 		return fallback;
 	}
 	
-	private String findValue(String[] keys, boolean required) {
+	private String findValue(boolean required, String[] keys) {
 		//Get value from map
 		String result = null;
 		for (String key : keys) {

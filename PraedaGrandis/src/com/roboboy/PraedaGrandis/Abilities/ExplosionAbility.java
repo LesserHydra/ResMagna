@@ -22,11 +22,11 @@ class ExplosionAbility extends Ability
 	public ExplosionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		power = args.getFloat(0F, false,								"power", "yield", "p");
+		power = args.getFloat(false, 0F,								"power", "yield", "p");
 		setFire = args.getBoolean(false, false,							"setfire", "fire");
 		breakBlocks = args.getBoolean(false, false,						"breakblocks", "blocks", "break");
-		location = args.getLocation(new GrandLocation(), false, 		"location", "loc", "l");
-		damagerTargeter = args.getTargeter(new NoneTargeter(), false,	"damager", "source", "dmgr");
+		location = args.getLocation(false, new GrandLocation(), 		"location", "loc", "l");
+		damagerTargeter = args.getTargeter(false, new NoneTargeter(),	"damager", "source", "dmgr");
 	}
 
 	@Override

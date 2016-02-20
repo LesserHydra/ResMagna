@@ -20,11 +20,11 @@ class GhostBlockAbility extends Ability
 	{
 		super(slotType, activator, targeter);
 		
-		String[] blockStrings = args.getString("stone:0", true, "block").split(":");
+		String[] blockStrings = args.getString(true, "stone:0", "block").split(":");
 		material = Material.matchMaterial(blockStrings[0]);
 		data = Byte.parseByte(blockStrings[1]);
 		
-		location = args.getLocation(new GrandLocation(), true, "location", "loc", "l");
+		location = args.getLocation(true, new GrandLocation(), "location", "loc", "l");
 	}
 
 	@SuppressWarnings("deprecation")

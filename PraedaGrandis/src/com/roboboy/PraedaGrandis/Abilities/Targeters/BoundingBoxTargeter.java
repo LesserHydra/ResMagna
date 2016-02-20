@@ -13,12 +13,12 @@ public class BoundingBoxTargeter extends Targeter
 	private final double spreadZ;
 	
 	public BoundingBoxTargeter(BlockArguments args) {
-		double spread = args.getDouble(0.5, false,		"spread", "radius", "sprd", "r");
-		double spreadH = args.getDouble(spread, false,	"spreadh", "sprdh", "sh", "rh");
-		double spreadV = args.getDouble(spread, false,	"spreadv", "sprdv", "sv", "rv");
-		spreadX = args.getDouble(spreadH, false,		"spreadx", "sx", "x");
-		spreadY = args.getDouble(spreadV, false,		"spready", "sy", "y");
-		spreadZ = args.getDouble(spreadH, false,		"spreadz", "sz", "z");
+		double spread = args.getDouble(false, 0.5,		"spread", "radius", "sprd", "r");
+		double spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh", "rh");
+		double spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv", "rv");
+		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx", "x");
+		spreadY = args.getDouble(false, spreadV,		"spready", "sy", "y");
+		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz", "z");
 	}
 	
 	@Override

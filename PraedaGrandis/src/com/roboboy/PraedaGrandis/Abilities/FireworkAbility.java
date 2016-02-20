@@ -22,26 +22,26 @@ class FireworkAbility extends Ability
 	public FireworkAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		FireworkEffect.Type type = args.getEnum(FireworkEffect.Type.BALL, true,		"fireworkeffecttype", "firework", "effecttype", "type");
+		FireworkEffect.Type type = args.getEnum(true, FireworkEffect.Type.BALL,		"fireworkeffecttype", "firework", "effecttype", "type");
 		
 		boolean flicker = args.getBoolean(false, false,		"flicker");
 		boolean trail = args.getBoolean(false, false,		"trail");
 		
 		List<Color> colors = new LinkedList<Color>();
-		Color lastColor = args.getColor(Color.BLACK, true,		"color", "color1");
+		Color lastColor = args.getColor(true, Color.BLACK,		"color", "color1");
 		for (int i = 2; lastColor != null; i++) {
 			colors.add(lastColor);
-			lastColor = args.getColor(null, false,				"color"+i);
+			lastColor = args.getColor(false, null,				"color"+i);
 		}
 		
 		List<Color> fades = new LinkedList<Color>();
-		Color lastFade = args.getColor(null, false,		"fade", "fade1");
+		Color lastFade = args.getColor(false, null,		"fade", "fade1");
 		for (int i = 2; lastFade != null; i++) {
 			fades.add(lastFade);
-			lastFade = args.getColor(null, false,		"fade"+i);
+			lastFade = args.getColor(false, null,		"fade"+i);
 		}
 		
-		power = args.getInteger(-1, false,	"power");
+		power = args.getInteger(false, -1,	"power");
 		
 		effect = FireworkEffect.builder().with(type).flicker(flicker).trail(trail).withColor(colors).withFade(fades).build();
 	}

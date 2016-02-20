@@ -21,10 +21,10 @@ class PotionAbility extends Ability
 		super(slotType, activator, targeter);
 		
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
-		type = PotionEffectType.getByName(args.getString("ABSORPTION", true,	"potiontype", "potion", "type", "name", "t", null));
+		type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"potiontype", "potion", "type", "name", "t", null));
 		
-		duration = args.getInteger(600, false,		"duration", "ticks", "d");
-		amplifier = args.getInteger(0, false,		"amplifier", "level", "amp", "a");
+		duration = args.getInteger(false, 600,		"duration", "ticks", "d");
+		amplifier = args.getInteger(false, 0,		"amplifier", "level", "amp", "a");
 	}
 	
 	@Override

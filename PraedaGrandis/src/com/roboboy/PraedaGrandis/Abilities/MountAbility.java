@@ -13,7 +13,7 @@ class MountAbility extends Ability
 	
 	public MountAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		otherTargeter = args.getTargeter(new NoneTargeter(), true,	"mount", "other", "target", "t", null);
+		otherTargeter = args.getTargeter(true, new NoneTargeter(),	"mount", "other", "target", "t", null);
 	}
 
 	@Override

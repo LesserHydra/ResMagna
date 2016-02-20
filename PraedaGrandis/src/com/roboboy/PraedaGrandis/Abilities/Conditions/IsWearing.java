@@ -19,7 +19,7 @@ class IsWearing extends Condition
 		super(targeter, not);
 		
 		//TODO: Error handling/logging
-		String namesString = args.getString("", false, "names", "name", "n", null);
+		String namesString = args.getString(false, "", "names", "name", "n", null);
 		for (String s : namesString.replace("(", "").replace(")", "").replace(",", "").split(" ")) {
 			itemNames.add(s);
 		}

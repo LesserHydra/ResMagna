@@ -21,9 +21,9 @@ class DamageAbility extends Ability
 	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 
-		damageAmount = args.getDouble(0D, true,							"amount", "a", null);
-		damagerTargeter = args.getTargeter(new HolderTargeter(), false, "damager", "dmgr", "source");
-		cause = args.getEnum(DamageCause.CUSTOM, false,					"cause");
+		damageAmount = args.getDouble(true, 0D,							"amount", "a", null);
+		damagerTargeter = args.getTargeter(false, new HolderTargeter(), "damager", "dmgr", "source");
+		cause = args.getEnum(false, DamageCause.CUSTOM,					"cause");
 	}
 	
 	@Override

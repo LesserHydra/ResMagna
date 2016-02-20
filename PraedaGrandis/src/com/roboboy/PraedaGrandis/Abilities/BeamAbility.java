@@ -44,34 +44,34 @@ public class BeamAbility extends Ability
 	public BeamAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		speed = args.getDouble(0D, true,			"speed", "spd", "s");
-		numSteps = args.getInteger(1, false,		"numsteps", "steps", "nstep");
-		delay = args.getLong(10L, false,			"delay", "dly", "d");
-		maxDistance = args.getDouble(50D, false,	"maxdistance", "distance", "maxdis", "mdis");
-		maxTicks = args.getLong(200L, false,		"maxticks", "ticks", "maxt");
+		speed = args.getDouble(true, 0D,			"speed", "spd", "s");
+		numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
+		delay = args.getLong(false, 10L,			"delay", "dly", "d");
+		maxDistance = args.getDouble(false, 50D,	"maxdistance", "distance", "maxdis", "mdis");
+		maxTicks = args.getLong(false, 200L,		"maxticks", "ticks", "maxt");
 		
 		ignoreBlocks = args.getBoolean(false, false,	"ignoreblocks", "notblocks", "noblock", "nb", "ib");
 		ignoreEntities = args.getBoolean(false, false,	"ignoreentities", "notentities", "noentity", "noent", "ient", "ne", "ie");
 		
-		double spread = args.getDouble(0.5, false,		"spread", "sprd", "s");
-		double spreadH = args.getDouble(spread, false,	"spreadh", "sprdh", "sh");
-		double spreadV = args.getDouble(spread, false,	"spreadv", "sprdv", "sv");
-		spreadX = args.getDouble(spreadH, false,		"spreadx", "sx");
-		spreadY = args.getDouble(spreadV, false,		"spready", "sy");
-		spreadZ = args.getDouble(spreadH, false,		"spreadz", "sz");
+		double spread = args.getDouble(false, 0.5,		"spread", "sprd", "s");
+		double spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh");
+		double spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv");
+		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx");
+		spreadY = args.getDouble(false, spreadV,		"spready", "sy");
+		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz");
 		
-		originLocation = args.getLocation(new GrandLocation("Y+1.62 "), false,		"originlocation", "origin", "oloc");
-		targetLocation = args.getLocation(new GrandLocation("Y+1.62  F+1"), false,	"targetlocation", "target", "tloc");
+		originLocation = args.getLocation(false, new GrandLocation("Y+1.62 "),		"originlocation", "origin", "oloc");
+		targetLocation = args.getLocation(false, new GrandLocation("Y+1.62  F+1"),	"targetlocation", "target", "tloc");
 		
-		homingTargeter = args.getTargeter(null, false,					"homingtarget", "hometarget", "htarget");
-		homingForce = args.getDouble(0D, (homingTargeter!=null),		"homingforce", "homeforce", "hforce");
+		homingTargeter = args.getTargeter(false, null,					"homingtarget", "hometarget", "htarget");
+		homingForce = args.getDouble((homingTargeter!=null), 0D,		"homingforce", "homeforce", "hforce");
 		
-		String onHitString = args.getString(null, false,					"onhit", "hit");
-		onHitBlock = new FunctionRunner(args.getString(onHitString, false,	"onhitblock", "hitblock", "hitb"));
-		onHitEntity = new FunctionRunner(args.getString(onHitString, false,	"onhitentity", "hitentity", "hite"));
+		String onHitString = args.getString(false, null,					"onhit", "hit");
+		onHitBlock = new FunctionRunner(args.getString(false, onHitString,	"onhitblock", "hitblock", "hitb"));
+		onHitEntity = new FunctionRunner(args.getString(false, onHitString,	"onhitentity", "hitentity", "hite"));
 		
-		onStep = new FunctionRunner(args.getString(null, false,		"onstep", "step"));
-		onEnd = new FunctionRunner(args.getString(null, false,		"onend", "end"));
+		onStep = new FunctionRunner(args.getString(false, null,		"onstep", "step"));
+		onEnd = new FunctionRunner(args.getString(false, null,		"onend", "end"));
 	}
 
 	@Override

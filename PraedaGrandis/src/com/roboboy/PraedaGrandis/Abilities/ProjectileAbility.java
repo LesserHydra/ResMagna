@@ -45,30 +45,30 @@ class ProjectileAbility extends Ability
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		projectileType = args.getEnum(ProjectileType.NONE, true,	"projectiletype", "projectile", "type", "proj");
+		projectileType = args.getEnum(true, ProjectileType.NONE,	"projectiletype", "projectile", "type", "proj");
 		
-		velocity = args.getDouble(1D, false,		"velocity", "vel", "v");
-		randomSpread = args.getDouble(0D, false,	"randomspread", "spread");
+		velocity = args.getDouble(false, 1D,		"velocity", "vel", "v");
+		randomSpread = args.getDouble(false, 0D,	"randomspread", "spread");
 		
 		bounce = args.getBoolean(false, false,		"bounce");
 		flaming = args.getBoolean(false, false,		"flaming");
-		targetLocation = args.getLocation(new GrandLocation("F+1"), false,	"targetlocation", "target");
-		onHitName = args.getString(null, false, 	"onhit", "hit");
-		onEndName = args.getString(null, false,		"onend", "end");
+		targetLocation = args.getLocation(false, new GrandLocation("F+1"),	"targetlocation", "target");
+		onHitName = args.getString(false, null, 	"onhit", "hit");
+		onEndName = args.getString(false, null,		"onend", "end");
 		
-		fireballYield = args.getFloat(0F, false,		"fireballyield", "fireyield", "fbyield");
+		fireballYield = args.getFloat(false, 0F,		"fireballyield", "fireyield", "fbyield");
 		fireballFire = args.getBoolean(false, false,	"fireballfire", "firefire", "fbfire");
 		skullCharged = args.getBoolean(false, false,	"skullcharged", "skullcharge", "fbcharge");
 		
-		arrowDamage = args.getDouble(0D, false,			"arrowdamage", "arrowd", "arrd");
+		arrowDamage = args.getDouble(false, 0D,			"arrowdamage", "arrowd", "arrd");
 		arrowCritical = args.getBoolean(false, false,	"arrowcritical", "arrowcrit", "arrcrit");
-		arrowKnockback = args.getInteger(0, false,		"arrowknockback", "arrowknock", "arrknock", "arrkb");
+		arrowKnockback = args.getInteger(false, 0,		"arrowknockback", "arrowknock", "arrknock", "arrkb");
 		arrowKeepHit = args.getBoolean(false, false,	"arrowkeephit", "arrowkhit", "arrkhit");
 		arrowKeepEnd = args.getBoolean(false, false,	"arrowkeepend", "arrowkend", "arrkend");
 		arrowRemove = args.getBoolean(false, false,		"arrowremoveonhit", "arrowremove", "arrowrem", "arrrem");
 		arrowPickup = args.getBoolean(false, false,		"arrowcanbepickedup", "arrowpickup", "arrpickup", "arrpick");
 		
-		onPotionSplash = args.getString(null, false,	"onpotionsplash", "onpotsplash", "onsplash", "splash");
+		onPotionSplash = args.getString(false, null,	"onpotionsplash", "onpotsplash", "onsplash", "splash");
 	}
 
 	@Override
