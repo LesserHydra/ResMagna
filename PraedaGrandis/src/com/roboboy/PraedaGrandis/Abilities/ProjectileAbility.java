@@ -52,8 +52,8 @@ class ProjectileAbility extends Ability
 		bounce = args.getBoolean("bounce", false, false);
 		flaming = args.getBoolean("flaming", false, false);
 		targetLocation = args.getLocation("targetlocation", new GrandLocation("F+1"), false);
-		onHitName = args.get("onhit", null, false);
-		onEndName = args.get("onend", null, false);
+		onHitName = args.getString("onhit", null, false);
+		onEndName = args.getString("onend", null, false);
 		
 		fireballYield = args.getFloat("fireballyield", 0F, false);
 		fireballFire = args.getBoolean("fireballfire", false, false);
@@ -67,7 +67,7 @@ class ProjectileAbility extends Ability
 		arrowRemove = args.getBoolean("arrowremove", false, false);
 		arrowPickup = args.getBoolean("arrowpickup", false, false);
 		
-		onPotionSplash = args.get("onsplash", null, false);
+		onPotionSplash = args.getString("onsplash", null, false);
 	}
 
 	@Override

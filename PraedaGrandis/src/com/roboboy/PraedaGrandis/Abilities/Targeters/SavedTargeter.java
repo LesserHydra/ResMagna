@@ -9,7 +9,7 @@ public class SavedTargeter extends Targeter
 	private final String saveName;
 	
 	public SavedTargeter(BlockArguments args) {
-		saveName = args.get(null, "", true);
+		saveName = args.getString(null, "", true);
 	}
 	
 	@Override

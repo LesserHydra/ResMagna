@@ -20,7 +20,7 @@ class GhostBlockAbility extends Ability
 	{
 		super(slotType, activator, targeter);
 		
-		String[] blockStrings = args.get("block", "stone:0", true).split(":");
+		String[] blockStrings = args.getString("block", "stone:0", true).split(":");
 		material = Material.matchMaterial(blockStrings[0]);
 		data = Byte.parseByte(blockStrings[1]);
 		

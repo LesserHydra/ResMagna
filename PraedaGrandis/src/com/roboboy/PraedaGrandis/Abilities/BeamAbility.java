@@ -65,12 +65,12 @@ public class BeamAbility extends Ability
 		homingTargeter = args.getTargeter("homingtarget", new CurrentTargeter(), false);
 		homingForce = args.getDouble("homingforce", 0D, false);
 		
-		String onHitString = args.get("onhit", null, false);
-		onHitBlock = new FunctionRunner(args.get("onhitblock", onHitString, false));
-		onHitEntity = new FunctionRunner(args.get("onhitentity", onHitString, false));
+		String onHitString = args.getString("onhit", null, false);
+		onHitBlock = new FunctionRunner(args.getString("onhitblock", onHitString, false));
+		onHitEntity = new FunctionRunner(args.getString("onhitentity", onHitString, false));
 		
-		onStep = new FunctionRunner(args.get("onstep", null, false));
-		onEnd = new FunctionRunner(args.get("onend", null, false));
+		onStep = new FunctionRunner(args.getString("onstep", null, false));
+		onEnd = new FunctionRunner(args.getString("onend", null, false));
 	}
 
 	@Override

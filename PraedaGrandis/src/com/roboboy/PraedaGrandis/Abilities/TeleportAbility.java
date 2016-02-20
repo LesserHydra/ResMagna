@@ -41,7 +41,7 @@ class TeleportAbility extends Ability
 		perfectSpread = args.getBoolean("perfectspread", false, false);
 		ender = args.getBoolean("ender", false, false);
 		
-		String dimensionString = args.get("dimension", null, false);
+		String dimensionString = args.getString("dimension", null, false);
 		worldSuffix = getWorldSuffix(dimensionString);
 	}
 

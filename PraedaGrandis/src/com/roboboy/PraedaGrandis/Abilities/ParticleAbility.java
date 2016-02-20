@@ -25,7 +25,7 @@ class ParticleAbility extends Ability
 		super(slotType, activator, targeter);
 		
 		//TODO: Verify name
-		particleEffect = ParticleEffect.fromName(args.get("name", "", true));
+		particleEffect = ParticleEffect.fromName(args.getString("name", "", true));
 		amount = args.getInteger("amount", 1, true);
 		
 		centerLocation = args.getLocation("location", new GrandLocation(), false);
