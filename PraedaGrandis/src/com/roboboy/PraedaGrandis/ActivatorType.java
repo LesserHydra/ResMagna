@@ -17,15 +17,15 @@ public enum ActivatorType
 	EQUIP			(NONE),					//Item moved into specified slotType	NA
 	UNEQUIP			(NONE),					//Item moved from specified slotType	NA
 	
-	MOVE			(NONE),					//Owner location changed
-	MOVEWALK		(MOVE),					//Owner walking
-	MOVEUP			(MOVE),
-	MOVEDOWN		(MOVE),
+	MOVE			(NONE),					//Owner location changed				From location
+	MOVEWALK		(MOVE),					//Owner walking							.
+	MOVEUP			(MOVE),					//										.
+	MOVEDOWN		(MOVE),					//										.
 	
-	TELEPORT		(MOVE),					//Owner teleported						NA
-	PORTAL			(TELEPORT),				//Owner about to go through portal		NA
+	TELEPORT		(MOVE),					//Owner teleported						From location
+	PORTAL			(TELEPORT),				//Owner about to go through portal		.
 	
-	LOOK			(NONE),					//Owner direction changed				NA
+	LOOK			(NONE),					//Owner direction changed				From location (direction)
 	
 	CLICK			(NONE),					//Owner clicked							What was clicked
 	CLICKLEFT		(CLICK),				//Owner left-clicked					NA

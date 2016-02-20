@@ -41,7 +41,7 @@ public class ActivatorListener implements Listener
 		if (e.getClickedBlock() != null && !e.getPlayer().isSneaking()) {
 			if (PraedaGrandis.CLICK_STEALERS.contains(e.getClickedBlock().getType())) return;
 		}
-		if (!clickType.isNull()) activate(clickType, e.getPlayer(), null);
+		if (!clickType.isNull()) activate(clickType, e.getPlayer(), (LivingEntity)null);
 	}
 	
 	
@@ -63,7 +63,7 @@ public class ActivatorListener implements Listener
 		GrandItem gItem = ItemHandler.getInstance().matchItem(e.getBrokenItem());
 		if (gItem == null) return;
 		
-		activate(ActivatorType.BREAK, e.getPlayer(), null);
+		activate(ActivatorType.BREAK, e.getPlayer(), (LivingEntity)null);
 	}
 	
 	
@@ -77,13 +77,13 @@ public class ActivatorListener implements Listener
 		
 		//Look
 		if (!to.getDirection().equals(from.getDirection())) {
-			activate(ActivatorType.LOOK, e.getPlayer(), null);
+			activate(ActivatorType.LOOK, e.getPlayer(), e.getFrom());
 		}
 		
 		//Move
 		if (!to.getBlock().equals(from.getBlock())) {
 			ActivatorType moveType = getMoveActivator(from, to);
-			activate(moveType, p, null);
+			activate(moveType, p, e.getFrom());
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class ActivatorListener implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (!(e.getEntity() instanceof Player)) return;
-		activate(ActivatorType.HURTOTHER, (Player) e.getEntity(), null);
+		activate(ActivatorType.HURTOTHER, (Player) e.getEntity(), (LivingEntity)null);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -138,11 +138,11 @@ public class ActivatorListener implements Listener
 	/*----------TELEPORT----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
-		activate(ActivatorType.TELEPORT, e.getPlayer(), null);
+		activate(ActivatorType.TELEPORT, e.getPlayer(), e.getFrom());
 	}
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerPortal(PlayerPortalEvent e) {
-		activate(ActivatorType.PORTAL, e.getPlayer(), null);
+		activate(ActivatorType.PORTAL, e.getPlayer(), e.getFrom());
 	}
 	
 	/**
@@ -151,8 +151,23 @@ public class ActivatorListener implements Listener
 	 * @param holder Player involved in event
 	 * @param activatorTarget Target for the activator, or null
 	 */
-	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget)
-	{
+	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget) {
+		//Run one tick later, to avoid the infinite hunger bug
+		new BukkitRunnable() { @Override public void run() {
+			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
+			for (GrandInventory.InventoryElement element : pInv.getItems()) {
+				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
+			}
+		}}.runTaskLater(plugin, 1L);
+	}
+	
+	/**
+	 * Sends an activator on the next tick
+	 * @param type Type of activator
+	 * @param holder Player involved in event
+	 * @param activatorTarget Target for the activator, or null
+	 */
+	private void activate(final ActivatorType type, final Player holder, final Location activatorTarget) {
 		//Run one tick later, to avoid the infinite hunger bug
 		new BukkitRunnable() { @Override public void run() {
 			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
