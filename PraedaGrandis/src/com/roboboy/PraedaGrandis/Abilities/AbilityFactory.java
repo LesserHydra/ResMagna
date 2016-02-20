@@ -49,7 +49,7 @@ public class AbilityFactory
 		//Get activator
 		String activatorName = lineMatcher.group(6);
 		ActivatorType actType = ActivatorType.NONE;
-		if (activatorName != null) actType = ActivatorType.valueOf(activatorName.toUpperCase()); //TODO: Error handling/logging
+		if (activatorName != null) actType = ActivatorType.fromName(activatorName);
 		
 		//Get activator argument
 		String activatorArgument = groupParser.getGrouping(lineMatcher.group(7));
@@ -59,7 +59,7 @@ public class AbilityFactory
 		//Get slot type
 		String slotTypeName = lineMatcher.group(8);
 		ItemSlotType slotType = ItemSlotType.ANY;
-		if (slotTypeName != null) slotType = ItemSlotType.valueOf(slotTypeName.toUpperCase()); //TODO: Error handling/logging
+		if (slotTypeName != null) slotType = ItemSlotType.fromName(slotTypeName.toUpperCase());
 		
 		//Construct ability by name
 		Ability a = constructAbility(abilityName, slotType, actType, targeter, abilityArgs, variableArgs);

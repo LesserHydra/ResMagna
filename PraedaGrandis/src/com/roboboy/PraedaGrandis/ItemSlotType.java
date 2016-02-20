@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public enum ItemSlotType
 {
@@ -172,4 +174,22 @@ public enum ItemSlotType
 		}
 		return results;
 	}
+	
+	/**
+	 * Find ItemSlotType by name
+	 * @param typeName Name of required type, non null
+	 * @return The matching type, or NONE if not found
+	 */
+	public static ItemSlotType fromName(String typeName){
+		//Find by name
+		typeName = typeName.toUpperCase();
+		for (ItemSlotType type : values()) {
+			if (typeName.equals(type.name())) return type;
+		}
+		
+		//Invalid name
+		GrandLogger.log("Invalid slot type: " + typeName, LogType.CONFIG_ERRORS);
+		return NONE;
+	}
+	
 }

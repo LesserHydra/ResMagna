@@ -1,5 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
+
 /**
  * Activators
  */
@@ -83,4 +86,22 @@ public enum ActivatorType
 	public boolean isNull() {
 		return (this == NONE);
 	}
+	
+	/**
+	 * Find ActivatorType by name
+	 * @param activatorName Name of required type
+	 * @return The matching type, or NONE if not found
+	 */
+	public static ActivatorType fromName(String activatorName){
+		//Find by name
+		activatorName = activatorName.toUpperCase();
+		for (ActivatorType type : values()) {
+			if (activatorName.equals(type.name())) return type;
+		}
+		
+		//Invalid name
+		GrandLogger.log("Invalid activator: on" + activatorName, LogType.CONFIG_ERRORS);
+		return NONE;
+	}
+	
 }
