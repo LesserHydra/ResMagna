@@ -22,8 +22,7 @@ class DamageAbility extends Ability
 		super(slotType, activator, targeter);
 		damageAmount = args.getDouble("amount", 0D, true);
 		damagerTargeter = args.getTargeter("damager", new HolderTargeter(), false);
-		//TODO: Verify valid cause
-		cause = DamageCause.valueOf(args.get("cause", "CUSTOM", false).toUpperCase());
+		cause = args.getEnum("cause", DamageCause.CUSTOM, false);
 	}
 	
 	@Override

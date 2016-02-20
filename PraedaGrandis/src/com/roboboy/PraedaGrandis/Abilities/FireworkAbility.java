@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +22,7 @@ class FireworkAbility extends Ability
 	public FireworkAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		FireworkEffect.Type type = Type.valueOf(args.get("type", "BALL", true).toUpperCase());
+		FireworkEffect.Type type = args.getEnum("type", FireworkEffect.Type.BALL, true);
 		boolean flicker = args.getBoolean("flicker", false, false);
 		boolean trail = args.getBoolean("trail", false, false);
 		

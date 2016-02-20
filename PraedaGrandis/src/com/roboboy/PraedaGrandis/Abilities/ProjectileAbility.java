@@ -45,7 +45,7 @@ class ProjectileAbility extends Ability
 	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		projectileType = ProjectileType.fromString(args.get("type", "", true));
+		projectileType = args.getEnum("type", ProjectileType.NONE, true);
 		velocity = args.getDouble("velocity", 1D, false);
 		randomSpread = args.getDouble("randomspread", 0D, false);
 		

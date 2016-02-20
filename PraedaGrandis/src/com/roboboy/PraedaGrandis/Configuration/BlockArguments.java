@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -225,4 +226,34 @@ public class BlockArguments
 		
 		return result;
 	}
+	
+	/**
+	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.
+	 * @param key All-lowercase key
+	 * @param fallback Non-null value to default to if none found
+	 * @param required Whether or not a value is required
+	 * @return Enum type value of argument, or fallback if none exists
+	 */
+	public <T extends Enum<T>> T getEnum(String key, T fallback, boolean required) {
+		//Get value from map
+		String lookupName = argumentMap.get(key);
+		
+		//Value not found
+		if (lookupName == null || lookupName.isEmpty()) {
+			if (required) GrandLogger.log("Missing required value for \"" + key + "\".", LogType.CONFIG_ERRORS);
+			return fallback;
+		}
+		
+		//Find enum from value
+		Class<T> enumClass = fallback.getDeclaringClass();
+		lookupName = lookupName.toUpperCase();
+		for (T type : EnumSet.allOf(enumClass)) {
+			if (lookupName.equals(type.name())) return type;
+		}
+		
+		//Invalid enum type name
+		GrandLogger.log("Value \"" + lookupName + "\" for \"" + key + "\" is invalid (Expected " + enumClass.getSimpleName() + ").", LogType.CONFIG_ERRORS);
+		return fallback;
+	}
+	
 }
