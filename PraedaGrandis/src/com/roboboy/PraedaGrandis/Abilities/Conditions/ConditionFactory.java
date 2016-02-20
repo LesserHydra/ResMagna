@@ -82,7 +82,7 @@ public class ConditionFactory
 		case "isexp":			return new IsExp(targeter, not, varArgsString);
 		case "islevel":			return new IsLevel(targeter, not, varArgsString);
 		
-		default:				return null; //TODO: Make a default condition (always false?)
+		default:				return null;
 		}
 	}
 	
