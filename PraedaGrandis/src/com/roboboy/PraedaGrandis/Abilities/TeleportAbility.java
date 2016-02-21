@@ -30,7 +30,8 @@ class TeleportAbility extends Ability
 	
 	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		location = args.getLocation(true, new GrandLocation(),		"location", "loc", "l", null);
+		
+		location = args.getLocation(false, new GrandLocation(),		"location", "loc", "l", null);
 		
 		int spread = args.getInteger(false, 0,			"spread", "sprd");
 		int spreadH = args.getInteger(false, spread,	"spreadh", "sprdh", "sh");
