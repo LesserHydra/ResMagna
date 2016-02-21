@@ -18,22 +18,25 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 
 public class GrandLocation
 {
-	//(?:(@\w+\s*(?:\((\$[\d]+)\))?)\s*)?(?:\|\s*)?(.+)?
-	static private final Pattern formatPattern = Pattern.compile("(?:(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)\\s*)?(?:\\|\\s*)?(.+)?");
+	//(?:(@\w+\s*(?:\((\$[\d]+)\))?)\s*)?(?:\|\s*)?([^<>\|\n]+)?(?:\s*\|\s*)?(?:<([*\w]+)>)?
+	static private final Pattern formatPattern = Pattern.compile("(?:(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)\\s*)?(?:\\|\\s*)?([^<>\\|\\n]+)?(?:\\s*\\|\\s*)?(?:<([*\\w]+)>)?");
 	//([~a-zA-Z]+=?)([+-]?[\d\.]+)?
 	static private final Pattern componentPattern = Pattern.compile("([~a-zA-Z]+=?)([+-]?[\\d\\.]+)?");
 	
 	private final Targeter locationTargeter;
 	private final List<Pair<LocationComponentType, Double>> componentList;
+	private final Dimension dimension;
 	
 	public GrandLocation() {
 		locationTargeter = new CurrentTargeter();
 		componentList = new LinkedList<>();
+		dimension = Dimension.SAME;
 	}
 	
-	public GrandLocation(Targeter locationTargeter, List<Pair<LocationComponentType, Double>> componentList) {
+	public GrandLocation(Targeter locationTargeter, List<Pair<LocationComponentType, Double>> componentList, Dimension dimension) {
 		this.locationTargeter = locationTargeter;
 		this.componentList = componentList;
+		this.dimension = dimension;
 	}
 
 	public Location calculate(Target mainTarget) {
@@ -46,6 +49,9 @@ public class GrandLocation
 		for (Pair<LocationComponentType, Double> componentPair : componentList) {
 			componentPair.getLeft().modify(finalLoc, componentPair.getRight());
 		}
+		
+		//Set world
+		finalLoc.setWorld(dimension.getWorld(finalLoc.getWorld()));
 		
 		//Return result
 		return finalLoc;
@@ -74,13 +80,18 @@ public class GrandLocation
 		//Get components, if exist
 		List<Pair<LocationComponentType, Double>> componentList = new LinkedList<>();
 		String componentsString = lineMatcher.group(3);
-		if (componentsString == null) return new GrandLocation(locationTargeter, componentList);
-		Matcher componentMatcher = componentPattern.matcher(componentsString);
-		while (componentMatcher.find()) {
-			addComponentToList(componentMatcher.group(1), componentMatcher.group(2), componentList);
+		if (componentsString != null) {
+			Matcher componentMatcher = componentPattern.matcher(componentsString);
+			while (componentMatcher.find()) {
+				addComponentToList(componentMatcher.group(1), componentMatcher.group(2), componentList);
+			}
 		}
 		
-		return new GrandLocation(locationTargeter, componentList);
+		//Get dimension
+		Dimension dimension = Dimension.fromString(lineMatcher.group(4));
+		
+		//Return result
+		return new GrandLocation(locationTargeter, componentList, dimension);
 	}
 	
 	private static void addComponentToList(String componentTypeString, String componentDoubleString, List<Pair<LocationComponentType, Double>> componentList) {

@@ -2,9 +2,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.ActivatorType;
@@ -18,7 +16,6 @@ import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 class TeleportAbility extends Ability
 {
 	private final GrandLocation location;
-	private final String worldSuffix;
 	private final int spreadX;
 	private final int spreadY;
 	private final int spreadZ;
@@ -45,34 +42,12 @@ class TeleportAbility extends Ability
 		failSafe = args.getBoolean(false, false,		"failsafe", "mustbesafe", "safe");
 		perfectSpread = args.getBoolean(false, false,	"perfectspread", "perfect");
 		ender = args.getBoolean(false, false,			"movetofloor", "floor");
-		
-		String dimensionString = args.getString(false, null,	"dimension"); //TODO: Move to GrandLocation
-		worldSuffix = getWorldSuffix(dimensionString);
 	}
-
-	private String getWorldSuffix(String dimensionString)
-	{
-		if (dimensionString == null)						return null;
-		if (dimensionString.equalsIgnoreCase("overworld"))	return "";
-		if (dimensionString.equalsIgnoreCase("nether"))		return "_nether";
-		if (dimensionString.equalsIgnoreCase("end"))		return "_the_end";
-		
-		//Error logging
-		return null;
-	}
-
+	
 	@Override
 	protected void execute(Target target) {
 		Location centerLoc = location.calculate(target);
 		if (centerLoc == null) return;
-		
-		if (worldSuffix != null) {
-			String worldName = getBaseWorldName(centerLoc.getWorld().getName()) + worldSuffix;
-			World world = Bukkit.getWorld(worldName);
-			//Error logging
-			if (world == null) return;
-			centerLoc.setWorld(world);
-		}
 		
 		if (spreadX > 0 || spreadY > 0 || spreadZ > 0) centerLoc = getSpread(centerLoc);
 		if (failSafe && !isSafe(centerLoc)) return;
@@ -102,12 +77,6 @@ class TeleportAbility extends Ability
 		Location result = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
 		result.add(0.5, 0, 0.5);
 		return result;
-	}
-
-	private String getBaseWorldName(String worldName) {
-		if (worldName.endsWith("_nether")) return worldName.replace("_nether", "");
-		if (worldName.endsWith("_the_end")) return worldName.replace("_the_end", "");
-		return worldName;
 	}
 
 	private List<Location> getSafeInRadius(Location center) {
