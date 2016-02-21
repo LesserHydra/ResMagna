@@ -34,7 +34,7 @@ public class ConditionFactory
 		
 		//Get condition arguments, if exist
 		String argumentsGroupID = lineMatcher.group(2);
-		BlockArguments conditionArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID));
+		BlockArguments conditionArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID), conditionLine);
 		
 		//Get unenclosed arguments, if exist
 		String variableArgsString = lineMatcher.group(3);

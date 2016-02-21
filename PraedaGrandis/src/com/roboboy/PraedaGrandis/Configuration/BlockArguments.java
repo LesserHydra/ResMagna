@@ -17,9 +17,12 @@ public class BlockArguments
 	//(\w+)\s*=\s*([^,;\s\n\(]*(?:\s*\((\$[\d]+)\))?)
 	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*([^,;\\s\\n\\(]*(?:\\s*\\((\\$[\\d]+)\\))?)");
 	
+	private final String lineString;
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
-	public BlockArguments(String argumentString) {
+	public BlockArguments(String argumentString, String lineString) {
+		this.lineString = lineString;
+		
 		if (argumentString == null) return;
 		
 		GroupingParser groupParser = new GroupingParser(argumentString);
@@ -62,7 +65,7 @@ public class BlockArguments
 		if (value == null) return fallback;
 		
 		if (!Tools.isBoolean(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected boolean).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "boolean");
 			return fallback;
 		}
 		
@@ -81,7 +84,7 @@ public class BlockArguments
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected integer).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "integer");
 			return fallback;
 		}
 		
@@ -100,7 +103,7 @@ public class BlockArguments
 		if (value == null) return fallback;
 		
 		if (!Tools.isInteger(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected long).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "long");
 			return fallback;
 		}
 		
@@ -119,7 +122,7 @@ public class BlockArguments
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected float).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "float");
 			return fallback;
 		}
 		
@@ -138,7 +141,7 @@ public class BlockArguments
 		if (value == null) return fallback;
 		
 		if (!Tools.isFloat(value)) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected double).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "double");
 			return fallback;
 		}
 		
@@ -156,6 +159,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
+		//TODO: Log error
 		return new GrandLocation(value.substring(1, value.length()-1));
 	}
 	
@@ -172,7 +176,7 @@ public class BlockArguments
 		
 		Targeter result = TargeterFactory.build(value);
 		if (result == null) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected targeter).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "targeter");
 			return fallback;
 		}
 		
@@ -185,7 +189,7 @@ public class BlockArguments
 		
 		Color result = ColorParser.build(value);
 		if (result == null) {
-			GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected RGB color).", LogType.CONFIG_ERRORS);
+			logInvalid(keys, value, "RGB color");
 			return fallback;
 		}
 		
@@ -212,7 +216,7 @@ public class BlockArguments
 		}
 		
 		//Invalid enum type name
-		GrandLogger.log("Value \"" + lookupName + "\" for \"" + keys + "\" is invalid (Expected " + enumClass.getSimpleName() + ").", LogType.CONFIG_ERRORS);
+		logInvalid(keys, lookupName, enumClass.getSimpleName());
 		return fallback;
 	}
 	
@@ -225,11 +229,27 @@ public class BlockArguments
 		}
 		//Not found
 		if (result == null || result.isEmpty()) {
-			if (required) GrandLogger.log("Missing required value for \"" + keys[0] + "\".", LogType.CONFIG_ERRORS);
+			if (required) {
+				GrandLogger.log("Missing required value for \"" + keys[0] + "\".", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
+				
+				String keysString = keys[0];
+				for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
+				GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
+			}
 			return null;
 		}
 		//Return result
 		return result;
+	}
+	
+	private void logInvalid(String[] keys, String value, String expected) {
+		GrandLogger.log("Value \"" + value + "\" for \"" + keys[0] + "\" is invalid (Expected " + expected + ").", LogType.CONFIG_ERRORS);
+		GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
+		
+		String keysString = keys[0];
+		for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
+		GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
 	}
 	
 }

@@ -35,7 +35,7 @@ public class AbilityFactory
 		
 		//Get ability arguments, if exist
 		String argumentsGroupID = lineMatcher.group(2);
-		BlockArguments abilityArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID));
+		BlockArguments abilityArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID), abilityLine);
 		
 		//Get unenclosed arguments, if exist
 		String variableArgs = lineMatcher.group(3);
