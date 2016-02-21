@@ -159,8 +159,13 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		//TODO: Log error
-		return new GrandLocation(value.substring(1, value.length()-1));
+		GrandLocation result = GrandLocation.buildFromString(value.substring(1, value.length()-1));
+		if (result == null) {
+			logInvalid(keys, value, "targeter");
+			return fallback;
+		}
+		
+		return result;
 	}
 	
 	/**

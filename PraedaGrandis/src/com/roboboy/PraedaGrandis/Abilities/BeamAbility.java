@@ -60,8 +60,8 @@ public class BeamAbility extends Ability
 		spreadY = args.getDouble(false, spreadV,		"spready", "sy");
 		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz");
 		
-		originLocation = args.getLocation(false, new GrandLocation("Y+1.62 "),		"originlocation", "origin", "oloc");
-		targetLocation = args.getLocation(false, new GrandLocation("Y+1.62  F+1"),	"targetlocation", "target", "tloc");
+		originLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62"),		"originlocation", "origin", "oloc");
+		targetLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62 F+1"),	"targetlocation", "target", "tloc");
 		
 		homingTargeter = args.getTargeter(false, null,					"homingtarget", "hometarget", "htarget");
 		homingForce = args.getDouble((homingTargeter!=null), 0D,		"homingforce", "homeforce", "hforce");

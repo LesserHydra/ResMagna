@@ -52,7 +52,7 @@ class ProjectileAbility extends Ability
 		
 		bounce = args.getBoolean(false, false,		"bounce");
 		flaming = args.getBoolean(false, false,		"flaming");
-		targetLocation = args.getLocation(false, new GrandLocation("F+1"),	"targetlocation", "target");
+		targetLocation = args.getLocation(false, GrandLocation.buildFromString("F+1"),	"targetlocation", "target");
 		onHitName = args.getString(false, null, 	"onhit", "hit");
 		onEndName = args.getString(false, null,		"onend", "end");
 		
