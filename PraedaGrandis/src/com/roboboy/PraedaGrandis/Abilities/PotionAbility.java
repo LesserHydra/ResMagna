@@ -10,14 +10,14 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class PotionAbility extends Ability
 {
-	//final PotionEffect potionEffect;
 	private final PotionEffectType type;
 	private final int duration;
 	private final int amplifier;
-
-	//LATER: Add options for force, ambient, and particles.
-	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
-	{
+	private final boolean ambient;
+	private final boolean particles;
+	private final boolean force;
+	
+	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
@@ -25,12 +25,14 @@ class PotionAbility extends Ability
 		
 		duration = args.getInteger(false, 600,		"duration", "ticks", "d");
 		amplifier = args.getInteger(false, 0,		"amplifier", "level", "amp", "a");
+		ambient = args.getBoolean(false, true,		"isambient", "ambient", "amb");
+		particles = args.getBoolean(false, true,	"showparticles", "particles", "part");
+		
+		force = args.getBoolean(false, true,		"removeconflicting", "force");
 	}
 	
 	@Override
-	protected void execute(Target target)
-	{
-		//PraedaGrandis.log("Applying " + type + " lvl" + amplifier + " to " + target.get().getType().toString() + " for " + + duration + " ticks.", LogType.TOO_MUCH_INFO);
-		target.getEntity().addPotionEffect(new PotionEffect(type, duration, amplifier, true, false), true);
+	protected void execute(Target target) {
+		target.getEntity().addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
 	}
 }
