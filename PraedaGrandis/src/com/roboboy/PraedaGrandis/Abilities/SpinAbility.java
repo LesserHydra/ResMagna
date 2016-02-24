@@ -12,17 +12,19 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class SpinAbility extends Ability
 {
-	private final int degrees;
-	private final int duration;
+	private final int numberOfUpdates;
+	private final float degreesPerUpdate;
 	private final long updateDelay;
-	private final boolean reverse;
 	
 	public SpinAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
-		degrees = args.getInteger(true, 0,			"degrees", "amount", "deg", "a");
-		duration = args.getInteger(true, 0, 		"duration", "ticks", "time", "dur", "d", "t");
-		updateDelay = args.getLong(false, 5,		"updateDelay", "delay", "ud");
-		reverse = args.getBoolean(false, false,		"reverse", "r");
+		
+		int degrees = args.getInteger(true, 0,			"degrees", "amount", "deg");
+		int duration = args.getInteger(true, 0, 		"duration", "ticks", "time", "dur");
+		this.updateDelay = args.getLong(false, 5,		"updatedelay", "delay");
+		
+		this.numberOfUpdates = (int) Math.ceil(duration/updateDelay);
+		this.degreesPerUpdate = degrees/numberOfUpdates;
 	}
 
 	@Override
@@ -36,17 +38,12 @@ class SpinAbility extends Ability
 	private class SpinTimer extends BukkitRunnable
 	{
 		private final LivingEntity targetEntity;
-		private final int numberOfUpdates;
-		private final float degreesPerUpdate;
 		
 		private int timesRun = 0;
 		private float newYaw;
 		
 		private SpinTimer(LivingEntity targetEntity) {
 			this.targetEntity = targetEntity;
-			this.numberOfUpdates = (int) Math.ceil(duration/updateDelay);
-			this.degreesPerUpdate = degrees/numberOfUpdates * (reverse ? -1 : 1);
-			
 			this.newYaw = targetEntity.getLocation().getYaw();
 		}
 		
