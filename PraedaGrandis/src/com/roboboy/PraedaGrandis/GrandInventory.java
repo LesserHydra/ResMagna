@@ -1,6 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetNone;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import java.util.ArrayList;
@@ -32,17 +34,22 @@ public class GrandInventory
 		}
 	}
 	
-	private Map<UUID, InventoryElement> itemMap = new HashMap<>();
-	private Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
+	private final Player holderPlayer;
+	private final Map<UUID, InventoryElement> itemMap = new HashMap<>();
+	private final Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
 	
-	public void resetToPlayer(Player player) {
+	public GrandInventory(Player holderPlayer) {
+		this.holderPlayer = holderPlayer;
+	}
+	
+	public void resetToPlayer() {
 		//Clear maps
 		itemMap.clear();
 		grandItemMap.clear();
 		
 		//Read all items from player's inventory
 		for (ItemSlotType slotType : ItemSlotType.getUniqueTypes()) {
-			for (ItemStack item : slotType.getItems(player)) {
+			for (ItemStack item : slotType.getItems(holderPlayer)) {
 				GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 				if (gItem != null) putItem(item, gItem, slotType);
 			}
@@ -57,13 +64,20 @@ public class GrandInventory
 	 * @param grandItem Represented GrandItem
 	 * @param slotType Most unique SlotType to add to
 	 */
-	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType)
-	{
+	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {		
 		//Construct new element
 		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
 		
 		//Put element on the itemMap
-		itemMap.put(element.id, element);
+		InventoryElement oldElement = itemMap.put(element.id, element);
+		
+		//Send unequip activator
+		if (oldElement != null) {
+			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
+		}
+		
+		//Send equip activator
+		grandItem.activateAbilities(ActivatorType.EQUIP, slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
 		Map<UUID, InventoryElement> items = grandItemMap.get(element.grandItem.getName());
@@ -85,8 +99,10 @@ public class GrandInventory
 		//Get and remove element from the itemMap
 		InventoryElement oldElement = itemMap.remove(getItemUUID(item));
 		
-		//Decrement value at old slot type
 		if (oldElement != null) {
+			//Send unequip activator
+			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
+			
 			Map<UUID, InventoryElement> items = grandItemMap.get(oldElement.grandItem.getName());
 			oldElement = items.remove(oldElement.id);
 		}

@@ -272,14 +272,14 @@ public class InventoryHandler implements Listener
 	}
 	
 	private void registerPlayer(Player p) {
-		GrandInventory gInv = new GrandInventory();
-		gInv.resetToPlayer(p);
+		GrandInventory gInv = new GrandInventory(p);
+		gInv.resetToPlayer();
 		playerInventories.put(p.getName(), gInv);
 	}
 	
 	private void resetInventoryNextTick(final Player p) {
 		new BukkitRunnable() { @Override public void run() {
-			playerInventories.get(p.getName()).resetToPlayer(p);
+			playerInventories.get(p.getName()).resetToPlayer();
 		}}.runTaskLater(PraedaGrandis.plugin, 1L);
 	}
 	
