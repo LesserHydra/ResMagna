@@ -77,6 +77,10 @@ public class Target
 		return currentTarget.isNull();
 	}
 	
+	public TargetConstruct getCurrent() {
+		return currentTarget;
+	}
+	
 	/**
 	 * Get the holder player
 	 * @return Holder player

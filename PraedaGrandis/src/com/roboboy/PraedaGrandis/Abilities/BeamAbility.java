@@ -102,7 +102,7 @@ public class BeamAbility extends Ability
 			currentVelocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
 			
 			currentLocation = startLocation;
-			beamTarget = target;
+			beamTarget = new Target(new TargetLocation(startLocation), target.getHolder(), target.getCurrent());
 		}
 		
 		@Override

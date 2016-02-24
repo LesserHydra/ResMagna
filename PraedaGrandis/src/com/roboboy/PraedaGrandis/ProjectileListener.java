@@ -44,7 +44,7 @@ public class ProjectileListener implements Listener
 		if (!(event.getDamager() instanceof Projectile)) return;
 		Projectile projectile = (Projectile) event.getDamager();
 		
-		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit")) runHitAbility(projectile, event.getEntity());
+		runHitAbility(projectile, event.getEntity());
 		if (projectile.hasMetadata("PG_ArrowRemoveOnHit")) projectile.remove();
 		
 		if (!projectile.hasMetadata("PG_ArrowKeepHit")) projectile.removeMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnHit", plugin);
@@ -54,7 +54,7 @@ public class ProjectileListener implements Listener
 	public void onProjectileEnd(ProjectileHitEvent event) {
 		Projectile projectile = event.getEntity();
 		
-		if (projectile.hasMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd")) runEndAbility(projectile);
+		runEndAbility(projectile);
 		if (projectile.hasMetadata("PG_ArrowRemoveOnEnd")) projectile.remove();
 		
 		if (!projectile.hasMetadata("PG_ArrowKeepEnd")) projectile.removeMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + "OnEnd", plugin);
@@ -94,40 +94,47 @@ public class ProjectileListener implements Listener
 		}
 	}
 	
-	private void runHitAbility(Projectile projectile, Entity damagee)
-	{
+	private void runHitAbility(Projectile projectile, Entity damagee) {
 		if (!(damagee instanceof LivingEntity)) return;
 		LivingEntity livingDamagee = (LivingEntity) damagee;
 		
 		FunctionRunner onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
 		if (onHitAbility == null) return;
 		
-		Player holder = null;
+		Player holder = getHolderFromMeta(projectile);
+		
+		LivingEntity sourceEntity = null;
 		ProjectileSource source = projectile.getShooter();
-		if (source instanceof Player) holder = (Player) source;
-		onHitAbility.run(new Target(new TargetEntity(livingDamagee), holder, new TargetEntity(livingDamagee)));
+		if (source instanceof LivingEntity) sourceEntity = (LivingEntity) source;
+		
+		onHitAbility.run(new Target(new TargetEntity(livingDamagee), holder, new TargetEntity(sourceEntity)));
 	}
 	
-	private void runEndAbility(Projectile projectile)
-	{
+	private void runEndAbility(Projectile projectile) {
 		FunctionRunner onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
 		if (onEndAbility == null) return;
 		
-		Player holder = null;
+		Player holder = getHolderFromMeta(projectile);
+		
+		LivingEntity sourceEntity = null;
 		ProjectileSource source = projectile.getShooter();
-		if (source instanceof Player) holder = (Player) source;
-		onEndAbility.run(new Target(new TargetLocation(projectile.getLocation()), holder, new TargetLocation(projectile.getLocation())));
+		if (source instanceof LivingEntity) sourceEntity = (LivingEntity) source;
+		
+		onEndAbility.run(new Target(new TargetLocation(projectile.getLocation()), holder, new TargetEntity(sourceEntity)));
 	}
 
 	private FunctionRunner getGrandAbilityFromMeta(Projectile entity, String key) {
-		MetadataValue gMeta = null;
 		for (MetadataValue md : entity.getMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + key)) {
-			if (md.getOwningPlugin() == PraedaGrandis.plugin) {
-				gMeta = md;
-				break;
-			}
+			if (md.getOwningPlugin() == PraedaGrandis.plugin) return new FunctionRunner(md.asString().toLowerCase());
 		}
-		if (gMeta == null) return null;
-		return new FunctionRunner(gMeta.asString().toLowerCase());
+		return null;
 	}
+	
+	private Player getHolderFromMeta(Projectile projectile) {
+		for (MetadataValue md : projectile.getMetadata(PraedaGrandis.META_HOLDER)) {
+			if (md.getOwningPlugin() == PraedaGrandis.plugin) return (Player) md.value();
+		}
+		throw new IllegalStateException("Projectile did not have \"holder\" metadata");
+	}
+	
 }

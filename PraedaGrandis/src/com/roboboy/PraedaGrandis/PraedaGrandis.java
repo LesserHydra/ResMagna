@@ -25,6 +25,7 @@ public class PraedaGrandis extends JavaPlugin
 			Material.SIGN_POST, Material.WALL_SIGN, Material.SIGN, Material.CAKE_BLOCK);
 	
 	public static PraedaGrandis plugin;
+	public static final String META_HOLDER = "PG.Holder";
 	public static final String META_GRANDABILITY_PREFIX = "PG.GrandAbility.";
 	public static final String STORAGE_ITEM_NAME = "PraedaGrandis.GrandItemName";
 	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
