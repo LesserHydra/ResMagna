@@ -2,6 +2,7 @@ package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -22,16 +23,16 @@ public class BoundingBoxTargeter extends Targeter
 	}
 	
 	@Override
-	public List<Target> getTargets(Target currentTarget)
-	{
+	public List<Target> getTargets(Target currentTarget) {
 		LivingEntity targetEntity = currentTarget.getEntity();
+		Location targetLocation = currentTarget.getLocation();
 		List<Target> results = new LinkedList<>();
 		
 		//For all entities in bounding box
-		for (Entity e : targetEntity.getNearbyEntities(spreadX, spreadY, spreadZ)) {
+		for (Entity e : targetLocation.getWorld().getNearbyEntities(targetLocation, spreadX, spreadY, spreadZ)) {
 			//If living and not target entity, add
 			if (!(e instanceof LivingEntity) || e.equals(targetEntity)) continue;
-			results.add(currentTarget.target((LivingEntity) e));
+			results.add(currentTarget.target(new TargetEntity((LivingEntity)e)));
 		}
 		
 		return results;

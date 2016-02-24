@@ -33,7 +33,6 @@ class ExplosionAbility extends Ability
 	protected void execute(Target target) {
 		//Get damagerTarget
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
-		if (damagerTarget == null) return;
 		
 		Location calculatedLocation = location.calculate(target);
 		if (calculatedLocation == null) return;

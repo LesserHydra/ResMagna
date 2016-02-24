@@ -9,7 +9,10 @@ import org.bukkit.util.Vector;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
@@ -63,8 +66,8 @@ public class BeamAbility extends Ability
 		originLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62"),		"originlocation", "origin", "oloc");
 		targetLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62 F+1"),	"targetlocation", "target", "tloc");
 		
-		homingTargeter = args.getTargeter(false, null,					"homingtarget", "hometarget", "htarget");
-		homingForce = args.getDouble((homingTargeter!=null), 0D,		"homingforce", "homeforce", "hforce");
+		homingTargeter = args.getTargeter(false, new NoneTargeter(),					"homingtarget", "hometarget", "htarget");
+		homingForce = args.getDouble(!(homingTargeter instanceof NoneTargeter), 0D,		"homingforce", "homeforce", "hforce");
 		
 		String onHitString = args.getString(false, null,					"onhit", "hit");
 		onHitBlock = new FunctionRunner(args.getString(false, onHitString,	"onhitblock", "hitblock", "hitb"));
@@ -77,15 +80,14 @@ public class BeamAbility extends Ability
 	@Override
 	protected void execute(Target target) {
 		//Get beam target, if exists
-		Target homingTarget = null;
-		if (homingTargeter != null) homingTarget = homingTargeter.getRandomTarget(target);
+		Target homingTarget = homingTargeter.getRandomTarget(target);
 		//Initialize beam
 		new BeamTimer(target, homingTarget).runTaskTimer(PraedaGrandis.plugin, 0L, delay);
 	}
 	
 	private class BeamTimer extends BukkitRunnable {
 		private final LivingEntity shooter;
-		private final LivingEntity homing;
+		private final Target homing;
 		
 		private Location currentLocation;
 		private Vector currentVelocity;
@@ -95,7 +97,7 @@ public class BeamAbility extends Ability
 		
 		BeamTimer(Target target, Target homingTarget) {
 			shooter = target.getEntity();
-			homing = (homingTarget != null ? homingTarget.getEntity() : null);
+			homing = homingTarget;
 			Location startLocation = originLocation.calculate(target);
 			currentVelocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
 			
@@ -120,7 +122,7 @@ public class BeamAbility extends Ability
 				calculateHomingVelocity();
 				//Move beam
 				currentLocation = currentLocation.add(currentVelocity);
-				beamTarget = beamTarget.target(currentLocation);
+				beamTarget = beamTarget.target(new TargetLocation(currentLocation));
 				totalDistance += speed;
 				//Run onStep
 				onStep.run(beamTarget);
@@ -131,7 +133,7 @@ public class BeamAbility extends Ability
 		}
 		
 		private void calculateHomingVelocity() {
-			if (homing == null) return;
+			if (homing.isNull()) return;
 			//Get direction to target
 			Vector homingForceVector = homing.getLocation().toVector().subtract(currentLocation.toVector());
 			//Set magnitude
@@ -166,7 +168,7 @@ public class BeamAbility extends Ability
 			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {
 				if (entity.equals(shooter)) continue;
 				if (!(entity instanceof LivingEntity)) continue;
-				onHitEntity.run(beamTarget.target((LivingEntity) entity));
+				onHitEntity.run(beamTarget.target(new TargetEntity((LivingEntity) entity)));
 				hit = true;
 			}
 			return hit;

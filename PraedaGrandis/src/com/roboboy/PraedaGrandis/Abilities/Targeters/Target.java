@@ -8,10 +8,10 @@ import org.bukkit.entity.Player;
 
 public class Target
 {
-	private final TargetEntity currentTarget;
+	private final TargetConstruct currentTarget;
 	private final Player holder;
-	private final TargetEntity activatorTarget;
-	private final Map<String, TargetEntity> savedTargets;
+	private final TargetConstruct activatorTarget;
+	private final Map<String, TargetConstruct> savedTargets;
 	
 	/**
 	 * Construct a fresh Target with a new save map
@@ -19,56 +19,13 @@ public class Target
 	 * @param holder
 	 * @param activatorTarget
 	 */
-	public Target(LivingEntity currentTarget, Player holder, LivingEntity activatorTarget)
+	public Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget)
 	{
-		this.currentTarget = new TargetEntity(currentTarget);
-		this.holder = holder;
-		this.activatorTarget = new TargetEntity(activatorTarget);
+		if (currentTarget == null || activatorTarget == null) throw new IllegalArgumentException("Cannot target null.");
 		
-		this.savedTargets = new HashMap<>();
-	}
-	
-	/**
-	 * Construct a fresh Target with a new save map
-	 * @param currentTarget
-	 * @param holder
-	 * @param activatorTarget
-	 */
-	public Target(Location currentTarget, Player holder, LivingEntity activatorTarget)
-	{
-		this.currentTarget = new TargetEntity(currentTarget);
+		this.currentTarget = currentTarget;
 		this.holder = holder;
-		this.activatorTarget = new TargetEntity(activatorTarget);
-		
-		this.savedTargets = new HashMap<>();
-	}
-	
-	/**
-	 * Construct a fresh Target with a new save map
-	 * @param currentTarget
-	 * @param holder
-	 * @param activatorTarget
-	 */
-	public Target(LivingEntity currentTarget, Player holder, Location activatorTarget)
-	{
-		this.currentTarget = new TargetEntity(currentTarget);
-		this.holder = holder;
-		this.activatorTarget = new TargetEntity(activatorTarget);
-		
-		this.savedTargets = new HashMap<>();
-	}
-	
-	/**
-	 * Construct a fresh Target with a new save map
-	 * @param currentTarget
-	 * @param holder
-	 * @param activatorTarget
-	 */
-	public Target(Location currentTarget, Player holder, Location activatorTarget)
-	{
-		this.currentTarget = new TargetEntity(currentTarget);
-		this.holder = holder;
-		this.activatorTarget = new TargetEntity(activatorTarget);
+		this.activatorTarget = activatorTarget;
 		
 		this.savedTargets = new HashMap<>();
 	}
@@ -80,7 +37,7 @@ public class Target
 	 * @param activatorTarget
 	 * @param savedTargets Custom save map to share
 	 */
-	private Target(TargetEntity currentTarget, Player holder, TargetEntity activatorTarget, Map<String, TargetEntity> savedTargets)
+	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget, Map<String, TargetConstruct> savedTargets)
 	{
 		this.currentTarget = currentTarget;
 		this.holder = holder;
@@ -132,26 +89,18 @@ public class Target
 	 * Get the entity targeted by whatever originally constructed the Target
 	 * @return Activator entity
 	 */
-	public LivingEntity getActivator() {
-		return activatorTarget.getEntity();
+	public TargetConstruct getActivator() {
+		return activatorTarget;
 	}
 	
 	/**
-	 * Set currently targeted entity to an arbitrary entity
-	 * @param newTarget LivingEntity to target
+	 * Set current target to an arbitrary target construct
+	 * @param newTarget Construct to target, non-null
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target target(LivingEntity newTarget) {
-		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
-	}
-	
-	/**
-	 * Set currently targeted entity to an arbitrary location
-	 * @param newTarget Location to target
-	 * @return Newly constructed Target sharing saved target map
-	 */
-	public Target target(Location newTarget) {
-		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
+	public Target target(TargetConstruct newTarget) {
+		if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
+		return new Target(newTarget, holder, activatorTarget, savedTargets);
 	}
 	
 	/**
@@ -160,8 +109,8 @@ public class Target
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target targetSaved(String saveName) {
-		TargetEntity saved = savedTargets.get(saveName);
-		if (saved == null) saved = new TargetEntity((LivingEntity)null);
+		TargetConstruct saved = savedTargets.get(saveName);
+		if (saved == null) saved = new TargetEntity(null);
 		return new Target(saved, holder, activatorTarget, savedTargets);
 	}
 	

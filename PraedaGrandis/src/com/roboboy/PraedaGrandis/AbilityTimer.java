@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 /* Every so often (configurable in main config) the plugin should
@@ -48,7 +48,7 @@ public class AbilityTimer
 				GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(p);
 				List<GrandInventory.InventoryElement> elements = pInv.getItems(item.getName());
 				for (GrandInventory.InventoryElement element : elements) {
-					ability.activate(element.slotType, new Target(p, p, (LivingEntity)null));
+					ability.activate(element.slotType, new Target(new TargetEntity(p), p, new TargetEntity(null)));
 				}
 				
 				if (elements.isEmpty()) it.remove(); //Deactivate player

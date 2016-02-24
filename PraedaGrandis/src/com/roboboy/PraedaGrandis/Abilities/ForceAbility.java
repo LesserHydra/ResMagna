@@ -23,11 +23,13 @@ class ForceAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
 		Location calculatedTargetLocation = targetLocation.calculate(target);
 		if (calculatedTargetLocation == null) return;
 		
 		//Old velocity plus new force vector
-		LivingEntity targetEntity = target.getEntity();
 		targetEntity.setVelocity(targetEntity.getVelocity().add(getForceVector(targetEntity.getLocation(), calculatedTargetLocation)));
 	}
 	

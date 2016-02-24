@@ -19,6 +19,8 @@ class IgniteAbility extends Ability
 	@Override
 	protected void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
 		targetEntity.setFireTicks(duration);
 	}
 

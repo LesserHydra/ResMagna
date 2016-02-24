@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
@@ -46,6 +47,9 @@ class TeleportAbility extends Ability
 	
 	@Override
 	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
 		Location centerLoc = location.calculate(target);
 		if (centerLoc == null) return;
 		
@@ -53,7 +57,7 @@ class TeleportAbility extends Ability
 		if (failSafe && !isSafe(centerLoc)) return;
 		
 		centerLoc.setDirection(target.getEntity().getLocation().getDirection());
-		target.getEntity().teleport(centerLoc);
+		targetEntity.teleport(centerLoc);
 	}
 
 	private Location getSpread(Location center) {

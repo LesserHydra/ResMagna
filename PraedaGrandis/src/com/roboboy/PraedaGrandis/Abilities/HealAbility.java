@@ -17,13 +17,13 @@ class HealAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target)
-	{
-		LivingEntity e = target.getEntity();
-		double newHealth = e.getHealth() + healAmount;
+	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
 		
-		if (newHealth <= e.getMaxHealth()) {
-			e.setHealth(newHealth);
+		double newHealth = targetEntity.getHealth() + healAmount;
+		if (newHealth <= targetEntity.getMaxHealth()) {
+			targetEntity.setHealth(newHealth);
 		}
 	}
 

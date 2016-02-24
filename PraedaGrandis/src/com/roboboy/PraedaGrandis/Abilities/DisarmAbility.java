@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
@@ -27,10 +28,12 @@ class DisarmAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target)
-	{
-		Location entityLocation = target.getEntity().getLocation();
-		EntityEquipment equipment = target.getEntity().getEquipment();
+	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
+		Location entityLocation = target.getLocation();
+		EntityEquipment equipment = targetEntity.getEquipment();
 		
 		if (held) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInHand());

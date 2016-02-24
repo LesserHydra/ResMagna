@@ -9,7 +9,7 @@ public abstract class Targeter
 	
 	public Target getRandomTarget(Target currentTarget) {
 		List<Target> targetList = getTargets(currentTarget);
-		if (targetList.isEmpty()) return null;
+		if (targetList.isEmpty()) return currentTarget.target(new TargetNone());
 		if (targetList.size() == 1) return targetList.get(0);
 		return targetList.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(targetList.size()));
 	}

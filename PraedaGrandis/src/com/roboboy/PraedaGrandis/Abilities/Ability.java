@@ -50,10 +50,4 @@ public abstract class Ability
 		return timerDelay;
 	}
 	
-	/*private final boolean slotTypeIsRepresented(EnumSet<ItemSlotType> slotTypes) {
-		for (ItemSlotType slot : slotTypes) {
-			if (slot.isSubtypeOf(this.slotType)) return true;
-		}
-		return false;
-	}*/
 }

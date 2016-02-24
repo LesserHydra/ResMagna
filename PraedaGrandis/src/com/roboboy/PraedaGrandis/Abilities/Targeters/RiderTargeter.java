@@ -12,6 +12,6 @@ public class RiderTargeter extends Targeter
 	public List<Target> getTargets(Target currentTarget) {
 		Entity rider = currentTarget.getEntity().getPassenger();
 		if (!(rider instanceof LivingEntity)) rider = null;
-		return Arrays.asList(currentTarget.target((LivingEntity)rider));
+		return Arrays.asList(currentTarget.target(new TargetEntity((LivingEntity)rider)));
 	}
 }

@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
@@ -18,10 +19,14 @@ class MountAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		Target otherTarget = otherTargeter.getRandomTarget(target);
-		if (otherTarget == null) return;
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
 		
-		otherTarget.getEntity().setPassenger(target.getEntity());
+		Target otherTarget = otherTargeter.getRandomTarget(target);
+		LivingEntity mountEntity = otherTarget.getEntity();
+		if (mountEntity == null) return;
+		
+		mountEntity.setPassenger(target.getEntity());
 	}
 
 }

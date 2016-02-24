@@ -29,12 +29,12 @@ class GhostBlockAbility extends Ability
 
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void execute(Target target)
-	{
-		LivingEntity e = target.getEntity();
-		if (e instanceof Player)
-		{
-			Player p = (Player) e;
+	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
+		if (targetEntity instanceof Player) {
+			Player p = (Player) targetEntity;
 			p.sendBlockChange(location.calculate(target), material, data);
 		}
 	}

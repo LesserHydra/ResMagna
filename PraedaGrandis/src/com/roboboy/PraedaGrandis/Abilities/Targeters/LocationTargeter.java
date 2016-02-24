@@ -17,7 +17,7 @@ class LocationTargeter extends Targeter
 	@Override
 	public List<Target> getTargets(Target currentTarget) {
 		Location location = grandLocation.calculate(currentTarget);
-		return Arrays.asList(currentTarget.target(location));
+		return Arrays.asList(currentTarget.target(new TargetLocation(location)));
 	}
 
 }

@@ -12,6 +12,6 @@ public class MountTargeter extends Targeter
 	public List<Target> getTargets(Target currentTarget) {
 		Entity mount = currentTarget.getEntity().getVehicle();
 		if (!(mount instanceof LivingEntity)) mount = null;
-		return Arrays.asList(currentTarget.target((LivingEntity)mount));
+		return Arrays.asList(currentTarget.target(new TargetEntity((LivingEntity)mount)));
 	}
 }

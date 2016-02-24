@@ -23,11 +23,12 @@ class SwapAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
-		Target otherTarget = otherTargeter.getRandomTarget(target);
-		if (otherTarget == null) return;
-		
 		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
+		Target otherTarget = otherTargeter.getRandomTarget(target);
 		LivingEntity otherEntity = otherTarget.getEntity();
+		if (otherEntity == null) return;
 		
 		Location targetLoc = targetEntity.getLocation();
 		Location otherLoc = otherEntity.getLocation();

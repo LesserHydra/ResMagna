@@ -20,6 +20,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 
 public class ProjectileListener implements Listener
@@ -69,7 +71,7 @@ public class ProjectileListener implements Listener
 		if (source instanceof Player) holder = (Player) source;
 		
 		for (LivingEntity hitEntity : event.getAffectedEntities()) {
-			onSplashAbility.run(new Target(hitEntity, holder, projectile.getLocation()));
+			onSplashAbility.run(new Target(new TargetEntity(hitEntity), holder, new TargetLocation(projectile.getLocation())));
 		}
 	}
 	
@@ -103,7 +105,7 @@ public class ProjectileListener implements Listener
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		onHitAbility.run(new Target(livingDamagee, holder, livingDamagee));
+		onHitAbility.run(new Target(new TargetEntity(livingDamagee), holder, new TargetEntity(livingDamagee)));
 	}
 	
 	private void runEndAbility(Projectile projectile)
@@ -114,7 +116,7 @@ public class ProjectileListener implements Listener
 		Player holder = null;
 		ProjectileSource source = projectile.getShooter();
 		if (source instanceof Player) holder = (Player) source;
-		onEndAbility.run(new Target(projectile.getLocation(), holder, projectile.getLocation()));
+		onEndAbility.run(new Target(new TargetLocation(projectile.getLocation()), holder, new TargetLocation(projectile.getLocation())));
 	}
 
 	private FunctionRunner getGrandAbilityFromMeta(Projectile entity, String key) {

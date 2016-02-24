@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import com.roboboy.PraedaGrandis.ActivatorType;
@@ -33,6 +34,9 @@ class PotionAbility extends Ability
 	
 	@Override
 	protected void execute(Target target) {
-		target.getEntity().addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
+		targetEntity.addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
 	}
 }

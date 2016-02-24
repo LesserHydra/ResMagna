@@ -23,6 +23,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
@@ -163,7 +165,7 @@ public class ActivatorListener implements Listener
 		new BukkitRunnable() { @Override public void run() {
 			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
 			for (GrandInventory.InventoryElement element : pInv.getItems()) {
-				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
+				element.grandItem.activateAbilities(type, element.slotType, new Target(new TargetEntity(holder), holder, new TargetEntity(activatorTarget)));
 			}
 		}}.runTaskLater(plugin, 1L);
 	}
@@ -179,7 +181,7 @@ public class ActivatorListener implements Listener
 		new BukkitRunnable() { @Override public void run() {
 			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
 			for (GrandInventory.InventoryElement element : pInv.getItems()) {
-				element.grandItem.activateAbilities(type, element.slotType, new Target(holder, holder, activatorTarget));
+				element.grandItem.activateAbilities(type, element.slotType, new Target(new TargetEntity(holder), holder, new TargetLocation(activatorTarget)));
 			}
 		}}.runTaskLater(plugin, 1L);
 	}

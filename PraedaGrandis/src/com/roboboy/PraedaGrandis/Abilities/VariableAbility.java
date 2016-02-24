@@ -58,8 +58,7 @@ class VariableAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target)
-	{
+	protected void execute(Target target) {
 		if (!(target.getEntity() instanceof Player)) return;
 		
 		Player p = (Player) target.getEntity();

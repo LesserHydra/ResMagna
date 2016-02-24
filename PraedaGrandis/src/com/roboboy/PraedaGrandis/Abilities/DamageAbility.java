@@ -28,12 +28,13 @@ class DamageAbility extends Ability
 	
 	@Override
 	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
 		//Get damagerTarget
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
-		if (damagerTarget == null) return;
 		
-		//Get damager & damagee
-		LivingEntity targetEntity = target.getEntity();
+		//Get damager
 		LivingEntity damagerEntity = damagerTarget.getEntity();
 		
 		//Create and call event
@@ -46,7 +47,7 @@ class DamageAbility extends Ability
 			targetEntity.setLastDamageCause(event);
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private EntityDamageEvent createDamageEvent(LivingEntity damagee, LivingEntity damager) {
 		if (damager != null) return new EntityDamageByEntityEvent(damager, damagee, cause, damageAmount);

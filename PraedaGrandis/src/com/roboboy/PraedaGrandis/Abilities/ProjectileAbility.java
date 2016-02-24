@@ -3,6 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
@@ -73,6 +74,9 @@ class ProjectileAbility extends Ability
 
 	@Override
 	protected void execute(Target target) {
+		LivingEntity targetEntity = target.getEntity();
+		if (targetEntity == null) return;
+		
 		Location calculatedLocation = targetLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		
@@ -81,7 +85,7 @@ class ProjectileAbility extends Ability
 		randomVector.multiply(randomSpread);
 		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.getLocation()).add(randomVector);
 		
-		Projectile projectile = target.getEntity().launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
+		Projectile projectile = targetEntity.launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);
 		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
 		projectile.setMetadata("PG_Projectile", new FixedMetadataValue(PraedaGrandis.plugin, true));

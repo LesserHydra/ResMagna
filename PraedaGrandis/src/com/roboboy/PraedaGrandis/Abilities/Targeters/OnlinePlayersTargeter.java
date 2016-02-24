@@ -16,7 +16,7 @@ public class OnlinePlayersTargeter extends Targeter
 		
 		//Construct targets
 		for (Player player : onlinePlayers) {
-			results.add(currentTarget.target(player));
+			results.add(currentTarget.target(new TargetEntity(player)));
 		}
 		
 		return results;
