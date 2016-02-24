@@ -10,60 +10,64 @@ public enum ActivatorType
 {
 /*	Type			Parent					Explanation								Target				*/
 /*------------------------------------------------------------------------------------------------------*/
-	NONE			(null),					//Invalid type, or no parent			NA
+	NONE,									//Invalid type, or no parent			NA
 	
-	TIMER			(NONE),					//Special case; not event driven		NA
+	TIMER,									//Special case; not event driven		NA
 	
-	THROW			(NONE),					//Egg, snowball, enderpearl, ect.		NA
-	DROP			(NONE),					//Pressed Q								NA
+	THROW,									//Egg, snowball, enderpearl, ect.		NA
+	DROP,									//Pressed Q								NA
 	
-	EQUIP			(NONE),					//Item moved into specified slotType	NA
-	UNEQUIP			(NONE),					//Item moved from specified slotType	NA
+	EQUIP,									//Item moved into specified slotType	NA
+	UNEQUIP,								//Item moved from specified slotType	NA
 	
-	MOVE			(NONE),					//Owner location changed				From location
-	MOVEWALK		(MOVE),					//Owner walking							.
-	MOVEUP			(MOVE),					//										.
-	MOVEDOWN		(MOVE),					//										.
+	MOVE,									//Holder location changed				From location
+	MOVEWALK		(MOVE),					//Holder walking						.
+	MOVEUP			(MOVE),					//Holder moved upwards					.
+	MOVEDOWN		(MOVE),					//Holder moved downwards				.
 	
-	TELEPORT		(MOVE),					//Owner teleported						From location
-	PORTAL			(TELEPORT),				//Owner about to go through portal		.
+	TELEPORT		(MOVE),					//Holder teleported						From location
+	PORTAL			(TELEPORT),				//Holder about to go through portal		.
 	
-	LOOK			(NONE),					//Owner direction changed				From location (direction)
+	LOOK,									//Holder direction changed				From location (direction)
 	
-	CLICK			(NONE),					//Owner clicked							What was clicked
-	CLICKLEFT		(CLICK),				//Owner left-clicked					NA
-	CLICKRIGHT		(CLICK),				//Owner right-clicked					NA
-	INTERACT		(CLICKRIGHT),			//Owner right-clicked on an entity		What was clicked
-	INTERACTPLAYER	(INTERACT),				//Owner right-clicked on a player		.
-	INTERACTMOB		(INTERACT),				//Owner right-clicked on a mob			.
+	CLICK,									//Holder clicked						What was clicked
+	CLICKLEFT		(CLICK),				//Holder left-clicked					NA
+	CLICKRIGHT		(CLICK),				//Holder right-clicked					NA
+	INTERACT		(CLICKRIGHT),			//Holder right-clicked on an entity		What was clicked
+	INTERACTPLAYER	(INTERACT),				//Holder right-clicked on a player		.
+	INTERACTMOB		(INTERACT),				//Holder right-clicked on a mob			.
 	
-	BLOCKBREAK		(NONE),					//Owner breaks a block					Location of block broken
+	BLOCKBREAK,								//Holder breaks a block					Location of block broken
 	
-	BREAK			(NONE),					//Item breaks							NA
+	BREAK,									//Item breaks							NA
 	
-	ATTACK			(NONE),					//Owner attacked something				What was attacked
-	ATTACKPLAYER	(ATTACK),				//Owner attacked player					.
-	ATTACKSELF		(ATTACKPLAYER),			//Owner attacked self					.
-	ATTACKMOB		(ATTACK),				//Owner attacked mob					.
+	ATTACK,									//Holder attacked something				What was attacked
+	ATTACKPLAYER	(ATTACK),				//Holder attacked player				.
+	ATTACKSELF		(ATTACKPLAYER),			//Holder attacked self					.
+	ATTACKMOB		(ATTACK),				//Holder attacked mob					.
 	
-	HURT			(NONE),					//Owner was hurt by something			What owner was hurt by
-	HURTPLAYER		(HURT),					//Owner was hurt by player				.
-	HURTSELF		(HURTPLAYER),			//Owner was hurt by self				.
-	HURTMOB			(HURT),					//Owner was hurt by mob					.
-	HURTOTHER		(HURT),					//Owner was hurt by environmental		NA
+	HURT,									//Holder was hurt by something			What owner was hurt by
+	HURTPLAYER		(HURT),					//Holder was hurt by player				.
+	HURTSELF		(HURTPLAYER),			//Holder was hurt by self				.
+	HURTMOB			(HURT),					//Holder was hurt by mob				.
+	HURTOTHER		(HURT),					//Holder was hurt by environmental		NA
 	
-	KILL			(NONE),					//Owner killed something				What was killed
-	KILLPLAYER		(KILL),					//Owner killed player					.
-	KILLSELF		(KILLPLAYER),			//Owner killed self						.
-	KILLMOB			(KILL),					//Owner killed mob						.
+	KILL,									//Holder killed something				What was killed
+	KILLPLAYER		(KILL),					//Holder killed player					.
+	KILLSELF		(KILLPLAYER),			//Holder killed self					.
+	KILLMOB			(KILL),					//Holder killed mob						.
 	
-	DEATH			(NONE),					//Owner was killed						What owner was killed by
-	DEATHPLAYER		(DEATH),				//Owner was killed by player			.
-	DEATHSELF		(DEATHPLAYER),			//Owner was killed by self				.
-	DEATHMOB		(DEATH),				//Owner was killed by mob				.
-	DEATHOTHER		(DEATH);				//Owner was killed by environmental		NA
+	DEATH,									//Holder was killed						What owner was killed by
+	DEATHPLAYER		(DEATH),				//Holder was killed by player			.
+	DEATHSELF		(DEATHPLAYER),			//Holder was killed by self				.
+	DEATHMOB		(DEATH),				//Holder was killed by mob				.
+	DEATHOTHER		(DEATH);				//Holder was killed by environmental	NA
 
 	private final ActivatorType parent;
+	
+	private ActivatorType() {
+		this.parent = null;
+	}
 	
 	private ActivatorType(ActivatorType parent) {
 		this.parent = parent;
@@ -75,12 +79,15 @@ public enum ActivatorType
 	 * @param supertype 
 	 * @return True if this type is a subtype of given type, false otherwise
 	 */
-	public boolean isSubtypeOf(ActivatorType supertype)
-	{
-		if (this == NONE) return false;			//Base case
+	public boolean isSubtypeOf(ActivatorType supertype) {
+		//Is subtype of self
+		if (this == supertype) return true;
 		
-		if (this == supertype) return true; 	//Is subtype of self
-		return parent.isSubtypeOf(supertype);	//Is subtype of anything parent is subtype of, ect
+		//No relation
+		if (parent == null) return false;
+		
+		//Is subtype of anything parent is subtype of
+		return parent.isSubtypeOf(supertype);
 	}
 
 	public boolean isNull() {
