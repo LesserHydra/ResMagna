@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -216,9 +215,8 @@ public class BlockArguments
 		//Find enum from value
 		Class<T> enumClass = fallback.getDeclaringClass();
 		lookupName = lookupName.toUpperCase();
-		for (T type : EnumSet.allOf(enumClass)) {
-			if (lookupName.equals(type.name())) return type;
-		}
+		T type = Tools.parseEnum(lookupName, enumClass);
+		if (type != null) return type;
 		
 		//Invalid enum type name
 		logInvalid(keys, lookupName, enumClass.getSimpleName());
@@ -240,7 +238,7 @@ public class BlockArguments
 				
 				String keysString = keys[0];
 				for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
-				GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Aliases: " + keysString, LogType.CONFIG_ERRORS);
 			}
 			return null;
 		}
@@ -254,7 +252,7 @@ public class BlockArguments
 		
 		String keysString = keys[0];
 		for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
-		GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
+		GrandLogger.log("  Aliases: " + keysString, LogType.CONFIG_ERRORS);
 	}
 	
 }
