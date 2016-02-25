@@ -1,42 +1,40 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import java.util.List;
+import org.bukkit.Location;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
+import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockPattern;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 class GhostBlockAbility extends Ability
 {
-	private final Material material;
-	private final byte data;
-	private final GrandLocation location;
+	private final BlockPattern blockPattern;
+	private final BlockPattern replacePattern;
+	
+	private final GrandLocation centerLocation;
+	private final double radius;
 	
 	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
 	{
 		super(slotType, activator, targeter);
 		
-		String[] blockStrings = args.getString(true, "stone:0", "block").split(":");
-		material = Material.matchMaterial(blockStrings[0]);
-		data = Byte.parseByte(blockStrings[1]);
+		blockPattern = args.getBlockPattern(true, BlockPattern.getEmpty(),		"blocks", "block", "b", null);
+		replacePattern = args.getBlockPattern(false, BlockPattern.getEmpty(),	"replace", "repl");
 		
-		location = args.getLocation(true, new GrandLocation(), "location", "loc", "l");
+		centerLocation = args.getLocation(false, new GrandLocation(),	"centerlocation", "location", "loc", "l");
+		radius = args.getDouble(false, 0D,								"radius", "rad", "r");
 	}
-
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	protected void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
-		if (targetEntity == null) return;
-		
-		if (targetEntity instanceof Player) {
-			Player p = (Player) targetEntity;
-			p.sendBlockChange(location.calculate(target), material, data);
-		}
+		Location center = centerLocation.calculate(target);
+		List<Location> blockList = Tools.getSphere(center, radius, false);
+		blockPattern.makeGhost(blockList, replacePattern);
 	}
 
 }

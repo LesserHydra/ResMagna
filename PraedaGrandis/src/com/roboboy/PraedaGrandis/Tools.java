@@ -1,7 +1,10 @@
 package com.roboboy.PraedaGrandis;
 
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
+import org.bukkit.Location;
 
 public class Tools
 {
@@ -50,4 +53,25 @@ public class Tools
 		//Not found
 		return null;
 	}
+	
+	public static List<Location> getSphere(Location center, double radius, boolean hollow) {
+		List<Location> circleblocks = new LinkedList<Location>();
+		
+		double centerX = center.getBlockX();
+		double centerY = center.getBlockY();
+		double centerZ = center.getBlockZ();
+		
+		for (double x = centerX - radius; x <= centerX + radius; x++) {
+			for (double z = centerZ - radius; z <= centerZ + radius; z++) {
+				for (double y = centerY - radius; y < centerY + radius; y++) {
+					double dist = (centerX - x) * (centerX - x) + (centerZ - z) * (centerZ - z) + (centerY - y) * (centerY - y);
+					if (dist >= radius * radius || (hollow && dist < (radius - 1) * (radius - 1))) continue;
+					Location l = new Location(center.getWorld(), x, y, z);
+					circleblocks.add(l);
+				}
+			}
+		}
+		return circleblocks;
+	}
+	
 }
