@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,24 +22,9 @@ public class BlockPattern
 	private BlockPattern(RandomCollection<BlockConstruct> blockCollection) {
 		this.blockCollection = blockCollection;
 	}
-
-	public boolean matches(Collection<Block> toCheck) {
-		for (Block block : toCheck) {
-			if (!matches(block)) return false;
-		}
-		return true;
-	}
-
-	public boolean matches(Block block) {
-		if (blockCollection.isEmpty()) return true;
-		for (BlockConstruct nextTest : blockCollection) {
-			if (nextTest.matches(block)) return true;
-		}
-		return false;
-	}
 	
 	@SuppressWarnings("deprecation")
-	public void replace(List<Location> locationList, BlockPattern replacePattern) {
+	public void replace(List<Location> locationList, BlockMask replacePattern) {
 		for (Location blockLocation : locationList) {
 			Block block = blockLocation.getBlock();
 			if (!replacePattern.matches(block)) continue;
@@ -52,7 +36,7 @@ public class BlockPattern
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void makeGhost(List<Location> locationList, BlockPattern replacePattern) {
+	public void makeGhost(List<Location> locationList, BlockMask replacePattern) {
 		for (Location blockLocation : locationList) {
 			Block block = blockLocation.getBlock();
 			if (!replacePattern.matches(block)) continue;
@@ -108,7 +92,7 @@ public class BlockPattern
 		}
 		
 		//Parse data
-		Byte data = null;
+		byte data = 0;
 		if (dataString != null) {
 			if (!Tools.isInteger(dataString)) {
 				GrandLogger.log("Invalid block data: " + dataString, LogType.CONFIG_ERRORS);
@@ -127,25 +111,18 @@ public class BlockPattern
 
 	private static class BlockConstruct {
 		private final Material material;
-		private final Byte data;
+		private final byte data;
 		
-		private BlockConstruct(Material material, Byte data) {
+		private BlockConstruct(Material material, byte data) {
 			this.material = material;
 			this.data = data;
-		}
-		
-		@SuppressWarnings("deprecation")
-		public boolean matches(Block block) {
-			if (block.getType() != material) return false;
-			if (data != null && data.compareTo(block.getData()) != 0) return false;
-			return true;
 		}
 		
 		public Material getMaterial() {
 			return material;
 		}
 		
-		public Byte getData() {
+		public byte getData() {
 			return data;
 		}
 	}

@@ -223,6 +223,28 @@ public class BlockArguments
 	}
 	
 	/**
+	 * Gets the BlockMask associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
+	 * @return BlockMask value of argument, or fallback if none exists
+	 */
+	public BlockMask getBlockMask(boolean required, BlockMask fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		BlockMask result = BlockMask.buildFromString(value);
+		if (result == null) {
+			//Continuing the error message given by BlockMask
+			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
+			
+			return fallback;
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.
 	 * @param required Whether or not a value is required
 	 * @param fallback Non-null value to default to if none found

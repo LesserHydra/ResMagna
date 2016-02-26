@@ -26,6 +26,7 @@ public class RandomCollection<E> implements Iterable<E>
 	}
 	
 	public E next() {
+		if (map.isEmpty()) throw new IllegalStateException("Cannot get from an empty RandomCollection.");
 		double value = random.nextDouble() * total;
 		return map.ceilingEntry(value).getValue();
 	}

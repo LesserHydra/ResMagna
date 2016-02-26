@@ -8,23 +8,23 @@ import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.BlockMask;
 import com.roboboy.PraedaGrandis.Configuration.BlockPattern;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 class GhostBlockAbility extends Ability
 {
 	private final BlockPattern blockPattern;
-	private final BlockPattern replacePattern;
+	private final BlockMask replaceMask;
 	
 	private final GrandLocation centerLocation;
 	private final double radius;
 	
-	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
-	{
+	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
 		blockPattern = args.getBlockPattern(true, BlockPattern.getEmpty(),		"blocks", "block", "b", null);
-		replacePattern = args.getBlockPattern(false, BlockPattern.getEmpty(),	"replace", "repl");
+		replaceMask = args.getBlockMask(false, BlockMask.getEmpty(),			"replace", "repl");
 		
 		centerLocation = args.getLocation(false, new GrandLocation(),	"centerlocation", "location", "loc", "l");
 		radius = args.getDouble(false, 0D,								"radius", "rad", "r");
@@ -34,7 +34,7 @@ class GhostBlockAbility extends Ability
 	protected void execute(Target target) {
 		Location center = centerLocation.calculate(target);
 		List<Location> blockList = Tools.getSphere(center, radius, false);
-		blockPattern.makeGhost(blockList, replacePattern);
+		blockPattern.makeGhost(blockList, replaceMask);
 	}
 
 }
