@@ -1,13 +1,8 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -23,32 +18,27 @@ public class BlockPattern
 		this.blockCollection = blockCollection;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void replace(List<Location> locationList, BlockMask replacePattern) {
-		for (Location blockLocation : locationList) {
-			Block block = blockLocation.getBlock();
-			if (!replacePattern.matches(block)) continue;
-			
-			BlockConstruct replaceBlock = blockCollection.next();
-			block.setType(replaceBlock.getMaterial());
-			block.setData(replaceBlock.getData());
-		}
+	/**
+	 * Gets a random BlockConstruct from this pattern.
+	 * @return Random BlockConstruct
+	 */
+	public BlockConstruct getBlock() {
+		return blockCollection.next();
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void makeGhost(List<Location> locationList, BlockMask replacePattern) {
-		for (Location blockLocation : locationList) {
-			Block block = blockLocation.getBlock();
-			if (!replacePattern.matches(block)) continue;
-			
-			BlockConstruct replaceBlock = blockCollection.next();
-			
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.sendBlockChange(blockLocation, replaceBlock.getMaterial(), replaceBlock.getData());
-			}
-		}
+	/**
+	 * Builds an empty BlockPattern
+	 * @return An empty BlockPattern
+	 */
+	public static BlockPattern buildEmpty() {
+		return new BlockPattern(new RandomCollection<BlockConstruct>());
 	}
-
+	
+	/**
+	 * Builds a BlockPattern from a string.
+	 * @param string String describing the requested BlockPattern
+	 * @return BlockPattern described by given string, or null if an error was hit
+	 */
 	public static BlockPattern buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
 		String[] blockStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: Temp
@@ -82,7 +72,7 @@ public class BlockPattern
 		//Success
 		return new BlockPattern(blockCollection);
 	}
-
+	
 	private static BlockConstruct parsePattern(String materialString, String dataString) {
 		//Parse material
 		Material material = Tools.parseEnum(materialString, Material.class);
@@ -105,11 +95,10 @@ public class BlockPattern
 		return new BlockConstruct(material, data);
 	}
 	
-	public static BlockPattern getEmpty() {
-		return new BlockPattern(new RandomCollection<BlockConstruct>());
-	}
-
-	private static class BlockConstruct {
+	/**
+	 * Holds information about block type and data.
+	 */
+	public static class BlockConstruct {
 		private final Material material;
 		private final byte data;
 		
@@ -118,10 +107,18 @@ public class BlockPattern
 			this.data = data;
 		}
 		
-		public Material getMaterial() {
+		/**
+		 * Gets the block type
+		 * @return Block type
+		 */
+		public Material getType() {
 			return material;
 		}
 		
+		/**
+		 * Gets the block data
+		 * @return Block data
+		 */
 		public byte getData() {
 			return data;
 		}
