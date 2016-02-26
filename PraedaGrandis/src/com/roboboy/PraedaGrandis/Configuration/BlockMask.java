@@ -18,61 +18,86 @@ public class BlockMask
 	//\s*(?:(\!)\s*)?(?:([<>])\s*)?([\w\s]+(?<!\s))(?:\s*\:\s*(\!)?\s*(\d+)(?:\s*\-\s*(\d+))?)?\s*
 	private static final Pattern componentPattern = Pattern.compile("\\s*(?:(\\!)\\s*)?(?:([<>])\\s*)?([\\w\\s]+(?<!\\s))(?:\\s*\\:\\s*(\\!)?\\s*(\\d+)(?:\\s*\\-\\s*(\\d+))?)?\\s*");
 	
-	private final List<MaskDetails> details;
+	private final List<MaskComponent> components;
 	
-	private BlockMask(List<MaskDetails> details) {
-		this.details = details;
+	private BlockMask(List<MaskComponent> components) {
+		this.components = components;
 	}
-
+	
+	/**
+	 * Checks a list of locations for ones matching this mask.
+	 * @param locationList Locations to check
+	 * @return A new list containing matching locations
+	 */
 	public List<Location> matches(Collection<Location> locationList) {
 		List<Location> results = new LinkedList<>(); 
 		for (Location blockLoc : locationList) {
-			if (matches(blockLoc.getBlock())) results.add(blockLoc);
+			if (matches(blockLoc)) results.add(blockLoc);
 		}
 		return results;
 	}
-
-	public boolean matches(Block block) {
-		if (details.isEmpty()) return true;
-		boolean result = details.get(0).isNegator();
-		for (MaskDetails nextTest : details) {
+	
+	/**
+	 * Checks the given location for a match with this mask.
+	 * @param location Location to match
+	 * @return True if matches, false otherwise.
+	 */
+	public boolean matches(Location location) {
+		Block block = location.getBlock();
+		if (components.isEmpty()) return true;
+		boolean result = components.get(0).isNegator();
+		for (MaskComponent nextTest : components) {
 			result = nextTest.test(block, result);
 		}
 		return result;
 	}
-
+	
+	/**
+	 * Builds a blank BlockMask which will match any block.
+	 * @return A blank BlockMask
+	 */
+	public static BlockMask buildBlank() {
+		return new BlockMask(new LinkedList<MaskComponent>());
+	}
+	
+	/**
+	 * Builds a BlockMask from a string.
+	 * @param string String describing the requested BlockMask
+	 * @return BlockMask described by given string, or null if an error was hit
+	 */
 	public static BlockMask buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
-		String[] maskStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: replaceall is temp
-		List<MaskDetails> masks = new LinkedList<>();
-		for (String maskString : maskStrings) {
-			Matcher matcher = componentPattern.matcher(maskString);
+		String[] componentStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: replaceall is temp
+		List<MaskComponent> components = new LinkedList<>();
+		for (String componentString : componentStrings) {
+			//Match component
+			Matcher matcher = componentPattern.matcher(componentString);
 			//Error message is expanded in BlockArguments
 			if (!matcher.matches()) {
-				GrandLogger.log("Invalid format for block mask component: " + maskString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Invalid format for block mask component: " + componentString, LogType.CONFIG_ERRORS);
 				return null;
 			}
+			
 			//Get component, check for validity
-			MaskDetails component = parseComponent(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6));
+			MaskComponent component = parseComponent(matcher.group(1), matcher.group(2), matcher.group(3),
+					matcher.group(4), matcher.group(5), matcher.group(6));
 			if (component == null) return null;
 			
 			//Succesfully constructed, add to randomizer
-			masks.add(component);
+			components.add(component);
 		}
 		
 		//Success
-		return new BlockMask(masks);
+		return new BlockMask(components);
 	}
 
-	private static MaskDetails parseComponent(String negatorString, String positionString, String materialString,
+	private static MaskComponent parseComponent(String negatorString, String positionString, String materialString,
 			String dataNegatedString, String minDataString, String maxDataString) {
 		//IsNegator
 		boolean negator = ("!".equals(negatorString));
 		
 		//Position
-		BlockFace position = BlockFace.SELF;
-		if (">".equals(positionString)) position = BlockFace.DOWN;
-		else if ("<".equals(positionString)) position = BlockFace.UP;
+		BlockFace position = parsePosition(positionString);
 		
 		//Material
 		Material material = Tools.parseEnum(materialString, Material.class);
@@ -105,14 +130,17 @@ public class BlockMask
 		}
 		
 		//Return result
-		return new MaskDetails(negator, position, material, dataNegated, minData, maxData);
-	}
-	
-	public static BlockMask getEmpty() {
-		return new BlockMask(new LinkedList<MaskDetails>());
+		return new MaskComponent(negator, position, material, dataNegated, minData, maxData);
 	}
 
-	private static class MaskDetails {
+	private static BlockFace parsePosition(String positionString) {
+		if (">".equals(positionString)) return BlockFace.DOWN;
+		if ("<".equals(positionString)) return BlockFace.UP;
+		return BlockFace.SELF;
+	}
+
+	private static class MaskComponent
+	{
 		private final boolean negator;
 		private final BlockFace positionMod;
 		
@@ -121,7 +149,7 @@ public class BlockMask
 		private final Byte minData;
 		private final Byte maxData;
 		
-		private MaskDetails(boolean negator, BlockFace positionMod, Material material, boolean dataNegated, Byte minData, Byte maxData) {
+		private MaskComponent(boolean negator, BlockFace positionMod, Material material, boolean dataNegated, Byte minData, Byte maxData) {
 			this.negator = negator;
 			this.positionMod = positionMod;
 			
