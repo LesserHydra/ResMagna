@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -202,6 +201,50 @@ public class BlockArguments
 	}
 	
 	/**
+	 * Gets the BlockPattern associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
+	 * @return BlockPattern value of argument, or fallback if none exists
+	 */
+	public BlockPattern getBlockPattern(boolean required, BlockPattern fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		BlockPattern result = BlockPattern.buildFromString(value);
+		if (result == null) {
+			//Continuing the error message given by BlockPattern
+			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
+			
+			return fallback;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets the BlockMask associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param key All-lowercase key
+	 * @return BlockMask value of argument, or fallback if none exists
+	 */
+	public BlockMask getBlockMask(boolean required, BlockMask fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		BlockMask result = BlockMask.buildFromString(value);
+		if (result == null) {
+			//Continuing the error message given by BlockMask
+			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
+			
+			return fallback;
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.
 	 * @param required Whether or not a value is required
 	 * @param fallback Non-null value to default to if none found
@@ -216,9 +259,8 @@ public class BlockArguments
 		//Find enum from value
 		Class<T> enumClass = fallback.getDeclaringClass();
 		lookupName = lookupName.toUpperCase();
-		for (T type : EnumSet.allOf(enumClass)) {
-			if (lookupName.equals(type.name())) return type;
-		}
+		T type = Tools.parseEnum(lookupName, enumClass);
+		if (type != null) return type;
 		
 		//Invalid enum type name
 		logInvalid(keys, lookupName, enumClass.getSimpleName());
@@ -240,7 +282,7 @@ public class BlockArguments
 				
 				String keysString = keys[0];
 				for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
-				GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Aliases: " + keysString, LogType.CONFIG_ERRORS);
 			}
 			return null;
 		}
@@ -254,7 +296,7 @@ public class BlockArguments
 		
 		String keysString = keys[0];
 		for (int i = 1; i < keys.length; i++) keysString = keysString + ", " + keys[i];
-		GrandLogger.log("  Alias': " + keysString, LogType.CONFIG_ERRORS);
+		GrandLogger.log("  Aliases: " + keysString, LogType.CONFIG_ERRORS);
 	}
 	
 }

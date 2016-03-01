@@ -410,6 +410,16 @@ public enum ParticleEffect {
 		this.requiredVersion = requiredVersion;
 		this.properties = Arrays.asList(properties);
 	}
+	
+	/**
+	 * Returns the name of this particle effect
+	 * 
+	 * @return The name
+	 */
+	@Override
+	public String toString() {
+		return name;
+	}
 
 	/**
 	 * Returns the name of this particle effect
