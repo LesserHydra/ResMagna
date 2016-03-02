@@ -245,7 +245,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.
+	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.<br>
+	 * <br>
+	 * Unlike the other argument getters, this function cannot use a null fallback. If one is desired, there is an overload<br>
+	 * which takes a class instead of a fallback value and uses null as a fallback.
+	 * 
 	 * @param required Whether or not a value is required
 	 * @param fallback Non-null value to default to if none found
 	 * @param key All-lowercase key
@@ -263,8 +267,33 @@ public class BlockArguments
 		if (type != null) return type;
 		
 		//Invalid enum type name
-		logInvalid(keys, lookupName, enumClass.getSimpleName());
+		logInvalid(keys, lookupName, enumClass.getSimpleName() + " enum");
 		return fallback;
+	}
+	
+	/**
+	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.<br>
+	 * <br>
+	 * This is an overload of the main enum argument getter which gives a null fallback value.
+	 * 
+	 * @param required Whether or not a value is required
+	 * @param enumClass Class declaring the enum type
+	 * @param key All-lowercase key
+	 * @return Enum type value of argument, or null if none exists
+	 */
+	public <T extends Enum<T>> T getEnum(boolean required, Class<T> enumClass, String... keys) {
+		//Get value from map
+		String lookupName = findValue(required, keys);
+		if (lookupName == null) return null;
+		
+		//Find enum from value
+		lookupName = lookupName.toUpperCase();
+		T type = Tools.parseEnum(lookupName, enumClass);
+		if (type != null) return type;
+		
+		//Invalid enum type name
+		logInvalid(keys, lookupName, enumClass.getSimpleName() + " enum");
+		return null;
 	}
 	
 	private String findValue(boolean required, String[] keys) {

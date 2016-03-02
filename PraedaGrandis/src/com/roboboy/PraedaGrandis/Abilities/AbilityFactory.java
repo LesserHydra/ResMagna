@@ -82,6 +82,7 @@ public class AbilityFactory
 		case "sound":			return new SoundAbility(slotType, actType, targeter, abilityArgs);
 		case "particle":		return new ParticleAbility(slotType, actType, targeter, abilityArgs);
 		case "potion":			return new PotionAbility(slotType, actType, targeter, abilityArgs);
+		case "cloud":			return new PotionCloudAbility(slotType, actType, targeter, abilityArgs);
 		case "teleport":		return new TeleportAbility(slotType, actType, targeter, abilityArgs);
 		case "spin":			return new SpinAbility(slotType, actType, targeter, abilityArgs);
 		case "swap":			return new SwapAbility(slotType, actType, targeter, abilityArgs);
