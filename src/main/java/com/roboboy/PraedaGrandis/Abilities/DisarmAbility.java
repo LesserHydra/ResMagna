@@ -11,7 +11,8 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class DisarmAbility extends Ability
 {
-	private final boolean held;
+	private final boolean mainHand;
+	private final boolean offHand;
 	private final boolean helmet;
 	private final boolean chestplate;
 	private final boolean leggings;
@@ -20,7 +21,8 @@ class DisarmAbility extends Ability
 	public DisarmAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		held = args.getBoolean(false, false,		"held", "hld");
+		mainHand = args.getBoolean(false, false,	"mainhand", "heldright", "right", "main");
+		offHand = args.getBoolean(false, false,		"offhand", "heldleft", "shield", "left", "off");
 		helmet = args.getBoolean(false, false,		"helmet", "helm", "hlm");
 		chestplate = args.getBoolean(false, false,	"chestplate", "chest", "cst");
 		leggings = args.getBoolean(false, false, 	"leggings", "legs", "lgs");
@@ -35,9 +37,14 @@ class DisarmAbility extends Ability
 		Location entityLocation = target.getLocation();
 		EntityEquipment equipment = targetEntity.getEquipment();
 		
-		if (held) {
-			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInHand());
-			equipment.setItemInHand(null);
+		if (mainHand) {
+			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInMainHand());
+			equipment.setItemInMainHand(null);
+		}
+		
+		if (offHand) {
+			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInOffHand());
+			equipment.setItemInOffHand(null);
 		}
 		
 		if (helmet) {

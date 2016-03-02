@@ -21,7 +21,8 @@ public enum ItemSlotType
 	
 	ANY			(NONE) {		//Anywhere on the player
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList( ArrayUtils.addAll(p.getInventory().getContents(), p.getInventory().getArmorContents()) );
+			PlayerInventory inv = p.getInventory();
+			return Arrays.asList( ArrayUtils.addAll(inv.getContents(), inv.getArmorContents()) );
 		}
 	},
 	
@@ -62,19 +63,33 @@ public enum ItemSlotType
 		}
 	},
 	
-	HOTBAR		(ANY) {			//Anywhere on the hotbar
+	HOTBAR		(ANY) {			//Anywhere on the hotbar, or off hand
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList( Arrays.copyOf(p.getInventory().getContents(), 9) );
+			PlayerInventory inv = p.getInventory();
+			return Arrays.asList( ArrayUtils.addAll(Arrays.copyOf(inv.getContents(), 9), inv.getItemInOffHand()) );
 		}
 	},
 	
 	HELD		(HOTBAR) {		//Held in hand
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getItemInHand());
+			PlayerInventory inv = p.getInventory();
+			return Arrays.asList(inv.getItemInMainHand(), inv.getItemInOffHand());
 		}
 	},
 	
-	UNHELD		(HOTBAR) {		//Held in hand
+	HELDMAIN	(HELD) {		//Held in main hand
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getItemInMainHand());
+		}
+	},
+	
+	HELDOFF		(HELD) {		//Held in off hand
+		@Override public List<ItemStack> getItems(Player p) {
+			return Arrays.asList(p.getInventory().getItemInOffHand());
+		}
+	},
+	
+	UNHELD		(HOTBAR) {		//An the hotbar, but not held in hand
 		@Override public List<ItemStack> getItems(Player p) {
 			PlayerInventory inv = p.getInventory();
 			return Arrays.asList( ArrayUtils.remove(Arrays.copyOf(inv.getContents(), 9), inv.getHeldItemSlot()) );
