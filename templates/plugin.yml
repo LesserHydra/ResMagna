@@ -1,0 +1,12 @@
+name: @pluginName@
+main: @mainClass@
+version: @version@
+author: @author@
+
+commands:
+  PraedaGrandis:
+    aliases: [pg, item]
+    description: Main command for PraedaGrandis
+    usage: /<command> <give|list|reload>
+    permission: praedagrandis.maincommand
+    permissions message: You don't have <permission>
