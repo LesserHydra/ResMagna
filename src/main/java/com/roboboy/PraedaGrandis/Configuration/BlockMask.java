@@ -11,10 +11,9 @@ import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
-import com.roboboy.bukkitutil.LocationTester;
 import com.roboboy.util.StringTools;
 
-public class BlockMask implements LocationTester
+public class BlockMask
 {
 	//\s*(?:(\!)\s*)?(?:([<>])\s*)?([\w\s]+(?<!\s))(?:\s*\:\s*(\!)?\s*(\d+)(?:\s*\-\s*(\d+))?)?\s*
 	private static final Pattern componentPattern = Pattern.compile("\\s*(?:(\\!)\\s*)?(?:([<>])\\s*)?([\\w\\s]+(?<!\\s))(?:\\s*\\:\\s*(\\!)?\\s*(\\d+)(?:\\s*\\-\\s*(\\d+))?)?\\s*");

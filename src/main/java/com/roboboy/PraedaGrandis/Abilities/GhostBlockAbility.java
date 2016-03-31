@@ -35,11 +35,11 @@ class GhostBlockAbility extends Ability
 	@Override
 	protected void execute(Target target) {
 		Location center = centerLocation.calculate(target);
-		AreaEffectTools.runInSphere(center, radius, false, replaceMask, location -> mask(location, blockPattern.getBlock()));
+		AreaEffectTools.runInSphere(center, radius, false, replaceMask::testLocation, this::ghostAtLocation);
 	}
 
 	@SuppressWarnings("deprecation")
-	private void mask(Location location, BlockConstruct block) {
+	private void ghostAtLocation(Location location) {
 		BlockConstruct replaceBlock = blockPattern.getBlock();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.sendBlockChange(location, replaceBlock.getType(), replaceBlock.getData());

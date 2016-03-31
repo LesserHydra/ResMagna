@@ -12,7 +12,7 @@ public class AreaEffectTools {
 	 * @param tester Test to run at locations
 	 * @param runner Runner to run at locations that pass
 	 */
-	public static void runInSphere(Location center, double radius, boolean hollow, LocationTester tester, LocationRunner runner) {
+	public static void runInSphere(Location center, double radius, boolean hollow, Predicate<Location> tester, Consumer<Location> runner) {
 		double centerX = center.getX();
 		double centerY = center.getY();
 		double centerZ = center.getZ();
@@ -26,8 +26,8 @@ public class AreaEffectTools {
 					double distSquared = (centerX - x) * (centerX - x) + (centerZ - z) * (centerZ - z) + (centerY - y) * (centerY - y);
 					if (distSquared >= radSquared) continue;
 					if (hollow && distSquared < subRadSquared) continue;
-					Location loc = new Location(center.getWorld(), x, y, z);
-					if (tester.testLocation(loc.clone())) runner.runAtLocation(loc);
+					Location location = new Location(center.getWorld(), x, y, z);
+					if (tester.test(location.clone())) runner.accept(location.clone());
 				}
 			}
 		}
