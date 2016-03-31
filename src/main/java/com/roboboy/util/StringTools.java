@@ -34,8 +34,9 @@ public class StringTools
 	}
 	
 	/**
-	 * Checks if a given string represents an integer. Note that it does
-	 * <b>NOT</b> check for overflow.
+	 * Checks if a given string represents an integer.<br>
+	 * <br>
+	 * Note that it does <b>NOT</b> check for overflow.
 	 * @param str - Non-null string to check
 	 * @return True if string represents an integer, false otherwise.
 	 */
@@ -44,8 +45,9 @@ public class StringTools
 	}
 	
 	/**
-	 * Checks if a given string represents a floating point number. Note
-	 * that it does <b>NOT</b> check for overflow.
+	 * Checks if a given string represents a floating point number.<br>
+	 * <br>
+	 * Note that it does <b>NOT</b> check for overflow.
 	 * @param str - Non-null string to check
 	 * @return True if string represents a float, false otherwise.
 	 */
@@ -57,7 +59,7 @@ public class StringTools
 	 * Parses the string as an extended boolean, as described in {@link #isExtendedBoolean(String)}<br>
 	 * <br>
 	 * The method only checks for true values; any unknown string will be treated as false.
-	 * @param str String to parse
+	 * @param str Non-null string to parse
 	 * @return True if the string represents a true value, false otherwise
 	 */
 	public static boolean parseExtendedBoolean(String str) {
