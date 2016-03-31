@@ -65,7 +65,7 @@ class PotionCloudAbility extends Ability
 		if (calculatedLocation == null) return;
 		
 		AreaEffectCloud cloud = calculatedLocation.getWorld().spawn(calculatedLocation, AreaEffectCloud.class);
-		if (potion != null) cloud.addEffect(potion);
+		if (potion != null) cloud.addCustomEffect(potion, true); 
 		
 		if (particle != null) cloud.setParticle(particle);
 		if (color != null) cloud.setColor(color);
