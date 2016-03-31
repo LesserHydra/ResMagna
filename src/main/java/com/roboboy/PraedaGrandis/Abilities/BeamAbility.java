@@ -18,7 +18,7 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-public class BeamAbility extends Ability
+class BeamAbility extends Ability
 {	
 	private final double speed;			//Distance per step
 	private final int numSteps;			//Steps per update

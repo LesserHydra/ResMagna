@@ -149,7 +149,7 @@ public enum ItemSlotType
 		return (this == NONE);
 	}
 	
-	private void registerSubtype(final ItemSlotType subtype) {
+	private void registerSubtype(ItemSlotType subtype) {
 		if (isNull()) return;
 		children.add(subtype);
 		parent.registerSubtype(subtype);
