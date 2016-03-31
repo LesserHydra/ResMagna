@@ -1,29 +1,38 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.LargeFireball;
+import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.SplashPotion;
 import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
 
 public enum ProjectileType
 {
-	NONE			(null),
+	NONE				(null),
 	
-	ARROW			(Arrow.class),
-	EGG				(Egg.class),
-	ENDERPEARL		(EnderPearl.class),
-	LARGE_FIREBALL	(LargeFireball.class),
-	SMALL_FIREBALL	(SmallFireball.class),
-	SNOWBALL		(Snowball.class),
-	EXP_BOTTLE		(ThrownExpBottle.class),
-	POTION			(ThrownPotion.class),
-	WITHER_SKULL	(WitherSkull.class);
+	ARROW				(Arrow.class),
+	SPECTRAL_ARROW		(SpectralArrow.class),
+
+	SMALL_FIREBALL		(SmallFireball.class),
+	LARGE_FIREBALL		(LargeFireball.class),
+	DRAGON_FIREBALL		(DragonFireball.class),
+	WITHER_SKULL		(WitherSkull.class),
+
+	SPLASH_POTION		(SplashPotion.class),
+	LINGERING_POTION	(LingeringPotion.class),
+
+	EGG					(Egg.class),
+	ENDERPEARL			(EnderPearl.class),
+	SNOWBALL			(Snowball.class),
+	EXP_BOTTLE			(ThrownExpBottle.class);
 	
 	private Class<? extends Projectile> projectileClass;
 	
