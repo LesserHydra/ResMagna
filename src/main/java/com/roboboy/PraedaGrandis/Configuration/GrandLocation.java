@@ -8,13 +8,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 public class GrandLocation
 {
@@ -104,7 +104,7 @@ public class GrandLocation
 		
 		//Get modifier
 		if (componentDoubleString == null) return;
-		if (!Tools.isFloat(componentDoubleString)) {
+		if (!StringTools.isFloat(componentDoubleString)) {
 			GrandLogger.log("Invalid location component modifier: " + componentDoubleString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("Expected a floating point value.", LogType.CONFIG_ERRORS);
 			return;

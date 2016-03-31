@@ -10,6 +10,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 public class BlockArguments
 {
@@ -63,7 +64,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!Tools.isBoolean(value)) {
+		if (!StringTools.isBoolean(value)) {
 			logInvalid(keys, value, "boolean");
 			return fallback;
 		}
@@ -82,7 +83,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!Tools.isInteger(value)) {
+		if (!StringTools.isInteger(value)) {
 			logInvalid(keys, value, "integer");
 			return fallback;
 		}
@@ -101,7 +102,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!Tools.isInteger(value)) {
+		if (!StringTools.isInteger(value)) {
 			logInvalid(keys, value, "long");
 			return fallback;
 		}
@@ -120,7 +121,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!Tools.isFloat(value)) {
+		if (!StringTools.isFloat(value)) {
 			logInvalid(keys, value, "float");
 			return fallback;
 		}
@@ -139,7 +140,7 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!Tools.isFloat(value)) {
+		if (!StringTools.isFloat(value)) {
 			logInvalid(keys, value, "double");
 			return fallback;
 		}

@@ -19,7 +19,7 @@ class IsBlock extends Condition
 
 	@Override
 	public boolean checkThis(Target target) {
-		return mask.matches(location.calculate(target));
+		return mask.testLocation(location.calculate(target));
 	}
 
 }

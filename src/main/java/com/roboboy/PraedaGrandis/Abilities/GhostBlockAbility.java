@@ -1,12 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
@@ -14,6 +12,7 @@ import com.roboboy.PraedaGrandis.Configuration.BlockMask;
 import com.roboboy.PraedaGrandis.Configuration.BlockPattern;
 import com.roboboy.PraedaGrandis.Configuration.BlockPattern.BlockConstruct;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.bukkitutil.AreaEffectTools;
 
 class GhostBlockAbility extends Ability
 {
@@ -33,16 +32,17 @@ class GhostBlockAbility extends Ability
 		radius = args.getDouble(false, 0D,								"radius", "rad", "r");
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void execute(Target target) {
 		Location center = centerLocation.calculate(target);
-		List<Location> toConvert = replaceMask.matches(Tools.getSphere(center, radius, false));
-		for (Location blockLocation : toConvert) {
-			BlockConstruct replaceBlock = blockPattern.getBlock();
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.sendBlockChange(blockLocation, replaceBlock.getType(), replaceBlock.getData());
-			}
+		AreaEffectTools.runInSphere(center, radius, false, replaceMask, location -> mask(location, blockPattern.getBlock()));
+	}
+
+	@SuppressWarnings("deprecation")
+	private void mask(Location location, BlockConstruct block) {
+		BlockConstruct replaceBlock = blockPattern.getBlock();
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			player.sendBlockChange(location, replaceBlock.getType(), replaceBlock.getData());
 		}
 	}
 
