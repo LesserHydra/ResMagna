@@ -34,8 +34,9 @@ class GhostBlockAbility extends Ability
 	
 	@Override
 	protected void execute(Target target) {
-		Location center = centerLocation.calculate(target);
-		AreaEffectTools.runInSphere(center, radius, false, replaceMask::testLocation, this::ghostAtLocation);
+		AreaEffectTools.runInSphere(centerLocation.calculate(target), radius, false,
+				replaceMask::testLocation,
+				this::ghostAtLocation);
 	}
 
 	@SuppressWarnings("deprecation")
