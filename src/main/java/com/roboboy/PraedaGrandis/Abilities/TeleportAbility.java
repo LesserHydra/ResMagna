@@ -13,6 +13,7 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.bukkitutil.AreaEffectTools;
 
 class TeleportAbility extends Ability
 {
@@ -85,31 +86,10 @@ class TeleportAbility extends Ability
 
 	private List<Location> getSafeInRadius(Location center) {
 		List<Location> safeLocations = new LinkedList<>();
-		
-		int centerX = center.getBlockX();
-		int centerY = center.getBlockY();
-		int centerZ = center.getBlockZ();
-		
-		int minX = centerX - spreadX;
-		int maxX = centerX + spreadX;
-		for (int x = minX; x <= maxX; x++) {
-			
-			int minZ = centerZ - spreadZ;
-			int maxZ = centerZ + spreadZ;
-			for (int z = minZ; z <= maxZ; z++) {
-				
-				int minY = Math.max(1, centerY - spreadY);
-				int maxY = Math.min(centerY + spreadY, center.getWorld().getHighestBlockYAt(x, z) + 1);
-				for (int y = minY; y <= maxY; y++) {
-					
-					if (!includeCenter && x == centerX && z == centerZ && y == centerY) continue;
-					Location toCheck = new Location(center.getWorld(), x, y, z);
-					if (ender) toCheck = getFloor(toCheck);
-					if (isSafe(toCheck)) safeLocations.add(toCheck);
-				}
-			}
-		}
-		
+		AreaEffectTools.runInCuboid(center, spreadX, spreadY, spreadZ,
+				location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location),
+				safeLocations::add);
+		//TODO: if (ender) toCheck = getFloor(toCheck);
 		return safeLocations;
 	}
 	

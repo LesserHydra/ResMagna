@@ -1,8 +1,34 @@
 package com.roboboy.bukkitutil;
 
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 
 public class AreaEffectTools {
+	
+	/**
+	 * Runs something at locations in a cuboid region that pass a given tester
+	 * @param center Center location
+	 * @param width Spread along X axis
+	 * @param height Spread along Y axis
+	 * @param depth Spread along Z axis
+	 * @param tester Test to run at locations
+	 * @param runner Runner to run at locations that pass
+	 */
+	public static void runInCuboid(Location center, double width, double height, double depth, Predicate<Location> tester, Consumer<Location> runner) {
+		double centerX = center.getX();
+		double centerY = center.getY();
+		double centerZ = center.getZ();
+		
+		for (double x = centerX - width; x <= centerX + width; x++) {
+			for (double z = centerZ - depth; z <= centerZ + depth; z++) {
+				for (double y = centerY - height; y <= centerY + height; y++) {
+					Location location = new Location(center.getWorld(), x, y, z);
+					if (tester.test(location.clone())) runner.accept(location.clone());
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Runs something at locations in a spherical region that pass a given tester.
