@@ -1,62 +1,52 @@
 package com.roboboy.bukkitutil;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.bukkit.Location;
 
 public class AreaEffectTools {
 	
 	/**
-	 * Runs a Consumer at locations within a cuboid region.
+	 * Gets a stream of locations in a cuboid region
 	 * @param center Center of the region
 	 * @param halfWidth Half distance along X axis
 	 * @param halfHeight Half distance along Y axis
 	 * @param halfDepth Half distance along Z axis
-	 * @param tester Predicate to test locations with
-	 * @param runner Consumer for locations that pass
+	 * @return Stream of locations
 	 */
-	public static void runInCuboid(Location center, double halfWidth, double halfHeight, double halfDepth, Predicate<Location> tester, Consumer<Location> runner) {
+	public static Stream<Location> cuboidStream(Location center, double halfWidth, double halfHeight, double halfDepth) {
 		double centerX = center.getX();
 		double centerY = center.getY();
 		double centerZ = center.getZ();
 		
+		Stream.Builder<Location> builder = Stream.builder();
 		for (double x = centerX - halfWidth; x <= centerX + halfWidth; x++) {
 			for (double z = centerZ - halfDepth; z <= centerZ + halfDepth; z++) {
 				for (double y = centerY - halfHeight; y <= centerY + halfHeight; y++) {
 					Location location = new Location(center.getWorld(), x, y, z);
-					if (tester.test(location.clone())) runner.accept(location.clone());
+					builder.add(location);
 				}
 			}
 		}
+		
+		return builder.build();
 	}
 	
 	/**
-	 * Runs a Consumer at locations within a spherical region.
+	 * Gets a stream of locations in a spherical region
 	 * @param center Center of the region
 	 * @param radius Radius of the region
 	 * @param hollow Whether the sphere should be hollow
-	 * @param tester Predicate to test locations with
-	 * @param runner Consumer for locations that pass
+	 * @return Stream of locations
 	 */
-	public static void runInSphere(Location center, double radius, boolean hollow, Predicate<Location> tester, Consumer<Location> runner) {
-		double centerX = center.getX();
-		double centerY = center.getY();
-		double centerZ = center.getZ();
-		
+	public static Stream<Location> sphereStream(Location center, double radius, boolean hollow) {
 		double radSquared = radius * radius;
 		double subRadSquared = (radius - 1) * (radius - 1);
 		
-		for (double x = centerX - radius; x <= centerX + radius; x++) {
-			for (double z = centerZ - radius; z <= centerZ + radius; z++) {
-				for (double y = centerY - radius; y < centerY + radius; y++) {
-					double distSquared = (centerX - x) * (centerX - x) + (centerZ - z) * (centerZ - z) + (centerY - y) * (centerY - y);
-					if (distSquared >= radSquared) continue;
-					if (hollow && distSquared < subRadSquared) continue;
-					Location location = new Location(center.getWorld(), x, y, z);
-					if (tester.test(location.clone())) runner.accept(location.clone());
-				}
-			}
-		}
+		return cuboidStream(center, radius, radius, radius)
+				.filter(location -> {
+					double distSquared = center.distanceSquared(location);
+					return (distSquared <= radSquared) && (!hollow || distSquared >= subRadSquared);
+				});
 	}
 
 }

@@ -34,9 +34,9 @@ class GhostBlockAbility extends Ability
 	
 	@Override
 	protected void execute(Target target) {
-		AreaEffectTools.runInSphere(centerLocation.calculate(target), radius, false,
-				replaceMask::testLocation,
-				this::ghostAtLocation);
+		AreaEffectTools.sphereStream(centerLocation.calculate(target), radius, false)
+				.filter(replaceMask::testLocation)
+				.forEach(this::ghostAtLocation);
 	}
 
 	@SuppressWarnings("deprecation")

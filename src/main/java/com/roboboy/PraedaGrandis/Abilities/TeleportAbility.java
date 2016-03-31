@@ -1,7 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -85,12 +86,11 @@ class TeleportAbility extends Ability
 	}
 
 	private List<Location> getSafeInRadius(Location center) {
-		List<Location> safeLocations = new LinkedList<>();
-		AreaEffectTools.runInCuboid(center, spreadX, spreadY, spreadZ,
-				location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location),
-				safeLocations::add);
-		//TODO: if (ender) toCheck = getFloor(toCheck);
-		return safeLocations;
+		Stream<Location> stream = AreaEffectTools.cuboidStream(center, spreadX, spreadY, spreadZ);
+		if (ender) stream.map(this::getFloor);
+		stream.filter(location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location));
+		
+		return stream.collect(Collectors.toList());
 	}
 	
 	private Location getFloor(Location loc) {
