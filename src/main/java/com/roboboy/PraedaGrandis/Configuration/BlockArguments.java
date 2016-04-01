@@ -187,6 +187,22 @@ public class BlockArguments
 		
 		return result;
 	}
+	
+	/**
+	 * Gets the function associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.<br>
+	 * Will never return null. If fallback is null, a null-object will be returned.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found, or null for null-object
+	 * @param keys All-lowercase keys
+	 * @return Function value of argument, fallback if none exists, or null object if falback is null
+	 */
+	public FunctionRunner getFunction(boolean required, FunctionRunner fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		return new FunctionRunner(value);
+	}
 
 	public Color getColor(boolean required, Color fallback, String... keys) {
 		String value = findValue(required, keys);
