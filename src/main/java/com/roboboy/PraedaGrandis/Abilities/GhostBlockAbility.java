@@ -25,7 +25,7 @@ class GhostBlockAbility extends Ability
 	public GhostBlockAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
 		super(slotType, activator, targeter);
 		
-		blockPattern = args.getBlockPattern(true, BlockPattern.buildEmpty(),		"blocks", "block", "b", null);
+		blockPattern = args.getBlockPattern(true, BlockPattern.buildEmpty(),	"blocks", "block", "b", null);
 		replaceMask = args.getBlockMask(false, BlockMask.buildBlank(),			"replace", "repl");
 		
 		centerLocation = args.getLocation(false, new GrandLocation(),	"centerlocation", "location", "loc", "l");
