@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-	compile group: 'org.spigotmc', name: 'spigot', version: '1.9-R0.1-SNAPSHOT'
+	compile group: 'org.spigotmc', name: 'spigot', version: '1.9.2-R0.1-SNAPSHOT'
 }
 
 task generatePluginYaml() << {
