@@ -67,6 +67,7 @@ class TeleportAbility extends Ability
 		
 		for (int i = 0; i < attempts; i++) {
 			Location random = center.clone().add(getRandomComponent(spreadX), getRandomComponent(spreadY), getRandomComponent(spreadZ));
+			if (ender) random = getFloor(random);
 			if (isSafe(random)) return random.getBlock().getLocation().add(0.5, 0, 0.5);
 		}
 		
@@ -74,13 +75,14 @@ class TeleportAbility extends Ability
 	}
 	
 	private int getRandomComponent(int spread){
-		return PraedaGrandis.RANDOM_GENERATOR.nextInt(spread+1)-spread/2;
+		return PraedaGrandis.RANDOM_GENERATOR.nextInt(2*spread+1)-spread;
 	}
 
 	private Location getSpreadFromSafe(Location centerLoc) {
 		List<Location> safe = getSafeInRadius(centerLoc);
 		if (safe.isEmpty()) return centerLoc;
 		Location result = safe.get(PraedaGrandis.RANDOM_GENERATOR.nextInt(safe.size()));
+		result = result.getBlock().getLocation();
 		result.add(0.5, 0, 0.5);
 		return result;
 	}
