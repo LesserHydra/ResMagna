@@ -3,13 +3,13 @@ package com.roboboy.PraedaGrandis.Abilities.Conditions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 class IsVariable extends Condition
 {
@@ -45,7 +45,7 @@ class IsVariable extends Condition
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (Tools.isInteger(operand)) {
+		if (StringTools.isInteger(operand)) {
 			number = Integer.parseInt(operand);
 			otherName = null;
 		}

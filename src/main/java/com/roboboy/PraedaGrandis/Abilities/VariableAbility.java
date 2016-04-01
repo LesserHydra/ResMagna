@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 class VariableAbility extends Ability
 {
@@ -47,7 +47,7 @@ class VariableAbility extends Ability
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (Tools.isInteger(operand)) {
+		if (StringTools.isInteger(operand)) {
 			number = Integer.parseInt(operand);
 			otherName = null;
 		}

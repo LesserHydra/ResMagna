@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import com.comphenix.attribute.Attributes.Attribute;
 import com.comphenix.attribute.Attributes.AttributeType;
 import com.comphenix.attribute.Attributes.Operation;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 public class GrandAttribute
 {
@@ -88,7 +88,7 @@ public class GrandAttribute
 	}
 	
 	private static double getOperand(String operandString, String operationString, boolean operandIsPercentage) {
-		if (!Tools.isFloat(operandString)) {
+		if (!StringTools.isFloat(operandString)) {
 			GrandLogger.log("Invalid attribute line operand: " + operandString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("Expected floating point value.", LogType.CONFIG_ERRORS);
 			return 0D;

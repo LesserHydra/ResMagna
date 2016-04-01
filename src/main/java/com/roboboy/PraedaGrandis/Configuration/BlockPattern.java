@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 public class BlockPattern
 {
@@ -58,7 +59,7 @@ public class BlockPattern
 			double weight = 1;
 			String weightString = blockMatcher.group(1);
 			if (weightString != null) {
-				if (!Tools.isFloat(weightString)) {
+				if (!StringTools.isFloat(weightString)) {
 					GrandLogger.log("Invalid block weight: " + weightString, LogType.CONFIG_ERRORS);
 					return null;
 				}
@@ -84,7 +85,7 @@ public class BlockPattern
 		//Parse data
 		byte data = 0;
 		if (dataString != null) {
-			if (!Tools.isInteger(dataString)) {
+			if (!StringTools.isInteger(dataString)) {
 				GrandLogger.log("Invalid block data: " + dataString, LogType.CONFIG_ERRORS);
 				return null;
 			}

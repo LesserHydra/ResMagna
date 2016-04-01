@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 
 public class BlockMask
 {
@@ -25,24 +25,11 @@ public class BlockMask
 	}
 	
 	/**
-	 * Checks a list of locations for ones matching this mask.
-	 * @param locationList Locations to check
-	 * @return A new list containing matching locations
-	 */
-	public List<Location> matches(Collection<Location> locationList) {
-		List<Location> results = new LinkedList<>(); 
-		for (Location blockLoc : locationList) {
-			if (matches(blockLoc)) results.add(blockLoc);
-		}
-		return results;
-	}
-	
-	/**
 	 * Checks the given location for a match with this mask.
 	 * @param location Location to match
 	 * @return True if matches, false otherwise.
 	 */
-	public boolean matches(Location location) {
+	public boolean testLocation(Location location) {
 		Block block = location.getBlock();
 		if (components.isEmpty()) return true;
 		boolean result = components.get(0).isNegator();
@@ -112,7 +99,7 @@ public class BlockMask
 		//Minimum data
 		Byte minData = null;
 		if (minDataString != null) {
-			if (!Tools.isInteger(minDataString)) {
+			if (!StringTools.isInteger(minDataString)) {
 				GrandLogger.log("Invalid block data: " + minDataString, LogType.CONFIG_ERRORS);
 				return null;
 			}
@@ -122,7 +109,7 @@ public class BlockMask
 		//Maximum data
 		Byte maxData = null;
 		if (maxDataString != null) {
-			if (!Tools.isInteger(maxDataString)) {
+			if (!StringTools.isInteger(maxDataString)) {
 				GrandLogger.log("Invalid block data: " + maxDataString, LogType.CONFIG_ERRORS);
 				return null;
 			}
