@@ -64,12 +64,12 @@ public class BlockArguments
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isBoolean(value)) {
+		if (!StringTools.isExtendedBoolean(value)) {
 			logInvalid(keys, value, "boolean");
 			return fallback;
 		}
 		
-		return Boolean.parseBoolean(value);
+		return StringTools.parseExtendedBoolean(value);
 	}
 	
 	/**
