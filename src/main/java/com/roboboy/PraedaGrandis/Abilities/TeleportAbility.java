@@ -87,10 +87,10 @@ class TeleportAbility extends Ability
 
 	private List<Location> getSafeInRadius(Location center) {
 		Stream<Location> stream = AreaEffectTools.cuboidStream(center, spreadX, spreadY, spreadZ);
-		if (ender) stream.map(this::getFloor);
-		stream.filter(location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location));
+		if (ender) stream = stream.map(this::getFloor);
 		
-		return stream.collect(Collectors.toList());
+		return stream.filter(location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location))
+				.collect(Collectors.toList());
 	}
 	
 	private Location getFloor(Location loc) {
