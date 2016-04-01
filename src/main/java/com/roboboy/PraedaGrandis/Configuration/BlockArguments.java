@@ -41,10 +41,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the string associated with the given key. Logs an error if required and none found.
+	 * Gets the string associated with the given key.<br>
+	 * Logs an error if required and none found.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Raw string value of argument, or fallback if none exists
 	 */
 	public String getString(boolean required, String fallback, String... keys) {
@@ -54,10 +55,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the boolean associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the boolean associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Boolean value of argument, or fallback if none exists
 	 */
 	public boolean getBoolean(boolean required, boolean fallback, String... keys) {
@@ -73,10 +75,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the integer associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the integer associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Integer value of argument, or fallback if none exists
 	 */
 	public int getInteger(boolean required, int fallback, String... keys) {
@@ -92,10 +95,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the long associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the long associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Long value of argument, or fallback if none exists
 	 */
 	public long getLong(boolean required, long fallback, String... keys) {
@@ -111,10 +115,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the float associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the float associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Float value of argument, or fallback if none exists
 	 */
 	public float getFloat(boolean required, float fallback, String... keys) {
@@ -130,10 +135,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the double associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the double associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Double value of argument, or fallback if none exists
 	 */
 	public double getDouble(boolean required, double fallback, String... keys) {
@@ -149,10 +155,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the GrandLocation associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the GrandLocation associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return GrandLocation value of argument, or fallback if none exists
 	 */
 	public GrandLocation getLocation(boolean required, GrandLocation fallback, String... keys) {
@@ -169,10 +176,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the Targeter associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the Targeter associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Targeter value of argument, or fallback if none exists
 	 */
 	public Targeter getTargeter(boolean required, Targeter fallback, String... keys) {
@@ -194,7 +202,7 @@ public class BlockArguments
 	 * Will never return null. If fallback is null, a null-object will be returned.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found, or null for null-object
-	 * @param keys All-lowercase keys
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Function value of argument, fallback if none exists, or null object if falback is null
 	 */
 	public FunctionRunner getFunction(boolean required, FunctionRunner fallback, String... keys) {
@@ -204,6 +212,14 @@ public class BlockArguments
 		return new FunctionRunner(value);
 	}
 
+	/**
+	 * Gets the rbg color associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Color value of argument, or fallback if none exists
+	 */
 	public Color getColor(boolean required, Color fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
@@ -218,10 +234,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the BlockPattern associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the BlockPattern associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return BlockPattern value of argument, or fallback if none exists
 	 */
 	public BlockPattern getBlockPattern(boolean required, BlockPattern fallback, String... keys) {
@@ -240,10 +257,11 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the BlockMask associated with the given key. Logs an error if required and none found, or if invalid format.
+	 * Gets the BlockMask associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return BlockMask value of argument, or fallback if none exists
 	 */
 	public BlockMask getBlockMask(boolean required, BlockMask fallback, String... keys) {
@@ -262,14 +280,15 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.<br>
+	 * Gets the enum type associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid type name.<br>
 	 * <br>
 	 * Unlike the other argument getters, this function cannot use a null fallback. If one is desired, there is an overload<br>
 	 * which takes a class instead of a fallback value and uses null as a fallback.
 	 * 
 	 * @param required Whether or not a value is required
 	 * @param fallback Non-null value to default to if none found
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Enum type value of argument, or fallback if none exists
 	 */
 	public <T extends Enum<T>> T getEnum(boolean required, T fallback, String... keys) {
@@ -289,13 +308,14 @@ public class BlockArguments
 	}
 	
 	/**
-	 * Gets the enum type associated with the given key. Logs an error if required and none found, or if invalid type name.<br>
+	 * Gets the enum type associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid type name.<br>
 	 * <br>
 	 * This is an overload of the main enum argument getter which gives a null fallback value.
 	 * 
 	 * @param required Whether or not a value is required
 	 * @param enumClass Class declaring the enum type
-	 * @param key All-lowercase key
+	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Enum type value of argument, or null if none exists
 	 */
 	public <T extends Enum<T>> T getEnum(boolean required, Class<T> enumClass, String... keys) {
