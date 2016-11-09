@@ -1,7 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -99,13 +103,37 @@ public class Target {
 	public TargetConstruct getActivator() { return activatorTarget; }
 	
 	/**
-	 * Set current target to an arbitrary target construct
-	 * @param newTarget Construct to target, non-null
+	 * Set current target to nothing
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target target(TargetConstruct newTarget) {
-		if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
-		return new Target(newTarget, holder, activatorTarget, savedTargets);
+	public Target targetNone() {
+		return new Target(new TargetNone(), holder, activatorTarget, savedTargets);
+	}
+	
+	/**
+	 * Set current target to a LivingEntity
+	 * @param newTarget Entity to target
+	 * @return Newly constructed Target sharing saved target map
+	 */
+	public Target target(LivingEntity newTarget) {
+		//if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
+		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
+	}
+	
+	/**
+	 * Set current target to a Location
+	 * @param newTarget Location to target
+	 * @return Newly constructed Target sharing saved target map
+	 */
+	public Target target(Location newTarget) {
+		//if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
+		return new Target(new TargetLocation(newTarget), holder, activatorTarget, savedTargets);
+	}
+	
+	public List<Target> multiTarget(Collection<? extends LivingEntity> newTargets) {
+		return newTargets.stream()
+				.map(this::target)
+				.collect(Collectors.toList());
 	}
 	
 	/**

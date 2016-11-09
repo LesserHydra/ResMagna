@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -14,8 +14,8 @@ class SwapAbility implements Ability {
 	private final boolean swapFacing;
 	
 	SwapAbility(BlockArguments args) {
-		otherTargeter = args.getTargeter(true, new NoneTargeter(),	"mount", "other", "target", "m", null);
-		swapFacing = args.getBoolean(false, false,					"swapfacing", "facing", "f");
+		otherTargeter = args.getTargeter(true, Targeters.NONE,  "mount", "other", "target", "m", null);
+		swapFacing = args.getBoolean(false, false,          	"swapfacing", "facing", "f");
 	}
 
 	@Override

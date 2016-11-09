@@ -1,19 +1,22 @@
 package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-public class BoundingBoxTargeter extends Targeter
-{
+class BoundingBoxTargeter implements Targeter {
+	
 	private final double spreadX;
 	private final double spreadY;
 	private final double spreadZ;
 	
-	public BoundingBoxTargeter(BlockArguments args) {
+	BoundingBoxTargeter(BlockArguments args) {
 		double spread = args.getDouble(false, 0.5,		"spread", "radius", "sprd", "r");
 		double spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh", "rh");
 		double spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv", "rv");
@@ -24,18 +27,16 @@ public class BoundingBoxTargeter extends Targeter
 	
 	@Override
 	public List<Target> getTargets(Target currentTarget) {
+		if (currentTarget.isNull()) return Collections.emptyList();
 		LivingEntity targetEntity = currentTarget.getEntity();
 		Location targetLocation = currentTarget.getLocation();
-		List<Target> results = new LinkedList<>();
 		
-		//For all entities in bounding box
-		for (Entity e : targetLocation.getWorld().getNearbyEntities(targetLocation, spreadX, spreadY, spreadZ)) {
-			//If living and not target entity, add
-			if (!(e instanceof LivingEntity) || e.equals(targetEntity)) continue;
-			results.add(currentTarget.target(new TargetEntity((LivingEntity)e)));
-		}
-		
-		return results;
+		//All LivingEntities in bounding box other than currentTarget, if exists
+		return targetLocation.getWorld().getNearbyEntities(targetLocation, spreadX, spreadY, spreadZ).stream()
+				.filter(e -> e instanceof LivingEntity)
+				.filter(e -> !e.equals(targetEntity))
+				.map(e -> currentTarget.target((LivingEntity) e))
+				.collect(Collectors.toList());
 	}
 
 }

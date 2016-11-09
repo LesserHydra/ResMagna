@@ -1,10 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
@@ -62,8 +61,8 @@ class BeamAbility implements Ability {
 		originLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62"),		"originlocation", "origin", "oloc");
 		targetLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62 F+1"),	"targetlocation", "target", "tloc");
 		
-		homingTargeter = args.getTargeter(false, new NoneTargeter(),					"homingtarget", "hometarget", "htarget");
-		homingForce = args.getDouble(!(homingTargeter instanceof NoneTargeter), 0D,		"homingforce", "homeforce", "hforce");
+		homingTargeter = args.getTargeter(false, Targeters.NONE,			"homingtarget", "hometarget", "htarget");
+		homingForce = args.getDouble(homingTargeter != Targeters.NONE, 0D,	"homingforce", "homeforce", "hforce");
 		
 		FunctionRunner onHit = args.getFunction(false, null,	"onhit", "hit");
 		onHitBlock = args.getFunction(false, onHit,				"onhitblock", "hitblock", "hitb");
@@ -118,7 +117,7 @@ class BeamAbility implements Ability {
 				calculateHomingVelocity();
 				//Move beam
 				currentLocation = currentLocation.add(currentVelocity);
-				beamTarget = beamTarget.target(new TargetLocation(currentLocation));
+				beamTarget = beamTarget.target(currentLocation);
 				totalDistance += speed;
 				//Run onStep
 				onStep.run(beamTarget);
@@ -163,7 +162,7 @@ class BeamAbility implements Ability {
 			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {
 				if (entity.equals(shooter)) continue;
 				if (!(entity instanceof LivingEntity)) continue;
-				onHitEntity.run(beamTarget.target(new TargetEntity((LivingEntity) entity)));
+				onHitEntity.run(beamTarget.target((LivingEntity) entity));
 				hit = true;
 			}
 			return hit;

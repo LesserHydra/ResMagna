@@ -1,20 +1,22 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.util.StringTools;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.CurrentTargeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
-import com.roboboy.PraedaGrandis.Logging.GrandLogger;
-import com.roboboy.PraedaGrandis.Logging.LogType;
-import com.roboboy.util.StringTools;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GrandLocation
 {
@@ -28,8 +30,8 @@ public class GrandLocation
 	private final Dimension dimension;
 	
 	public GrandLocation() {
-		locationTargeter = new CurrentTargeter();
-		componentList = new LinkedList<>();
+		locationTargeter = Targeters.CURRENT;
+		componentList = Collections.emptyList();
 		dimension = Dimension.SAME;
 	}
 	

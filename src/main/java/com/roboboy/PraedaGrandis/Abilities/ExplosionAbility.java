@@ -1,13 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
 class ExplosionAbility implements Ability {
 	
@@ -18,11 +18,11 @@ class ExplosionAbility implements Ability {
 	private final Targeter damagerTargeter;
 	
 	ExplosionAbility(BlockArguments args) {
-		power = args.getFloat(false, 0F,								"power", "yield", "p");
-		setFire = args.getBoolean(false, false,							"setfire", "fire");
-		breakBlocks = args.getBoolean(false, false,						"breakblocks", "blocks", "break");
-		location = args.getLocation(false, new GrandLocation(), 		"location", "loc", "l");
-		damagerTargeter = args.getTargeter(false, new NoneTargeter(),	"damager", "source", "dmgr");
+		power = args.getFloat(false, 0F,							"power", "yield", "p");
+		setFire = args.getBoolean(false, false,						"setfire", "fire");
+		breakBlocks = args.getBoolean(false, false,					"breakblocks", "blocks", "break");
+		location = args.getLocation(false, new GrandLocation(),     "location", "loc", "l");
+		damagerTargeter = args.getTargeter(false, Targeters.NONE,   "damager", "source", "dmgr");
 	}
 
 	@Override

@@ -1,20 +1,21 @@
 package com.roboboy.PraedaGrandis.Abilities.Targeters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public class TargeterFactory
-{
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class TargeterFactory {
+	
 	//@(\w+)\s*(?:\((\$[\d]+)\))?
 	static private final Pattern targeterPattern = Pattern.compile("@(\\w+)\\s*(?:\\((\\$[\\d]+)\\))?");
 	
 	public static Targeter build(String targeterString) {
 		//Default targeter
-		if (targeterString == null) return new CurrentTargeter();
+		if (targeterString == null) return Targeters.CURRENT;
 		
 		//Pull out groupings
 		GroupingParser groupingParser = new GroupingParser(targeterString);
@@ -43,19 +44,20 @@ public class TargeterFactory
 		return result;
 	}
 	
-	private static Targeter constructTargeter(String targeterName, BlockArguments targeterArgs)
-	{
+	private static Targeter constructTargeter(String targeterName, BlockArguments targeterArgs) {
 		switch (targeterName) {
-		case "none":			return new NoneTargeter();
-		case "current":			return new CurrentTargeter();
-		case "saved":			return new SavedTargeter(targeterArgs);
-		case "holder":			return new HolderTargeter();
-		case "activator":		return new ActivatorTargeter();
-		case "mount":			return new MountTargeter();
-		case "rider":			return new RiderTargeter();
+		//Single-target
+		case "none":			return Targeters.NONE;
+		case "current":			return Targeters.CURRENT;
+		case "holder":			return Targeters.HOLDER;
+		case "activator":		return Targeters.ACTIVATOR;
+		case "mount":			return Targeters.MOUNT;
+		case "rider":			return Targeters.RIDER;
 		case "location":		return new LocationTargeter(targeterArgs);
+		case "saved":			return new SavedTargeter(targeterArgs);
 		
-		case "onlineplayers":	return new OnlinePlayersTargeter();
+		//Multi-target
+		case "onlineplayers":	return Targeters.ONLINE_PLAYERS;
 		case "boundingbox":		return new BoundingBoxTargeter(targeterArgs);
 		
 		default:				return null;
