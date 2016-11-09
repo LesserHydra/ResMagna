@@ -12,6 +12,7 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class LineFactory {
 	
-	public static GrandFunction parseAndLinkLines(Collection<String> lines) {
+	public static @Nonnull GrandFunction parseAndLinkLines(@Nonnull Collection<String> lines) {
 		return lines.stream()
 				.sequential()
 				.collect(LineFactory::new, LineFactory::parseLine, LineFactory::combine)
@@ -30,7 +31,7 @@ public class LineFactory {
 	}
 	
 	
-	//([\w\d]+)\s*(.*)
+	//(\w+)\s*(.*)
 	private static final Pattern lineTypePattern = Pattern.compile("(\\w+)\\s*(.*)");
 	//label\s+(\w+)
 	private static final Pattern labelLinePattern = Pattern.compile("label\\s+(\\w+)");
@@ -38,8 +39,8 @@ public class LineFactory {
 	private static final Pattern jumpLinePattern = Pattern.compile("jump\\s+(\\w+)");
 	//jumpif\s+(\w+)\s+(.+)
 	private static final Pattern jumpIfLinePattern = Pattern.compile("jumpif\\s+(\\w+)\\s+(.+)");
-	//(\w+\s*(?:\(\$\d+\))?)\s*(@.*)?
-	private static final Pattern abilityLinePattern = Pattern.compile("(\\w+\\s*(?:\\(\\$\\d+\\))?)\\s*(@.*)?");
+	//(\w+[^\@]*(?<!\s))\s*(\@.+)?
+	private static final Pattern abilityLinePattern = Pattern.compile("(\\w+[^@]*(?<!\\s))\\s*(@.+)?");
 	//delay\s+(\d+)
 	private static final Pattern delayLinePattern = Pattern.compile("delay\\s+(\\d+)");
 	
@@ -53,15 +54,26 @@ public class LineFactory {
 	private void parseLine(String lineString) {
 		String l_lineString = lineString.trim().toLowerCase();
 		
+		//Match
 		Matcher typeMatcher = lineTypePattern.matcher(l_lineString);
-		String typeString = typeMatcher.group(1);
+		if (!typeMatcher.matches()) {
+			GrandLogger.log("Invalid line format: ", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + l_lineString, LogType.CONFIG_ERRORS);
+			return;
+		}
 		
+		String typeString = typeMatcher.group(1);
 		switch (typeString) {
 			case "label": parseLabelLine(l_lineString);
+				break;
 			case "jump": parseJumpLine(l_lineString);
+				break;
 			case "jumpif": parseJumpIfLine(l_lineString);
+				break;
 			case "delay": parseDelayLine(l_lineString);
+				break;
 			default: parseAbilityLine(l_lineString);
+				break;
 		}
 	}
 	
@@ -79,9 +91,9 @@ public class LineFactory {
 		return this;
 	}
 	
-	private GrandFunction finish() {
+	private @Nonnull GrandFunction finish() {
 		jumps.forEach(this::finishJump);
-		return first;
+		return (first == null ? (target) -> {} : first);
 	}
 	
 	private void finishJump(Pair<String, Jump> jump) {

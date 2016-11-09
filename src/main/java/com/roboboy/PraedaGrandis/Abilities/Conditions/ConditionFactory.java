@@ -15,6 +15,8 @@ public class ConditionFactory
 	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)?");
 	
 	public static Condition build(String conditionLine) {
+		conditionLine = conditionLine.toLowerCase();
+		
 		//Remove groupings
 		GroupingParser groupParser = new GroupingParser(conditionLine);
 		String simplifiedLine = groupParser.getSimplifiedString();

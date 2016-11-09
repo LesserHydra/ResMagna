@@ -16,6 +16,8 @@ public class AbilityFactory {
 	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
 	
 	public static @Nullable Ability build(String abilityString) {
+		abilityString = abilityString.toLowerCase();
+		
 		//Remove groupings
 		GroupingParser groupParser = new GroupingParser(abilityString);
 		String simplifiedLine = groupParser.getSimplifiedString();

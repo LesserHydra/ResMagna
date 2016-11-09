@@ -17,8 +17,8 @@ public class ActivatorFactory {
 	//(.+?)(?:\s+(\@.+?))?\s+(\~.+)
 	static private final Pattern seperatorPattern = Pattern.compile("(.+?)(?:\\s+(\\@.+?))?\\s+(\\~.+)");
 	
-	//~on(\w+)(?:\s*\(\$(\d+)\))?(?:\s*\:\s*(\w+))?
-	static private final Pattern activatorPattern = Pattern.compile("~on(\\w+)(?:\\s*\\(\\$(\\d+)\\))?(?:\\s*\\:\\s*(\\w+))?");
+	//~on(\w+)(?:\s*\((\$\d+)\))?(?:\s*\:\s*(\w+))?
+	static private final Pattern activatorPattern = Pattern.compile("~on(\\w+)(?:\\s*\\((\\$\\d+)\\))?(?:\\s*\\:\\s*(\\w+))?");
 	
 	public static ActivatorLine build(String line) {
 		//Remove groupings
@@ -65,7 +65,7 @@ public class ActivatorFactory {
 		
 		//Get arguments
 		//TODO: Temp
-		String argString = activatorMatcher.group(2);
+		String argString = groupParser.getGrouping(activatorMatcher.group(2));
 		long timerDelay = (argString == null ? -1L : Long.parseLong(argString));
 		
 		//Get slot type
