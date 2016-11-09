@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis.Abilities.Targeters;
+package com.roboboy.PraedaGrandis.Targeters;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;

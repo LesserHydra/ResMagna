@@ -1,9 +1,9 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Targeters.Targeters;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;

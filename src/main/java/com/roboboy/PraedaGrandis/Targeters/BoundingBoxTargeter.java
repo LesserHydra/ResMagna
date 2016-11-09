@@ -1,12 +1,10 @@
-package com.roboboy.PraedaGrandis.Abilities.Targeters;
+package com.roboboy.PraedaGrandis.Targeters;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 

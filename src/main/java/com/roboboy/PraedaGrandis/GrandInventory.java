@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetNone;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.TargetNone;
 import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;

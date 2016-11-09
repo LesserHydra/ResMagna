@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class HealAbility implements Ability {

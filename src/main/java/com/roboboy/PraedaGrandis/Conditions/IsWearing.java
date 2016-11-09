@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis.Abilities.Conditions;
+package com.roboboy.PraedaGrandis.Conditions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.InventoryHandler;
 import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class IsWearing implements Condition {

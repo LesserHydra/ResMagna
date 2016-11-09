@@ -8,7 +8,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class FireworkAbility implements Ability {

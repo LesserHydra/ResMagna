@@ -4,16 +4,16 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.Function.GrandFunction;
 import com.roboboy.PraedaGrandis.Configuration.Function.LineFactory;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import org.bukkit.configuration.ConfigurationSection;
-import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
-import com.roboboy.PraedaGrandis.Abilities.Conditions.ConditionFactory;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Conditions.Condition;
+import com.roboboy.PraedaGrandis.Conditions.ConditionFactory;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 
 public class GrandAbilityFactory {
 	

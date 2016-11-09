@@ -19,9 +19,9 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetLocation;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.TargetEntity;
+import com.roboboy.PraedaGrandis.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 
 public class ProjectileListener implements Listener

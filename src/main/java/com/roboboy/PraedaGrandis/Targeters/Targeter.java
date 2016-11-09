@@ -1,8 +1,8 @@
-package com.roboboy.PraedaGrandis.Abilities.Targeters;
+package com.roboboy.PraedaGrandis.Targeters;
 
 import java.util.List;
 
-import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
+import com.roboboy.PraedaGrandis.Conditions.Condition;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 
 public interface Targeter {

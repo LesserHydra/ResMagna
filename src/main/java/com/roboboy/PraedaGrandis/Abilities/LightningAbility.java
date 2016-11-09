@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
 class LightningAbility implements Ability {

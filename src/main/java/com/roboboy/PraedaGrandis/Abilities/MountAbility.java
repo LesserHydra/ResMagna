@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.Targeters;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import org.bukkit.entity.LivingEntity;
 

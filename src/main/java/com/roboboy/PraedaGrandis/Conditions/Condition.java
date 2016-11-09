@@ -1,6 +1,6 @@
-package com.roboboy.PraedaGrandis.Abilities.Conditions;
+package com.roboboy.PraedaGrandis.Conditions;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 
 public interface Condition {
 	

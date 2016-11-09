@@ -8,8 +8,8 @@ import java.util.Set;
 import com.roboboy.PraedaGrandis.Activator.ActivatorLine;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.TargetEntity;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 /* Every so often (configurable in main config) the plugin should

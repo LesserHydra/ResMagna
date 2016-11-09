@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.entity.LivingEntity;
 
 class EjectAbility implements Ability {
