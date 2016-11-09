@@ -1,11 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
@@ -18,14 +13,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ConditionFactory {
 	
-	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w\s=<>\.]*[\w\.]))?\s*(@\w+\s*(?:\((\$[\d]+)\))?)?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)?");
+	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w\s=<>.]*[\w.]))?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>.]*[\\w.]))?");
 	
 	public static Condition build(String conditionLine) {
 		conditionLine = conditionLine.toLowerCase();
@@ -43,8 +40,8 @@ public class ConditionFactory {
 			return null;
 		}
 		
-		//Get condition name and NOT opperator
-		String conditionName = lineMatcher.group(1).toLowerCase();
+		//Get condition name and NOT operator
+		String conditionName = lineMatcher.group(1);
 		boolean not = conditionLine.startsWith("~");
 		
 		//Get condition arguments, if exist
@@ -53,12 +50,6 @@ public class ConditionFactory {
 		
 		//Get unenclosed arguments, if exist
 		String variableArgsString = lineMatcher.group(3);
-		
-		//Get Targeter
-		String targeterString = lineMatcher.group(4);
-		String targeterArgumentsGroupID = lineMatcher.group(5);
-		targeterString = groupParser.readdGrouping(targeterString, targeterArgumentsGroupID);
-		Targeter targeter = TargeterFactory.build(targeterString);
 		
 		//Construct condition by name
 		Condition c = createCondition(conditionName, conditionArgs, variableArgsString);
