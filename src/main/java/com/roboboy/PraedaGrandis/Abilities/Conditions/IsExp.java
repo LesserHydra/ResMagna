@@ -1,27 +1,23 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.bukkit.entity.Player;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;
+import org.bukkit.entity.Player;
 
-class IsExp extends Condition
-{
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+class IsExp implements Condition {
 	//([=<>]+)\s*(\w+)
 	private static final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*(\\w+)");
 	
 	private final VariableConditional	conditional;
 	private final int					number;
 
-	public IsExp(Targeter targeter, boolean not, String argLine)
-	{
-		super(targeter, not);
-		
+	IsExp(String argLine) {
 		//Match
 		Matcher lineMatcher = isLinePattern.matcher(argLine);
 		if (!lineMatcher.matches()) {
@@ -47,8 +43,7 @@ class IsExp extends Condition
 	}
 
 	@Override
-	protected boolean checkThis(Target target)
-	{
+	public boolean test(Target target) {
 		if (!(target.getEntity() instanceof Player)) return false;
 		Player p = (Player) target.getEntity();
 		return conditional.check(p.getTotalExperience(), number);

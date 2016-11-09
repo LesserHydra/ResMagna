@@ -2,17 +2,22 @@ package com.roboboy.PraedaGrandis.Configuration.Function;
 
 import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
 class JumpIfLine extends FunctionLine implements Jump {
 	
 	private final Condition condition;
+	private final Targeter targeter;
 	private GrandFunction jumpLine = null;
 	
-	JumpIfLine(Condition condition) { this.condition = condition; }
+	JumpIfLine(Condition condition, Targeter targeter) {
+		this.condition = condition;
+		this.targeter = targeter;
+	}
 	
 	@Override
 	public void run(Target target) {
-		if (jumpLine != null && condition.check(target)) jumpLine.run(target);
+		if (jumpLine != null && targeter.match(target, condition)) jumpLine.run(target);
 		else nextLine.run(target);
 	}
 	

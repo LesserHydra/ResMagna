@@ -1,29 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities.Conditions;
 
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 
-public abstract class Condition
-{
-	private final Targeter targeter;
-	private final boolean not;
+public interface Condition {
 	
-	protected Condition(Targeter targeter, boolean not)
-	{
-		this.targeter = targeter;
-		this.not = not;
-	}
+	boolean test(Target target);
 	
-	public final boolean check(Target target)
-	{
-		//boolean result = true;
-		for (Target t : targeter.getTargets(target)) {
-			if ( !(not ^ checkThis(t)) ) return false;
-			//result = result && (not ^ checkThis(t.get())); //(not ? !result : result)
-		}
-		//return result;
-		return true;
-	}
+	default Condition negate() { return target -> !test(target); }
 	
-	protected abstract boolean checkThis(Target target);
 }
