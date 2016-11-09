@@ -1,8 +1,11 @@
 package com.roboboy.PraedaGrandis;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType.SlotType;
@@ -16,7 +19,7 @@ public enum ItemSlotType
 /*	Type		Parent			Explanation								*/
 /*----------------------------------------------------------------------*/
 	NONE		(null) {		//Nowhere
-		@Override public List<ItemStack> getItems(Player p) {return Arrays.asList();}
+		@Override public List<ItemStack> getItems(Player p) { return Collections.emptyList(); }
 	},
 	
 	ANY			(NONE) {		//Anywhere on the player
@@ -34,25 +37,25 @@ public enum ItemSlotType
 	
 	HELMET		(WORN) {		//Helmet slot
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getHelmet());
+			return Collections.singletonList(p.getInventory().getHelmet());
 		}
 	},
 	
 	CHESTPLATE	(WORN) {		//Chestplate slot
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getChestplate());
+			return Collections.singletonList(p.getInventory().getChestplate());
 		}
 	},
 	
 	LEGGINGS	(WORN) {		//Leggings slot
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getLeggings());
+			return Collections.singletonList(p.getInventory().getLeggings());
 		}
 	},
 	
 	BOOTS		(WORN) {		//Boots slot
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getBoots());
+			return Collections.singletonList(p.getInventory().getBoots());
 		}
 	},
 	
@@ -79,32 +82,45 @@ public enum ItemSlotType
 	
 	HELDMAIN	(HELD) {		//Held in main hand
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getItemInMainHand());
+			return Collections.singletonList(p.getInventory().getItemInMainHand());
 		}
 	},
 	
 	HELDOFF		(HELD) {		//Held in off hand
 		@Override public List<ItemStack> getItems(Player p) {
-			return Arrays.asList(p.getInventory().getItemInOffHand());
+			return Collections.singletonList(p.getInventory().getItemInOffHand());
 		}
 	},
 	
-	UNHELD		(HOTBAR) {		//An the hotbar, but not held in hand
+	UNHELD		(HOTBAR) {		//In the hotbar, but not held in hand
 		@Override public List<ItemStack> getItems(Player p) {
 			PlayerInventory inv = p.getInventory();
+			/*ItemStack[] invArray = p.getInventory().getContents();
+			ItemStack[] resultArray = new ItemStack[8];
+			int heldSlot = inv.getHeldItemSlot();
+			for (int i = 0, j = 0; i < 8; ++i, ++j) {
+				if (j == heldSlot) ++j;
+				resultArray[i] = invArray[j];
+			}
+			return Arrays.asList(resultArray);*/
 			return Arrays.asList( ArrayUtils.remove(Arrays.copyOf(inv.getContents(), 9), inv.getHeldItemSlot()) );
 		}
 	};
+	
+	private static final Set<ItemSlotType> unique;
 	
 	private final ItemSlotType parent;
 	private EnumSet<ItemSlotType> children;
 	
 	static {
+		Set<ItemSlotType> workingUnique = EnumSet.allOf(ItemSlotType.class);
 		for (ItemSlotType type : values()) {
 			if (type.isNull()) continue;
 			type.children = EnumSet.noneOf(ItemSlotType.class);
 			type.parent.registerSubtype(type);
+			workingUnique.remove(type.parent);
 		}
+		unique = Collections.unmodifiableSet(workingUnique);
 	}
 	
 	private ItemSlotType(ItemSlotType parent) {
@@ -145,9 +161,9 @@ public enum ItemSlotType
 		return results;
 	}
 	
-	public boolean isNull() {
-		return (this == NONE);
-	}
+	public boolean isNull() { return this == NONE; }
+	
+	public boolean isUnique() { return this.children.isEmpty(); }
 	
 	private void registerSubtype(ItemSlotType subtype) {
 		if (isNull()) return;
@@ -181,13 +197,8 @@ public enum ItemSlotType
 		return ItemSlotType.UNHELD;
 	}
 	
-	public static EnumSet<ItemSlotType> getUniqueTypes() {
-		EnumSet<ItemSlotType> results = EnumSet.noneOf(ItemSlotType.class);
-		for (ItemSlotType type : values()) {
-			if (type.isNull()) continue;
-			if (type.children.isEmpty()) results.add(type);
-		}
-		return results;
+	public static Set<ItemSlotType> getUniqueTypes() {
+		return unique;
 	}
 	
 	/**
