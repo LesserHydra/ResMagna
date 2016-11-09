@@ -64,6 +64,8 @@ public class Target {
 	 */
 	public Location getLocation() { return currentTarget.getLocation(); }
 	
+	public Player asPlayer() { return (Player) currentTarget.getEntity(); }
+	
 	/**
 	 * Checks to see if nothing is currently targeted
 	 * @return True if there is no current target
@@ -75,6 +77,8 @@ public class Target {
 	 * @return True is the current target is an entity
 	 */
 	public boolean isEntity() { return currentTarget.getEntity() != null; }
+	
+	public boolean isPlayer() { return currentTarget.getEntity() instanceof Player; }
 	
 	public TargetConstruct getCurrent() { return currentTarget; }
 	
