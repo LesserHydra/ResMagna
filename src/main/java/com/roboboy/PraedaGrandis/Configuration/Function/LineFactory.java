@@ -37,8 +37,8 @@ public class LineFactory {
 	private static final Pattern labelLinePattern = Pattern.compile("label\\s+(\\w+)");
 	//jump\s+(\w+)
 	private static final Pattern jumpLinePattern = Pattern.compile("jump\\s+(\\w+)");
-	//jumpif\s+(\w+)\s+(.+)
-	private static final Pattern jumpIfLinePattern = Pattern.compile("jumpif\\s+(\\w+)\\s+(.+)");
+	//jumpif\s+(\w+)\s+(~?\w+[^@]*(?<!\s))\s*(@.+)?
+	private static final Pattern jumpIfLinePattern = Pattern.compile("jumpif\\s+(\\w+)\\s+(~?\\w+[^@]*(?<!\\s))\\s*(@.+)?");
 	//(\w+[^\@]*(?<!\s))\s*(\@.+)?
 	private static final Pattern abilityLinePattern = Pattern.compile("(\\w+[^@]*(?<!\\s))\\s*(@.+)?");
 	//delay\s+(\d+)
@@ -136,17 +136,23 @@ public class LineFactory {
 	}
 	
 	private void parseJumpIfLine(String l_lineString) {
+		//Pull out groupings
+		GroupingParser groupingParser = new GroupingParser(l_lineString);
+		String s_lineString = groupingParser.getSimplifiedString();
+		
 		//Match
-		Matcher matcher = jumpIfLinePattern.matcher(l_lineString);
+		Matcher matcher = jumpIfLinePattern.matcher(s_lineString);
 		if (!matcher.matches()) {
 			GrandLogger.log("Invalid conditional jump format: " + l_lineString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  Expected: JUMPIF <label> <condition> [targeter]", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Simplified: " + s_lineString, LogType.CONFIG_ERRORS);
 			return;
 		}
 		
 		//Get component strings
 		String labelName = matcher.group(1);
-		String conditionString = matcher.group(2);
+		String conditionString = groupingParser.readdAllGroupings(matcher.group(2));
+		String targeterString = groupingParser.readdAllGroupings(matcher.group(3));
 		
 		//Parse condition, check for fail
 		Condition condition = ConditionFactory.build(conditionString);
@@ -155,8 +161,15 @@ public class LineFactory {
 			return;
 		}
 		
+		//Parse targeter, check for fail
+		Targeter targeter = TargeterFactory.build(targeterString);
+		if (targeter == null) {
+			GrandLogger.log("  In line: " + l_lineString, LogType.CONFIG_ERRORS);
+			return;
+		}
+		
 		//Result
-		JumpIfLine jumpLine = new JumpIfLine(condition);
+		JumpIfLine jumpLine = new JumpIfLine(condition, targeter);
 		jumps.add(new ImmutablePair<>(labelName, jumpLine));
 		addLine(jumpLine);
 	}
