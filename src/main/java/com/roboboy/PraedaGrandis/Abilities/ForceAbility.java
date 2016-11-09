@@ -1,28 +1,24 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-class ForceAbility extends Ability
-{
+class ForceAbility implements Ability {
+	
 	private final double forceAmount;
 	private final GrandLocation targetLocation;
 
-	public ForceAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
+	ForceAbility(BlockArguments args) {
 		forceAmount = args.getDouble(true, 0D,		"forceamount", "force", "amount", "a");
 		targetLocation = args.getLocation(false, GrandLocation.buildFromString("F+1"),	"targetlocation", "target", "tloc", "t");
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		

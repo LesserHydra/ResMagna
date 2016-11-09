@@ -1,16 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class PotionAbility extends Ability
-{
+class PotionAbility implements Ability {
+	
 	private final PotionEffectType type;
 	private final int duration;
 	private final int amplifier;
@@ -18,9 +15,7 @@ class PotionAbility extends Ability
 	private final boolean particles;
 	private final boolean force;
 	
-	public PotionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	public PotionAbility(BlockArguments args) {
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
 		type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"potiontype", "potion", "type", "name", "t", null));
 		
@@ -33,10 +28,11 @@ class PotionAbility extends Ability
 	}
 	
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		
 		targetEntity.addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
 	}
+	
 }

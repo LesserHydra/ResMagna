@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis;
+package com.roboboy.PraedaGrandis.Activator;
 
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -6,8 +6,8 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
 /**
  * Activators
  */
-public enum ActivatorType
-{
+public enum ActivatorType {
+	
 /*	Type			Parent					Explanation								Target				*/
 /*------------------------------------------------------------------------------------------------------*/
 	NONE,									//Invalid type, or no parent			NA

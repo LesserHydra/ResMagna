@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.roboboy.PraedaGrandis.Activator.ActivatorFactory;
+import com.roboboy.PraedaGrandis.Activator.ActivatorLine;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -18,11 +21,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import com.comphenix.attribute.Attributes;
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.AbilityTimer;
-import com.roboboy.PraedaGrandis.ActivatorType;
+import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
-import com.roboboy.PraedaGrandis.Abilities.Ability;
-import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 
 public class GrandItem
@@ -53,7 +54,7 @@ public class GrandItem
 	private boolean updateAmount = false;
 	private boolean updateEnchantments = false;
 	
-	private List<Ability> abilities = new ArrayList<>();
+	private List<ActivatorLine> abilities = new ArrayList<>();
 	
 	private List<AbilityTimer> timers = new ArrayList<>();
 	
@@ -113,10 +114,10 @@ public class GrandItem
 		//Abilities
 		for (String abilityString : itemConfig.getStringList("abilities"))
 		{
-			Ability a = AbilityFactory.build(abilityString);
+			ActivatorLine a = ActivatorFactory.build(abilityString);
 			if (a == null) continue;
 			
-			if (a.getActivator() != ActivatorType.TIMER) {
+			if (a.getType() != ActivatorType.TIMER) {
 				abilities.add(a);
 			}
 			else {//Special case. Timers are handled differently.
@@ -201,8 +202,8 @@ public class GrandItem
 	}
 	
 	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
-		for (Ability a : abilities) {
-			if (!activatorType.isSubtypeOf(a.getActivator())) continue;
+		for (ActivatorLine a : abilities) {
+			if (!activatorType.isSubtypeOf(a.getType())) continue;
 			a.activate(slotType, target);
 		}
 	}

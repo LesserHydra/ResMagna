@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis;
 
+import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

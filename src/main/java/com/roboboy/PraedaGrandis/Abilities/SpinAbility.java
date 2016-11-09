@@ -1,24 +1,19 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class SpinAbility extends Ability
-{
+class SpinAbility implements Ability {
+	
 	private final int numberOfUpdates;
 	private final float degreesPerUpdate;
 	private final long updateDelay;
 	
-	public SpinAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	SpinAbility(BlockArguments args) {
 		int degrees = args.getInteger(true, 0,			"degrees", "amount", "deg");
 		int duration = args.getInteger(true, 0, 		"duration", "ticks", "time", "dur");
 		this.updateDelay = args.getLong(false, 5,		"updatedelay", "delay");
@@ -28,15 +23,15 @@ class SpinAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		
+		//TODO: Ick.
 		new SpinTimer(targetEntity).runTaskTimer(PraedaGrandis.plugin, 0L, updateDelay);
 	}
 
-	private class SpinTimer extends BukkitRunnable
-	{
+	private class SpinTimer extends BukkitRunnable {
 		private final LivingEntity targetEntity;
 		
 		private int timesRun = 0;

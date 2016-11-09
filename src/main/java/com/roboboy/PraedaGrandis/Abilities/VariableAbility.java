@@ -1,20 +1,18 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
+import com.roboboy.PraedaGrandis.VariableHandler;
 import com.roboboy.util.StringTools;
+import org.bukkit.entity.Player;
 
-class VariableAbility extends Ability
-{
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+class VariableAbility implements Ability {
+	
 	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
 	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
 	
@@ -23,10 +21,7 @@ class VariableAbility extends Ability
 	private final String			otherName;
 	private final int				number;
 	
-	public VariableAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, String variableLine)
-	{
-		super(slotType, activator, targeter);
-		
+	VariableAbility(String variableLine) {
 		//Match
 		Matcher lineMatcher = variableLinePattern.matcher(variableLine);
 		if (!lineMatcher.matches()) {
@@ -58,7 +53,7 @@ class VariableAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		if (!(target.getEntity() instanceof Player)) return;
 		
 		Player p = (Player) target.getEntity();

@@ -22,7 +22,7 @@ public class ConditionFactory
 		//Match
 		Matcher lineMatcher = conditionLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
-			GrandLogger.log("Invalid condition line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid condition format:", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + conditionLine, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;

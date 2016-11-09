@@ -60,7 +60,8 @@ public class GrandAbilityHandler extends MultiConfig
 	protected void loadConfig(FileConfiguration config) {
 		for (String key : config.getKeys(false)) {
 			ConfigurationSection abilityConfig = config.getConfigurationSection(key);
-			customAbilities.put(key.toLowerCase(), new GrandAbility(abilityConfig));
+			GrandAbility result = GrandAbilityFactory.build(abilityConfig);
+			customAbilities.put(key.toLowerCase(), result);
 		}
 	}
 	
