@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public class Target
-{
+public class Target {
+	
 	private final TargetConstruct currentTarget;
 	private final Player holder;
 	private final TargetConstruct activatorTarget;
@@ -19,8 +19,7 @@ public class Target
 	 * @param holder
 	 * @param activatorTarget
 	 */
-	public Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget)
-	{
+	public Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget) {
 		if (currentTarget == null || activatorTarget == null) throw new IllegalArgumentException("Cannot target null.");
 		
 		this.currentTarget = currentTarget;
@@ -37,8 +36,8 @@ public class Target
 	 * @param activatorTarget
 	 * @param savedTargets Custom save map to share
 	 */
-	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget, Map<String, TargetConstruct> savedTargets)
-	{
+	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget,
+	               Map<String, TargetConstruct> savedTargets) {
 		this.currentTarget = currentTarget;
 		this.holder = holder;
 		this.activatorTarget = activatorTarget;
@@ -49,9 +48,7 @@ public class Target
 	 * Save the currently targeted entity to all Targets sharing a saved target map
 	 * @param saveName Save name
 	 */
-	public void save(String saveName) {
-		savedTargets.put(saveName, currentTarget);
-	}
+	public void save(String saveName) { savedTargets.put(saveName, currentTarget); }
 	
 	/**
 	 * Get the currently targeted entity
@@ -65,37 +62,33 @@ public class Target
 	 * Get the currently targeted location
 	 * @return Current target location
 	 */
-	public Location getLocation() {
-		return currentTarget.getLocation();
-	}
+	public Location getLocation() { return currentTarget.getLocation(); }
 	
 	/**
 	 * Checks to see if nothing is currently targeted
 	 * @return True if there is no current target
 	 */
-	public boolean isNull(){
-		return currentTarget.isNull();
-	}
+	public boolean isNull() { return currentTarget.isNull(); }
 	
-	public TargetConstruct getCurrent() {
-		return currentTarget;
-	}
+	/**
+	 * Checks whether or not an entity is currently targeted
+	 * @return True is the current target is an entity
+	 */
+	public boolean isEntity() { return currentTarget.getEntity() != null; }
+	
+	public TargetConstruct getCurrent() { return currentTarget; }
 	
 	/**
 	 * Get the holder player
 	 * @return Holder player
 	 */
-	public Player getHolder() {
-		return holder;
-	}
+	public Player getHolder() { return holder; }
 	
 	/**
 	 * Get the entity targeted by whatever originally constructed the Target
 	 * @return Activator entity
 	 */
-	public TargetConstruct getActivator() {
-		return activatorTarget;
-	}
+	public TargetConstruct getActivator() { return activatorTarget; }
 	
 	/**
 	 * Set current target to an arbitrary target construct
@@ -122,16 +115,12 @@ public class Target
 	 * Set currently targeted entity to the holder
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetHolder() {
-		return new Target(new TargetEntity(holder), holder, activatorTarget, savedTargets);
-	}
+	public Target targetHolder() { return new Target(new TargetEntity(holder), holder, activatorTarget, savedTargets); }
 	
 	/**
 	 * Set currently targeted entity to the activator
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetActivator() {
-		return new Target(activatorTarget, holder, activatorTarget, savedTargets);
-	}
+	public Target targetActivator() { return new Target(activatorTarget, holder, activatorTarget, savedTargets); }
 	
 }

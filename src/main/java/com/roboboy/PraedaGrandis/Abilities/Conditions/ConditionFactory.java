@@ -55,8 +55,7 @@ public class ConditionFactory
 		return c;
 	}
 	
-	private static Condition createCondition(String name, Targeter targeter, boolean not, BlockArguments args, String varArgsString)
-	{
+	private static Condition createCondition(String name, Targeter targeter, boolean not, BlockArguments args, String varArgsString) {
 		switch (name) {
 		case "isnone":			return new IsNone(targeter, not);
 		case "isholder":		return new IsHolder(targeter, not);
@@ -77,6 +76,7 @@ public class ConditionFactory
 		case "isblock":			return new IsBlock(targeter, not, args);
 		case "iswearing":		return new IsWearing(targeter, not, args);
 		case "isholding":		return new IsHolding(targeter, not, args);
+		case "iseffected":		return new IsEffected(targeter, not, args);
 		
 		case "isvariable":		return new IsVariable(targeter, not, varArgsString);
 		case "ishealth":		return new IsHealth(targeter, not, varArgsString);
