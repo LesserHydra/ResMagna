@@ -131,7 +131,11 @@ public class InventoryHandler implements Listener
 		
 		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK || e.getAction() == InventoryAction.UNKNOWN) return;
 		
-		PlayerInventory inv = p.getInventory();
+		//FIXME: Fix for 1.9
+		//FIXME: Offhand slot seems to be slot=9,raw=45,inv=player
+		resetInventoryNextTick(p);
+		
+		/*PlayerInventory inv = p.getInventory();
 		GrandInventory gInv = playerInventories.get(p.getName());
 		ItemStack currentItem = e.getCurrentItem();
 		ItemStack cursorItem = e.getCursor();
@@ -203,7 +207,7 @@ public class InventoryHandler implements Listener
 		if (e.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
 			//TODO: Figure out where the items will be moved to
 			resetInventoryNextTick(p);
-		}
+		}*/
 	}
 	
 	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
