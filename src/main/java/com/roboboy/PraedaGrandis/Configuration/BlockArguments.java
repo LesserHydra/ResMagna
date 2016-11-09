@@ -337,7 +337,7 @@ public class BlockArguments
 		//Get value from map
 		String result = null;
 		for (String key : keys) {
-			result = argumentMap.get(key.toLowerCase());
+			result = argumentMap.remove(key == null ? null : key.toLowerCase());
 			if (result != null) break;
 		}
 		//Not found

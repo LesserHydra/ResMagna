@@ -1,28 +1,25 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 
-class SwapAbility extends Ability
-{
+class SwapAbility implements Ability {
+	
 	private final Targeter otherTargeter;
 	private final boolean swapFacing;
 	
-	public SwapAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
+	SwapAbility(BlockArguments args) {
 		otherTargeter = args.getTargeter(true, new NoneTargeter(),	"mount", "other", "target", "m", null);
 		swapFacing = args.getBoolean(false, false,					"swapfacing", "facing", "f");
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		

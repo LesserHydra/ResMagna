@@ -6,6 +6,7 @@ public enum LogType
 {
 	TOO_MUCH_INFO	("[TMI]", Level.INFO),
 	CONFIG_PARSING	("[CFG]", Level.INFO),
+	CONFIG_WARNING	("[WRN]", Level.WARNING),
 	CONFIG_ERRORS	("[ERR]", Level.WARNING),
 	ACTIVATORS		("[ACT]", Level.INFO),
 	DEBUG			("[DBG]", Level.INFO);

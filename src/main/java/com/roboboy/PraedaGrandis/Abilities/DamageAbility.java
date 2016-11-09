@@ -5,29 +5,25 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.HolderTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class DamageAbility extends Ability
-{
+class DamageAbility implements Ability {
+	
 	private final double damageAmount;
 	private final Targeter damagerTargeter;
 	private final DamageCause cause;
 	
-	public DamageAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-
+	DamageAbility(BlockArguments args) {
 		damageAmount = args.getDouble(true, 0D,							"amount", "a", null);
 		damagerTargeter = args.getTargeter(false, new HolderTargeter(), "damager", "dmgr", "source");
 		cause = args.getEnum(false, DamageCause.CUSTOM,					"cause");
 	}
 	
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		
@@ -61,4 +57,5 @@ class DamageAbility extends Ability
 		}
 		damagee.damage(amount);
 	}
+	
 }

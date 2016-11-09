@@ -1,5 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Configuration.ProjectileType;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Fireball;
@@ -9,17 +14,9 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
-import com.roboboy.PraedaGrandis.Configuration.ProjectileType;
 
-class ProjectileAbility extends Ability
-{
+class ProjectileAbility implements Ability {
+	
 	private final ProjectileType projectileType;
 	private final double velocity;
 	private final double randomSpread;
@@ -43,9 +40,7 @@ class ProjectileAbility extends Ability
 	
 	private final String onPotionSplash;
 	
-	public ProjectileAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	ProjectileAbility(BlockArguments args) {
 		projectileType = args.getEnum(true, ProjectileType.NONE,	"projectiletype", "projectile", "type", "proj");
 		
 		velocity = args.getDouble(false, 1D,		"velocity", "vel", "v");
@@ -73,7 +68,7 @@ class ProjectileAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		

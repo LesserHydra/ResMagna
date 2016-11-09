@@ -3,25 +3,21 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-class ExplosionAbility extends Ability
-{
+class ExplosionAbility implements Ability {
+	
 	private final float power;
 	private final boolean setFire;
 	private final boolean breakBlocks;
 	private final GrandLocation location;
 	private final Targeter damagerTargeter;
 	
-	public ExplosionAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	ExplosionAbility(BlockArguments args) {
 		power = args.getFloat(false, 0F,								"power", "yield", "p");
 		setFire = args.getBoolean(false, false,							"setfire", "fire");
 		breakBlocks = args.getBoolean(false, false,						"breakblocks", "blocks", "break");
@@ -30,7 +26,7 @@ class ExplosionAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		//Get damagerTarget
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
 		

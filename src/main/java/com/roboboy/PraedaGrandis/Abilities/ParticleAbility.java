@@ -1,16 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 
-class ParticleAbility extends Ability
-{
+class ParticleAbility implements Ability {
+	
 	private final Particle particleType;
 	private final float offsetX;
 	private final float offsetY;
@@ -19,10 +16,7 @@ class ParticleAbility extends Ability
 	private final int amount;
 	private final GrandLocation centerLocation;
 
-	public ParticleAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args)
-	{
-		super(slotType, activator, targeter);
-		
+	ParticleAbility(BlockArguments args) {
 		particleType = args.getEnum(true, Particle.BARRIER,	"particlename", "particle", "name", "type", "n");
 		amount = args.getInteger(true, 1,						"amount", "amnt", "a");
 		
@@ -41,7 +35,7 @@ class ParticleAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		Location calculatedLocation = centerLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		

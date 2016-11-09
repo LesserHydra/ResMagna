@@ -1,23 +1,19 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import org.bukkit.entity.LivingEntity;
 
-class IgniteAbility extends Ability
-{
+class IgniteAbility implements Ability {
+	
 	private final int duration;
 	
-	public IgniteAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
+	IgniteAbility(BlockArguments args) {
 		duration = args.getInteger(false, 0,	"duration", "time", "ticks", "d", "t", null);
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		

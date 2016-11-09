@@ -4,9 +4,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import com.roboboy.PraedaGrandis.Activator.ActivatorLine;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
@@ -18,7 +19,7 @@ import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 public class AbilityTimer
 {
 	final private GrandItem item;
-	final private Ability ability;
+	final private ActivatorLine activatorLine;
 	final private long delay;
 	
 	private boolean running = false;
@@ -48,7 +49,7 @@ public class AbilityTimer
 				GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(p);
 				List<GrandInventory.InventoryElement> elements = pInv.getItems(item.getName());
 				for (GrandInventory.InventoryElement element : elements) {
-					ability.activate(element.slotType, new Target(new TargetEntity(p), p, new TargetEntity(null)));
+					activatorLine.activate(element.slotType, new Target(new TargetEntity(p), p, new TargetEntity(null)));
 				}
 				
 				if (elements.isEmpty()) it.remove(); //Deactivate player
@@ -62,9 +63,9 @@ public class AbilityTimer
 		}
 	}
 	
-	public AbilityTimer(GrandItem item, Ability ability, long delay) {
+	public AbilityTimer(GrandItem item, ActivatorLine activatorLine, long delay) {
 		this.item = item;
-		this.ability = ability;
+		this.activatorLine = activatorLine;
 		this.delay = delay;
 	}
 	
@@ -78,7 +79,7 @@ public class AbilityTimer
 		if (!running) {
 			running = true;
 			timer = new TimerRunnable(); //It seems you must construct a new instance every time
-			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);;
+			timer.runTaskTimer(PraedaGrandis.plugin, 1L, delay);
 		}
 	}
 	

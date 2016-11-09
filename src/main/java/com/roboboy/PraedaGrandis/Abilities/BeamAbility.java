@@ -1,14 +1,5 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.NoneTargeter;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.TargetEntity;
@@ -17,9 +8,16 @@ import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
-class BeamAbility extends Ability
-{	
+class BeamAbility implements Ability {
+	
 	private final double speed;			//Distance per step
 	private final int numSteps;			//Steps per update
 	private final long delay;			//Delay between updates
@@ -44,9 +42,7 @@ class BeamAbility extends Ability
 	private final Targeter homingTargeter;
 	private final double homingForce;
 	
-	public BeamAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	BeamAbility(BlockArguments args) {
 		speed = args.getDouble(true, 0D,			"speed", "spd", "s");
 		numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
 		delay = args.getLong(false, 10L,			"delay", "dly", "d");
@@ -78,7 +74,7 @@ class BeamAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		//Get beam target, if exists
 		Target homingTarget = homingTargeter.getRandomTarget(target);
 		//Initialize beam
@@ -150,10 +146,9 @@ class BeamAbility extends Ability
 		}
 		
 		public boolean checkForEnd() {
-			if (!ignoreEntities && hitEntity()) return true;
-			if (!ignoreBlocks && hitBlock()) return true;
-			if (totalDistance >= maxDistance) return true;
-			return false;
+			return !ignoreEntities && hitEntity()
+					|| !ignoreBlocks && hitBlock()
+					|| totalDistance >= maxDistance;
 		}
 		
 		private boolean hitBlock() {

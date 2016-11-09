@@ -1,23 +1,21 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.bukkitutil.AreaEffectTools;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
-import com.roboboy.bukkitutil.AreaEffectTools;
 
-class TeleportAbility extends Ability
-{
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+class TeleportAbility implements Ability {
+	
 	private final GrandLocation location;
 	private final int spreadX;
 	private final int spreadY;
@@ -28,9 +26,7 @@ class TeleportAbility extends Ability
 	private final boolean perfectSpread;
 	private final boolean ender;
 	
-	public TeleportAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	TeleportAbility(BlockArguments args) {
 		location = args.getLocation(false, new GrandLocation(),		"location", "loc", "l", null);
 		
 		int spread = args.getInteger(false, 0,			"spread", "sprd");
@@ -48,7 +44,7 @@ class TeleportAbility extends Ability
 	}
 	
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		
@@ -107,13 +103,11 @@ class TeleportAbility extends Ability
 
 	private boolean isSafe(Location loc) {
 		Block feetBlock = loc.getBlock();
-		if (feetBlock.getType().isSolid()) return false;
-		if (!feetBlock.getRelative(BlockFace.DOWN).getType().isSolid()) return false;
-		if (feetBlock.getRelative(BlockFace.UP).getType().isSolid()) return false;
+		return !feetBlock.getType().isSolid()
+				&& !feetBlock.isLiquid()
+				&& feetBlock.getRelative(BlockFace.DOWN).getType().isSolid()
+				&& !feetBlock.getRelative(BlockFace.UP).getType().isSolid();
 		
-		if (feetBlock.isLiquid()) return false;
-		
-		return true;
 	}
 
 }

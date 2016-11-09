@@ -1,16 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class DisarmAbility extends Ability
-{
+class DisarmAbility implements Ability {
+	
 	private final boolean mainHand;
 	private final boolean offHand;
 	private final boolean helmet;
@@ -18,9 +15,7 @@ class DisarmAbility extends Ability
 	private final boolean leggings;
 	private final boolean boots;
 	
-	public DisarmAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	DisarmAbility(BlockArguments args) {
 		mainHand = args.getBoolean(false, false,	"mainhand", "heldright", "right", "main");
 		offHand = args.getBoolean(false, false,		"offhand", "heldleft", "shield", "left", "off");
 		helmet = args.getBoolean(false, false,		"helmet", "helm", "hlm");
@@ -30,7 +25,7 @@ class DisarmAbility extends Ability
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		LivingEntity targetEntity = target.getEntity();
 		if (targetEntity == null) return;
 		

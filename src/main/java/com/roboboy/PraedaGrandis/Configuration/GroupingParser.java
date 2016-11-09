@@ -70,6 +70,16 @@ public class GroupingParser
 		if (grouping == null) return string;
 		return string.replace(identifier, grouping);
 	}
+	
+	public String readdAllGroupings(String string) {
+		//TODO: Implement better
+		if (string == null) return null;
+		String result = string;
+		for (int i = 0; i < groupingList.size(); ++i) {
+			result = result.replace("$" + i, groupingList.get(i));
+		}
+		return result;
+	}
 
 	public static String removeBrackets(String originalString) {
 		Matcher matcher = bracketedStringPattern.matcher(originalString);

@@ -1,24 +1,17 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class SaveTargetAbility extends Ability
-{
+class SaveTargetAbility implements Ability {
+	
 	private final String saveName;
 
-	public SaveTargetAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	SaveTargetAbility(BlockArguments args) {
 		saveName = args.getString(true, "",		"savename", "save", "name", "sn", "n", null);
 	}
 
 	@Override
-	protected void execute(Target target) {
-		target.save(saveName);
-	}
+	public void execute(Target target) { target.save(saveName); }
 
 }

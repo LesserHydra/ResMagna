@@ -1,20 +1,17 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
 
-class PotionCloudAbility extends Ability
-{
+class PotionCloudAbility implements Ability {
+	
 	private final PotionEffect potion;
 	private final GrandLocation centerLocation;
 	
@@ -32,9 +29,7 @@ class PotionCloudAbility extends Ability
 	private final int immuneDelay;
 	
 	
-	public PotionCloudAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
-		
+	PotionCloudAbility(BlockArguments args) {
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
 		PotionEffectType potType = PotionEffectType.getByName(args.getString(false, "",	"potiontype", "potion", "pottype", "potname"));
 		int potDuration = args.getInteger(false, 600,			"potionduration", "potticks", "potdur");
@@ -60,7 +55,7 @@ class PotionCloudAbility extends Ability
 	}
 	
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		Location calculatedLocation = centerLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		
@@ -80,4 +75,5 @@ class PotionCloudAbility extends Ability
 		cloud.setWaitTime(waitTime);
 		cloud.setReapplicationDelay(immuneDelay);
 	}
+	
 }

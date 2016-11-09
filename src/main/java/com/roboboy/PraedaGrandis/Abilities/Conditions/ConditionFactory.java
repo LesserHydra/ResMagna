@@ -15,6 +15,8 @@ public class ConditionFactory
 	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>\\.]*[\\w\\.]))?\\s*(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)?");
 	
 	public static Condition build(String conditionLine) {
+		conditionLine = conditionLine.toLowerCase();
+		
 		//Remove groupings
 		GroupingParser groupParser = new GroupingParser(conditionLine);
 		String simplifiedLine = groupParser.getSimplifiedString();
@@ -22,7 +24,7 @@ public class ConditionFactory
 		//Match
 		Matcher lineMatcher = conditionLinePattern.matcher(simplifiedLine);
 		if (!lineMatcher.matches()) {
-			GrandLogger.log("Invalid condition line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid condition format:", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + conditionLine, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
@@ -53,8 +55,7 @@ public class ConditionFactory
 		return c;
 	}
 	
-	private static Condition createCondition(String name, Targeter targeter, boolean not, BlockArguments args, String varArgsString)
-	{
+	private static Condition createCondition(String name, Targeter targeter, boolean not, BlockArguments args, String varArgsString) {
 		switch (name) {
 		case "isnone":			return new IsNone(targeter, not);
 		case "isholder":		return new IsHolder(targeter, not);
@@ -75,6 +76,7 @@ public class ConditionFactory
 		case "isblock":			return new IsBlock(targeter, not, args);
 		case "iswearing":		return new IsWearing(targeter, not, args);
 		case "isholding":		return new IsHolding(targeter, not, args);
+		case "iseffected":		return new IsEffected(targeter, not, args);
 		
 		case "isvariable":		return new IsVariable(targeter, not, varArgsString);
 		case "ishealth":		return new IsHealth(targeter, not, varArgsString);

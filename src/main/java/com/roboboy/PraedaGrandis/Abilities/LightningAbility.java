@@ -3,27 +3,23 @@ package com.roboboy.PraedaGrandis.Abilities;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import com.roboboy.PraedaGrandis.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 
-class LightningAbility extends Ability
-{
+class LightningAbility implements Ability {
+	
 	private final boolean effectOnly;
 	private final boolean snap;
 	private final boolean hitCeiling;
 	
-	public LightningAbility(ItemSlotType slotType, ActivatorType activator, Targeter targeter, BlockArguments args) {
-		super(slotType, activator, targeter);
+	LightningAbility(BlockArguments args) {
 		effectOnly = args.getBoolean(false, false,		"effectonly", "iseffect", "effect", "e");
 		snap = args.getBoolean(false, false,			"snaptofloor", "snap", "floor");
 		hitCeiling = args.getBoolean(false, false,		"hitceiling", "ceiling");
 	}
 
 	@Override
-	protected void execute(Target target) {
+	public void execute(Target target) {
 		Location location = getLocation(target.getLocation());
 		if (effectOnly) location.getWorld().strikeLightningEffect(location);
 		else location.getWorld().strikeLightning(location);

@@ -7,8 +7,7 @@ public class FunctionRunner
 	private GrandAbility function;
 	
 	public FunctionRunner(String functionName) {
-		if (functionName == null) return;
-		GrandAbilityHandler.getInstance().requestFunction(this, functionName);
+		if (functionName != null) GrandAbilityHandler.getInstance().requestFunction(this, functionName);
 	}
 	
 	public void run(Target target) {
@@ -16,7 +15,6 @@ public class FunctionRunner
 		function.run(target);
 	}
 	
-	public void returnRequest(GrandAbility function) {
-		this.function = function;
-	}
+	void returnRequest(GrandAbility function) { this.function = function; }
+	
 }
