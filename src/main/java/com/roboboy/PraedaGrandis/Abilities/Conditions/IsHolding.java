@@ -12,7 +12,7 @@ class IsHolding extends Condition
 {
 	final private String itemName;
 
-	public IsHolding(Targeter targeter, boolean not, BlockArguments args) {
+	IsHolding(Targeter targeter, boolean not, BlockArguments args) {
 		super(targeter, not);
 		
 		//TODO: Error handling/logging
@@ -24,10 +24,7 @@ class IsHolding extends Condition
 		if (!(target.getEntity() instanceof Player)) return false;
 		
 		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.getEntity());
-		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
-			if (element.slotType == ItemSlotType.HELD) return true;
-		}
-		return false;
+		return gInv.containsGrandItem(itemName, ItemSlotType.HELD);
 	}
 
 }

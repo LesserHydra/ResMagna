@@ -31,17 +31,7 @@ class IsWearing extends Condition
 		if (!(target.getEntity() instanceof Player)) return false;
 		
 		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer((Player)target.getEntity());
-		for (String name : itemNames) {
-			if (!found(gInv.getItems(name))) return false;
-		}
-		return true;
+		return gInv.containsAll(itemNames, ItemSlotType.WORN);
 	}
 	
-	private boolean found(List<GrandInventory.InventoryElement> elementList) {
-		for (GrandInventory.InventoryElement element : elementList) {
-			if (!element.slotType.isSubtypeOf(ItemSlotType.WORN)) return true;
-		}
-		return false;
-	}
-
 }

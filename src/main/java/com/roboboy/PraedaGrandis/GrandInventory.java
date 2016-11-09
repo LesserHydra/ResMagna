@@ -7,11 +7,13 @@ import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -94,7 +96,6 @@ public class GrandInventory
 	 * <br>
 	 * The item must represent a valid grand item, and contain a UUID in the metadata.
 	 * @param item Item to remove
-	 * @param grandItem Represented GrandItem
 	 */
 	public void removeItem(ItemStack item) {
 		//Get and remove element from the itemMap
@@ -119,7 +120,7 @@ public class GrandInventory
 	
 	public List<InventoryElement> getItems(String grandItemName) {
 		Map<UUID, InventoryElement> items = grandItemMap.get(grandItemName);
-		if (items == null) return Arrays.asList();
+		if (items == null) return Collections.emptyList();
 		return new ArrayList<>(items.values());
 	}
 	
@@ -127,7 +128,54 @@ public class GrandInventory
 		return grandItemMap.containsKey(grandItemName);
 	}
 	
+	public boolean containsGrandItem(String grandItemName, ItemSlotType itemSlotType) {
+		return getItems(grandItemName).stream()
+				.anyMatch(element -> element.slotType.isSubtypeOf(itemSlotType));
+	}
+	
+	public boolean containsAll(Collection<String> grandItemNames, ItemSlotType itemSlotType) {
+		return grandItemNames.stream()
+				.allMatch(name -> containsGrandItem(name, itemSlotType));
+	}
+	
 	private UUID getItemUUID(ItemStack item) {
 		return UUID.fromString(NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_ID).getString(""));
 	}
+	
+	/*
+	public Stream<InventoryElement> getItems(ItemSlotType slotType) {
+		return slotType.getItems(holderPlayer).stream()
+				.map(this::itemToElement)
+				.filter(Objects::nonNull);
+	}
+	
+	public Stream<InventoryElement> getItems(ItemSlotType slotType, String grandItemName) {
+		return slotType.getItems(holderPlayer).stream()
+				.map(this::itemToElement)
+				.filter(element -> element.grandItem.getName().equalsIgnoreCase(grandItemName))
+				.filter(Objects::nonNull);
+	}
+	
+	public boolean contains(ItemSlotType slotType, String grandItemName) {
+		return slotType.getItems(holderPlayer).stream()
+				.map(item -> ItemHandler.getInstance().matchItem(item))
+				.filter(Objects::nonNull)
+				.anyMatch(grandItem -> grandItem.getName().equalsIgnoreCase(grandItemName));
+	}
+	
+	public boolean containsAll(ItemSlotType slotType, Collection<String> names) {
+		Set<String> toFind = new HashSet<>(names);
+		slotType.getItems(holderPlayer).stream()
+				.map(item -> ItemHandler.getInstance().matchItem(item))
+				.filter(Objects::nonNull)
+				.forEach(grandItem -> toFind.remove(grandItem.getName().toLowerCase()));
+		return toFind.isEmpty();
+	}
+	
+	private InventoryElement itemToElement(ItemStack item) {
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
+		if (grandItem == null) return null;
+		return new InventoryElement(item, grandItem);
+	}
+	*/
 }
