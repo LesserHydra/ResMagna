@@ -1,7 +1,7 @@
-name: @pluginName@
+name: PraedaGrandis
 main: @mainClass@
 version: @version@
-author: @author@
+author: Roboboy
 
 commands:
   PraedaGrandis:
