@@ -15,6 +15,8 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +26,8 @@ public class ConditionFactory {
 	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w\s=<>.]*[\w.]))?
 	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>.]*[\\w.]))?");
 	
-	public static Condition build(String conditionLine) {
+	@Nullable
+	public static Condition build(@NotNull String conditionLine) {
 		conditionLine = conditionLine.toLowerCase();
 		
 		//Remove groupings

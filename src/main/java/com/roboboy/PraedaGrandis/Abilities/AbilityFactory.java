@@ -7,15 +7,15 @@ import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class AbilityFactory {
 	
 	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w\s=+\-*/%]+\b))?
 	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
 	
-	public static @Nullable Ability build(String abilityString) {
+	@Nullable
+	public static Ability build(String abilityString) {
 		abilityString = abilityString.toLowerCase();
 		
 		//Remove groupings
