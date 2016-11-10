@@ -1,13 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Function.Functor;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class PotionAbility implements Functor {
+class PotionAbility implements Ability.WithEntity {
 	
 	private final PotionEffectType type;
 	private final int duration;
@@ -16,7 +14,7 @@ class PotionAbility implements Functor {
 	private final boolean particles;
 	private final boolean force;
 	
-	public PotionAbility(ArgumentBlock args) {
+	PotionAbility(ArgumentBlock args) {
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
 		type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"potiontype", "potion", "type", "name", "t", null));
 		
@@ -29,11 +27,8 @@ class PotionAbility implements Functor {
 	}
 	
 	@Override
-	public void run(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
-		
-		targetEntity.addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
+	public void run(LivingEntity target) {
+		target.addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
 	}
 	
 }

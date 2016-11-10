@@ -1,7 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
@@ -9,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
-class SwapAbility implements Functor {
+class SwapAbility implements Ability {
 	
 	private final Targeter otherTargeter;
 	private final boolean swapFacing;

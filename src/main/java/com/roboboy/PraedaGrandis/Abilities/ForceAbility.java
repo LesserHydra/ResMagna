@@ -1,14 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Function.Functor;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
-class ForceAbility implements Functor {
+class ForceAbility implements Ability {
 	
 	private final double forceAmount;
 	private final GrandLocation targetLocation;
@@ -20,8 +19,8 @@ class ForceAbility implements Functor {
 
 	@Override
 	public void run(Target target) {
+		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
 		
 		Location calculatedTargetLocation = targetLocation.calculate(target);
 		if (calculatedTargetLocation == null) return;

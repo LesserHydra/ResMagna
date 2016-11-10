@@ -123,6 +123,12 @@ public class Target {
 	public boolean isEntity() { return currentTarget.getEntity() != null; }
 	
 	/**
+	 * Checks whether or not a location is currently targeted
+	 * @return True is the current target is a location
+	 */
+	public boolean isLocation() { return !currentTarget.isNull(); }
+	
+	/**
 	 * Checks whether or not a player is currently targeted
 	 * @return True is the current target is a player
 	 */

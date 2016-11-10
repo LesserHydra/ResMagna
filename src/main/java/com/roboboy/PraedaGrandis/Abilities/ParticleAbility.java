@@ -1,13 +1,12 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Function.Functor;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
-class ParticleAbility implements Functor {
+class ParticleAbility implements Ability {
 	
 	private final Particle particleType;
 	private final float offsetX;

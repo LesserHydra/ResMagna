@@ -1,10 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Function.Functor;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.bukkitutil.AreaEffectTools;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class TeleportAbility implements Functor {
+class TeleportAbility implements Ability {
 	
 	private final GrandLocation location;
 	private final int spreadX;

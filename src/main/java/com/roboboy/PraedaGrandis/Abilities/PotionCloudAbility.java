@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
@@ -11,7 +10,7 @@ import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class PotionCloudAbility implements Functor {
+class PotionCloudAbility implements Ability {
 	
 	private final PotionEffect potion;
 	private final GrandLocation centerLocation;

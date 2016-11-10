@@ -1,13 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-class LightningAbility implements Functor {
+class LightningAbility implements Ability.WithLocation {
 	
 	private final boolean effectOnly;
 	private final boolean snap;
@@ -20,8 +18,8 @@ class LightningAbility implements Functor {
 	}
 
 	@Override
-	public void run(Target target) {
-		Location location = getLocation(target.asLocation());
+	public void run(Location target) {
+		Location location = getLocation(target);
 		if (effectOnly) location.getWorld().strikeLightningEffect(location);
 		else location.getWorld().strikeLightning(location);
 	}

@@ -14,7 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-class BeamAbility implements Functor {
+class BeamAbility implements Ability {
 	
 	private final double speed;			//Distance per step
 	private final int numSteps;			//Steps per update

@@ -4,7 +4,7 @@ import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-class SaveTargetAbility implements Functor {
+class SaveTargetAbility implements Ability {
 	
 	private final String saveName;
 

@@ -1,13 +1,12 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.entity.LivingEntity;
 
-class MountAbility implements Functor {
+class MountAbility implements Ability {
 	
 	private final Targeter otherTargeter;
 	
