@@ -1,12 +1,12 @@
 package com.roboboy.PraedaGrandis.Conditions;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.InventoryHandler;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
+import org.bukkit.entity.Player;
 
-class IsHolding implements Condition {
+class IsHolding implements Condition.ForPlayer {
 	
 	final private String itemName;
 
@@ -16,9 +16,8 @@ class IsHolding implements Condition {
 	}
 
 	@Override
-	public boolean test(Target target) {
-		if (!target.isPlayer()) return false;
-		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target.asPlayer());
+	public boolean test(Player target) {
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target);
 		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
 			if (element.slotType == ItemSlotType.HELD) return true;
 		}

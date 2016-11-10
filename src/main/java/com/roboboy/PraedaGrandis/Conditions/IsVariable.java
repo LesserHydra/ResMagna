@@ -1,6 +1,5 @@
 package com.roboboy.PraedaGrandis.Conditions;
 
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -11,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class IsVariable implements Condition {
+class IsVariable implements Condition.ForPlayer {
 	//(\w+)\s*([=<>]+)\s*(\w+)
 	private static final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
 	
@@ -52,12 +51,9 @@ class IsVariable implements Condition {
 	}
 
 	@Override
-	public boolean test(Target target) {
-		if (!target.isPlayer()) return false;
-		Player p = target.asPlayer();
-		
-		int a = VariableHandler.get(p, name);
-		int b = (otherName != null ? VariableHandler.get(p, otherName) : number);
+	public boolean test(Player target) {
+		int a = VariableHandler.get(target, name);
+		int b = (otherName != null ? VariableHandler.get(target, otherName) : number);
 		return conditional.check(a, b);
 	}
 

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class IsHunger implements Condition {
+class IsHunger implements Condition.ForPlayer {
 	
 	//([=<>]+)\s*([\w\.]+)
 	private static final Pattern isLinePattern = Pattern.compile("([=<>]+)\\s*([\\w]+)");
@@ -44,10 +44,8 @@ class IsHunger implements Condition {
 	}
 
 	@Override
-	public boolean test(Target target) {
-		if (!target.isPlayer()) return false;
-		Player p = target.asPlayer();
-		return conditional.check(p.getFoodLevel(), number);
+	public boolean test(Player target) {
+		return conditional.check(target.getFoodLevel(), number);
 	}
 
 }

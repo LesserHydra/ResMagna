@@ -1,10 +1,10 @@
 package com.roboboy.PraedaGrandis.Conditions;
 
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffectType;
 
-class IsAffected implements Condition {
+class IsAffected implements Condition.ForEntity {
 	
 	private final PotionEffectType type;
 	
@@ -14,6 +14,6 @@ class IsAffected implements Condition {
 	}
 	
 	@Override
-	public boolean test(Target target) { return target.isEntity() && target.asEntity().hasPotionEffect(type); }
+	public boolean test(LivingEntity target) { return target.hasPotionEffect(type); }
 	
 }

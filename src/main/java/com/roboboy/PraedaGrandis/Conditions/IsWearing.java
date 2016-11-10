@@ -6,10 +6,10 @@ import java.util.List;
 import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.InventoryHandler;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import org.bukkit.entity.Player;
 
-class IsWearing implements Condition {
+class IsWearing implements Condition.ForPlayer {
 	
 	private final List<String> itemNames = new ArrayList<>();
 
@@ -22,9 +22,8 @@ class IsWearing implements Condition {
 	}
 
 	@Override
-	public boolean test(Target target) {
-		if (!target.isPlayer()) return false;
-		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target.asPlayer());
+	public boolean test(Player target) {
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target);
 		for (String name : itemNames) {
 			if (!found(gInv.getItems(name))) return false;
 		}
