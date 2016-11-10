@@ -121,10 +121,10 @@ public class ConditionFactory {
 	
 		//Non-trivial value checks
 		case "isvariable":		return new IsVariable(varArgsString);
-		case "ishealth":		return new IsHealth(varArgsString);
-		case "ishunger":		return new IsHunger(varArgsString);
-		case "isexp":			return new IsExp(varArgsString);
-		case "islevel":			return new IsLevel(varArgsString);
+		case "ishealth":		return Conditions.isHealth(varArgsString);
+		case "ishunger":		return Conditions.isHunger(varArgsString);
+		case "isexp":			return Conditions.isExp(varArgsString);
+		case "islevel":			return Conditions.isLevel(varArgsString);
 		
 		default:				return null;
 		}

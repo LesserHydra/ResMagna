@@ -4,6 +4,7 @@ import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Ocelot;
@@ -63,5 +64,10 @@ class Conditions {
 	static Condition.ForLocation IS_THUNDERING = l -> l.getWorld().isThundering();
 	static Condition.ForLocation IS_SHELTERED  = l -> l.getBlockY() < l.getWorld().getHighestBlockYAt(l);
 	
+	//Non-trivial value checks
+	static Condition isHunger(String argString) { return ValueCheck.makeInt(argString, Player::getFoodLevel); }
+	static Condition isHealth(String argString) { return ValueCheck.makeDouble(argString, Damageable::getHealth); }
+	static Condition isExp(String argString)    { return ValueCheck.makeInt(argString, Player::getTotalExperience); }
+	static Condition isLevel(String argString)  { return ValueCheck.makeInt(argString, Player::getLevel); }
 	
 }
