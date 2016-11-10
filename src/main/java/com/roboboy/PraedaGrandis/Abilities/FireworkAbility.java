@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.LinkedList;
 import java.util.List;
 
-class FireworkAbility implements Ability.WithLocation {
+class FireworkAbility implements Ability.Location {
 	
 	private final int power;
 	private final FireworkEffect effect;

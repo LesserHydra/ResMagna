@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.Location;
 
-class SoundAbility implements Ability.WithLocation {
+class SoundAbility implements Ability.Location {
 	
 	private final String sound;
 	private final float volume;

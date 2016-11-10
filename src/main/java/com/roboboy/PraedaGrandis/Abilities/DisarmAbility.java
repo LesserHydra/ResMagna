@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 
-class DisarmAbility implements Ability.WithEntity {
+class DisarmAbility implements Ability.Entity {
 	
 	private final boolean mainHand;
 	private final boolean offHand;

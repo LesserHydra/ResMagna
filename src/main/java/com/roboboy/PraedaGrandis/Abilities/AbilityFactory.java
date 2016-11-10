@@ -50,6 +50,10 @@ public class AbilityFactory {
 	
 	private static Functor constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
 		switch (name) {
+		//Trivial abilities
+		case "eject":			return Abilities.EJECT;
+		
+		//Nontrivial abilities
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
 		case "heal":			return new HealAbility(abilityArgs);
 		case "damage":			return new DamageAbility(abilityArgs);
@@ -67,12 +71,14 @@ public class AbilityFactory {
 		case "spin":			return new SpinAbility(abilityArgs);
 		case "swap":			return new SwapAbility(abilityArgs);
 		case "mount":			return new MountAbility(abilityArgs);
-		case "eject":			return new EjectAbility();
 		case "ghostblock":		return new GhostBlockAbility(abilityArgs);
 		case "projectile":		return new ProjectileAbility(abilityArgs);
 		case "beam":			return new BeamAbility(abilityArgs);
 		
+		//Variable style abilities
 		case "variable":		return new VariableAbility(variableArgs);
+		
+		//No built-in found, request custom
 		default:				return GrandAbilityHandler.getInstance().requestFunction(name);
 		}
 	}

@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.entity.LivingEntity;
 
-class IgniteAbility implements Ability.WithEntity {
+class IgniteAbility implements Ability.Entity {
 	
 	private final int duration;
 	
