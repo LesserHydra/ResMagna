@@ -1,17 +1,15 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 
-class CustomAbility implements Ability {
+class CustomAbility implements Functor {
 	
-	private FunctionRunner grandAbility;
+	private Functor function;
 	
-	CustomAbility(String name) {
-		grandAbility = new FunctionRunner(name);
-	}
+	CustomAbility(Functor function) { this.function = function; }
 	
 	@Override
-	public void execute(Target target) { grandAbility.run(target); }
+	public void run(Target target) { function.run(target); }
 
 }

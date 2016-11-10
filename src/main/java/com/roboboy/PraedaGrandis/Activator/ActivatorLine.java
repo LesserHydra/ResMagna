@@ -1,19 +1,19 @@
 package com.roboboy.PraedaGrandis.Activator;
 
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
-import com.roboboy.PraedaGrandis.Abilities.Ability;
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 
 public class ActivatorLine {
 
-	private final Ability ability;
+	private final Functor ability;
 	private final Targeter targeter;
 	private final ItemSlotType slotType;
 	private final ActivatorType activator;
 	private long timerDelay;
 
-	ActivatorLine(Ability ability, Targeter targeter, ItemSlotType slotType, ActivatorType activatorType) {
+	ActivatorLine(Functor ability, Targeter targeter, ItemSlotType slotType, ActivatorType activatorType) {
 		this.ability = ability;
 		this.targeter = targeter;
 		this.slotType = slotType;
@@ -22,7 +22,7 @@ public class ActivatorLine {
 
 	public final void activate(ItemSlotType type, Target target) {
 		if (!type.isSubtypeOf(slotType)) return;
-		targeter.getTargets(target).forEach(ability::execute);
+		targeter.getTargets(target).forEach(ability::run);
 	}
 	
 	public final ActivatorType getType() {

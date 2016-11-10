@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class TeleportAbility implements Ability {
+class TeleportAbility implements Functor {
 	
 	private final GrandLocation location;
 	private final int spreadX;
@@ -44,7 +45,7 @@ class TeleportAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		

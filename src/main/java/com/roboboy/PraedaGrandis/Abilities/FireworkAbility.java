@@ -2,6 +2,8 @@ package com.roboboy.PraedaGrandis.Abilities;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import com.roboboy.PraedaGrandis.Function.Functor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Firework;
@@ -11,7 +13,7 @@ import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-class FireworkAbility implements Ability {
+class FireworkAbility implements Functor {
 	
 	private final int power;
 	private final FireworkEffect effect;
@@ -42,7 +44,7 @@ class FireworkAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		final Firework firework = target.asLocation().getWorld().spawn(target.asLocation(), Firework.class);
 		FireworkMeta meta = firework.getFireworkMeta();
 		meta.addEffect(effect);

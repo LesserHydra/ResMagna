@@ -1,10 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import org.bukkit.entity.LivingEntity;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-class HealAbility implements Ability {
+class HealAbility implements Functor {
 	
 	private final double healAmount;
 	
@@ -13,7 +14,7 @@ class HealAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		

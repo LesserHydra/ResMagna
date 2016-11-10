@@ -1,6 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.BlockMask;
 import com.roboboy.PraedaGrandis.Arguments.BlockPattern;
@@ -11,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-class GhostBlockAbility implements Ability {
+class GhostBlockAbility implements Functor {
 	
 	private final BlockPattern blockPattern;
 	private final BlockMask replaceMask;
@@ -29,7 +30,7 @@ class GhostBlockAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		AreaEffectTools.sphereStream(centerLocation.calculate(target), radius, false)
 				.filter(replaceMask::testLocation)
 				.forEach(this::ghostAtLocation);

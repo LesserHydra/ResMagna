@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -15,7 +17,7 @@ public class AbilityFactory {
 	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
 	
 	@Nullable
-	public static Ability build(String abilityString) {
+	public static Functor build(String abilityString) {
 		abilityString = abilityString.toLowerCase();
 		
 		//Remove groupings
@@ -46,7 +48,7 @@ public class AbilityFactory {
 		//if (timerDelay > 0) a.setTimerDelay(timerDelay);
 	}
 	
-	private static Ability constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
+	private static Functor constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
 		switch (name) {
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
 		case "heal":			return new HealAbility(abilityArgs);
@@ -71,7 +73,7 @@ public class AbilityFactory {
 		case "beam":			return new BeamAbility(abilityArgs);
 		
 		case "variable":		return new VariableAbility(variableArgs);
-		default:				return new CustomAbility(name);
+		default:				return GrandAbilityHandler.getInstance().requestFunction(name);
 		}
 	}
 	

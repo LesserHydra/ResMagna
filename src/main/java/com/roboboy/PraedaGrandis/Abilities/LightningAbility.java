@@ -1,12 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-class LightningAbility implements Ability {
+class LightningAbility implements Functor {
 	
 	private final boolean effectOnly;
 	private final boolean snap;
@@ -19,7 +20,7 @@ class LightningAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		Location location = getLocation(target.asLocation());
 		if (effectOnly) location.getWorld().strikeLightningEffect(location);
 		else location.getWorld().strikeLightning(location);

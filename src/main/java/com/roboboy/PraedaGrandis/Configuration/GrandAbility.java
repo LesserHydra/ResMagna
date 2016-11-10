@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.Function.GrandFunction;
+import com.roboboy.PraedaGrandis.Function.Functor;
 
 import java.util.function.Predicate;
 
@@ -11,19 +11,19 @@ import java.util.function.Predicate;
  * @author roboboy
  *
  */
-public class GrandAbility {
+class GrandAbility implements Functor {
 	
 	private final Predicate<Target> conditions;
-	private final GrandFunction thenFunction;
-	private final GrandFunction elseFunction;
+	private final Functor thenFunction;
+	private final Functor elseFunction;
 	
-
-	GrandAbility(Predicate<Target> conditions, GrandFunction thenFunction, GrandFunction elseFunction) {
+	GrandAbility(Predicate<Target> conditions, Functor thenFunction, Functor elseFunction) {
 		this.conditions = conditions;
 		this.thenFunction = thenFunction;
 		this.elseFunction = elseFunction;
 	}
 
+	@Override
 	public void run(Target target) {
 		if (conditions.test(target)) thenFunction.run(target);
 		else elseFunction.run(target);

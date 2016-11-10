@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
@@ -10,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-class DamageAbility implements Ability {
+class DamageAbility implements Functor {
 	
 	private final double damageAmount;
 	private final Targeter damagerTargeter;
@@ -23,7 +24,7 @@ class DamageAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		

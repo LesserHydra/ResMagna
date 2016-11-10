@@ -1,10 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.Location;
 
-class SoundAbility implements Ability {
+class SoundAbility implements Functor {
 	
 	private final String sound;
 	private final float volume;
@@ -17,7 +18,7 @@ class SoundAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		Location targetLocation = target.asLocation();
 		targetLocation.getWorld().playSound(targetLocation, sound, volume, pitch);
 	}

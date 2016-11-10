@@ -1,12 +1,13 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
-class ParticleAbility implements Ability {
+class ParticleAbility implements Functor {
 	
 	private final Particle particleType;
 	private final float offsetX;
@@ -35,7 +36,7 @@ class ParticleAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		Location calculatedLocation = centerLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		

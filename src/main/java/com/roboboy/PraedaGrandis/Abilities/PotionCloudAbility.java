@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
@@ -10,7 +11,7 @@ import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class PotionCloudAbility implements Ability {
+class PotionCloudAbility implements Functor {
 	
 	private final PotionEffect potion;
 	private final GrandLocation centerLocation;
@@ -55,7 +56,7 @@ class PotionCloudAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		Location calculatedLocation = centerLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		

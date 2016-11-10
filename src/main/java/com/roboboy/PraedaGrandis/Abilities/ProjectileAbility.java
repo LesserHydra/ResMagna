@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
@@ -15,7 +16,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-class ProjectileAbility implements Ability {
+class ProjectileAbility implements Functor {
 	
 	private final ProjectileType projectileType;
 	private final double velocity;
@@ -68,7 +69,7 @@ class ProjectileAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		

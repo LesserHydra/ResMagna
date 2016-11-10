@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis.Configuration.Function;
+package com.roboboy.PraedaGrandis.Function;
 
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.PraedaGrandis;

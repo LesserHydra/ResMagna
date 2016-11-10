@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
-import com.roboboy.PraedaGrandis.Configuration.Function.GrandFunction;
-import com.roboboy.PraedaGrandis.Configuration.Function.LineFactory;
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Function.LineFactory;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,7 +15,7 @@ import com.roboboy.PraedaGrandis.Conditions.Condition;
 import com.roboboy.PraedaGrandis.Conditions.ConditionFactory;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 
-public class GrandAbilityFactory {
+class GrandAbilityFactory {
 	
 	//(~?\w+[^@]*(?<!\s))\s*(@.+)?
 	private static final Pattern conditionLinePattern = Pattern.compile("(~?\\w+[^@]*(?<!\\s))\\s*(@.+)?");
@@ -37,10 +37,10 @@ public class GrandAbilityFactory {
 		}
 		
 		//Abilities (then)
-		GrandFunction thenFunction = LineFactory.parseAndLinkLines(abilitySection.getStringList("then"));
+		Functor thenFunction = LineFactory.parseAndLinkLines(abilitySection.getStringList("then"));
 		
 		//Otherwise (else)
-		GrandFunction elseFunction = LineFactory.parseAndLinkLines(abilitySection.getStringList("else"));
+		Functor elseFunction = LineFactory.parseAndLinkLines(abilitySection.getStringList("else"));
 		
 		return new GrandAbility(conditions, thenFunction, elseFunction);
 	}

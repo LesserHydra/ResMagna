@@ -1,5 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,8 +22,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
-import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 
 public class ProjectileListener implements Listener
 {
@@ -61,7 +62,7 @@ public class ProjectileListener implements Listener
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPotionSplash(PotionSplashEvent event) {
 		ThrownPotion projectile = event.getPotion();
-		FunctionRunner onSplashAbility = getGrandAbilityFromMeta(projectile, "OnPotionSplash");
+		Functor onSplashAbility = getGrandAbilityFromMeta(projectile, "OnPotionSplash");
 		if (onSplashAbility == null) return;
 		
 		Player holder = null;
@@ -96,7 +97,7 @@ public class ProjectileListener implements Listener
 		if (!(damagee instanceof LivingEntity)) return;
 		LivingEntity livingDamagee = (LivingEntity) damagee;
 		
-		FunctionRunner onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
+		Functor onHitAbility = getGrandAbilityFromMeta(projectile, "OnHit");
 		if (onHitAbility == null) return;
 		
 		Player holder = getHolderFromMeta(projectile);
@@ -109,7 +110,7 @@ public class ProjectileListener implements Listener
 	}
 	
 	private void runEndAbility(Projectile projectile) {
-		FunctionRunner onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
+		Functor onEndAbility = getGrandAbilityFromMeta(projectile, "OnEnd");
 		if (onEndAbility == null) return;
 		
 		Player holder = getHolderFromMeta(projectile);
@@ -121,9 +122,11 @@ public class ProjectileListener implements Listener
 		onEndAbility.run(Target.make(holder, Target.from(projectile.getLocation()), Target.from(sourceEntity)));
 	}
 
-	private FunctionRunner getGrandAbilityFromMeta(Projectile entity, String key) {
+	private Functor getGrandAbilityFromMeta(Projectile entity, String key) {
 		for (MetadataValue md : entity.getMetadata(PraedaGrandis.META_GRANDABILITY_PREFIX + key)) {
-			if (md.getOwningPlugin() == PraedaGrandis.plugin) return new FunctionRunner(md.asString().toLowerCase());
+			if (md.getOwningPlugin() == PraedaGrandis.plugin) {
+				return GrandAbilityHandler.getInstance().requestFunction(md.asString().toLowerCase());
+			}
 		}
 		return null;
 	}

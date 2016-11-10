@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.VariableOperator;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
@@ -11,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class VariableAbility implements Ability {
+class VariableAbility implements Functor {
 	
 	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
 	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
@@ -53,7 +54,7 @@ class VariableAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		if (!target.isPlayer()) return;
 		Player p = target.asPlayer();
 		VariableHandler.operate(p, name, operator, (otherName != null ? VariableHandler.get(p, otherName) : number));

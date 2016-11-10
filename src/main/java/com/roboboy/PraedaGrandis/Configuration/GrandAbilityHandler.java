@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,26 +18,28 @@ import com.roboboy.PraedaGrandis.Logging.LogType;
  * Loads and stores all GrandAbilities
  * @author roboboy
  */
-public class GrandAbilityHandler extends MultiConfig
-{
+public class GrandAbilityHandler extends MultiConfig {
+	
 	private static GrandAbilityHandler instance = new GrandAbilityHandler();
 	private GrandAbilityHandler() {}
 	public static GrandAbilityHandler getInstance() {
 		return instance;
 	}
 	
-	private Map<String, GrandAbility> customAbilities = new HashMap<String, GrandAbility>();
-	private List< Pair<FunctionRunner, String> > requestList = new LinkedList<>();
+	private Map<String, GrandAbility> customAbilities = new HashMap<>();
+	private List< Pair<FunctionRequester, String> > requestList = new LinkedList<>();
 	
 	private boolean fullyLoaded = false;
 	
-	public void requestFunction(FunctionRunner requester, String requestName) {
-		requestName = requestName.toLowerCase();
+	public Functor requestFunction(String requestName) {
+		FunctionRequester result = new FunctionRequester();
+		String l_requestName = requestName.toLowerCase();
 		if (!fullyLoaded) {
-			requestList.add(new ImmutablePair<FunctionRunner, String>(requester, requestName));
-			return;
+			requestList.add(new ImmutablePair<>(result, l_requestName));
+			return result;
 		}
-		handleRequest(requester, requestName);
+		handleRequest(result, requestName);
+		return result;
 	}
 
 	/**
@@ -66,16 +71,25 @@ public class GrandAbilityHandler extends MultiConfig
 	}
 	
 	private void handleRequests() {
-		for (Pair<FunctionRunner, String> request : requestList) {
+		for (Pair<FunctionRequester, String> request : requestList) {
 			handleRequest(request.getLeft(), request.getRight());
 		}
 		requestList.clear();
 	}
 	
-	private void handleRequest(FunctionRunner requester, String requestName) {
+	private void handleRequest(FunctionRequester requester, String requestName) {
 		GrandAbility result = customAbilities.get(requestName);
 		requester.returnRequest(result);
 		if (result == null) GrandLogger.log("Requested custom ability not found: " + requestName, LogType.CONFIG_ERRORS);
+	}
+	
+	private static class FunctionRequester implements Functor {
+		private Functor function = Functor.NONE;
+		
+		@Override
+		public void run(Target target) { function.run(target); }
+		
+		void returnRequest(Functor function) { this.function = function; }
 	}
 	
 }
