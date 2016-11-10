@@ -4,6 +4,6 @@ import org.bukkit.entity.LivingEntity;
 
 class Abilities {
 	
-	static Ability.Entity EJECT = LivingEntity::eject;
+	static Ability.ForEntity EJECT = LivingEntity::eject;
 	
 }

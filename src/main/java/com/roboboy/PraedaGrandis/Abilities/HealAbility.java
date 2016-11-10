@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.entity.LivingEntity;
 
-class HealAbility implements Ability.Entity {
+class HealAbility implements Ability.ForEntity {
 	
 	private final double healAmount;
 	

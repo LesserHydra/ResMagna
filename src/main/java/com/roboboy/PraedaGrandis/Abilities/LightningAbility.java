@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-class LightningAbility implements Ability.Location {
+class LightningAbility implements Ability.ForLocation {
 	
 	private final boolean effectOnly;
 	private final boolean snap;

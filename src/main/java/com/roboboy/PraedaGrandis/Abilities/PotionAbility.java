@@ -5,7 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class PotionAbility implements Ability.Entity {
+class PotionAbility implements Ability.ForEntity {
 	
 	private final PotionEffectType type;
 	private final int duration;

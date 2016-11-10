@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-class SpinAbility implements Ability.Entity {
+class SpinAbility implements Ability.ForEntity {
 	
 	private final int numberOfUpdates;
 	private final float degreesPerUpdate;
