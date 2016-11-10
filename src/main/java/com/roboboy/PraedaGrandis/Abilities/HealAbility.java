@@ -9,14 +9,14 @@ class HealAbility implements Ability.ForEntity {
 	
 	HealAbility(ArgumentBlock args) {
 		healAmount = args.getDouble(true, 0D,	"amount", "a", null);
+		//TODO: amount must be non negative
 	}
 
 	@Override
 	public void run(LivingEntity target) {
 		double newHealth = target.getHealth() + healAmount;
-		if (newHealth <= target.getMaxHealth()) {
-			target.setHealth(newHealth);
-		}
+		if (newHealth <= target.getMaxHealth()) target.setHealth(newHealth);
+		else target.setHealth(target.getMaxHealth());
 	}
 
 }
