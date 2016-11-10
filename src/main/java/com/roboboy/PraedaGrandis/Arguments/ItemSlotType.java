@@ -25,7 +25,7 @@ public enum ItemSlotType
 	ANY			(NONE) {		//Anywhere on the player
 		@Override public List<ItemStack> getItems(Player p) {
 			PlayerInventory inv = p.getInventory();
-			return Arrays.asList( ArrayUtils.addAll(inv.getContents(), inv.getArmorContents()) );
+			return Arrays.asList(inv.getContents());
 		}
 	},
 	
@@ -61,7 +61,7 @@ public enum ItemSlotType
 	
 	STORED		(ANY) {			//Bulk inventory (not hotbar or armor)
 		@Override public List<ItemStack> getItems(Player p) {
-			ItemStack[] invContents = p.getInventory().getContents();
+			ItemStack[] invContents = p.getInventory().getStorageContents();
 			return Arrays.asList( Arrays.copyOfRange(invContents, 9, invContents.length) );
 		}
 	},
@@ -69,7 +69,7 @@ public enum ItemSlotType
 	HOTBAR		(ANY) {			//Anywhere on the hotbar, or off hand
 		@Override public List<ItemStack> getItems(Player p) {
 			PlayerInventory inv = p.getInventory();
-			return Arrays.asList( ArrayUtils.addAll(Arrays.copyOf(inv.getContents(), 9), inv.getItemInOffHand()) );
+			return Arrays.asList( Arrays.copyOf(inv.getContents(), 10) );
 		}
 	},
 	

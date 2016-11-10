@@ -65,7 +65,7 @@ public class GrandInventory
 	 * @param grandItem Represented GrandItem
 	 * @param slotType Most unique SlotType to add to
 	 */
-	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {		
+	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
 		//Construct new element
 		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
 		
