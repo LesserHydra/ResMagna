@@ -1,9 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -23,7 +23,7 @@ class DamageAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		

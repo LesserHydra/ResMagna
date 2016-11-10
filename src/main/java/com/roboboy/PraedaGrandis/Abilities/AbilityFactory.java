@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -15,7 +17,7 @@ public class AbilityFactory {
 	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
 	
 	@Nullable
-	public static Ability build(String abilityString) {
+	public static Functor build(String abilityString) {
 		abilityString = abilityString.toLowerCase();
 		
 		//Remove groupings
@@ -46,8 +48,12 @@ public class AbilityFactory {
 		//if (timerDelay > 0) a.setTimerDelay(timerDelay);
 	}
 	
-	private static Ability constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
+	private static Functor constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
 		switch (name) {
+		//Trivial abilities
+		case "eject":			return Abilities.EJECT;
+		
+		//Nontrivial abilities
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
 		case "heal":			return new HealAbility(abilityArgs);
 		case "damage":			return new DamageAbility(abilityArgs);
@@ -65,13 +71,15 @@ public class AbilityFactory {
 		case "spin":			return new SpinAbility(abilityArgs);
 		case "swap":			return new SwapAbility(abilityArgs);
 		case "mount":			return new MountAbility(abilityArgs);
-		case "eject":			return new EjectAbility();
 		case "ghostblock":		return new GhostBlockAbility(abilityArgs);
 		case "projectile":		return new ProjectileAbility(abilityArgs);
 		case "beam":			return new BeamAbility(abilityArgs);
 		
+		//Variable style abilities
 		case "variable":		return new VariableAbility(variableArgs);
-		default:				return new CustomAbility(name);
+		
+		//No built-in found, request custom
+		default:				return GrandAbilityHandler.getInstance().requestFunction(name);
 		}
 	}
 	

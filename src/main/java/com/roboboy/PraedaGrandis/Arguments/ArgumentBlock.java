@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
+import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.Configuration.GrandAbilityHandler;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import org.bukkit.Color;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
@@ -201,17 +202,16 @@ public class ArgumentBlock {
 	/**
 	 * Gets the function associated with the given key.<br>
 	 * Logs an error if required and none found, or if invalid format.<br>
-	 * Will never return null. If fallback is null, a null-object will be returned.
 	 * @param required Whether or not a value is required
-	 * @param fallback Value to default to if none found, or null for null-object
+	 * @param fallback Value to default to if none found
 	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return Function value of argument, fallback if none exists, or null object if fallback is null
+	 * @return Function value of argument, or fallback if none exists
 	 */
-	public FunctionRunner getFunction(boolean required, FunctionRunner fallback, String... keys) {
+	public Functor getFunction(boolean required, Functor fallback, String... keys) {
 		String value = findValue(required, keys);
-		if (value == null) return fallback == null ? new FunctionRunner(null) : fallback;
+		if (value == null) return fallback;
 		
-		return new FunctionRunner(value);
+		return GrandAbilityHandler.getInstance().requestFunction(value);
 	}
 
 	/**

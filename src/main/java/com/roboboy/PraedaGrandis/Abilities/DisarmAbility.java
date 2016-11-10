@@ -1,12 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 
-class DisarmAbility implements Ability {
+class DisarmAbility implements Ability.Entity {
 	
 	private final boolean mainHand;
 	private final boolean offHand;
@@ -25,12 +24,9 @@ class DisarmAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
-		
-		Location entityLocation = target.asLocation();
-		EntityEquipment equipment = targetEntity.getEquipment();
+	public void run(LivingEntity target) {
+		Location entityLocation = target.getLocation();
+		EntityEquipment equipment = target.getEquipment();
 		
 		if (mainHand) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInMainHand());

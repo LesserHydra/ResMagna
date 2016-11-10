@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Activator;
 
-import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
@@ -38,7 +38,7 @@ public class ActivatorFactory {
 		String activatorString = seperatorMatcher.group(3);
 		
 		//Get ability
-		Ability ability = AbilityFactory.build(abilityString);
+		Functor ability = AbilityFactory.build(abilityString);
 		if (ability == null) {
 			GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
 			return null;

@@ -1,10 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import org.bukkit.entity.LivingEntity;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import org.bukkit.entity.LivingEntity;
 
-class HealAbility implements Ability {
+class HealAbility implements Ability.Entity {
 	
 	private final double healAmount;
 	
@@ -13,13 +12,10 @@ class HealAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
-		
-		double newHealth = targetEntity.getHealth() + healAmount;
-		if (newHealth <= targetEntity.getMaxHealth()) {
-			targetEntity.setHealth(newHealth);
+	public void run(LivingEntity target) {
+		double newHealth = target.getHealth() + healAmount;
+		if (newHealth <= target.getMaxHealth()) {
+			target.setHealth(newHealth);
 		}
 	}
 

@@ -1,10 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.entity.LivingEntity;
 
-class IgniteAbility implements Ability {
+class IgniteAbility implements Ability.Entity {
 	
 	private final int duration;
 	
@@ -13,11 +12,8 @@ class IgniteAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
-		
-		targetEntity.setFireTicks(duration);
+	public void run(LivingEntity target) {
+		target.setFireTicks(duration);
 	}
 
 }

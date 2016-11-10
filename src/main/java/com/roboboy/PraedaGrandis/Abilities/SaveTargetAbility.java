@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
@@ -12,6 +13,6 @@ class SaveTargetAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) { target.save(saveName); }
+	public void run(Target target) { target.save(saveName); }
 
 }

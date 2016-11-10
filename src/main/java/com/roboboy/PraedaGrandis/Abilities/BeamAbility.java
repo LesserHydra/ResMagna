@@ -1,10 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Function.Functor;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
 import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
@@ -29,10 +29,10 @@ class BeamAbility implements Ability {
 	private final double spreadY;
 	private final double spreadZ;
 	
-	private final FunctionRunner onStep;
-	private final FunctionRunner onHitBlock;
-	private final FunctionRunner onHitEntity;
-	private final FunctionRunner onEnd;
+	private final Functor onStep;
+	private final Functor onHitBlock;
+	private final Functor onHitEntity;
+	private final Functor onEnd;
 	
 	private final GrandLocation originLocation;
 	private final GrandLocation targetLocation;
@@ -63,16 +63,16 @@ class BeamAbility implements Ability {
 		homingTargeter = args.getTargeter(false, Targeters.NONE,			"homingtarget", "hometarget", "htarget");
 		homingForce = args.getDouble(homingTargeter != Targeters.NONE, 0D,	"homingforce", "homeforce", "hforce");
 		
-		FunctionRunner onHit = args.getFunction(false, null,	"onhit", "hit");
+		Functor onHit = args.getFunction(false, Functor.NONE,	"onhit", "hit");
 		onHitBlock = args.getFunction(false, onHit,				"onhitblock", "hitblock", "hitb");
 		onHitEntity = args.getFunction(false, onHit,			"onhitentity", "hitentity", "hite");
 		
-		onStep = args.getFunction(false, null,		"onstep", "step");
-		onEnd = args.getFunction(false, null,		"onend", "end");
+		onStep = args.getFunction(false, Functor.NONE,	    "onstep", "step");
+		onEnd = args.getFunction(false, Functor.NONE,	    "onend", "end");
 	}
 
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		//Get beam target, if exists
 		Target homingTarget = homingTargeter.getRandomTarget(target);
 		//Initialize beam

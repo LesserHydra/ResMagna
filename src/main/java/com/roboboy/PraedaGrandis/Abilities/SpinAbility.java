@@ -1,13 +1,12 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 
-class SpinAbility implements Ability {
+class SpinAbility implements Ability.Entity {
 	
 	private final int numberOfUpdates;
 	private final float degreesPerUpdate;
@@ -23,12 +22,9 @@ class SpinAbility implements Ability {
 	}
 
 	@Override
-	public void execute(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
-		
+	public void run(LivingEntity target) {
 		//TODO: Ick.
-		new SpinTimer(targetEntity).runTaskTimer(PraedaGrandis.plugin, 0L, updateDelay);
+		new SpinTimer(target).runTaskTimer(PraedaGrandis.plugin, 0L, updateDelay);
 	}
 
 	private class SpinTimer extends BukkitRunnable {

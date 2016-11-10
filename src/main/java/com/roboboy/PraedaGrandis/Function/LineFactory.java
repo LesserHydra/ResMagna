@@ -1,6 +1,5 @@
-package com.roboboy.PraedaGrandis.Configuration.Function;
+package com.roboboy.PraedaGrandis.Function;
 
-import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
 import com.roboboy.PraedaGrandis.Conditions.Condition;
 import com.roboboy.PraedaGrandis.Conditions.ConditionFactory;
@@ -23,7 +22,8 @@ import java.util.regex.Pattern;
 
 public class LineFactory {
 	
-	public static @Nonnull GrandFunction parseAndLinkLines(@Nonnull Collection<String> lines) {
+	public static @Nonnull
+	Functor parseAndLinkLines(@Nonnull Collection<String> lines) {
 		return lines.stream()
 				.sequential()
 				.collect(LineFactory::new, LineFactory::parseLine, LineFactory::combine)
@@ -46,7 +46,7 @@ public class LineFactory {
 	
 	private FunctionLine first;
 	private FunctionLine last;
-	private final Map<String, GrandFunction> labels = new HashMap<>();
+	private final Map<String, Functor> labels = new HashMap<>();
 	private final List<Pair<String, Jump>> jumps = new LinkedList<>();
 	
 	private LineFactory() {}
@@ -91,13 +91,14 @@ public class LineFactory {
 		return this;
 	}
 	
-	private @Nonnull GrandFunction finish() {
+	private @Nonnull
+	Functor finish() {
 		jumps.forEach(this::finishJump);
 		return (first == null ? (target) -> {} : first);
 	}
 	
 	private void finishJump(Pair<String, Jump> jump) {
-		GrandFunction label = labels.get(jump.getLeft());
+		Functor label = labels.get(jump.getLeft());
 		if (label == null) {
 			GrandLogger.log("Requested label not found: " + jump.getLeft(), LogType.CONFIG_ERRORS);
 			return;
@@ -206,7 +207,7 @@ public class LineFactory {
 		
 		//Null ability or targeter indicates parsing error
 		//TODO: expand errors, like in JUMPIF
-		Ability ability = AbilityFactory.build(abilityString);
+		Functor ability = AbilityFactory.build(abilityString);
 		Targeter targeter = TargeterFactory.build(targeterString);
 		if (ability != null && targeter != null) addLine(new AbilityLine(ability, targeter));
 	}

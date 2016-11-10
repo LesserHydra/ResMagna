@@ -55,7 +55,7 @@ class PotionCloudAbility implements Ability {
 	}
 	
 	@Override
-	public void execute(Target target) {
+	public void run(Target target) {
 		Location calculatedLocation = centerLocation.calculate(target);
 		if (calculatedLocation == null) return;
 		
