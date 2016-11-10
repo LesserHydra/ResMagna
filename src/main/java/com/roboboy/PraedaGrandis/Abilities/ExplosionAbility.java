@@ -1,10 +1,10 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.Targeters;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -17,7 +17,7 @@ class ExplosionAbility implements Ability {
 	private final GrandLocation location;
 	private final Targeter damagerTargeter;
 	
-	ExplosionAbility(BlockArguments args) {
+	ExplosionAbility(ArgumentBlock args) {
 		power = args.getFloat(false, 0F,							"power", "yield", "p");
 		setFire = args.getBoolean(false, false,						"setfire", "fire");
 		breakBlocks = args.getBoolean(false, false,					"breakblocks", "blocks", "break");
@@ -33,7 +33,7 @@ class ExplosionAbility implements Ability {
 		Location calculatedLocation = location.calculate(target);
 		if (calculatedLocation == null) return;
 		
-		LivingEntity damagerEntity = damagerTarget.getEntity();
+		LivingEntity damagerEntity = damagerTarget.asEntity();
 		
 		//Mark entities in radius as damaged by damagerEntity, if exists
 		if (damagerEntity != null) {

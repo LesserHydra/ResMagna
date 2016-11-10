@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -15,7 +15,7 @@ class DisarmAbility implements Ability {
 	private final boolean leggings;
 	private final boolean boots;
 	
-	DisarmAbility(BlockArguments args) {
+	DisarmAbility(ArgumentBlock args) {
 		mainHand = args.getBoolean(false, false,	"mainhand", "heldright", "right", "main");
 		offHand = args.getBoolean(false, false,		"offhand", "heldleft", "shield", "left", "off");
 		helmet = args.getBoolean(false, false,		"helmet", "helm", "hlm");
@@ -26,10 +26,10 @@ class DisarmAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
-		Location entityLocation = target.getLocation();
+		Location entityLocation = target.asLocation();
 		EntityEquipment equipment = targetEntity.getEquipment();
 		
 		if (mainHand) {

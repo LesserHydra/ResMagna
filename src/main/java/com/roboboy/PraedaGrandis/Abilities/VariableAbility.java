@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Arguments.VariableOperator;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.PraedaGrandis.VariableHandler;
@@ -54,9 +54,8 @@ class VariableAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		if (!(target.getEntity() instanceof Player)) return;
-		
-		Player p = (Player) target.getEntity();
+		if (!target.isPlayer()) return;
+		Player p = target.asPlayer();
 		VariableHandler.operate(p, name, operator, (otherName != null ? VariableHandler.get(p, otherName) : number));
 	}
 

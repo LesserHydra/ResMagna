@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.bukkitutil.AreaEffectTools;
 import org.bukkit.Location;
@@ -26,7 +26,7 @@ class TeleportAbility implements Ability {
 	private final boolean perfectSpread;
 	private final boolean ender;
 	
-	TeleportAbility(BlockArguments args) {
+	TeleportAbility(ArgumentBlock args) {
 		location = args.getLocation(false, new GrandLocation(),		"location", "loc", "l", null);
 		
 		int spread = args.getInteger(false, 0,			"spread", "sprd");
@@ -45,7 +45,7 @@ class TeleportAbility implements Ability {
 	
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		Location centerLoc = location.calculate(target);
@@ -54,7 +54,7 @@ class TeleportAbility implements Ability {
 		if (spreadX > 0 || spreadY > 0 || spreadZ > 0) centerLoc = getSpread(centerLoc);
 		if (failSafe && !isSafe(centerLoc)) return;
 		
-		centerLoc.setDirection(target.getEntity().getLocation().getDirection());
+		centerLoc.setDirection(target.asEntity().getLocation().getDirection());
 		targetEntity.teleport(centerLoc);
 	}
 

@@ -1,9 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
-import com.roboboy.PraedaGrandis.Configuration.ProjectileType;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ProjectileType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
@@ -40,7 +40,7 @@ class ProjectileAbility implements Ability {
 	
 	private final String onPotionSplash;
 	
-	ProjectileAbility(BlockArguments args) {
+	ProjectileAbility(ArgumentBlock args) {
 		projectileType = args.getEnum(true, ProjectileType.NONE,	"projectiletype", "projectile", "type", "proj");
 		
 		velocity = args.getDouble(false, 1D,		"velocity", "vel", "v");
@@ -69,7 +69,7 @@ class ProjectileAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		Location calculatedLocation = targetLocation.calculate(target);
@@ -78,7 +78,7 @@ class ProjectileAbility implements Ability {
 		Vector randomVector = new Vector(PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,
 				PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5,PraedaGrandis.RANDOM_GENERATOR.nextDouble() - 0.5);
 		randomVector.multiply(randomSpread);
-		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.getLocation()).add(randomVector);
+		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.asLocation()).add(randomVector);
 		
 		Projectile projectile = targetEntity.launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		projectile.setBounce(bounce);

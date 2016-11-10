@@ -1,9 +1,9 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.Targeters;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -13,18 +13,18 @@ class SwapAbility implements Ability {
 	private final Targeter otherTargeter;
 	private final boolean swapFacing;
 	
-	SwapAbility(BlockArguments args) {
+	SwapAbility(ArgumentBlock args) {
 		otherTargeter = args.getTargeter(true, Targeters.NONE,  "mount", "other", "target", "m", null);
 		swapFacing = args.getBoolean(false, false,          	"swapfacing", "facing", "f");
 	}
 
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		Target otherTarget = otherTargeter.getRandomTarget(target);
-		LivingEntity otherEntity = otherTarget.getEntity();
+		LivingEntity otherEntity = otherTarget.asEntity();
 		if (otherEntity == null) return;
 		
 		Location targetLoc = targetEntity.getLocation();

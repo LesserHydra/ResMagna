@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis.Configuration;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Configuration.Function.GrandFunction;
 
 import java.util.function.Predicate;

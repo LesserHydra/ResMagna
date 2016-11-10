@@ -1,5 +1,6 @@
 package com.roboboy.PraedaGrandis;
 
+import com.roboboy.PraedaGrandis.Configuration.AutoConvertItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;

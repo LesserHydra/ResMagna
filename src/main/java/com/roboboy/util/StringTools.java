@@ -1,15 +1,17 @@
 package com.roboboy.util;
 
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableSet;
 
-public class StringTools
-{
+public class StringTools {
+	
 	private static Set<String> TRUE_VALUES = ImmutableSet.of("true", "t", "yes", "y", "1");
 	private static Set<String> FALSE_VALUES = ImmutableSet.of("false", "f", "no", "n", "0");
 	private static Pattern integerPattern = Pattern.compile("[+-]?\\d+");
 	private static Pattern floatPattern = Pattern.compile("[+-]?((\\d+(\\.\\d*)?)|(\\.\\d+))");
+	private static Pattern enumSeparatorPattern = Pattern.compile("[_\\s]");
 	
 	/**
 	 * Checks if a given string represents a boolean.
@@ -64,6 +66,18 @@ public class StringTools
 	 */
 	public static boolean parseExtendedBoolean(String str) {
 		return (TRUE_VALUES.contains(str.toLowerCase()));
+	}
+	
+	public static <T extends Enum<T>> T parseEnum(String lookupName, Class<T> enumClass) {
+		//Find enum from value
+		lookupName = enumSeparatorPattern.matcher(lookupName.toUpperCase()).replaceAll("");
+		for (T type : EnumSet.allOf(enumClass)) {
+			String enumName = enumSeparatorPattern.matcher(type.name()).replaceAll("");
+			String enumString = enumSeparatorPattern.matcher(type.toString().toUpperCase()).replaceAll("");
+			if (lookupName.equals(enumName) || lookupName.equals(enumString)) return type;
+		}
+		//Not found
+		return null;
 	}
 
 }

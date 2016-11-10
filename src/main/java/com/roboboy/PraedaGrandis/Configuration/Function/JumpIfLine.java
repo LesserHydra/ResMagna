@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Configuration.Function;
 
-import com.roboboy.PraedaGrandis.Abilities.Conditions.Condition;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Conditions.Condition;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
 
 class JumpIfLine extends FunctionLine implements Jump {
 	

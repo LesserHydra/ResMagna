@@ -1,11 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.BlockMask;
-import com.roboboy.PraedaGrandis.Configuration.BlockPattern;
-import com.roboboy.PraedaGrandis.Configuration.BlockPattern.BlockConstruct;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Arguments.BlockMask;
+import com.roboboy.PraedaGrandis.Arguments.BlockPattern;
+import com.roboboy.PraedaGrandis.Arguments.BlockPattern.BlockConstruct;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.bukkitutil.AreaEffectTools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +19,7 @@ class GhostBlockAbility implements Ability {
 	private final GrandLocation centerLocation;
 	private final double radius;
 	
-	GhostBlockAbility(BlockArguments args) {
+	GhostBlockAbility(ArgumentBlock args) {
 		
 		blockPattern = args.getBlockPattern(true, BlockPattern.buildEmpty(),	"blocks", "block", "b", null);
 		replaceMask = args.getBlockMask(false, BlockMask.buildBlank(),			"replace", "repl");

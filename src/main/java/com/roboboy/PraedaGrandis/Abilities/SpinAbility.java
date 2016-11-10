@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -13,7 +13,7 @@ class SpinAbility implements Ability {
 	private final float degreesPerUpdate;
 	private final long updateDelay;
 	
-	SpinAbility(BlockArguments args) {
+	SpinAbility(ArgumentBlock args) {
 		int degrees = args.getInteger(true, 0,			"degrees", "amount", "deg");
 		int duration = args.getInteger(true, 0, 		"duration", "ticks", "time", "dur");
 		this.updateDelay = args.getLong(false, 5,		"updatedelay", "delay");
@@ -24,7 +24,7 @@ class SpinAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		//TODO: Ick.

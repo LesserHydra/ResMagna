@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Configuration.Function;
 
 import com.roboboy.PraedaGrandis.Abilities.Ability;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Target;
-import com.roboboy.PraedaGrandis.Abilities.Targeters.Targeter;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import com.roboboy.PraedaGrandis.Targeters.Targeter;
 
 class AbilityLine extends FunctionLine {
 	

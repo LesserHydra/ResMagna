@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
-import com.roboboy.PraedaGrandis.Configuration.VariableOperator;
+import com.roboboy.PraedaGrandis.Arguments.VariableOperator;
 
 public class VariableHandler
 {
