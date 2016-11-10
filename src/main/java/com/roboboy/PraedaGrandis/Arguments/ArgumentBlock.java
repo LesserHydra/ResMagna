@@ -205,11 +205,11 @@ public class ArgumentBlock {
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found, or null for null-object
 	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return Function value of argument, fallback if none exists, or null object if falback is null
+	 * @return Function value of argument, fallback if none exists, or null object if fallback is null
 	 */
 	public FunctionRunner getFunction(boolean required, FunctionRunner fallback, String... keys) {
 		String value = findValue(required, keys);
-		if (value == null) return fallback;
+		if (value == null) return fallback == null ? new FunctionRunner(null) : fallback;
 		
 		return new FunctionRunner(value);
 	}
