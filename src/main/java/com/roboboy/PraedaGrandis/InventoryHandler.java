@@ -2,6 +2,9 @@ package com.roboboy.PraedaGrandis;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.roboboy.PraedaGrandis.Arguments.ArmorType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -15,14 +18,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Dispenser;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;

@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis.Targeters;
 
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -34,7 +34,7 @@ public class TargeterFactory {
 		
 		//Get targeter arguments, if exist
 		String argumentsString = groupingParser.getGrouping(lineMatcher.group(2));
-		BlockArguments targeterArgs = new BlockArguments(argumentsString, targeterString);
+		ArgumentBlock targeterArgs = new ArgumentBlock(argumentsString, targeterString);
 		
 		//Construct targeter by name
 		Targeter result = constructTargeter(targeterName, targeterArgs);
@@ -44,7 +44,7 @@ public class TargeterFactory {
 		return result;
 	}
 	
-	private static Targeter constructTargeter(String targeterName, BlockArguments targeterArgs) {
+	private static Targeter constructTargeter(String targeterName, ArgumentBlock targeterArgs) {
 		switch (targeterName) {
 		//Single-target
 		case "none":			return Targeters.NONE;

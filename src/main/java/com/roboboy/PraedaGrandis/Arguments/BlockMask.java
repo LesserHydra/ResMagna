@@ -1,5 +1,6 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -8,13 +9,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;
 
-public class BlockMask
-{
+public class BlockMask {
+	
 	//\s*(?:(\!)\s*)?(?:([<>])\s*)?([\w\s]+(?<!\s))(?:\s*\:\s*(\!)?\s*(\d+)(?:\s*\-\s*(\d+))?)?\s*
 	private static final Pattern componentPattern = Pattern.compile("\\s*(?:(\\!)\\s*)?(?:([<>])\\s*)?([\\w\\s]+(?<!\\s))(?:\\s*\\:\\s*(\\!)?\\s*(\\d+)(?:\\s*\\-\\s*(\\d+))?)?\\s*");
 	
@@ -44,7 +44,7 @@ public class BlockMask
 	 * @return A blank BlockMask
 	 */
 	public static BlockMask buildBlank() {
-		return new BlockMask(new LinkedList<MaskComponent>());
+		return new BlockMask(Collections.emptyList());
 	}
 	
 	/**
@@ -52,14 +52,14 @@ public class BlockMask
 	 * @param string String describing the requested BlockMask
 	 * @return BlockMask described by given string, or null if an error was hit
 	 */
-	public static BlockMask buildFromString(String string) {
+	static BlockMask buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
 		String[] componentStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: replaceall is temp
 		List<MaskComponent> components = new LinkedList<>();
 		for (String componentString : componentStrings) {
 			//Match component
 			Matcher matcher = componentPattern.matcher(componentString);
-			//Error message is expanded in BlockArguments
+			//Error message is expanded in ArgumentBlock
 			if (!matcher.matches()) {
 				GrandLogger.log("Invalid format for block mask component: " + componentString, LogType.CONFIG_ERRORS);
 				return null;
@@ -87,7 +87,7 @@ public class BlockMask
 		BlockFace position = parsePosition(positionString);
 		
 		//Material
-		Material material = Tools.parseEnum(materialString, Material.class);
+		Material material = StringTools.parseEnum(materialString, Material.class);
 		if (material == null) {
 			GrandLogger.log("Invalid block material: " + materialString, LogType.CONFIG_ERRORS);
 			return null;
@@ -100,7 +100,7 @@ public class BlockMask
 		Byte minData = null;
 		if (minDataString != null) {
 			if (!StringTools.isInteger(minDataString)) {
-				GrandLogger.log("Invalid block data: " + minDataString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Invalid block data minimum: " + minDataString, LogType.CONFIG_ERRORS);
 				return null;
 			}
 			minData = Byte.parseByte(minDataString);
@@ -110,7 +110,7 @@ public class BlockMask
 		Byte maxData = null;
 		if (maxDataString != null) {
 			if (!StringTools.isInteger(maxDataString)) {
-				GrandLogger.log("Invalid block data: " + maxDataString, LogType.CONFIG_ERRORS);
+				GrandLogger.log("Invalid block data maximum: " + maxDataString, LogType.CONFIG_ERRORS);
 				return null;
 			}
 			maxData = Byte.parseByte(maxDataString);
@@ -126,8 +126,7 @@ public class BlockMask
 		return BlockFace.SELF;
 	}
 
-	private static class MaskComponent
-	{
+	private static class MaskComponent {
 		private final boolean negator;
 		private final BlockFace positionMod;
 		
@@ -146,12 +145,12 @@ public class BlockMask
 			this.maxData = maxData;
 		}
 		
-		public boolean isNegator() {
+		boolean isNegator() {
 			return negator;
 		}
 
 		@SuppressWarnings("deprecation")
-		public boolean test(Block block, boolean old) {
+		boolean test(Block block, boolean old) {
 			block = block.getRelative(positionMod);
 			if (block.getType() != material) return old;
 			if (!checkData(block.getData())) return old;

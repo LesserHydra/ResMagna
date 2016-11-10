@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;
@@ -14,8 +14,8 @@ import org.bukkit.entity.SplashPotion;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.WitherSkull;
 
-public enum ProjectileType
-{
+public enum ProjectileType {
+	
 	NONE				(null),
 	
 	ARROW				(Arrow.class),
@@ -54,4 +54,5 @@ public enum ProjectileType
 		}
 		return NONE;
 	}
+	
 }

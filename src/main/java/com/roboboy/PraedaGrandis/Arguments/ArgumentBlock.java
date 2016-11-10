@@ -1,26 +1,28 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
+import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import org.bukkit.Color;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;
 
-public class BlockArguments
-{
+public class ArgumentBlock {
+	
 	//(\w+)\s*=\s*([^,;\s\n\(]*(?:\s*\((\$[\d]+)\))?)
 	static private final Pattern argumentPattern = Pattern.compile("(\\w+)\\s*=\\s*([^,;\\s\\n\\(]*(?:\\s*\\((\\$[\\d]+)\\))?)");
 	
 	private final String lineString;
 	private final Map<String, String> argumentMap = new HashMap<>();
 	
-	public BlockArguments(String argumentString, String lineString) {
+	public ArgumentBlock(String argumentString, String lineString) {
 		this.lineString = lineString;
 		
 		if (argumentString == null) return;
@@ -299,7 +301,7 @@ public class BlockArguments
 		//Find enum from value
 		Class<T> enumClass = fallback.getDeclaringClass();
 		lookupName = lookupName.toUpperCase();
-		T type = Tools.parseEnum(lookupName, enumClass);
+		T type = StringTools.parseEnum(lookupName, enumClass);
 		if (type != null) return type;
 		
 		//Invalid enum type name
@@ -325,7 +327,7 @@ public class BlockArguments
 		
 		//Find enum from value
 		lookupName = lookupName.toUpperCase();
-		T type = Tools.parseEnum(lookupName, enumClass);
+		T type = StringTools.parseEnum(lookupName, enumClass);
 		if (type != null) return type;
 		
 		//Invalid enum type name

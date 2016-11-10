@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -12,14 +12,14 @@ class ForceAbility implements Ability {
 	private final double forceAmount;
 	private final GrandLocation targetLocation;
 
-	ForceAbility(BlockArguments args) {
+	ForceAbility(ArgumentBlock args) {
 		forceAmount = args.getDouble(true, 0D,		"forceamount", "force", "amount", "a");
 		targetLocation = args.getLocation(false, GrandLocation.buildFromString("F+1"),	"targetlocation", "target", "tloc", "t");
 	}
 
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		Location calculatedTargetLocation = targetLocation.calculate(target);

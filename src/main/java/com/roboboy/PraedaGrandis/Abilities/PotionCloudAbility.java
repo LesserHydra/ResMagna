@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -29,7 +29,7 @@ class PotionCloudAbility implements Ability {
 	private final int immuneDelay;
 	
 	
-	PotionCloudAbility(BlockArguments args) {
+	PotionCloudAbility(ArgumentBlock args) {
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
 		PotionEffectType potType = PotionEffectType.getByName(args.getString(false, "",	"potiontype", "potion", "pottype", "potname"));
 		int potDuration = args.getInteger(false, 600,			"potionduration", "potticks", "potdur");

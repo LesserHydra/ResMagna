@@ -1,4 +1,4 @@
-package com.roboboy.PraedaGrandis;
+package com.roboboy.PraedaGrandis.Arguments;
 
 import java.util.Arrays;
 import java.util.Collections;

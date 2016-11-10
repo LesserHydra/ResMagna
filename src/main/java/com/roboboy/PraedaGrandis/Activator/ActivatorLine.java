@@ -1,6 +1,6 @@
 package com.roboboy.PraedaGrandis.Activator;
 
-import com.roboboy.PraedaGrandis.ItemSlotType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Abilities.Ability;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;

@@ -4,32 +4,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Serves as a place to define trivial Targeters
  */
 public class Targeters {
 	
-	public static Targeter NONE = t -> Collections.singletonList(t.targetNone());
-	public static Targeter CURRENT = Collections::singletonList;
-	public static Targeter HOLDER = t -> Collections.singletonList(t.targetHolder());
-	public static Targeter ACTIVATOR = t -> Collections.singletonList(t.targetActivator());
-	public static Targeter MOUNT = Targeters::mountTargeter;
-	public static Targeter RIDER = Targeters::riderTargeter;
-	public static Targeter ONLINE_PLAYERS =  t -> t.multiTarget(Bukkit.getOnlinePlayers());
+	public static Targeter.Singleton NONE = t -> t.target(Target.none());
+	public static Targeter.Singleton CURRENT = t -> t;
+	public static Targeter.Singleton HOLDER = t -> t.target(Target.from(t.getHolder()));
+	public static Targeter.Singleton ACTIVATOR = t -> t.target(t.activator());
+	public static Targeter.Singleton MOUNT = Targeters::mountTargeter;
+	public static Targeter.Singleton RIDER = Targeters::riderTargeter;
+	
+	public static Targeter ONLINE_PLAYERS =  t -> Bukkit.getOnlinePlayers().stream()
+														.map(p -> t.target(Target.from(p)))
+														.collect(Collectors.toList());
 
-	private static List<Target> mountTargeter(Target currentTarget) {
-		if (!currentTarget.isEntity()) return Collections.emptyList();
-		Entity mount = currentTarget.getEntity().getVehicle();
-		return Collections.singletonList(currentTarget.target(mount instanceof LivingEntity ? (LivingEntity) mount : null));
+	private static Target mountTargeter(Target currentTarget) {
+		if (!currentTarget.isEntity()) return currentTarget.targetNone();
+		Entity mount = currentTarget.asEntity().getVehicle();
+		return currentTarget.target(mount instanceof LivingEntity ? Target.from((LivingEntity) mount) : Target.none());
 	}
 	
-	private static List<Target> riderTargeter(Target currentTarget) {
-		if (!currentTarget.isEntity()) return Collections.emptyList();
-		Entity rider = currentTarget.getEntity().getPassenger();
-		return Collections.singletonList(currentTarget.target(rider instanceof LivingEntity ? (LivingEntity) rider : null));
+	private static Target riderTargeter(Target currentTarget) {
+		if (!currentTarget.isEntity()) return currentTarget.targetNone();
+		Entity rider = currentTarget.asEntity().getPassenger();
+		return currentTarget.target(rider instanceof LivingEntity ? Target.from((LivingEntity) rider) : Target.none());
 	}
 	
 }

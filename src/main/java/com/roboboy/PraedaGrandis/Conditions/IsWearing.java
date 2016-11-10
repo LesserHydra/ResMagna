@@ -5,15 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import com.roboboy.PraedaGrandis.GrandInventory;
 import com.roboboy.PraedaGrandis.InventoryHandler;
-import com.roboboy.PraedaGrandis.ItemSlotType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
 class IsWearing implements Condition {
 	
 	private final List<String> itemNames = new ArrayList<>();
 
-	IsWearing(BlockArguments args) {
+	IsWearing(ArgumentBlock args) {
 		//TODO: Error handling/logging
 		String namesString = args.getString(false, "", "names", "name", "n", null);
 		Collections.addAll(itemNames,

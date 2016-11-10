@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Targeters.TargetNone;
 import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
@@ -74,11 +74,11 @@ public class GrandInventory
 		
 		//Send unequip activator
 		if (oldElement != null) {
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
+			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
 		}
 		
 		//Send equip activator
-		grandItem.activateAbilities(ActivatorType.EQUIP, slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
+		grandItem.activateAbilities(ActivatorType.EQUIP, slotType, Target.makeEmpty(holderPlayer));
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
 		Map<UUID, InventoryElement> items = grandItemMap.get(element.grandItem.getName());
@@ -94,7 +94,6 @@ public class GrandInventory
 	 * <br>
 	 * The item must represent a valid grand item, and contain a UUID in the metadata.
 	 * @param item Item to remove
-	 * @param grandItem Represented GrandItem
 	 */
 	public void removeItem(ItemStack item) {
 		//Get and remove element from the itemMap
@@ -102,7 +101,7 @@ public class GrandInventory
 		
 		if (oldElement != null) {
 			//Send unequip activator
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, new Target(new TargetNone(), holderPlayer, new TargetNone()));
+			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
 			
 			Map<UUID, InventoryElement> items = grandItemMap.get(oldElement.grandItem.getName());
 			oldElement = items.remove(oldElement.id);

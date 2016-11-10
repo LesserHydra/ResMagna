@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Conditions;
 
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.VariableConditional;
+import com.roboboy.PraedaGrandis.Arguments.VariableConditional;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;
@@ -45,8 +45,8 @@ class IsHunger implements Condition {
 
 	@Override
 	public boolean test(Target target) {
-		if (!(target.getEntity() instanceof Player)) return false;
-		Player p = (Player) target.getEntity();
+		if (!target.isPlayer()) return false;
+		Player p = target.asPlayer();
 		return conditional.check(p.getFoodLevel(), number);
 	}
 

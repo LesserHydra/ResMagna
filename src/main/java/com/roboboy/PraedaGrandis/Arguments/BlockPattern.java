@@ -1,15 +1,16 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.roboboy.util.RandomCollection;
 import org.bukkit.Material;
-import com.roboboy.PraedaGrandis.Tools;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.util.StringTools;
 
-public class BlockPattern
-{
+public class BlockPattern {
+	
 	//\s*(?:([\d\.]+)\s*\?\s*)?([\w\s]+(?<!\s))(?:\s*\:\s*(\d+))?\s*
 	private static final Pattern blockComponentPattern = Pattern.compile("\\s*(?:([\\d\\.]+)\\s*\\?\\s*)?([\\w\\s]+(?<!\\s))(?:\\s*\\:\\s*(\\d+))?\\s*");
 	
@@ -40,13 +41,13 @@ public class BlockPattern
 	 * @param string String describing the requested BlockPattern
 	 * @return BlockPattern described by given string, or null if an error was hit
 	 */
-	public static BlockPattern buildFromString(String string) {
+	static BlockPattern buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
 		String[] blockStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: Temp
 		RandomCollection<BlockConstruct> blockCollection = new RandomCollection<>();
 		for (String blockString : blockStrings) {
 			Matcher blockMatcher = blockComponentPattern.matcher(blockString);
-			//Error message is expanded in BlockArguments
+			//Error message is expanded in ArgumentBlock
 			if (!blockMatcher.matches()) {
 				GrandLogger.log("Invalid format for block pattern component: " + blockString, LogType.CONFIG_ERRORS);
 				return null;
@@ -76,7 +77,7 @@ public class BlockPattern
 	
 	private static BlockConstruct parsePattern(String materialString, String dataString) {
 		//Parse material
-		Material material = Tools.parseEnum(materialString, Material.class);
+		Material material = StringTools.parseEnum(materialString, Material.class);
 		if (material == null) {
 			GrandLogger.log("Invalid block material: " + materialString, LogType.CONFIG_ERRORS);
 			return null;

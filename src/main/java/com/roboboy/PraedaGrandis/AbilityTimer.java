@@ -9,7 +9,6 @@ import com.roboboy.PraedaGrandis.Activator.ActivatorLine;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Targeters.TargetEntity;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
 /* Every so often (configurable in main config) the plugin should
@@ -49,7 +48,7 @@ public class AbilityTimer
 				GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(p);
 				List<GrandInventory.InventoryElement> elements = pInv.getItems(item.getName());
 				for (GrandInventory.InventoryElement element : elements) {
-					activatorLine.activate(element.slotType, new Target(new TargetEntity(p), p, new TargetEntity(null)));
+					activatorLine.activate(element.slotType, Target.make(p, Target.from(p), Target.none()));
 				}
 				
 				if (elements.isEmpty()) it.remove(); //Deactivate player

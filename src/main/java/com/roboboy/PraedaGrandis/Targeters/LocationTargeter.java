@@ -1,24 +1,21 @@
 package com.roboboy.PraedaGrandis.Targeters;
 
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Location;
 
-import java.util.Collections;
-import java.util.List;
-
-class LocationTargeter implements Targeter {
+class LocationTargeter implements Targeter.Singleton {
 	
 	private final GrandLocation grandLocation;
 	
-	LocationTargeter(BlockArguments args) {
+	LocationTargeter(ArgumentBlock args) {
 		grandLocation = args.getLocation(true, new GrandLocation(), "location", "loc", "l", null);
 	}
 	
 	@Override
-	public List<Target> getTargets(Target currentTarget) {
+	public Target getTarget(Target currentTarget) {
 		Location location = grandLocation.calculate(currentTarget);
-		return Collections.singletonList(currentTarget.target(location));
+		return currentTarget.target(Target.from(location));
 	}
 
 }

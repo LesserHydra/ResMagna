@@ -1,7 +1,7 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
-public enum VariableConditional
-{
+public enum VariableConditional {
+	
 	EQUAL("==") {
 		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) == 0;}
 	},
@@ -20,17 +20,15 @@ public enum VariableConditional
 	
 	final private String symbol;
 	
-	private VariableConditional(String symbol) {
-		this.symbol = symbol;
-	}
+	VariableConditional(String symbol) { this.symbol = symbol; }
 	
 	public abstract <T extends Comparable<T>> boolean check(T a, T b);
 
-	public static VariableConditional fromSymbol(String symbol)
-	{
+	public static VariableConditional fromSymbol(String symbol) {
 		for (VariableConditional op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
 		throw new IllegalArgumentException("Invalid variable conditional: " + symbol);
 	}
+	
 }

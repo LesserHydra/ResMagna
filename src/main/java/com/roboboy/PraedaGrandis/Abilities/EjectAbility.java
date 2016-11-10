@@ -7,7 +7,7 @@ class EjectAbility implements Ability {
 	
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		targetEntity.eject();

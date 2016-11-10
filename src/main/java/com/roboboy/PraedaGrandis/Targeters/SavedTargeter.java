@@ -1,21 +1,16 @@
 package com.roboboy.PraedaGrandis.Targeters;
 
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
-import java.util.Collections;
-import java.util.List;
-
-class SavedTargeter implements Targeter {
+class SavedTargeter implements Targeter.Singleton {
 	
 	private final String saveName;
 	
-	SavedTargeter(BlockArguments args) {
+	SavedTargeter(ArgumentBlock args) {
 		saveName = args.getString(true, "",     "savename", "save", "name", "sn", "n", null);
 	}
 	
 	@Override
-	public List<Target> getTargets(Target currentTarget) {
-		return Collections.singletonList(currentTarget.targetSaved(saveName));
-	}
+	public Target getTarget(Target currentTarget) { return currentTarget.targetSaved(saveName);}
 	
 }

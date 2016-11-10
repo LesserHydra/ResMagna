@@ -1,7 +1,7 @@
 package com.roboboy.PraedaGrandis.Conditions;
 
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -49,7 +49,7 @@ public class ConditionFactory {
 		
 		//Get condition arguments, if exist
 		String argumentsGroupID = lineMatcher.group(2);
-		BlockArguments conditionArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID), conditionLine);
+		ArgumentBlock conditionArgs = new ArgumentBlock(groupParser.getGrouping(argumentsGroupID), conditionLine);
 		
 		//Get unenclosed arguments, if exist
 		String variableArgsString = lineMatcher.group(3);
@@ -65,12 +65,12 @@ public class ConditionFactory {
 		return (not ? c.negate() : c);
 	}
 	
-	private static Condition createCondition(String name, BlockArguments args, String varArgsString) {
+	private static Condition createCondition(String name, ArgumentBlock args, String varArgsString) {
 		switch (name) {
 		//Identity checks
 		case "isnone":			return Target::isNull;
 		case "isentity":        return Target::isEntity;
-		case "isholder":		return t -> t.getHolder().equals(t.getEntity());
+		case "isholder":		return t -> t.getHolder().equals(t.asEntity());
 		case "isplayer":		return Target::isPlayer;
 		case "iscreature":		return t -> t.is(Creature.class);
 		case "isageable":		return t -> t.is(Ageable.class);
@@ -79,19 +79,19 @@ public class ConditionFactory {
 		case "ismonster":		return t -> t.is(Monster.class);
 		
 		//Trivial entity state checks
-		case "isvalid":			return t -> t.isEntity() && t.getEntity().isValid();
-		case "hasai":		    return t -> t.isEntity() && t.getEntity().hasAI();
-		case "hasgravity":		return t -> t.isEntity() && t.getEntity().hasGravity();
-		case "iscollidable":	return t -> t.isEntity() && t.getEntity().isCollidable();
-		case "isinvulnerable":	return t -> t.isEntity() && t.getEntity().isInvulnerable();
-		case "issilent":		return t -> t.isEntity() && t.getEntity().isSilent();
-		case "isburning":		return t -> t.isEntity() && t.getEntity().getFireTicks() > 0;
-		case "isonground":		return t -> t.isEntity() && t.getEntity().isOnGround();
-		case "ismount":			return t -> t.isEntity() && t.getEntity().getPassenger() instanceof LivingEntity;
-		case "isriding":		return t -> t.isEntity() && t.getEntity().isInsideVehicle();
-		case "isgliding":		return t -> t.isEntity() && t.getEntity().isGliding();
-		case "isglowing":		return t -> t.isEntity() && t.getEntity().isGlowing();
-		case "isleashed":		return t -> t.isEntity() && t.getEntity().isLeashed();
+		case "isvalid":			return t -> t.isEntity() && t.asEntity().isValid();
+		case "hasai":		    return t -> t.isEntity() && t.asEntity().hasAI();
+		case "hasgravity":		return t -> t.isEntity() && t.asEntity().hasGravity();
+		case "iscollidable":	return t -> t.isEntity() && t.asEntity().isCollidable();
+		case "isinvulnerable":	return t -> t.isEntity() && t.asEntity().isInvulnerable();
+		case "issilent":		return t -> t.isEntity() && t.asEntity().isSilent();
+		case "isburning":		return t -> t.isEntity() && t.asEntity().getFireTicks() > 0;
+		case "isonground":		return t -> t.isEntity() && t.asEntity().isOnGround();
+		case "ismount":			return t -> t.isEntity() && t.asEntity().getPassenger() instanceof LivingEntity;
+		case "isriding":		return t -> t.isEntity() && t.asEntity().isInsideVehicle();
+		case "isgliding":		return t -> t.isEntity() && t.asEntity().isGliding();
+		case "isglowing":		return t -> t.isEntity() && t.asEntity().isGlowing();
+		case "isleashed":		return t -> t.isEntity() && t.asEntity().isLeashed();
 		
 		//Trivial creature state checks
 		case "hastarget":       return t -> t.is(Creature.class) && t.as(Creature.class).getTarget() != null;
@@ -112,8 +112,8 @@ public class ConditionFactory {
 		case "issleeping":		return t -> t.isPlayer() && t.asPlayer().isSleeping();
 		
 		//Trivial location state checks
-		case "israining":		return t -> !t.isNull() && t.getLocation().getWorld().hasStorm();
-		case "isthundering":	return t -> !t.isNull() && t.getLocation().getWorld().isThundering();
+		case "israining":		return t -> !t.isNull() && t.asLocation().getWorld().hasStorm();
+		case "isthundering":	return t -> !t.isNull() && t.asLocation().getWorld().isThundering();
 		case "issheltered":		return ConditionFactory::isSheltered;
 		
 		//Non-trivial state checks
@@ -142,7 +142,7 @@ public class ConditionFactory {
 	}
 	
 	private static boolean isSheltered(Target target) {
-		Location loc = target.getLocation();
+		Location loc = target.asLocation();
 		return loc != null && loc.getBlockY() < loc.getWorld().getHighestBlockYAt(loc);
 	}
 	

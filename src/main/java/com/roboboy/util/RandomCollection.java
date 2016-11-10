@@ -1,29 +1,29 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.util;
 
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
 
 /**
- * Represents a collection of elements with weighted probability.
+ * Represents a collection of elements from weighted probability.
  *
  * @param <E>
  */
-public class RandomCollection<E>
-{
+public class RandomCollection<E> {
+	
 	private final NavigableMap<Double, E> map = new TreeMap<>();
 	private final Random random;
 	private double total = 0;
 	
 	/**
-	 * Constructs a new RandomCollection with a new Random instance.
+	 * Constructs a new RandomCollection from a new Random instance.
 	 */
 	public RandomCollection() {
 		this(new Random());
 	}
 	
 	/**
-	 * Constructs a new RandomCollection with a given Random instance.
+	 * Constructs a new RandomCollection from a given Random instance.
 	 */
 	public RandomCollection(Random random) {
 		this.random = random;

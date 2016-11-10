@@ -1,7 +1,7 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
-public enum VariableOperator
-{
+public enum VariableOperator {
+	
 	SET("=") {
 		@Override public int apply(int a, int b) {return b;}
 	},
@@ -23,17 +23,15 @@ public enum VariableOperator
 	
 	final private String symbol;
 	
-	private VariableOperator(String symbol) {
-		this.symbol = symbol;
-	}
+	VariableOperator(String symbol) { this.symbol = symbol; }
 	
 	public abstract int apply(int a, int b);
 
-	public static VariableOperator fromSymbol(String symbol)
-	{
+	public static VariableOperator fromSymbol(String symbol) {
 		for (VariableOperator op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
 		throw new IllegalArgumentException("Invalid variable operator: " + symbol);
 	}
+	
 }

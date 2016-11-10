@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
 class LightningAbility implements Ability {
 	
@@ -12,7 +12,7 @@ class LightningAbility implements Ability {
 	private final boolean snap;
 	private final boolean hitCeiling;
 	
-	LightningAbility(BlockArguments args) {
+	LightningAbility(ArgumentBlock args) {
 		effectOnly = args.getBoolean(false, false,		"effectonly", "iseffect", "effect", "e");
 		snap = args.getBoolean(false, false,			"snaptofloor", "snap", "floor");
 		hitCeiling = args.getBoolean(false, false,		"hitceiling", "ceiling");
@@ -20,7 +20,7 @@ class LightningAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		Location location = getLocation(target.getLocation());
+		Location location = getLocation(target.asLocation());
 		if (effectOnly) location.getWorld().strikeLightningEffect(location);
 		else location.getWorld().strikeLightning(location);
 	}

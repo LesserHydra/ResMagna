@@ -1,8 +1,8 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -16,7 +16,7 @@ class ParticleAbility implements Ability {
 	private final int amount;
 	private final GrandLocation centerLocation;
 
-	ParticleAbility(BlockArguments args) {
+	ParticleAbility(ArgumentBlock args) {
 		particleType = args.getEnum(true, Particle.BARRIER,	"particlename", "particle", "name", "type", "n");
 		amount = args.getInteger(true, 1,						"amount", "amnt", "a");
 		

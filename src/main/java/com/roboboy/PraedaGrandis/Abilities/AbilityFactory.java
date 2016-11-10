@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
@@ -36,7 +36,7 @@ public class AbilityFactory {
 		
 		//Get ability arguments, if exist
 		String argumentsGroupID = lineMatcher.group(2);
-		BlockArguments abilityArgs = new BlockArguments(groupParser.getGrouping(argumentsGroupID), abilityString);
+		ArgumentBlock abilityArgs = new ArgumentBlock(groupParser.getGrouping(argumentsGroupID), abilityString);
 		
 		//Get unenclosed arguments, if exist
 		String variableArgs = lineMatcher.group(3);
@@ -46,7 +46,7 @@ public class AbilityFactory {
 		//if (timerDelay > 0) a.setTimerDelay(timerDelay);
 	}
 	
-	private static Ability constructAbility(String name, BlockArguments abilityArgs, String variableArgs) {
+	private static Ability constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {
 		switch (name) {
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
 		case "heal":			return new HealAbility(abilityArgs);

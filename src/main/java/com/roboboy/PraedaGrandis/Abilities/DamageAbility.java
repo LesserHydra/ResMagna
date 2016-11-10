@@ -3,7 +3,7 @@ package com.roboboy.PraedaGrandis.Abilities;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -16,7 +16,7 @@ class DamageAbility implements Ability {
 	private final Targeter damagerTargeter;
 	private final DamageCause cause;
 	
-	DamageAbility(BlockArguments args) {
+	DamageAbility(ArgumentBlock args) {
 		damageAmount = args.getDouble(true, 0D,					        "amount", "a", null);
 		damagerTargeter = args.getTargeter(false, Targeters.HOLDER,     "damager", "dmgr", "source");
 		cause = args.getEnum(false, DamageCause.CUSTOM,				    "cause");
@@ -24,14 +24,14 @@ class DamageAbility implements Ability {
 	
 	@Override
 	public void execute(Target target) {
-		LivingEntity targetEntity = target.getEntity();
+		LivingEntity targetEntity = target.asEntity();
 		if (targetEntity == null) return;
 		
 		//Get damagerTarget
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
 		
 		//Get damager
-		LivingEntity damagerEntity = damagerTarget.getEntity();
+		LivingEntity damagerEntity = damagerTarget.asEntity();
 		
 		//Create and call event
 		EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);

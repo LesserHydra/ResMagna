@@ -22,7 +22,7 @@ import com.comphenix.attribute.Attributes;
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.AbilityTimer;
 import com.roboboy.PraedaGrandis.Activator.ActivatorType;
-import com.roboboy.PraedaGrandis.ItemSlotType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 

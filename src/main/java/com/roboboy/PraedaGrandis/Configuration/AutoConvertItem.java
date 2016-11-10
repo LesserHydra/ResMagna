@@ -1,24 +1,24 @@
-package com.roboboy.PraedaGrandis;
+package com.roboboy.PraedaGrandis.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 
-public class AutoConvertItem
-{
+public class AutoConvertItem {
+	
 	private final GrandItem convertItem;
 	
 	private final String searchName;
 	private final List<String> searchLore;
 	private final Material searchType;
 	
-	public AutoConvertItem(GrandItem convertItem, String searchName, List<String> searchLore, Material searchType)
-	{
+	AutoConvertItem(GrandItem convertItem, String searchName, List<String> searchLore, Material searchType) {
 		this.convertItem = convertItem;
 		
 		this.searchType = searchType;
@@ -31,8 +31,7 @@ public class AutoConvertItem
 		this.searchLore = convertedSearchLore;
 	}
 	
-	public boolean match(ItemStack item)
-	{
+	public boolean match(ItemStack item) {
 		boolean matches = true;
 		boolean hasMeta = item.hasItemMeta();
 		boolean hasLore = hasMeta && item.getItemMeta().hasLore();
@@ -47,8 +46,7 @@ public class AutoConvertItem
 		return matches && !(searchName == null && searchLore.isEmpty());
 	}
 
-	public ItemStack convert(ItemStack item)
-	{
+	public ItemStack convert(ItemStack item) {
 		NBTStorage storage = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME);
 		storage.setData(convertItem.getName());
 		
@@ -58,4 +56,5 @@ public class AutoConvertItem
 		
 		return convertItem.update(storage.getTarget());
 	}
+	
 }

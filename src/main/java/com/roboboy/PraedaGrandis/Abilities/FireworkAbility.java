@@ -9,14 +9,14 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 
 class FireworkAbility implements Ability {
 	
 	private final int power;
 	private final FireworkEffect effect;
 	
-	FireworkAbility(BlockArguments args) {
+	FireworkAbility(ArgumentBlock args) {
 		FireworkEffect.Type type = args.getEnum(true, FireworkEffect.Type.BALL,		"fireworkeffecttype", "firework", "effecttype", "type");
 		
 		boolean flicker = args.getBoolean(false, false,		"flicker");
@@ -43,7 +43,7 @@ class FireworkAbility implements Ability {
 
 	@Override
 	public void execute(Target target) {
-		final Firework firework = target.getLocation().getWorld().spawn(target.getLocation(), Firework.class);
+		final Firework firework = target.asLocation().getWorld().spawn(target.asLocation(), Firework.class);
 		FireworkMeta meta = firework.getFireworkMeta();
 		meta.addEffect(effect);
 		if (power >= 0) meta.setPower(power);

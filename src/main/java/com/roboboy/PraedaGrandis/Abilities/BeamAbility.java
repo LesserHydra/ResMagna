@@ -1,12 +1,11 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
+import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
 import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Targeters.TargetLocation;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Configuration.BlockArguments;
 import com.roboboy.PraedaGrandis.Configuration.FunctionRunner;
-import com.roboboy.PraedaGrandis.Configuration.GrandLocation;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,7 +40,7 @@ class BeamAbility implements Ability {
 	private final Targeter homingTargeter;
 	private final double homingForce;
 	
-	BeamAbility(BlockArguments args) {
+	BeamAbility(ArgumentBlock args) {
 		speed = args.getDouble(true, 0D,			"speed", "spd", "s");
 		numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
 		delay = args.getLong(false, 10L,			"delay", "dly", "d");
@@ -91,13 +90,16 @@ class BeamAbility implements Ability {
 		private double totalTicks = 0;
 		
 		BeamTimer(Target target, Target homingTarget) {
-			shooter = target.getEntity();
+			shooter = target.asEntity();
 			homing = homingTarget;
 			Location startLocation = originLocation.calculate(target);
 			currentVelocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
 			
 			currentLocation = startLocation;
-			beamTarget = new Target(new TargetLocation(startLocation), target.getHolder(), target.getCurrent());
+			//Target.make(startLocation, target.getHolder(), target.getCurrent());
+			//Target.make(Target.from(startLocation), target.getHolder(), target.current());
+			//target.swap().target(startLocation);
+			beamTarget = target.set(Target.from(startLocation), target.current());
 		}
 		
 		@Override
@@ -117,7 +119,7 @@ class BeamAbility implements Ability {
 				calculateHomingVelocity();
 				//Move beam
 				currentLocation = currentLocation.add(currentVelocity);
-				beamTarget = beamTarget.target(currentLocation);
+				beamTarget = beamTarget.target(Target.from(currentLocation));
 				totalDistance += speed;
 				//Run onStep
 				onStep.run(beamTarget);
@@ -130,7 +132,7 @@ class BeamAbility implements Ability {
 		private void calculateHomingVelocity() {
 			if (homing.isNull()) return;
 			//Get direction to target
-			Vector homingForceVector = homing.getLocation().toVector().subtract(currentLocation.toVector());
+			Vector homingForceVector = homing.asLocation().toVector().subtract(currentLocation.toVector());
 			//Set magnitude
 			homingForceVector.normalize().multiply(homingForce);
 			//Add to current velocity
@@ -162,7 +164,7 @@ class BeamAbility implements Ability {
 			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {
 				if (entity.equals(shooter)) continue;
 				if (!(entity instanceof LivingEntity)) continue;
-				onHitEntity.run(beamTarget.target((LivingEntity) entity));
+				onHitEntity.run(beamTarget.target(Target.from((LivingEntity) entity)));
 				hit = true;
 			}
 			return hit;

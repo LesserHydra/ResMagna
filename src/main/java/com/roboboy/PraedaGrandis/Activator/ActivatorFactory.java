@@ -5,7 +5,7 @@ import com.roboboy.PraedaGrandis.Abilities.AbilityFactory;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.TargeterFactory;
 import com.roboboy.PraedaGrandis.Configuration.GroupingParser;
-import com.roboboy.PraedaGrandis.ItemSlotType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 

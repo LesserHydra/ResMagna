@@ -1,12 +1,12 @@
-package com.roboboy.PraedaGrandis.Configuration;
+package com.roboboy.PraedaGrandis.Arguments;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import com.roboboy.PraedaGrandis.Logging.GrandLogger;
 import com.roboboy.PraedaGrandis.Logging.LogType;
 
-public enum Dimension
-{
+enum Dimension {
+	
 	SAME		(null),
 	OVERWORLD	(""),
 	NETHER		("_nether"),

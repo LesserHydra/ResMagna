@@ -1,16 +1,57 @@
 package com.roboboy.PraedaGrandis.Targeters;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Target {
+	
+	/**
+	 * Make a new, empty targeter
+	 * @param holder Holder
+	 * @return Newly constructed targeter
+	 */
+	public static Target makeEmpty(@NotNull Player holder) {
+		return new Target(NONE, holder, NONE);
+	}
+	
+	/**
+	 * Make a new targeter
+	 * @param holder Holder
+	 * @param target Target construct
+	 * @param activator Activator construct
+	 * @return Newly constructed targeter
+	 */
+	public static Target make(@NotNull Player holder, @NotNull TargetConstruct target, @NotNull TargetConstruct activator) {
+		return new Target(target, holder, activator);
+	}
+	
+	/**
+	 * Returns an empty target construct
+	 * @return Empty target construct
+	 */
+	public static TargetConstruct none() { return NONE; }
+	
+	/**
+	 * Constructs a target construct from given entity
+	 * @param target Living entity
+	 * @return Target construct
+	 */
+	public static TargetConstruct from(LivingEntity target) { return target == null ? NONE : new TargetEntity(target); }
+	
+	/**
+	 * Constructs a target construct from given location
+	 * @param target Location
+	 * @return Target construct
+	 */
+	public static TargetConstruct from(Location target) { return target == null ? NONE : new TargetLocation(target); }
+	
+	
+	private static TargetConstruct NONE = new TargetNone();
 	
 	private final TargetConstruct currentTarget;
 	private final Player holder;
@@ -18,35 +59,22 @@ public class Target {
 	private final Map<String, TargetConstruct> savedTargets;
 	
 	/**
-	 * Construct a fresh Target with a new save map
-	 * @param currentTarget
-	 * @param holder
-	 * @param activatorTarget
+	 * Returns the currently targeted construct
+	 * @return The currently targeted construct
 	 */
-	public Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget) {
-		if (currentTarget == null || activatorTarget == null) throw new IllegalArgumentException("Cannot target null.");
-		
-		this.currentTarget = currentTarget;
-		this.holder = holder;
-		this.activatorTarget = activatorTarget;
-		
-		this.savedTargets = new HashMap<>();
-	}
+	public TargetConstruct current() { return currentTarget; }
 	
 	/**
-	 * Construct a new Target sharing a saved target map
-	 * @param currentTarget
-	 * @param holder
-	 * @param activatorTarget
-	 * @param savedTargets Custom save map to share
+	 * Returns the activator construct
+	 * @return The activator construct
 	 */
-	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget,
-	               Map<String, TargetConstruct> savedTargets) {
-		this.currentTarget = currentTarget;
-		this.holder = holder;
-		this.activatorTarget = activatorTarget;
-		this.savedTargets = savedTargets;
-	}
+	public TargetConstruct activator() { return activatorTarget; }
+	
+	/**
+	 * Get the holder player
+	 * @return Holder player
+	 */
+	public Player getHolder() { return holder; }
 	
 	/**
 	 * Save the currently targeted entity to all Targets sharing a saved target map
@@ -55,21 +83,31 @@ public class Target {
 	public void save(String saveName) { savedTargets.put(saveName, currentTarget); }
 	
 	/**
-	 * Get the currently targeted entity
-	 * @return Current target entity
+	 * Gets the current target as an entity
+	 * @return Current target entity, or null
 	 */
-	public LivingEntity getEntity() {
-		return currentTarget.getEntity();
-	}
+	public LivingEntity asEntity() { return currentTarget.getEntity(); }
 	
 	/**
-	 * Get the currently targeted location
-	 * @return Current target location
+	 * Gets the current target as a location
+	 * @return Current target location, or null
 	 */
-	public Location getLocation() { return currentTarget.getLocation(); }
+	public Location asLocation() { return currentTarget.getLocation(); }
 	
+	/**
+	 * Gets the current target entity as a player
+	 * @return Current target player, or null
+	 * @throws ClassCastException If target cannot be expressed as a player
+	 */
 	public Player asPlayer() { return (Player) currentTarget.getEntity(); }
 	
+	/**
+	 * Gets the current target entity as a given class
+	 * @param clazz Class to attempt casting to
+	 * @param <T> Class type
+	 * @return Current target, or null
+	 * @throws ClassCastException If target cannot be expressed as the given class
+	 */
 	public <T> T as(Class<T> clazz) { return clazz.cast(currentTarget.getEntity()); }
 	
 	/**
@@ -84,57 +122,25 @@ public class Target {
 	 */
 	public boolean isEntity() { return currentTarget.getEntity() != null; }
 	
+	/**
+	 * Checks whether or not a player is currently targeted
+	 * @return True is the current target is a player
+	 */
 	public boolean isPlayer() { return currentTarget.getEntity() instanceof Player; }
 	
+	/**
+	 * Checks whether or not an entity of a given class is currently targeted
+	 * @param clazz Class to check
+	 * @param <T> Class type
+	 * @return True is the current target is an entity of the given class
+	 */
 	public <T> boolean is(Class<T> clazz) { return clazz.isInstance(currentTarget.getEntity()); }
-	
-	public TargetConstruct getCurrent() { return currentTarget; }
-	
-	/**
-	 * Get the holder player
-	 * @return Holder player
-	 */
-	public Player getHolder() { return holder; }
-	
-	/**
-	 * Get the entity targeted by whatever originally constructed the Target
-	 * @return Activator entity
-	 */
-	public TargetConstruct getActivator() { return activatorTarget; }
 	
 	/**
 	 * Set current target to nothing
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetNone() {
-		return new Target(new TargetNone(), holder, activatorTarget, savedTargets);
-	}
-	
-	/**
-	 * Set current target to a LivingEntity
-	 * @param newTarget Entity to target
-	 * @return Newly constructed Target sharing saved target map
-	 */
-	public Target target(LivingEntity newTarget) {
-		//if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
-		return new Target(new TargetEntity(newTarget), holder, activatorTarget, savedTargets);
-	}
-	
-	/**
-	 * Set current target to a Location
-	 * @param newTarget Location to target
-	 * @return Newly constructed Target sharing saved target map
-	 */
-	public Target target(Location newTarget) {
-		//if (newTarget == null) throw new IllegalArgumentException("Cannot target null.");
-		return new Target(new TargetLocation(newTarget), holder, activatorTarget, savedTargets);
-	}
-	
-	public List<Target> multiTarget(Collection<? extends LivingEntity> newTargets) {
-		return newTargets.stream()
-				.map(this::target)
-				.collect(Collectors.toList());
-	}
+	public Target targetNone() { return new Target(NONE, holder, activatorTarget, savedTargets); }
 	
 	/**
 	 * Set currently targeted entity to a saved entity from this Target's shared save map
@@ -142,21 +148,95 @@ public class Target {
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target targetSaved(String saveName) {
-		TargetConstruct saved = savedTargets.get(saveName);
-		if (saved == null) saved = new TargetEntity(null);
-		return new Target(saved, holder, activatorTarget, savedTargets);
+		return new Target(savedTargets.getOrDefault(saveName, NONE), holder, activatorTarget, savedTargets);
 	}
 	
 	/**
-	 * Set currently targeted entity to the holder
+	 * Set current target to construct
+	 * @param newTarget TargetConstruct to target
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetHolder() { return new Target(new TargetEntity(holder), holder, activatorTarget, savedTargets); }
+	public Target target(@NotNull TargetConstruct newTarget) {
+		return new Target(newTarget, holder, activatorTarget, savedTargets);
+	}
 	
 	/**
-	 * Set currently targeted entity to the activator
+	 * Sets both the current target and the activator target
+	 * @param target Target construct
+	 * @param activator Activator construct
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetActivator() { return new Target(activatorTarget, holder, activatorTarget, savedTargets); }
+	public Target set(@NotNull TargetConstruct target, @NotNull TargetConstruct activator) {
+		return new Target(target, holder, activator, savedTargets);
+	}
+	
+	
+	/*
+	 * Construct a fresh Target from a new save map
+	 */
+	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget) {
+		this.currentTarget = currentTarget;
+		this.holder = holder;
+		this.activatorTarget = activatorTarget;
+		this.savedTargets = new HashMap<>();
+	}
+	
+	/*
+	 * Construct a new Target sharing a saved target map
+	 */
+	private Target(TargetConstruct currentTarget, Player holder, TargetConstruct activatorTarget,
+	               Map<String, TargetConstruct> savedTargets) {
+		this.currentTarget = currentTarget;
+		this.holder = holder;
+		this.activatorTarget = activatorTarget;
+		this.savedTargets = savedTargets;
+	}
+	
+	private interface TargetConstruct {
+		Location getLocation();
+		LivingEntity getEntity();
+		boolean isNull();
+	}
+	
+	private static class TargetNone implements TargetConstruct {
+		@Override
+		public Location getLocation() { return null; }
+		
+		@Override
+		public LivingEntity getEntity() { return null; }
+		
+		@Override
+		public boolean isNull() { return true; }
+	}
+	
+	private static class TargetEntity implements TargetConstruct {
+		private final LivingEntity targetEntity;
+		
+		TargetEntity(LivingEntity targetEntity) { this.targetEntity = targetEntity; }
+		
+		@Override
+		public Location getLocation() { return targetEntity == null ? null : targetEntity.getLocation(); }
+		
+		@Override
+		public LivingEntity getEntity() { return targetEntity; }
+		
+		@Override
+		public boolean isNull() { return targetEntity == null; }
+	}
+	
+	private static class TargetLocation implements TargetConstruct {
+		private final Location targetLocation;
+		
+		TargetLocation(Location targetEntity) { this.targetLocation = targetEntity; }
+		
+		@Override
+		public Location getLocation() { return targetLocation; }
+		
+		@Override
+		public LivingEntity getEntity() { return null; }
+		
+		@Override
+		public boolean isNull() { return targetLocation == null; }
+	}
 	
 }
