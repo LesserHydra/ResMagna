@@ -1,30 +1,27 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
-import com.roboboy.PraedaGrandis.Logging.GrandLogger;
-import com.roboboy.PraedaGrandis.Logging.LogType;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Activator.ActivatorType;
+import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
+import com.roboboy.PraedaGrandis.Targeters.Target;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-public class GrandInventory
-{
+public class GrandInventory {
+	
 	/**
 	 * Represents an item in inventory along with its pre-determined GrandItem and the ItemSlotType it exists in.<br>
 	 */
-	public class InventoryElement
-	{
+	public class InventoryElement {
 		public final ItemStack item;
 		public final UUID id;
 		public final GrandItem grandItem;
@@ -42,11 +39,9 @@ public class GrandInventory
 	private final Map<UUID, InventoryElement> itemMap = new HashMap<>();
 	private final Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
 	
-	public GrandInventory(Player holderPlayer) {
-		this.holderPlayer = holderPlayer;
-	}
+	GrandInventory(Player holderPlayer) { this.holderPlayer = holderPlayer; }
 	
-	public void resetToPlayer() {
+	void resetToPlayer() {
 		//Clear maps
 		itemMap.clear();
 		grandItemMap.clear();
@@ -75,11 +70,6 @@ public class GrandInventory
 			return;
 		}
 		
-		//DEBUG
-		if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
-			GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
-		}
-		
 		//Construct new element
 		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
 		
@@ -87,16 +77,22 @@ public class GrandInventory
 		InventoryElement oldElement = itemMap.put(element.id, element);
 		
 		//Send unequip activator
-		if (oldElement != null) {
-			//DEBUG
+		if (oldElement != null && oldElement.slotType != slotType) {
+			/*//DEBUG
 			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
-				GrandLogger.log("  Previous: " + oldElement.slotType, LogType.DEBUG);
-			}
+				GrandLogger.log("Debug item moved from: " + oldElement.slotType, LogType.DEBUG);
+			}*/
 			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
 		}
 		
 		//Send equip activator
-		grandItem.activateAbilities(ActivatorType.EQUIP, slotType, Target.makeEmpty(holderPlayer));
+		if (oldElement == null || oldElement.slotType != slotType) {
+			/*//DEBUG
+			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
+			}*/
+			grandItem.activateAbilities(ActivatorType.EQUIP, slotType, Target.makeEmpty(holderPlayer));
+		}
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
 		Map<UUID, InventoryElement> items = grandItemMap.get(element.grandItem.getName());
@@ -119,9 +115,9 @@ public class GrandInventory
 		
 		if (oldElement != null) {
 			//DEBUG
-			if (oldElement.grandItem.getName().equalsIgnoreCase("InvDebug")) {
-				GrandLogger.log("Debug item removed from " + oldElement.slotType, LogType.DEBUG);
-			}
+			/*if (oldElement.grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item removed from: " + oldElement.slotType, LogType.DEBUG);
+			}*/
 			
 			//Send unequip activator
 			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));

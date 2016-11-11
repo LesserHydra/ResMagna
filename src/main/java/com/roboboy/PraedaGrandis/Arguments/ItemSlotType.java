@@ -196,10 +196,10 @@ public enum ItemSlotType
 		}
 	}*/
 	
-	/*public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
-		if (slotNumber == heldSlotNumber) return ItemSlotType.HELD;
+	public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
+		if (slotNumber == heldSlotNumber) return ItemSlotType.HELDMAIN;
 		return ItemSlotType.UNHELD;
-	}*/
+	}
 	
 	public static Set<ItemSlotType> getUniqueTypes() { return unique; }
 	
@@ -228,7 +228,27 @@ public enum ItemSlotType
 		return -1;
 	}
 	
-	private static ItemSlotType fromTotalIndex(int i, int heldSlot) {
+	public static ItemSlotType fromCreativeIndex(int i, int heldSlot) {
+		//Negative values represent unfound
+		if (i < 0) return NONE;
+		//36-40 & 0-3 Hotbar
+		if (i >= 36 && i <= 40) return (i - 36 == heldSlot ? HELDMAIN : UNHELD);
+		if (i <= 3) return (i + 5 == heldSlot ? HELDMAIN : UNHELD);
+		//4 Offhand
+		if (i == 4) return HELDOFF;
+		//5-8 Armor
+		if (i == 5) return HELMET;
+		if (i == 6) return CHESTPLATE;
+		if (i == 7) return LEGGINGS;
+		if (i == 8) return BOOTS;
+		//9-35 Stored
+		if (i <= 35) return STORED;
+
+		//TODO:Should throw?
+		return NONE;
+	}
+	
+	public static ItemSlotType fromTotalIndex(int i, int heldSlot) {
 		//Negative values represent unfound
 		if (i < 0) return NONE;
 		//0-8 Hotbar

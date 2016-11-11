@@ -1,12 +1,12 @@
 package com.roboboy.PraedaGrandis;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.roboboy.PraedaGrandis.Arguments.ArmorType;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
+import com.roboboy.PraedaGrandis.Configuration.GrandItem;
+import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -26,10 +26,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Dispenser;
-import org.bukkit.scheduler.BukkitRunnable;
-import com.roboboy.PraedaGrandis.Configuration.GrandItem;
-import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InventoryHandler implements Listener {
 	
@@ -129,95 +130,96 @@ public class InventoryHandler implements Listener {
 	}
 	
 	//Player "clicks" with inventory open
+	//TODO: Implement in a nicer way
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player)) return;
 		Player p = (Player)e.getWhoClicked();
 		
-		/*if (e instanceof InventoryCreativeEvent) {
-			resetInventoryNextTick(p);
-			return;
-		}*/
+		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK
+				|| e.getAction() == InventoryAction.UNKNOWN) return;
 		
-		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK || e.getAction() == InventoryAction.UNKNOWN) return;
+		//DEBUG: GrandLogger.log(e.getAction().name(), LogType.DEBUG);
 		
-		//FIXME: Fix for 1.9
-		//FIXME: Offhand slot seems to be slot=9,raw=45,inv=player
-		//resetInventoryNextTick(p);
-		
-		/*PlayerInventory inv = p.getInventory();
+		PlayerInventory inv = p.getInventory();
 		GrandInventory gInv = playerInventories.get(p.getName());
 		ItemStack currentItem = e.getCurrentItem();
 		ItemStack cursorItem = e.getCursor();
 		GrandItem currentGrandItem = ItemHandler.getInstance().matchItem(currentItem);
 		GrandItem cursorGrandItem = ItemHandler.getInstance().matchItem(cursorItem);
-		ItemSlotType clickedSlotType = ItemSlotType.getSlotType(e.getSlotType(), e.getSlot(), inv.getHeldItemSlot());
 		
-		//if (currentGrandItem == null && cursorGrandItem == null) return;
+		boolean creative = e instanceof InventoryCreativeEvent;
+		boolean otherInventory = !inv.equals(e.getClickedInventory());
 		
-		//Clicked on other inventory
-		if (!inv.equals(e.getClickedInventory())) {
-			//TODO: Figure out where the item will be moved to
-			if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-				resetInventoryNextTick(p);
-			}
-			return;
+		//Assumes own inventory
+		ItemSlotType clickedSlotType = creative
+				? ItemSlotType.fromCreativeIndex(e.getSlot(), inv.getHeldItemSlot())
+				: ItemSlotType.fromTotalIndex(e.getSlot(), inv.getHeldItemSlot());
+		
+		//Special case for most creative events
+		if (creative && currentGrandItem != null && e.getAction() == InventoryAction.PLACE_ALL) {
+			/*The main issue here is that swaps (and shifting within own inventory) show up as two events, one before
+			the swap and one after it. For example, when shift-equipping a helmet, the first event will decide to add
+			the item to HELMET and the second will remove it.*/
+			addItemAtEndOfTick(p, currentItem, currentGrandItem);
 		}
 		
 		//Shift-clicked
 		if (currentGrandItem != null && e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-			InventoryType topInventoryType = e.getView().getTopInventory().getType();
-			
-			//Current item is shift-clicked to another place in inventory
-			if (topInventoryType == InventoryType.CRAFTING || topInventoryType == InventoryType.WORKBENCH) {
-				//TODO: Figure out where the item will be moved to
-				resetInventoryNextTick(p);
-			}
-			//Current item is shift-clicked to another inventory
-			else if (topInventoryType == InventoryType.ANVIL || topInventoryType == InventoryType.CHEST
-					|| topInventoryType == InventoryType.DISPENSER || topInventoryType == InventoryType.DROPPER
-					|| topInventoryType == InventoryType.ENCHANTING || topInventoryType == InventoryType.ENDER_CHEST
-					|| topInventoryType == InventoryType.HOPPER){
-				//TODO: Check for failure (inventory is full)
-				gInv.removeItem(currentItem);
-			}
-			//TODO: Handle cases where only certain items are put into the other inventory
-			
-			return;
-		}
-		
-		//Current item is removed from inventory
-		if (currentGrandItem != null && (
-				e.getAction() == InventoryAction.COLLECT_TO_CURSOR || e.getAction() == InventoryAction.DROP_ALL_SLOT
-				|| e.getAction() == InventoryAction.DROP_ONE_SLOT || e.getAction() == InventoryAction.PICKUP_ALL
-				|| e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PICKUP_ONE
-				|| e.getAction() == InventoryAction.PICKUP_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)
-				) {
-			gInv.removeItem(currentItem);
-		}
-		
-		//Cursor item is added to inventory
-		if (cursorGrandItem != null && (
-				e.getAction() == InventoryAction.PLACE_ALL || e.getAction() == InventoryAction.PLACE_ONE
-				|| e.getAction() == InventoryAction.PLACE_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
-			gInv.putItem(cursorItem, cursorGrandItem, clickedSlotType);
+			addItemAtEndOfTick(p, currentItem, currentGrandItem);
+			return; //Done
 		}
 		
 		//Current item is swapped with hotbar item
 		if (e.getAction() == InventoryAction.HOTBAR_SWAP) {
 			ItemStack hotbarItem = inv.getItem(e.getHotbarButton());
 			GrandItem hotbarGrandItem = ItemHandler.getInstance().matchItem(hotbarItem);
-			ItemSlotType hotbarSlotType = ItemSlotType.getHotbarSlotType(e.getHotbarButton(), inv.getHeldItemSlot());
+			ItemSlotType hotbarSlotType = creative
+					? ItemSlotType.fromCreativeIndex(e.getHotbarButton(), inv.getHeldItemSlot())
+					: ItemSlotType.fromTotalIndex(e.getHotbarButton(), inv.getHeldItemSlot());
 			
 			if (currentGrandItem != null) gInv.putItem(currentItem, currentGrandItem, hotbarSlotType);
-			if (hotbarGrandItem != null) gInv.putItem(hotbarItem, hotbarGrandItem, clickedSlotType);
+			if (hotbarGrandItem != null) {
+				if (otherInventory) gInv.removeItem(hotbarItem);
+				else gInv.putItem(hotbarItem, hotbarGrandItem, clickedSlotType);
+			}
+			return; //Done
 		}
 		
-		//Current item displaces hotbar item, which is readded to inventory 
+		/*Seems to happen when hotbar swapping two items when current is in another inventory. Also fires when current
+		is in armor slots and hotbar is not armor, but the items don't actually swap for some reason. The old behavior
+		had the hotbar item being readded to inventory.*/
 		if (e.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
-			//TODO: Figure out where the items will be moved to
-			resetInventoryNextTick(p);
-		}*/
+			ItemStack hotbarItem = inv.getItem(e.getHotbarButton());
+			GrandItem hotbarGrandItem = ItemHandler.getInstance().matchItem(hotbarItem);
+			if (currentGrandItem != null) addItemAtEndOfTick(p, currentItem, currentGrandItem);
+			if (hotbarGrandItem != null) addItemAtEndOfTick(p, hotbarItem, hotbarGrandItem);
+			return; //Done
+		}
+		
+		//Clicked on other inventory
+		if (otherInventory) return;
+		
+		//Current item is removed from inventory
+		if (currentGrandItem != null
+				&& (e.getAction() == InventoryAction.COLLECT_TO_CURSOR || e.getAction() == InventoryAction.PICKUP_ALL
+				|| e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PICKUP_ONE
+				|| e.getAction() == InventoryAction.PICKUP_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
+			gInv.removeItem(currentItem);
+		}
+		
+		//Current item is dropped (only works if hand is empty?)
+		if (currentGrandItem != null && (cursorItem == null || cursorItem.getType() == Material.AIR)
+				&& (e.getAction() == InventoryAction.DROP_ALL_SLOT || e.getAction() == InventoryAction.DROP_ONE_SLOT)) {
+			gInv.removeItem(currentItem);
+		}
+		
+		//Cursor item is added to inventory
+		if (cursorGrandItem != null
+				&& (e.getAction() == InventoryAction.PLACE_ALL || e.getAction() == InventoryAction.PLACE_ONE
+				|| e.getAction() == InventoryAction.PLACE_SOME || e.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
+			gInv.putItem(cursorItem, cursorGrandItem, clickedSlotType);
+		}
 	}
 	
 	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
@@ -263,14 +265,13 @@ public class InventoryHandler implements Listener {
 		Block targetBlock = e.getBlock().getRelative(directionFacing);
 		
 		for (Player p : loc.getWorld().getPlayers()) {
-			if (!type.isEmpty(p)) continue;
-			if (!playerIsTouchingBlock(targetBlock, p)) continue;
-			
-			GrandInventory gInv = playerInventories.get(p.getName());
-			gInv.putItem(item, grandItem, type.getItemSlotType());
-			return; //TODO: What happens if two players are valid?
+			//In case multiple players are valid
+			if (playerIsTouchingBlock(targetBlock, p) && type.isEmpty(p)) addItemAtEndOfTick(p, item, grandItem);
 		}
 	}
+	
+	//TODO: Place in itemframe or armorstand
+	//TODO: Use? (eat/place/break)
 	
 	private boolean playerIsTouchingBlock(Block block, Player player) {
 		Location playerLocation = player.getLocation();
@@ -278,11 +279,9 @@ public class InventoryHandler implements Listener {
 		double playerY = playerLocation.getY();
 		double playerZ = playerLocation.getZ();
 		
-		if (playerX < block.getX() - 0.3 || playerX > block.getX() + 1.3)	return false;
-		if (playerZ < block.getZ() - 0.3 || playerZ > block.getZ() + 1.3)	return false;
-		if (playerY < block.getY() - 1.8 || playerY > block.getY())			return false;
-		
-		return true;
+		return !(playerX < block.getX() - 0.3 || playerX > block.getX() + 1.3)
+				&& !(playerZ < block.getZ() - 0.3 || playerZ > block.getZ() + 1.3)
+				&& !(playerY < block.getY() - 1.8 || playerY > block.getY());
 	}
 	
 	private void registerPlayer(Player p) {
@@ -291,16 +290,14 @@ public class InventoryHandler implements Listener {
 		playerInventories.put(p.getName(), gInv);
 	}
 	
+	private void addItemAtEndOfTick(Player player, ItemStack item, GrandItem grandItem) {
+		Bukkit.getScheduler().runTask(PraedaGrandis.plugin, () -> addItem(player, item, grandItem));
+	}
+	
 	private void addItem(Player player, ItemStack item, GrandItem grandItem) {
 		GrandInventory gInv = playerInventories.get(player.getName());
 		ItemSlotType slot = ItemSlotType.find(player, item);
 		gInv.putItem(item, grandItem, slot);
 	}
-	
-	/*private void resetInventoryNextTick(final Player p) {
-		new BukkitRunnable() { @Override public void run() {
-			playerInventories.get(p.getName()).resetToPlayer();
-		}}.runTaskLater(PraedaGrandis.plugin, 1L);
-	}*/
 	
 }
