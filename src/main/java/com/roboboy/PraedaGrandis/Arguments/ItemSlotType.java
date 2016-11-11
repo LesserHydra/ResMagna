@@ -1,21 +1,20 @@
 package com.roboboy.PraedaGrandis.Arguments;
 
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
+import org.apache.commons.lang3.ArrayUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import com.roboboy.PraedaGrandis.Logging.GrandLogger;
-import com.roboboy.PraedaGrandis.Logging.LogType;
-
-public enum ItemSlotType
-{
+public enum ItemSlotType {
+	
 /*	Type		Parent			Explanation								*/
 /*----------------------------------------------------------------------*/
 	NONE		(null) {		//Nowhere

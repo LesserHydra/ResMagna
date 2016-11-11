@@ -1,11 +1,9 @@
 package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
-import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
-import com.roboboy.PraedaGrandis.Targeters.Target;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -82,16 +80,15 @@ public class GrandInventory {
 			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
 				GrandLogger.log("Debug item moved from: " + oldElement.slotType, LogType.DEBUG);
 			}*/
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
+			grandItem.sendReEquip(holderPlayer, oldElement.slotType, slotType);
 		}
-		
 		//Send equip activator
-		if (oldElement == null || oldElement.slotType != slotType) {
+		else if (oldElement == null) {
 			/*//DEBUG
 			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
 				GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
 			}*/
-			grandItem.activateAbilities(ActivatorType.EQUIP, slotType, Target.makeEmpty(holderPlayer));
+			grandItem.sendEquip(holderPlayer, slotType);
 		}
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
@@ -120,7 +117,7 @@ public class GrandInventory {
 			}*/
 			
 			//Send unequip activator
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
+			oldElement.grandItem.sendUnEquip(holderPlayer, oldElement.slotType);
 			
 			Map<UUID, InventoryElement> items = grandItemMap.get(oldElement.grandItem.getName());
 			oldElement = items.remove(oldElement.id);

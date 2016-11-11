@@ -25,16 +25,12 @@ public class ActivatorLine {
 		targeter.getTargets(target).forEach(ability::run);
 	}
 	
-	public final ActivatorType getType() {
-		return activator;
-	}
+	public final ActivatorType getType() { return activator; }
 	
-	public final void setTimerDelay(long timerDelay) {
-		this.timerDelay = timerDelay;
-	}
+	public final ItemSlotType getRequestedSlot() { return slotType; }
 	
-	public final long getTimerDelay() {
-		return timerDelay;
-	}
+	final void setTimerDelay(long timerDelay) { this.timerDelay = timerDelay; }
+	
+	public final long getTimerDelay() { return timerDelay; }
 	
 }

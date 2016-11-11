@@ -26,8 +26,8 @@ import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
 import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 
-public class GrandItem
-{
+public class GrandItem {
+	
 	private final String name;
 	
 	private String displayName;
@@ -58,8 +58,8 @@ public class GrandItem
 	
 	private List<AbilityTimer> timers = new ArrayList<>();
 	
-	public GrandItem(ConfigurationSection itemConfig)
-	{
+	//TODO: Make factory function
+	GrandItem(ConfigurationSection itemConfig) {
 		this.name = itemConfig.getName();
 		
 		displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
@@ -76,8 +76,7 @@ public class GrandItem
 		}
 		
 		//Enchantments
-		for (String s : itemConfig.getStringList("enchantments"))
-		{
+		for (String s : itemConfig.getStringList("enchantments")) {
 			String[] eStrings = s.split(" ");
 					
 			if (eStrings.length == 2) {
@@ -112,8 +111,7 @@ public class GrandItem
 		updateEnchantments = itemConfig.getBoolean("options.fixEnchantments", false);
 		
 		//Abilities
-		for (String abilityString : itemConfig.getStringList("abilities"))
-		{
+		for (String abilityString : itemConfig.getStringList("abilities")) {
 			ActivatorLine a = ActivatorFactory.build(abilityString);
 			if (a == null) continue;
 			
@@ -126,8 +124,7 @@ public class GrandItem
 		}
 	}
 
-	public ItemStack create()
-	{
+	public ItemStack create() {
 		ItemStack item = new ItemStack(type, amount, durability);
 		
 		item.addUnsafeEnchantments(enchants);
@@ -162,8 +159,7 @@ public class GrandItem
 		return storage.getTarget();
 	}
 
-	public ItemStack update(ItemStack item)
-	{
+	public ItemStack update(ItemStack item) {
 		item.setType(type);
 		if (updateAmount) item.setAmount(amount);
 		if (updateDurability) item.setDurability(durability);
@@ -202,22 +198,44 @@ public class GrandItem
 	}
 	
 	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
-		for (ActivatorLine a : abilities) {
-			if (!activatorType.isSubtypeOf(a.getType())) continue;
-			a.activate(slotType, target);
-		}
+		abilities.stream()
+				.filter(a -> activatorType.isSubtypeOf(a.getType()))
+				.forEach(a -> a.activate(slotType, target));
 	}
 	
 	public void activateTimers(Player holder) {
-		for (AbilityTimer at : timers) {
-			at.activatePlayer(holder);
+		timers.forEach(timer -> timer.activatePlayer(holder));
+	}
+	
+	public void sendEquip(Player holder, ItemSlotType equipTo) {
+		activateAbilities(ActivatorType.EQUIP, equipTo, Target.makeEmpty(holder));
+	}
+	
+	public void sendUnEquip(Player holder, ItemSlotType unEquipFrom) {
+		activateAbilities(ActivatorType.UNEQUIP, unEquipFrom, Target.makeEmpty(holder));
+	}
+	
+	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
+		for (ActivatorLine line : abilities) {
+			ItemSlotType request = line.getRequestedSlot();
+			
+			//Equip
+			if (line.getType() == ActivatorType.EQUIP
+					&& equipTo.isSubtypeOf(request) && !unEquipFrom.isSubtypeOf(request)) {
+				line.activate(request, Target.makeEmpty(holder));
+			}
+			//Unequip
+			else if (line.getType() == ActivatorType.UNEQUIP
+					&& unEquipFrom.isSubtypeOf(request) && !equipTo.isSubtypeOf(request)) {
+				line.activate(request, Target.makeEmpty(holder));
+			}
 		}
 	}
 	
 	/**
 	 * Cancels all running ability timers
 	 */
-	public void stopTimers() {
+	void stopTimers() {
 		for (AbilityTimer at : timers) {
 			at.stopTimer();
 		}
