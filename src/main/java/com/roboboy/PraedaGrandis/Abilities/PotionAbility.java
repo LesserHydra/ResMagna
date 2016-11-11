@@ -16,14 +16,14 @@ class PotionAbility implements Ability.ForEntity {
 	
 	PotionAbility(ArgumentBlock args) {
 		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
-		type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"potiontype", "potion", "type", "name", "t", null));
+		this.type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"PotionType", "Potion", "Type", "Name", "T", null));
 		
-		duration = args.getInteger(false, 600,		"duration", "ticks", "d");
-		amplifier = args.getInteger(false, 0,		"amplifier", "level", "amp", "a");
-		ambient = args.getBoolean(false, true,		"isambient", "ambient", "amb");
-		particles = args.getBoolean(false, true,	"showparticles", "particles", "part");
+		this.duration = args.getInteger(false, 600,		"Duration", "Ticks", "D");
+		this.amplifier = args.getInteger(false, 0,		"Amplifier", "Level", "Amp", "A");
+		this.ambient = args.getBoolean(false, true,		"IsAmbient", "Ambient", "Amb");
+		this.particles = args.getBoolean(false, true,	"ShowParticles", "Particles", "Part");
 		
-		force = args.getBoolean(false, true,		"removeconflicting", "force");
+		this.force = args.getBoolean(false, true,		"RemoveConflicting", "Force");
 	}
 	
 	@Override

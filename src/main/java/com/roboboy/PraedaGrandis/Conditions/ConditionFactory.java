@@ -126,6 +126,7 @@ public class ConditionFactory {
 		case "isvariable":		return new IsVariable(varArgsString);
 		case "ishealth":		return new IsHealth(varArgsString);
 		case "ishunger":		return new IsHunger(varArgsString);
+		case "issaturation":	return new IsSaturation(varArgsString);
 		case "isexp":			return new IsExp(varArgsString);
 		case "islevel":			return new IsLevel(varArgsString);
 		
