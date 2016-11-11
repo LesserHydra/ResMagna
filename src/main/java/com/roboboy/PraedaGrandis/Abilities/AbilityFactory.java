@@ -54,6 +54,7 @@ public class AbilityFactory {
 		case "eject":			return Abilities.EJECT;
 		
 		//Nontrivial abilities
+		case "say":             return new SayAbility(abilityArgs);
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
 		case "heal":			return new HealAbility(abilityArgs);
 		case "damage":			return new DamageAbility(abilityArgs);

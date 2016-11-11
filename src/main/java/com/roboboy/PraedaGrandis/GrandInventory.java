@@ -2,26 +2,24 @@ package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
-import com.roboboy.PraedaGrandis.Targeters.Target;
-import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-public class GrandInventory
-{
+public class GrandInventory {
+	
 	/**
 	 * Represents an item in inventory along with its pre-determined GrandItem and the ItemSlotType it exists in.<br>
 	 */
-	public class InventoryElement
-	{
+	public class InventoryElement {
 		public final ItemStack item;
 		public final UUID id;
 		public final GrandItem grandItem;
@@ -39,11 +37,9 @@ public class GrandInventory
 	private final Map<UUID, InventoryElement> itemMap = new HashMap<>();
 	private final Map<String, Map<UUID, InventoryElement>> grandItemMap = new HashMap<>();
 	
-	public GrandInventory(Player holderPlayer) {
-		this.holderPlayer = holderPlayer;
-	}
+	GrandInventory(Player holderPlayer) { this.holderPlayer = holderPlayer; }
 	
-	public void resetToPlayer() {
+	void resetToPlayer() {
 		//Clear maps
 		itemMap.clear();
 		grandItemMap.clear();
@@ -65,7 +61,13 @@ public class GrandInventory
 	 * @param grandItem Represented GrandItem
 	 * @param slotType Most unique SlotType to add to
 	 */
-	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+	void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+		//Redirect to remove if slot type is none
+		if (slotType == ItemSlotType.NONE) {
+			removeItem(item);
+			return;
+		}
+		
 		//Construct new element
 		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
 		
@@ -73,12 +75,21 @@ public class GrandInventory
 		InventoryElement oldElement = itemMap.put(element.id, element);
 		
 		//Send unequip activator
-		if (oldElement != null) {
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
+		if (oldElement != null && oldElement.slotType != slotType) {
+			/*//DEBUG
+			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item moved from: " + oldElement.slotType, LogType.DEBUG);
+			}*/
+			grandItem.sendReEquip(holderPlayer, oldElement.slotType, slotType);
 		}
-		
 		//Send equip activator
-		grandItem.activateAbilities(ActivatorType.EQUIP, slotType, Target.makeEmpty(holderPlayer));
+		else if (oldElement == null) {
+			/*//DEBUG
+			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
+			}*/
+			grandItem.sendEquip(holderPlayer, slotType);
+		}
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
 		Map<UUID, InventoryElement> items = grandItemMap.get(element.grandItem.getName());
@@ -95,13 +106,18 @@ public class GrandInventory
 	 * The item must represent a valid grand item, and contain a UUID in the metadata.
 	 * @param item Item to remove
 	 */
-	public void removeItem(ItemStack item) {
+	void removeItem(ItemStack item) {
 		//Get and remove element from the itemMap
 		InventoryElement oldElement = itemMap.remove(getItemUUID(item));
 		
 		if (oldElement != null) {
+			//DEBUG
+			/*if (oldElement.grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item removed from: " + oldElement.slotType, LogType.DEBUG);
+			}*/
+			
 			//Send unequip activator
-			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
+			oldElement.grandItem.sendUnEquip(holderPlayer, oldElement.slotType);
 			
 			Map<UUID, InventoryElement> items = grandItemMap.get(oldElement.grandItem.getName());
 			oldElement = items.remove(oldElement.id);
@@ -118,7 +134,7 @@ public class GrandInventory
 	
 	public List<InventoryElement> getItems(String grandItemName) {
 		Map<UUID, InventoryElement> items = grandItemMap.get(grandItemName);
-		if (items == null) return Arrays.asList();
+		if (items == null) return Collections.emptyList();
 		return new ArrayList<>(items.values());
 	}
 	
