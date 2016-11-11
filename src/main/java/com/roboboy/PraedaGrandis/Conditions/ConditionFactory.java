@@ -50,6 +50,9 @@ public class ConditionFactory {
 			return null;
 		}
 		
+		//Log unused arguments
+		conditionArgs.logExtra();
+		
 		//Return result, negated if appropriate
 		return (not ? c.negate() : c);
 	}

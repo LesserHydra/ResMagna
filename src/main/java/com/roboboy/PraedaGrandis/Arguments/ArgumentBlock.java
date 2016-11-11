@@ -43,6 +43,14 @@ public class ArgumentBlock {
 		if (argumentMap.isEmpty()) argumentMap.put(null, argumentString);
 	}
 	
+	public void logExtra() {
+		if (argumentMap.isEmpty()) return;
+		GrandLogger.log("Unused arguments: ", LogType.CONFIG_ERRORS);
+		GrandLogger.log("  " + lineString, LogType.CONFIG_ERRORS);
+		argumentMap.entrySet()
+				.forEach(e -> GrandLogger.log("  " + e.getKey() + " : " + e.getValue(), LogType.CONFIG_ERRORS));
+	}
+	
 	/**
 	 * Gets the string associated with the given key.<br>
 	 * Logs an error if required and none found.

@@ -44,8 +44,12 @@ public class AbilityFactory {
 		String variableArgs = lineMatcher.group(3);
 		
 		//Construct ability by name
-		return constructAbility(abilityName, abilityArgs, variableArgs);
-		//if (timerDelay > 0) a.setTimerDelay(timerDelay);
+		Functor result = constructAbility(abilityName, abilityArgs, variableArgs);
+		
+		//Log unused arguments
+		abilityArgs.logExtra();
+		
+		return result;
 	}
 	
 	private static Functor constructAbility(String name, ArgumentBlock abilityArgs, String variableArgs) {

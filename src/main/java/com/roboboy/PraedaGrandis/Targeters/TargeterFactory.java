@@ -39,8 +39,11 @@ public class TargeterFactory {
 		//Construct targeter by name
 		Targeter result = constructTargeter(targeterName, targeterArgs);
 		if (result == null) {
-			GrandLogger.log("Invalid condition name: " + targeterName, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid targeter name: " + targeterName, LogType.CONFIG_ERRORS);
 		}
+		//Log unused arguments
+		else targeterArgs.logExtra();
+		
 		return result;
 	}
 	
