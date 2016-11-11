@@ -208,11 +208,11 @@ public class GrandItem {
 	}
 	
 	public void sendEquip(Player holder, ItemSlotType equipTo) {
-		activateAbilities(ActivatorType.EQUIP, equipTo, Target.makeEmpty(holder));
+		activateAbilities(ActivatorType.EQUIP, equipTo, Target.make(holder, Target.from(holder), Target.none()));
 	}
 	
 	public void sendUnEquip(Player holder, ItemSlotType unEquipFrom) {
-		activateAbilities(ActivatorType.UNEQUIP, unEquipFrom, Target.makeEmpty(holder));
+		activateAbilities(ActivatorType.UNEQUIP, unEquipFrom, Target.make(holder, Target.from(holder), Target.none()));
 	}
 	
 	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
@@ -222,12 +222,12 @@ public class GrandItem {
 			//Equip
 			if (line.getType() == ActivatorType.EQUIP
 					&& equipTo.isSubtypeOf(request) && !unEquipFrom.isSubtypeOf(request)) {
-				line.activate(request, Target.makeEmpty(holder));
+				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
 			}
 			//Unequip
 			else if (line.getType() == ActivatorType.UNEQUIP
 					&& unEquipFrom.isSubtypeOf(request) && !equipTo.isSubtypeOf(request)) {
-				line.activate(request, Target.makeEmpty(holder));
+				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
 			}
 		}
 	}
