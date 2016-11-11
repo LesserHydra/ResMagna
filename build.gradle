@@ -8,7 +8,7 @@ import org.ajoberstar.grgit.*
 import org.apache.tools.ant.filters.ReplaceTokens
 
 version = generateVersion('0.2')
-String pluginMain = 'com.roboboy.PraedaGrandis.PraedaGrandis'
+String pluginMain = 'com.lesserhydra.praedagrandis.PraedaGrandis'
 
 repositories {
 	mavenLocal()
@@ -34,8 +34,8 @@ processResources {
 	])
 }
 
-String generateVersion(workingVersion) {
-	Grgit repo = Grgit.open(project.file('.'))
+static String generateVersion(workingVersion) {
+	Grgit repo = Grgit.open()
 	Tag currentTag = repo.tag.list().find {it.commit == repo.head()}
 
 	if (currentTag == null) return workingVersion + '-SNAPSHOT'
