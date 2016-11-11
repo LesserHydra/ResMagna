@@ -1,18 +1,21 @@
 package com.roboboy.PraedaGrandis.Abilities;
 
 import com.roboboy.PraedaGrandis.Arguments.ArgumentBlock;
+import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
 import com.roboboy.PraedaGrandis.Function.Functor;
+import com.roboboy.PraedaGrandis.PraedaGrandis;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Targeters.Targeter;
 import com.roboboy.PraedaGrandis.Targeters.Targeters;
-import com.roboboy.PraedaGrandis.Arguments.GrandLocation;
-import com.roboboy.PraedaGrandis.PraedaGrandis;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 class BeamAbility implements Ability {
 	
@@ -40,6 +43,8 @@ class BeamAbility implements Ability {
 	private final Targeter homingTargeter;
 	private final double homingForce;
 	
+	private final Targeter ignoreTargeter;
+	
 	BeamAbility(ArgumentBlock args) {
 		speed = args.getDouble(true, 0D,			"speed", "spd", "s");
 		numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
@@ -63,6 +68,8 @@ class BeamAbility implements Ability {
 		homingTargeter = args.getTargeter(false, Targeters.NONE,			"homingtarget", "hometarget", "htarget");
 		homingForce = args.getDouble(homingTargeter != Targeters.NONE, 0D,	"homingforce", "homeforce", "hforce");
 		
+		ignoreTargeter = args.getTargeter(false, Targeters.ACTIVATOR,			"ignore");
+		
 		Functor onHit = args.getFunction(false, Functor.NONE,	"onhit", "hit");
 		onHitBlock = args.getFunction(false, onHit,				"onhitblock", "hitblock", "hitb");
 		onHitEntity = args.getFunction(false, onHit,			"onhitentity", "hitentity", "hite");
@@ -80,7 +87,6 @@ class BeamAbility implements Ability {
 	}
 	
 	private class BeamTimer extends BukkitRunnable {
-		private final LivingEntity shooter;
 		private final Target homing;
 		
 		private Location currentLocation;
@@ -90,15 +96,11 @@ class BeamAbility implements Ability {
 		private double totalTicks = 0;
 		
 		BeamTimer(Target target, Target homingTarget) {
-			shooter = target.asEntity();
 			homing = homingTarget;
 			Location startLocation = originLocation.calculate(target);
 			currentVelocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
 			
 			currentLocation = startLocation;
-			//Target.make(startLocation, target.getHolder(), target.getCurrent());
-			//Target.make(Target.from(startLocation), target.getHolder(), target.current());
-			//target.swap().target(startLocation);
 			beamTarget = target.set(Target.from(startLocation), target.current());
 		}
 		
@@ -160,10 +162,15 @@ class BeamAbility implements Ability {
 		}
 		
 		private boolean hitEntity() {
+			Set<LivingEntity> toIgnore = ignoreTargeter.getTargets(beamTarget).stream()
+					.filter(Target::isEntity)
+					.map(Target::asEntity)
+					.collect(Collectors.toSet());
+			
 			boolean hit = false;
 			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {
-				if (entity.equals(shooter)) continue;
 				if (!(entity instanceof LivingEntity)) continue;
+				if (toIgnore.contains(entity)) continue;
 				onHitEntity.run(beamTarget.target(Target.from((LivingEntity) entity)));
 				hit = true;
 			}
