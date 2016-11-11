@@ -2,12 +2,15 @@ package com.roboboy.PraedaGrandis;
 
 import com.comphenix.attribute.NBTStorage;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
+import com.roboboy.PraedaGrandis.Logging.GrandLogger;
+import com.roboboy.PraedaGrandis.Logging.LogType;
 import com.roboboy.PraedaGrandis.Targeters.Target;
 import com.roboboy.PraedaGrandis.Activator.ActivatorType;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +68,18 @@ public class GrandInventory
 	 * @param grandItem Represented GrandItem
 	 * @param slotType Most unique SlotType to add to
 	 */
-	public void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+	void putItem(ItemStack item, GrandItem grandItem, ItemSlotType slotType) {
+		//Redirect to remove if slot type is none
+		if (slotType == ItemSlotType.NONE) {
+			removeItem(item);
+			return;
+		}
+		
+		//DEBUG
+		if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
+			GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
+		}
+		
 		//Construct new element
 		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
 		
@@ -74,6 +88,10 @@ public class GrandInventory
 		
 		//Send unequip activator
 		if (oldElement != null) {
+			//DEBUG
+			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("  Previous: " + oldElement.slotType, LogType.DEBUG);
+			}
 			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
 		}
 		
@@ -95,11 +113,16 @@ public class GrandInventory
 	 * The item must represent a valid grand item, and contain a UUID in the metadata.
 	 * @param item Item to remove
 	 */
-	public void removeItem(ItemStack item) {
+	void removeItem(ItemStack item) {
 		//Get and remove element from the itemMap
 		InventoryElement oldElement = itemMap.remove(getItemUUID(item));
 		
 		if (oldElement != null) {
+			//DEBUG
+			if (oldElement.grandItem.getName().equalsIgnoreCase("InvDebug")) {
+				GrandLogger.log("Debug item removed from " + oldElement.slotType, LogType.DEBUG);
+			}
+			
 			//Send unequip activator
 			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType, Target.makeEmpty(holderPlayer));
 			
@@ -118,7 +141,7 @@ public class GrandInventory
 	
 	public List<InventoryElement> getItems(String grandItemName) {
 		Map<UUID, InventoryElement> items = grandItemMap.get(grandItemName);
-		if (items == null) return Arrays.asList();
+		if (items == null) return Collections.emptyList();
 		return new ArrayList<>(items.values());
 	}
 	

@@ -171,16 +171,20 @@ public enum ItemSlotType
 		parent.registerSubtype(subtype);
 	}
 	
-	public static ItemSlotType getSlotType(SlotType slotType, int slotNumber, int heldSlotNumber) {
+	public static ItemSlotType find(Player player, ItemStack item) {
+		return fromTotalIndex(getIndex(player, item), player.getInventory().getHeldItemSlot());
+	}
+	
+	/*public static ItemSlotType getSlotType(SlotType slotType, int slotNumber, int heldSlotNumber) {
 		switch (slotType) {
 		case CONTAINER:		return STORED;
 		case ARMOR:			return getArmorSlotType(slotNumber);
 		case QUICKBAR:		return getHotbarSlotType(slotNumber, heldSlotNumber);
 		default:			return NONE;
 		}
-	}
+	}*/
 	
-	private static ItemSlotType getArmorSlotType(int i) {
+	/*private static ItemSlotType getArmorSlotType(int i) {
 		switch (i) {
 		case 39: 	return HELMET;
 		case 38:	return CHESTPLATE;
@@ -190,16 +194,14 @@ public enum ItemSlotType
 		//Should be impossible, unless inventory structure changes (aka Minecraft 1.9)
 		default: throw new IllegalArgumentException("Invalid armor slot (36-39): " + i);
 		}
-	}
+	}*/
 	
-	public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
+	/*public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
 		if (slotNumber == heldSlotNumber) return ItemSlotType.HELD;
 		return ItemSlotType.UNHELD;
-	}
+	}*/
 	
-	public static Set<ItemSlotType> getUniqueTypes() {
-		return unique;
-	}
+	public static Set<ItemSlotType> getUniqueTypes() { return unique; }
 	
 	/**
 	 * Find ItemSlotType by name
@@ -215,6 +217,32 @@ public enum ItemSlotType
 		
 		//Invalid name
 		GrandLogger.log("Invalid slot type: " + typeName, LogType.CONFIG_ERRORS);
+		return NONE;
+	}
+	
+	private static int getIndex(Player player, ItemStack item) {
+		ItemStack[] contents = player.getInventory().getContents();
+		for (int i = 0; i < contents.length; ++i) {
+			if (item.isSimilar(contents[i])) return i;
+		}
+		return -1;
+	}
+	
+	private static ItemSlotType fromTotalIndex(int i, int heldSlot) {
+		//Negative values represent unfound
+		if (i < 0) return NONE;
+		//0-8 Hotbar
+		if (i < 9) return (i == heldSlot ? HELDMAIN : UNHELD);
+		//9-35 Stored
+		if (i < 36) return STORED;
+		//36-39 Armor
+		if (i == 36) return BOOTS;
+		if (i == 37) return LEGGINGS;
+		if (i == 38) return CHESTPLATE;
+		if (i == 39) return HELMET;
+		//40 Offhand
+		if (i == 40) return HELDOFF;
+		//TODO:Should throw?
 		return NONE;
 	}
 	

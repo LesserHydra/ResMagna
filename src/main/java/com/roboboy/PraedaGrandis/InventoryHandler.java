@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.roboboy.PraedaGrandis.Arguments.ArmorType;
 import com.roboboy.PraedaGrandis.Arguments.ItemSlotType;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -99,10 +100,9 @@ public class InventoryHandler implements Listener {
 	public void onItemPickup(PlayerPickupItemEvent e) {
 		ItemStack item = e.getItem().getItemStack();
 		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
-		if (grandItem == null) return;
 		
-		//TODO: Figure out where the item will added to
-		resetInventoryNextTick(e.getPlayer());
+		Player player = e.getPlayer();
+		if (grandItem != null) Bukkit.getScheduler().runTask(PraedaGrandis.plugin, () -> addItem(player, item, grandItem));
 	}
 	
 	//Player drops an item
@@ -123,31 +123,27 @@ public class InventoryHandler implements Listener {
 		if (!(e.getWhoClicked() instanceof Player)) return;
 		Player player = (Player)e.getWhoClicked();
 		
-		ItemStack cursorItem = e.getOldCursor();
-		GrandItem grandCursorItem = ItemHandler.getInstance().matchItem(cursorItem);
-		if (grandCursorItem == null) return;
-		
-		//TODO: Figure out where the item will added to
-		resetInventoryNextTick(player);
+		ItemStack item = e.getOldCursor();
+		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
+		if (grandItem != null) Bukkit.getScheduler().runTask(PraedaGrandis.plugin, () -> addItem(player, item, grandItem));
 	}
 	
 	//Player "clicks" with inventory open
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onInventoryClick(InventoryClickEvent e)
-	{
+	public void onInventoryClick(InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player)) return;
 		Player p = (Player)e.getWhoClicked();
 		
-		if (e instanceof InventoryCreativeEvent) {
+		/*if (e instanceof InventoryCreativeEvent) {
 			resetInventoryNextTick(p);
 			return;
-		}
+		}*/
 		
 		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK || e.getAction() == InventoryAction.UNKNOWN) return;
 		
 		//FIXME: Fix for 1.9
 		//FIXME: Offhand slot seems to be slot=9,raw=45,inv=player
-		resetInventoryNextTick(p);
+		//resetInventoryNextTick(p);
 		
 		/*PlayerInventory inv = p.getInventory();
 		GrandInventory gInv = playerInventories.get(p.getName());
@@ -295,10 +291,16 @@ public class InventoryHandler implements Listener {
 		playerInventories.put(p.getName(), gInv);
 	}
 	
-	private void resetInventoryNextTick(final Player p) {
+	private void addItem(Player player, ItemStack item, GrandItem grandItem) {
+		GrandInventory gInv = playerInventories.get(player.getName());
+		ItemSlotType slot = ItemSlotType.find(player, item);
+		gInv.putItem(item, grandItem, slot);
+	}
+	
+	/*private void resetInventoryNextTick(final Player p) {
 		new BukkitRunnable() { @Override public void run() {
 			playerInventories.get(p.getName()).resetToPlayer();
 		}}.runTaskLater(PraedaGrandis.plugin, 1L);
-	}
+	}*/
 	
 }
