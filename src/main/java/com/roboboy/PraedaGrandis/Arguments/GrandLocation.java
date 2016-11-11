@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,8 @@ public class GrandLocation {
 	static private final Pattern formatPattern = Pattern.compile("(?:(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)\\s*)?(?:\\|\\s*)?([^<>\\|\\n]+)?(?:\\s*\\|\\s*)?(?:<([*\\w]+)>)?");
 	//([~a-zA-Z]+=?)([+-]?[\d\.]+)?
 	static private final Pattern componentPattern = Pattern.compile("([~a-zA-Z]+=?)([+-]?[\\d\\.]+)?");
+	
+	private static final Random random = new Random();
 	
 	private final Targeter locationTargeter;
 	private final List<Pair<ComponentType, Double>> componentList;
@@ -126,31 +129,38 @@ public class GrandLocation {
 			@Override public void modify(Location location, double amount) {
 				location.setX(amount);
 		}},
+		
 		Y_ABSOLUTE			("Y=") {
 			@Override public void modify(Location location, double amount) {
 				location.setY(amount);
 		}},
+		
 		Z_ABSOLUTE			("Z=") {
 			@Override public void modify(Location location, double amount) {
 				location.setZ(amount);
 		}},
+		
 		X_RELATIVE			("X") {
 			@Override public void modify(Location location, double amount) {
 				location.add(amount, 0D, 0D);
 		}},
+		
 		Y_RELATIVE			("Y") {
 			@Override public void modify(Location location, double amount) {
 				location.add(0D, amount, 0D);
 		}},
+		
 		Z_RELATIVE			("Z") {
 			@Override public void modify(Location location, double amount) {
 				location.add(0D, 0D, amount);
 		}},
+		
 		FACING				("F") {
 			@Override public void modify(Location location, double amount) {
 				Vector forward = location.getDirection();
 				location.add(forward.multiply(amount));
 		}},
+		
 		FACING_UP			("U") {
 			@Override public void modify(Location location, double amount) {
 				Vector forward = location.getDirection();
@@ -159,6 +169,7 @@ public class GrandLocation {
 				up.normalize();
 				location.add(up.multiply(amount));
 		}},
+		
 		FACING_RIGHT		("R") {
 			@Override public void modify(Location location, double amount) {
 				Vector forward = location.getDirection();
@@ -166,18 +177,34 @@ public class GrandLocation {
 				right.normalize().multiply(amount);
 				location.add(right.multiply(amount));
 		}},
+		
 		FACING_HORIZONTAL	("FH") {
 			@Override public void modify(Location location, double amount) {
 				Vector hForward = location.getDirection().setY(0);
 				hForward.normalize();
 				location.add(hForward.multiply(amount));
+		}},
+		
+		SPREAD   ("S") {
+			@Override public void modify(Location location, double amount) {
+				location.add((2*random.nextDouble() - 1) * amount, (2*random.nextDouble() - 1) * amount,
+						(2*random.nextDouble() - 1) * amount);
+		}},
+		
+		SPREAD_HORIZONTAL   ("SH") {
+			@Override public void modify(Location location, double amount) {
+				location.add((2*random.nextDouble() - 1) * amount, 0, (2*random.nextDouble() - 1) * amount);
+		}},
+		
+		SPREAD_VERTICAL   ("SV") {
+			@Override public void modify(Location location, double amount) {
+				location.add(0, (2*random.nextDouble() - 1) * amount, 0);
 		}};
+		
 		
 		private final String identifier;
 		
-		ComponentType(String identifier) {
-			this.identifier = identifier;
-		}
+		ComponentType(String identifier) { this.identifier = identifier; }
 		
 		abstract void modify(Location location, double amount);
 		
