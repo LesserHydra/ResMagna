@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -58,6 +59,12 @@ public class InventoryHandler implements Listener {
 	//Player logs in
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent e) { registerPlayer(e.getPlayer()); }
+	
+	//Player respawns
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onRespawn(PlayerRespawnEvent event) {
+		getItemsFromPlayer(event.getPlayer()).resetToPlayer();
+	}
 	
 	//Player changes selected item
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -223,7 +230,7 @@ public class InventoryHandler implements Listener {
 	}
 	
 	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		
@@ -249,7 +256,7 @@ public class InventoryHandler implements Listener {
 	}
 	
 	//Based loosely off of https://github.com/Borlea/ArmorEquipEvent
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onDispenserFire(BlockDispenseEvent e) {
 		ItemStack item = e.getItem();
 		if (item == null) return;
