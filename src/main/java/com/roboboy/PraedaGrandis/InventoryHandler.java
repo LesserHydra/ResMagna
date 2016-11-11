@@ -23,14 +23,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Dispenser;
 import org.bukkit.scheduler.BukkitRunnable;
 import com.roboboy.PraedaGrandis.Configuration.GrandItem;
 import com.roboboy.PraedaGrandis.Configuration.ItemHandler;
 
-public class InventoryHandler implements Listener
-{	
+public class InventoryHandler implements Listener {
+	
 	private static InventoryHandler instance = new InventoryHandler();
 	private InventoryHandler() {}
 	public static InventoryHandler getInstance() {
@@ -45,22 +46,16 @@ public class InventoryHandler implements Listener
 	 * <br>
 	 * <strong>The ItemHandler must be reloaded first.</strong>
 	 */
-	public void reload() {
+	void reload() {
 		playerInventories.clear();
-		for (Player p : PraedaGrandis.plugin.getServer().getOnlinePlayers()) {
-			registerPlayer(p);
-		}
+		PraedaGrandis.plugin.getServer().getOnlinePlayers().forEach(this::registerPlayer);
 	}
 	
-	public GrandInventory getItemsFromPlayer(Player p) {
-		return playerInventories.get(p.getName());
-	}
+	public GrandInventory getItemsFromPlayer(Player p) { return playerInventories.get(p.getName()); }
 	
 	//Player logs in
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerJoin(PlayerJoinEvent e) {
-		registerPlayer(e.getPlayer());
-	}
+	public void onPlayerJoin(PlayerJoinEvent e) { registerPlayer(e.getPlayer()); }
 	
 	//Player changes selected item
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -77,7 +72,25 @@ public class InventoryHandler implements Listener
 		ItemStack newItem = playerItems[e.getNewSlot()];
 		GrandItem newGrandItem = ItemHandler.getInstance().matchItem(newItem);
 		if (newGrandItem != null) {
-			gInv.putItem(newItem, newGrandItem, ItemSlotType.HELD);
+			gInv.putItem(newItem, newGrandItem, ItemSlotType.HELDMAIN);
+		}
+	}
+	
+	//Player swaps main and offhand items
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onSwapHands(PlayerSwapHandItemsEvent event) {
+		GrandInventory gInv = playerInventories.get(event.getPlayer().getName());
+		
+		ItemStack mainHandItem = event.getMainHandItem();
+		GrandItem mainHandGrand = ItemHandler.getInstance().matchItem(mainHandItem);
+		if (mainHandGrand != null) {
+			gInv.putItem(mainHandItem, mainHandGrand, ItemSlotType.HELDMAIN);
+		}
+		
+		ItemStack offHandItem = event.getOffHandItem();
+		GrandItem offHandGrand = ItemHandler.getInstance().matchItem(offHandItem);
+		if (offHandGrand != null) {
+			gInv.putItem(offHandItem, offHandGrand, ItemSlotType.HELDOFF);
 		}
 	}
 	
