@@ -48,7 +48,7 @@ public class Target {
 	 * @param target Location
 	 * @return Target construct
 	 */
-	public static TargetConstruct from(Location target) { return target == null ? NONE : new TargetLocation(target); }
+	public static TargetConstruct from(Location target) { return target == null ? NONE : new TargetLocation(target.clone()); }
 	
 	
 	private static TargetConstruct NONE = new TargetNone();
@@ -236,7 +236,7 @@ public class Target {
 		TargetLocation(Location targetEntity) { this.targetLocation = targetEntity; }
 		
 		@Override
-		public Location getLocation() { return targetLocation; }
+		public Location getLocation() { return targetLocation.clone(); }
 		
 		@Override
 		public LivingEntity getEntity() { return null; }

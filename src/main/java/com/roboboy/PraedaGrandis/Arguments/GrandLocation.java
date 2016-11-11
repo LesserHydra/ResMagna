@@ -46,7 +46,7 @@ public class GrandLocation {
 	public Location calculate(Target mainTarget) {
 		//Get new target from targeter
 		Target newTarget = locationTargeter.getRandomTarget(mainTarget);
-		if (newTarget.asLocation() == null) return null;
+		if (newTarget.isNull()) return null;
 		
 		//Modify according to components
 		Location finalLoc = newTarget.asLocation();
