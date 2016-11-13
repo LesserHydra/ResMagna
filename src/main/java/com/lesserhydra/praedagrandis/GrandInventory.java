@@ -1,6 +1,5 @@
 package com.lesserhydra.praedagrandis;
 
-import com.comphenix.attribute.NBTStorage;
 import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import com.lesserhydra.praedagrandis.configuration.GrandItem;
 import com.lesserhydra.praedagrandis.configuration.ItemHandler;
@@ -69,7 +68,7 @@ public class GrandInventory {
 		}
 		
 		//Construct new element
-		InventoryElement element = new InventoryElement(item, getItemUUID(item), grandItem, slotType);
+		InventoryElement element = new InventoryElement(item, GrandItem.getItemUUID(item), grandItem, slotType);
 		
 		//Put element on the itemMap
 		InventoryElement oldElement = itemMap.put(element.id, element);
@@ -108,7 +107,7 @@ public class GrandInventory {
 	 */
 	void removeItem(ItemStack item) {
 		//Get and remove element from the itemMap
-		InventoryElement oldElement = itemMap.remove(getItemUUID(item));
+		InventoryElement oldElement = itemMap.remove(GrandItem.getItemUUID(item));
 		
 		if (oldElement != null) {
 			//DEBUG
@@ -142,7 +141,4 @@ public class GrandInventory {
 		return grandItemMap.containsKey(grandItemName);
 	}
 	
-	private UUID getItemUUID(ItemStack item) {
-		return UUID.fromString(NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_ID).getString(""));
-	}
 }

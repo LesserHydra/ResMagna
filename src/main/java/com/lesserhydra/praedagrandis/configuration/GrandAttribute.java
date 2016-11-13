@@ -1,32 +1,37 @@
 package com.lesserhydra.praedagrandis.configuration;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import com.comphenix.attribute.Attributes.Attribute;
 import com.comphenix.attribute.Attributes.AttributeType;
 import com.comphenix.attribute.Attributes.Operation;
+import com.comphenix.attribute.Attributes.Slot;
 import com.lesserhydra.praedagrandis.logging.GrandLogger;
 import com.lesserhydra.praedagrandis.logging.LogType;
 import com.lesserhydra.util.StringTools;
+import org.jetbrains.annotations.Nullable;
 
-public class GrandAttribute
-{
-	//(\w+)\s+([+\-*/])\s+([\d\.]+)(%)?
-	static private final Pattern LINE_PATTERN = Pattern.compile("(\\w+)\\s+([+\\-*/])\\s+([\\d\\.]+)(%)?");
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
+
+class GrandAttribute {
 	
-	private final String 		name;
+	//(\w+)\s+([\w.]+)\s*([^\w\s.]+)\s*([\d.]+)\s*(%)?
+	static private final Pattern LINE_PATTERN = Pattern.compile("(\\w+)\\s+([\\w.]+)\\s*([^\\w\\s.]+)\\s*([\\d.]+)\\s*(%)?");
+	
 	private final AttributeType type;
+	private final Slot          slot;
 	private final Operation 	operation;
 	private final double 		operand;
 	
-	private GrandAttribute(String name, AttributeType type, Operation operation, double operand) {
-		this.name = name;
+	private GrandAttribute(AttributeType type, Slot slot, Operation operation, double operand) {
 		this.type = type;
+		this.slot = slot;
 		this.operation = operation;
 		this.operand = operand;
 	}
 	
-	static public GrandAttribute fromString(String attributeLine) {
+	@Nullable
+	static GrandAttribute fromString(String attributeLine) {
 		//Match line
 		Matcher lineMatcher = LINE_PATTERN.matcher(attributeLine);
 		if (!lineMatcher.matches()) {
@@ -35,48 +40,55 @@ public class GrandAttribute
 			return null;
 		}
 		
-		//Name
-		String nameString = lineMatcher.group(1).toLowerCase();
+		//Parse slot
+		String slotString = lineMatcher.group(1);
+		Slot slot = (slotString == null ? Slot.ALL : StringTools.parseEnum(slotString, Slot.class));
+		if (slot == null) {
+			GrandLogger.log("Invalid attribute slot: " + slotString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
+		}
 		
 		//AttributeType
-		AttributeType attributeType = getTypeFromName(nameString);
+		String nameString = lineMatcher.group(2).toLowerCase();
+		AttributeType attributeType = parseType(nameString);
 		if (attributeType == null) {
-			GrandLogger.log("Invalid attribute type: " + nameString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Unknown attribute type: " + nameString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
 		//Operation
-		String operationString = lineMatcher.group(2);
-		boolean isPercentage = "%".equals(lineMatcher.group(4));
-		Operation operationType = getOperation(operationString, isPercentage);
+		String operationString = lineMatcher.group(3);
+		boolean isPercentage = "%".equals(lineMatcher.group(5));
+		Operation operationType = parseOperation(operationString, isPercentage);
 		if (operationType == null) {
-			GrandLogger.log("Invalid attribute operation: " + operationString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid attribute line operator: " + operationString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Valid operators are: '+', '-', '*', and '/'.)", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
 		//Operand
-		String operandString = lineMatcher.group(3);
-		double operandValue = getOperand(operandString, operationString, isPercentage);
+		String operandString = lineMatcher.group(4);
+		if (!StringTools.isFloat(operandString)) {
+			GrandLogger.log("Invalid attribute line operand: " + operandString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Expected floating point value.", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + attributeLine, LogType.CONFIG_ERRORS);
+			return null;
+		}
+		double operandValue = parseOperand(operandString, operationString, isPercentage);
 		
-		return new GrandAttribute(nameString, attributeType, operationType, operandValue);
+		//Result
+		return new GrandAttribute(attributeType, slot, operationType, operandValue);
 	}
 
-	static private AttributeType getTypeFromName(String nameString)
-	{
-		switch (nameString) {
-		case "attackdamage":		return AttributeType.GENERIC_ATTACK_DAMAGE;
-		case "followrange":			return AttributeType.GENERIC_FOLLOW_RANGE;
-		case "knockbackresistance":	return AttributeType.GENERIC_KNOCKBACK_RESISTANCE;
-		case "maxhealth":			return AttributeType.GENERIC_MAX_HEALTH;
-		case "movementspeed":		return AttributeType.GENERIC_MOVEMENT_SPEED;
-		
-		default:					return null;
-		}
+	private static AttributeType parseType(String lookup) {
+		return StreamSupport.stream(AttributeType.values().spliterator(), false)
+				.filter(type -> lookup.equalsIgnoreCase(type.getMinecraftId()))
+				.findAny().orElse(null);
 	}
 	
-	private static Operation getOperation(String operationString, boolean operandIsPercentage) {
+	private static Operation parseOperation(String operationString, boolean operandIsPercentage) {
 		switch (operationString) {
 		case "+": case "-":
 			if (operandIsPercentage) return Operation.ADD_PERCENTAGE;
@@ -87,27 +99,27 @@ public class GrandAttribute
 		}
 	}
 	
-	private static double getOperand(String operandString, String operationString, boolean operandIsPercentage) {
-		if (!StringTools.isFloat(operandString)) {
-			GrandLogger.log("Invalid attribute line operand: " + operandString, LogType.CONFIG_ERRORS);
-			GrandLogger.log("Expected floating point value.", LogType.CONFIG_ERRORS);
-			return 0D;
-		}
-		
+	private static double parseOperand(String operandString, String operationString, boolean operandIsPercentage) {
 		double result = Double.parseDouble(operandString);
-		if (operandIsPercentage) result /= 100D;
+		if (operandIsPercentage) result /= 100;
 		
 		switch (operationString) {
 		case "+": return result;
 		case "-": return -result;
 		case "*": return result - 1;
 		case "/": return (1/result) - 1;
-		
-		default: throw new IllegalStateException();
+		default: throw new IllegalStateException("Invalid operation string");
 		}
 	}
 
 	public Attribute build() {
-		return Attribute.newBuilder().name(name).type(type).operation(operation).amount(operand).build();
+		return Attribute.newBuilder()
+				.name("PraedaGrandis attribute")
+				.type(type)
+				.slot(slot)
+				.operation(operation)
+				.amount(operand)
+				.build();
 	}
+	
 }
