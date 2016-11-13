@@ -17,29 +17,52 @@
 
 package com.comphenix.attribute;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.inventory.ItemStack;
+
 import com.comphenix.attribute.NbtFactory.NbtCompound;
 import com.comphenix.attribute.NbtFactory.NbtList;
-import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
+import org.bukkit.inventory.ItemStack;
 
+@SuppressWarnings("WeakerAccess")
 public class Attributes {
+    
+    public enum Slot {
+        ALL(""),
+        MAIN_HAND("mainhand"),
+        OFF_HAND("offhand"),
+        HEAD("head"),
+        CHEST("chest"),
+        LEGS("legs"),
+        FEET("feet");
+        private final String id;
+        
+        Slot(String id) { this.id = id; }
+        
+        public String getId() { return id; }
+        
+        public static Slot fromId(String id) {
+            for (Slot slot : values()) {
+                if (slot.id.equals(id)) return slot;
+            }
+            throw new IllegalArgumentException("Unknown slot ID \"" + id + "\" detected.");
+        }
+    }
+    
     public enum Operation {
         ADD_NUMBER(0),
         MULTIPLY_PERCENTAGE(1),
         ADD_PERCENTAGE(2);
         private int id;
         
-        private Operation(int id) {
+        Operation(int id) {
             this.id = id;
         }
         
@@ -58,6 +81,7 @@ public class Attributes {
         }
     }
     
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static class AttributeType {
         private static ConcurrentMap<String, AttributeType> LOOKUP = Maps.newConcurrentMap();
         public static final AttributeType GENERIC_MAX_HEALTH = new AttributeType("generic.maxHealth").register();
@@ -65,6 +89,10 @@ public class Attributes {
         public static final AttributeType GENERIC_ATTACK_DAMAGE = new AttributeType("generic.attackDamage").register();
         public static final AttributeType GENERIC_MOVEMENT_SPEED = new AttributeType("generic.movementSpeed").register();
         public static final AttributeType GENERIC_KNOCKBACK_RESISTANCE = new AttributeType("generic.knockbackResistance").register();
+        public static final AttributeType GENERIC_ARMOR = new AttributeType("generic.armor").register();
+        public static final AttributeType GENERIC_ARMOR_TOUGHNESS = new AttributeType("generic.armorToughness").register();
+        public static final AttributeType GENERIC_ATTACK_SPEED = new AttributeType("generic.attackSpeed").register();
+        public static final AttributeType GENERIC_LUCK = new AttributeType("generic.luck").register();
         
         private final String minecraftId;
         
@@ -114,6 +142,7 @@ public class Attributes {
         }
     }
 
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public static class Attribute {
         private NbtCompound data;
 
@@ -121,6 +150,7 @@ public class Attributes {
             data = NbtFactory.createCompound();
             setAmount(builder.amount);
             setOperation(builder.operation);
+            setSlot(builder.slot);
             setAttributeType(builder.type);
             setName(builder.name);
             setUUID(builder.uuid);
@@ -145,6 +175,16 @@ public class Attributes {
         public void setOperation(@Nonnull Operation operation) {
             Preconditions.checkNotNull(operation, "operation cannot be NULL.");
             data.put("Operation", operation.getId());
+        }
+        
+        public Slot getSlot() {
+            return Slot.fromId(data.getString("Slot", null));
+        }
+        
+        public void setSlot(@Nonnull Slot slot) {
+            Preconditions.checkNotNull(slot, "slot cannot be NULL.");
+            if (slot != Slot.ALL) data.put("Slot", slot.getId());
+            else data.remove("Slot");
         }
 
         public AttributeType getAttributeType() {
@@ -187,6 +227,7 @@ public class Attributes {
         public static class Builder {
             private double amount;
             private Operation operation = Operation.ADD_NUMBER;
+            private Slot slot = Slot.ALL;
             private AttributeType type;
             private String name;
             private UUID uuid;
@@ -201,6 +242,10 @@ public class Attributes {
             }
             public Builder operation(Operation operation) {
                 this.operation = operation;
+                return this;
+            }
+            public Builder slot(Slot slot) {
+                this.slot = slot;
                 return this;
             }
             public Builder type(AttributeType type) {
@@ -318,28 +363,17 @@ public class Attributes {
      * @return The attribute at that index.
      */
     public Attribute get(int index) {
-    	if (size() == 0)
-    		throw new IllegalStateException("Attribute list is empty.");
+    	if (size() == 0) throw new IllegalStateException("Attribute list is empty.");
         return new Attribute((NbtCompound) attributes.get(index));
     }
 
     // We can't make Attributes itself iterable without splitting it up into separate classes
     public Iterable<Attribute> values() {
-        return new Iterable<Attribute>() {
-            @Override
-            public Iterator<Attribute> iterator() {
-            	// Handle the empty case
-            	if (size() == 0)
-            		return Collections.<Attribute>emptyList().iterator();
-            	
-                return Iterators.transform(attributes.iterator(), 
-                  new Function<Object, Attribute>() {
-                    @Override
-                    public Attribute apply(@Nullable Object element) {
-                        return new Attribute((NbtCompound) element);
-                    }
-                });
-            }
+        return () -> {
+	        // Handle the empty case
+	        if (size() == 0) return Collections.<Attribute>emptyList().iterator();
+            return Iterators.transform(attributes.iterator(),
+                    element -> new Attribute((NbtCompound) element));
         };
     }
 }
