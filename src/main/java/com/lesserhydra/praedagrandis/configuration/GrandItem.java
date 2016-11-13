@@ -1,13 +1,16 @@
 package com.lesserhydra.praedagrandis.configuration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.comphenix.attribute.Attributes;
+import com.comphenix.attribute.NbtFactory;
+import com.comphenix.attribute.NbtFactory.NbtCompound;
+import com.comphenix.attribute.NbtFactory.NbtList;
+import com.lesserhydra.praedagrandis.AbilityTimer;
+import com.lesserhydra.praedagrandis.PraedaGrandis;
 import com.lesserhydra.praedagrandis.activator.ActivatorFactory;
 import com.lesserhydra.praedagrandis.activator.ActivatorLine;
+import com.lesserhydra.praedagrandis.activator.ActivatorType;
+import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
+import com.lesserhydra.praedagrandis.targeters.Target;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -18,13 +21,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import com.comphenix.attribute.Attributes;
-import com.comphenix.attribute.NBTStorage;
-import com.lesserhydra.praedagrandis.AbilityTimer;
-import com.lesserhydra.praedagrandis.activator.ActivatorType;
-import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
-import com.lesserhydra.praedagrandis.PraedaGrandis;
-import com.lesserhydra.praedagrandis.targeters.Target;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class GrandItem {
 	
@@ -125,12 +129,12 @@ public class GrandItem {
 	}
 
 	public ItemStack create() {
-		ItemStack item = new ItemStack(type, amount, durability);
+		ItemStack result = new ItemStack(type, amount, durability);
 		
-		item.addUnsafeEnchantments(enchants);
+		result.addUnsafeEnchantments(enchants);
 		
 		//Meta data stuff
-		ItemMeta meta = item.getItemMeta();
+		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		meta.spigot().setUnbreakable(unbreakable);
@@ -140,23 +144,19 @@ public class GrandItem {
 		if (leatherColor != null && meta instanceof LeatherArmorMeta) {
 			((LeatherArmorMeta)meta).setColor(leatherColor);
 		}
-		item.setItemMeta(meta);
+		result.setItemMeta(meta);
 		
 		//Attributes
-		Attributes att = new Attributes(item);
-		for (GrandAttribute a: attributes)
+		Attributes att = new Attributes(result);
+		for (GrandAttribute a: attributes) {
 			att.add(a.build());
+		}
+		result = att.getStack();
 		
-		//NBT Name
-		NBTStorage storage = NBTStorage.newTarget(att.getStack(), PraedaGrandis.STORAGE_ITEM_NAME);
-		storage.setData(name);
+		//Set NBT name and id
+		result = markItem(result);
 		
-		//NBT ID
-		UUID newID = UUID.randomUUID();
-		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);
-		storage.setData(newID.toString());
-		
-		return storage.getTarget();
+		return result;
 	}
 
 	public ItemStack update(ItemStack item) {
@@ -273,6 +273,82 @@ public class GrandItem {
 		if (this == obj) return true;
 		if (!(obj instanceof GrandItem)) return false;
 		return name.equals(((GrandItem)obj).name);
+	}
+	
+	@NotNull
+	public ItemStack markItem(@NotNull ItemStack item) {
+		ItemStack result = NbtFactory.getCraftItemStack(item);
+		
+		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
+		NbtCompound storage = nbt.getMap("PraedaGrandis", true);
+		
+		//Set name (Identifies the represented GrandItem)
+		storage.put("Name", name);
+		
+		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
+		UUID newID = UUID.randomUUID();
+		storage.put("UUIDLeast", newID.getLeastSignificantBits());
+		storage.put("UUIDMost", newID.getMostSignificantBits());
+		
+		return result;
+	}
+	
+	/**
+	 * Finds the name of the GrandItem represented by the given item stack.
+	 * @param item Item
+	 * @return Name, or empty string
+	 */
+	@Nullable
+	public static String getItemName(ItemStack item) {
+		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		if (tag == null) return null;
+		
+		NbtCompound storage = tag.getMap("PraedaGrandis", false);
+		if (storage == null) return getLegacyName(tag); //Temp while transitioning
+		
+		return storage.getString("Name", null);
+	}
+	
+	@NotNull
+	public static UUID getItemUUID(ItemStack item) {
+		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
+		
+		NbtCompound storage = tag.getMap("PraedaGrandis", false);
+		if (storage == null) {
+			//Temp while transitioning
+			UUID legacy = getLegacyUUID(tag);
+			if (legacy == null) throw new IllegalStateException("Item does not have the PraedaGrandis compound.");
+			return legacy;
+		}
+		
+		long least = storage.getLong("UUIDLeast", 0L);
+		long most = storage.getLong("UUIDLeast", 0L);
+		return new UUID(most, least);
+	}
+	
+	private static String getLegacyName(NbtCompound tag) {
+		NbtList storage = tag.getList("CustomStorage", false);
+		if (storage == null) return null;
+		
+		return storage.stream()
+				.filter(obj -> obj instanceof NbtCompound)
+				.map(obj -> (NbtCompound) obj)
+				.filter(compound -> "PraedaGrandis.GrandItemName".equals(compound.getString("Name", null)))
+				.map(compound -> compound.getString("Data", null))
+				.findAny().orElse(null);
+	}
+	
+	private static UUID getLegacyUUID(NbtCompound tag) {
+		NbtList storage = tag.getList("CustomStorage", false);
+		if (storage == null) return null;
+		
+		return storage.stream()
+				.filter(obj -> obj instanceof NbtCompound)
+				.map(obj -> (NbtCompound) obj)
+				.filter(compound -> "PraedaGrandis.GrandItemID".equals(compound.getString("Name", null)))
+				.map(compound -> UUID.fromString(compound.getString("Data", "")))
+				.findAny().orElse(null);
 	}
 	
 }

@@ -1,25 +1,25 @@
 package com.lesserhydra.praedagrandis.configuration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.lesserhydra.praedagrandis.logging.GrandLogger;
+import com.lesserhydra.praedagrandis.logging.LogType;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import com.comphenix.attribute.NBTStorage;
-import com.lesserhydra.praedagrandis.PraedaGrandis;
-import com.lesserhydra.praedagrandis.logging.GrandLogger;
-import com.lesserhydra.praedagrandis.logging.LogType;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Loads and stores all GrandItems
  * @author roboboy
  */
-public class ItemHandler extends MultiConfig
-{
+public class ItemHandler extends MultiConfig {
+	
 	private static ItemHandler instance = new ItemHandler();
 	private ItemHandler() {}
 	public static ItemHandler getInstance() {
@@ -74,15 +74,14 @@ public class ItemHandler extends MultiConfig
 		return items.get(itemName.toLowerCase());
 	}
 	
-	public GrandItem matchItem(ItemStack item)
-	{
+	@Nullable
+	public GrandItem matchItem(ItemStack item) {
 		if (item == null || item.getType() == Material.AIR) return null;
-		String id = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME).getString("");
-		return items.get(id.toLowerCase());
+		String name = GrandItem.getItemName(item);
+		return name == null ? null : items.get(name.toLowerCase());
 	}
 
-	public AutoConvertItem matchConvertItem(ItemStack item)
-	{
+	public AutoConvertItem matchConvertItem(ItemStack item) {
 		if (item == null || item.getType() == Material.AIR) return null;
 		for (AutoConvertItem convert : convertItems) {
 			if (convert.match(item)) {
@@ -101,7 +100,8 @@ public class ItemHandler extends MultiConfig
 		return result.substring(0, result.length() - 2);
 	}
 
-	public Set<String> getItemNames() {
+	public Collection<String> getItemNames() {
 		return items.keySet();
 	}
+	
 }

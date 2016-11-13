@@ -1,14 +1,12 @@
 package com.lesserhydra.praedagrandis.configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import com.lesserhydra.praedagrandis.PraedaGrandis;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import com.comphenix.attribute.NBTStorage;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AutoConvertItem {
 	
@@ -46,15 +44,10 @@ public class AutoConvertItem {
 		return matches && !(searchName == null && searchLore.isEmpty());
 	}
 
+	@NotNull
 	public ItemStack convert(ItemStack item) {
-		NBTStorage storage = NBTStorage.newTarget(item, PraedaGrandis.STORAGE_ITEM_NAME);
-		storage.setData(convertItem.getName());
-		
-		UUID newID = UUID.randomUUID();
-		storage = NBTStorage.newTarget(storage.getTarget(), PraedaGrandis.STORAGE_ITEM_ID);
-		storage.setData(newID.toString());
-		
-		return convertItem.update(storage.getTarget());
+		ItemStack result = convertItem.markItem(item);
+		return convertItem.update(result);
 	}
 	
 }

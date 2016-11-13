@@ -59,6 +59,7 @@ import com.google.common.io.Files;
 import com.google.common.primitives.Primitives;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class NbtFactory {   
@@ -154,30 +155,47 @@ public class NbtFactory {
         }
 
         // Simplifying access to each value
+        @Nullable @Contract("_, !null -> !null")
         public Byte getByte(String key, Byte defaultValue) {
             return containsKey(key) ? (Byte)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public Short getShort(String key, Short defaultValue) {
             return containsKey(key) ? (Short)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public Integer getInteger(String key, Integer defaultValue) {
             return containsKey(key) ? (Integer)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public Long getLong(String key, Long defaultValue) {
             return containsKey(key) ? (Long)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public Float getFloat(String key, Float defaultValue) {
             return containsKey(key) ? (Float)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public Double getDouble(String key, Double defaultValue) {
             return containsKey(key) ? (Double)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public String getString(String key, String defaultValue) {
             return containsKey(key) ? (String)get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public byte[] getByteArray(String key, byte[] defaultValue) {
             return containsKey(key) ? (byte[])get(key) : defaultValue;
         }
+        
+        @Nullable @Contract("_, !null -> !null")
         public int[] getIntegerArray(String key, int[] defaultValue) {
             return containsKey(key) ? (int[])get(key) : defaultValue;
         }
@@ -188,11 +206,11 @@ public class NbtFactory {
          * @param createNew - whether or not to create a new list if its missing.
          * @return An existing list, a new list or NULL.
          */
+        @Nullable @Contract("_, true -> !null")
         public NbtList getList(String key, boolean createNew) {
             NbtList list = (NbtList) get(key);
             
-            if (list == null && createNew) 
-                put(key, list = createList());
+            if (list == null && createNew) put(key, list = createList());
             return list;
         }
         
@@ -202,6 +220,7 @@ public class NbtFactory {
          * @param createNew - whether or not to create a new map if its missing.
          * @return An existing map, a new map or NULL.
          */
+        @Nullable @Contract("_, true -> !null")
         public NbtCompound getMap(String key, boolean createNew) {
             return getMap(Collections.singletonList(key), createNew);
         }
@@ -261,7 +280,7 @@ public class NbtFactory {
          * @param createNew - whether or not to create new compounds on the way.
          * @return The map at this location.
          */
-        @Contract("_, true -> !null")
+        @Nullable @Contract("_, true -> !null")
         private NbtCompound getMap(Iterable<String> path, boolean createNew) {
             NbtCompound current = this;
             
@@ -530,10 +549,11 @@ public class NbtFactory {
      * <p>
      * The item stack must be a wrapper for a CraftItemStack.
      * @param stack - the item stack.
-     * @param createIfMissing - create the tag if its missing.
+     * @param createNew - create the tag if its missing.
      * @return A wrapper for its NBT tag, or null if missing.
      */
-    public static NbtCompound fromItemTag(ItemStack stack, boolean createIfMissing) {
+    @Nullable @Contract("_, true -> !null")
+    public static NbtCompound fromItemTag(ItemStack stack, boolean createNew) {
         checkItemStack(stack);
         Object nms = getFieldValue(get().CRAFT_HANDLE, stack);
         Object tag = getFieldValue(get().STACK_TAG, nms);
@@ -541,7 +561,7 @@ public class NbtFactory {
         // Create the tag if it doesn't exist
         if (tag == null) {
             //Keeps from creating nbt tag when not necessary/desired
-            if (!createIfMissing) return null;
+            if (!createNew) return null;
 			NbtCompound compound = createCompound();
 			setItemTag(stack, compound);
 			return compound;
