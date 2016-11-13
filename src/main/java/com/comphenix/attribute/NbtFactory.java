@@ -22,10 +22,10 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -33,6 +33,7 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -49,13 +51,16 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.google.common.io.ByteSink;
+import com.google.common.io.ByteSource;
 import com.google.common.io.Closeables;
+import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
 import com.google.common.primitives.Primitives;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class NbtFactory {   
     // Convert between NBT id and the equivalent class in java
     private static final BiMap<Integer, Class<?>> NBT_CLASS = HashBiMap.create();
@@ -87,7 +92,7 @@ public class NbtFactory {
         // Unique NBT id
         public final int id;
         
-        private NbtType(int id, Class<?> type) {
+        NbtType(int id, Class<?> type) {
             this.id = id;
             NBT_CLASS.put(id, type);
             NBT_ENUM.put(id, this);
@@ -105,7 +110,6 @@ public class NbtFactory {
     
     // The NBT base class
     private Class<?> BASE_CLASS;
-    private Class<?> COMPOUND_CLASS;
     private Class<?> STREAM_TOOLS;
     private Class<?> READ_LIMITER_CLASS;
     private Method NBT_CREATE_TAG;
@@ -143,12 +147,13 @@ public class NbtFactory {
      * </ul>
      * @author Kristian
      */
+    @SuppressWarnings("unused")
     public final class NbtCompound extends ConvertedMap {
         private NbtCompound(Object handle) {
             super(handle, getDataMap(handle));
         }
 
-        // Simplifiying access to each value
+        // Simplifying access to each value
         public Byte getByte(String key, Byte defaultValue) {
             return containsKey(key) ? (Byte)get(key) : defaultValue;
         }
@@ -198,7 +203,7 @@ public class NbtFactory {
          * @return An existing map, a new map or NULL.
          */
         public NbtCompound getMap(String key, boolean createNew) {
-            return getMap(Arrays.asList(key), createNew);
+            return getMap(Collections.singletonList(key), createNew);
         }
         // Done
         
@@ -241,12 +246,12 @@ public class NbtFactory {
         /**
          * Save the content of a NBT compound to a stream.
          * <p>
-         * Use {@link Files#newOutputStreamSupplier(java.io.File)} to provide a stream supplier to a file.
+         * Use {@link Files#asByteSink(File, FileWriteMode...)} to provide a stream supplier to a file.
          * @param stream - the output stream.
          * @param option - whether or not to compress the output.
          * @throws IOException If anything went wrong.
          */
-        public void saveTo(OutputSupplier<? extends OutputStream> stream, StreamOptions option) throws IOException {
+        public void saveTo(ByteSink stream, StreamOptions option) throws IOException {
             saveStream(this, stream, option);
         }
         
@@ -256,6 +261,7 @@ public class NbtFactory {
          * @param createNew - whether or not to create new compounds on the way.
          * @return The map at this location.
          */
+        @Contract("_, true -> !null")
         private NbtCompound getMap(Iterable<String> path, boolean createNew) {
             NbtCompound current = this;
             
@@ -263,8 +269,7 @@ public class NbtFactory {
                 NbtCompound child = (NbtCompound) current.get(entry);
                 
                 if (child == null) {
-                    if (!createNew)
-                        return null;
+                    if (!createNew) return null;
                     current.put(entry, child = createCompound());
                 }
                 current = child;
@@ -286,7 +291,8 @@ public class NbtFactory {
      * Represents a root NBT list.
      * See also:
      * <ul>
-     *   <li>{@link NbtFactory#createNbtList()}</li>
+     *   <li>{@link NbtFactory#createList(Object...)}</li>
+     *   <li>{@link NbtFactory#createList(Iterable)}</li>
      *   <li>{@link NbtFactory#fromList(Object)}</li>
      * </ul>
      * @author Kristian
@@ -301,12 +307,12 @@ public class NbtFactory {
      * Represents an object that provides a view of a native NMS class.
      * @author Kristian
      */
-    public static interface Wrapper {
+    public interface Wrapper {
         /**
          * Retrieve the underlying native NBT tag.
          * @return The underlying NBT.
          */
-        public Object getHandle();
+        Object getHandle();
     }
     
     /**
@@ -333,8 +339,8 @@ public class NbtFactory {
                 Class<?> offlinePlayer = loader.loadClass(packageName + ".CraftOfflinePlayer");
                 
                 // Prepare NBT
-                COMPOUND_CLASS = getMethod(0, Modifier.STATIC, offlinePlayer, "getData").getReturnType();
-                BASE_CLASS = COMPOUND_CLASS.getSuperclass();
+                Class<?> compoundClass = getMethod(0, Modifier.STATIC, offlinePlayer, "getData").getReturnType();
+                BASE_CLASS = compoundClass.getSuperclass();
                 NBT_GET_TYPE = getMethod(0, Modifier.STATIC, BASE_CLASS, "getTypeId");
                 NBT_CREATE_TAG = getMethod(Modifier.STATIC, 0, BASE_CLASS, "createTag", byte.class);
                 
@@ -347,9 +353,7 @@ public class NbtFactory {
                 String nmsPackage = BASE_CLASS.getPackage().getName();
 				initializeNMS(loader, nmsPackage);
 				
-                LOAD_COMPOUND = READ_LIMITER_CLASS != null ? 
-                		new LoadMethodSkinUpdate(STREAM_TOOLS, READ_LIMITER_CLASS) :
-                		new LoadMethodWorldUpdate(STREAM_TOOLS);
+                LOAD_COMPOUND = new LoadCompoundMethod(STREAM_TOOLS, READ_LIMITER_CLASS);
                 SAVE_COMPOUND = getMethod(Modifier.STATIC, 0, STREAM_TOOLS, null, BASE_CLASS, DataOutput.class);
                 
             } catch (ClassNotFoundException e) {
@@ -403,7 +407,7 @@ public class NbtFactory {
      * Construct a new NBT list of an unspecified type.
      * @return The NBT list.
      */
-    public static NbtList createList(Iterable<? extends Object> iterable) {
+    public static NbtList createList(Iterable<?> iterable) {
         NbtList list = get().new NbtList(
             INSTANCE.createNbtTag(NbtType.TAG_LIST, null)
         );
@@ -417,7 +421,6 @@ public class NbtFactory {
     /**
      * Construct a new NBT compound.
      * <p>
-     * Use {@link NbtCompound#asMap()} to modify it.
      * @return The NBT compound.
      */
     public static NbtCompound createCompound() {
@@ -438,19 +441,19 @@ public class NbtFactory {
     /**
      * Load the content of a file from a stream.
      * <p>
-     * Use {@link Files#newInputStreamSupplier(java.io.File)} to provide a stream from a file.
+     * Use {@link Files#asByteSource(java.io.File)} to provide a stream from a file.
      * @param stream - the stream supplier.
      * @param option - whether or not to decompress the input stream.
      * @return The decoded NBT compound.
      * @throws IOException If anything went wrong.
      */
-    public static NbtCompound fromStream(InputSupplier<? extends InputStream> stream, StreamOptions option) throws IOException {
+    public static NbtCompound fromStream(ByteSource stream, StreamOptions option) throws IOException {
         InputStream input = null;
         DataInputStream data = null;
         boolean suppress = true;
         
         try {
-            input = stream.getInput();
+            input = stream.openStream();
             data = new DataInputStream(new BufferedInputStream(
                 option == StreamOptions.GZIP_COMPRESSION ? new GZIPInputStream(input) : input
             ));
@@ -460,29 +463,27 @@ public class NbtFactory {
             return result;
             
         } finally {
-            if (data != null)
-                Closeables.close(data, suppress);
-            else if (input != null)
-                Closeables.close(input, suppress);
+            if (data != null) Closeables.close(data, suppress);
+            else if (input != null) Closeables.close(input, true);
         }
     }
     
     /**
      * Save the content of a NBT compound to a stream.
      * <p>
-     * Use {@link Files#newOutputStreamSupplier(java.io.File)} to provide a stream supplier to a file.
+     * Use {@link Files#asByteSink(File, FileWriteMode...)} to provide a stream supplier to a file.
      * @param source - the NBT compound to save.
      * @param stream - the stream.
      * @param option - whether or not to compress the output.
      * @throws IOException If anything went wrong.
      */
-    public static void saveStream(NbtCompound source, OutputSupplier<? extends OutputStream> stream, StreamOptions option) throws IOException {
+    public static void saveStream(NbtCompound source, ByteSink stream, StreamOptions option) throws IOException {
         OutputStream output = null;
         DataOutputStream data = null;
         boolean suppress = true;
         
         try {
-            output = stream.getOutput();
+            output = stream.openStream();
             data = new DataOutputStream(
                 option == StreamOptions.GZIP_COMPRESSION ? new GZIPOutputStream(output) : output
             );
@@ -491,16 +492,14 @@ public class NbtFactory {
             suppress = false;
             
         } finally {
-            if (data != null)
-                Closeables.close(data, suppress);
-            else if (output != null)
-                Closeables.close(output, suppress);
+            if (data != null) Closeables.close(data, suppress);
+            else if (output != null) Closeables.close(output, true);
         }
     }
     
     /**
      * Construct a new NBT wrapper from a compound.
-     * @param nmsCompound - the NBT compund.
+     * @param nmsCompound - the NBT compound.
      * @return The wrapper.
      */
     public static NbtCompound fromCompound(Object nmsCompound) {
@@ -511,7 +510,7 @@ public class NbtFactory {
      * Set the NBT compound tag of a given item stack.
      * <p>
      * The item stack must be a wrapper for a CraftItemStack. Use 
-     * {@link MinecraftReflection#getBukkitItemStack(ItemStack)} if not.
+     * {@link NbtFactory#getCraftItemStack(ItemStack)} if not.
      * @param stack - the item stack, cannot be air.
      * @param compound - the new NBT compound, or NULL to remove it.
      * @throws IllegalArgumentException If the stack is not a CraftItemStack, or it represents air.
@@ -526,7 +525,7 @@ public class NbtFactory {
 
     /**
      * Construct a wrapper for an NBT tag stored (in memory) in an item stack. This is where
-     * auxillary data such as enchanting, name and lore is stored. It does not include items
+     * auxiliary data such as enchanting, name and lore is stored. It does not include items
      * material, damage value or count.
      * <p>
      * The item stack must be a wrapper for a CraftItemStack.
@@ -541,14 +540,11 @@ public class NbtFactory {
         
         // Create the tag if it doesn't exist
         if (tag == null) {
-        	if (createIfMissing) { //Keeps from creating nbt tag when not necissary/desired
-        		NbtCompound compound = createCompound();
-        		setItemTag(stack, compound);
-        		return compound;
-        	}
-        	else {
-        		return null;
-        	}
+            //Keeps from creating nbt tag when not necessary/desired
+            if (!createIfMissing) return null;
+			NbtCompound compound = createCompound();
+			setItemTag(stack, compound);
+			return compound;
         }
         return fromCompound(tag);
     }
@@ -564,9 +560,8 @@ public class NbtFactory {
             return stack;
         try {
             // Call the private constructor
-            Constructor<?> caller = INSTANCE.CRAFT_STACK.getDeclaredConstructor(ItemStack.class);
-            caller.setAccessible(true);
-            return (ItemStack) caller.newInstance(stack);
+	        Method copyMethod = INSTANCE.CRAFT_STACK.getMethod("asCraftCopy", ItemStack.class);
+            return (ItemStack) copyMethod.invoke(null, stack);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to convert " + stack + " + to a CraftItemStack.");
         }
@@ -587,7 +582,6 @@ public class NbtFactory {
     
     /**
      * Convert wrapped List and Map objects into their respective NBT counterparts.
-     * @param name - the name of the NBT element to create.
      * @param value - the value of the element to create. Can be a List or a Map.
      * @return The NBT element.
      */
@@ -721,7 +715,7 @@ public class NbtFactory {
     }
     
     /**
-     * Search for the first publically and privately defined method of the given name and parameter count.
+     * Search for the first publicly and privately defined method of the given name and parameter count.
      * @param requireMod - modifiers that are required.
      * @param bannedMod - modifiers that are banned.
      * @param clazz - a class to start with.
@@ -750,7 +744,7 @@ public class NbtFactory {
     }
     
     /**
-     * Search for the first publically and privately defined field of the given name. 
+     * Search for the first publicly and privately defined field of the given name.
      * @param instance - an instance of the class with the field.
      * @param clazz - an optional class to start with, or NULL to deduce it from instance.
      * @param fieldName - the field name.
@@ -767,7 +761,7 @@ public class NbtFactory {
                 return field;
             }
         }
-        // Recursively fild the correct field
+        // Recursively find the correct field
         if (clazz.getSuperclass() != null)
             return getField(instance, clazz.getSuperclass(), fieldName);
         throw new IllegalStateException("Unable to find field " + fieldName + " in " + instance);
@@ -825,7 +819,7 @@ public class NbtFactory {
         @Override
         public Object put(String key, Object value) {
             return wrapOutgoing(original.put(
-                (String) key, 
+				key,
                 unwrapIncoming(value)
             ));
         }
@@ -844,7 +838,7 @@ public class NbtFactory {
             return original.containsKey(key);
         }
         
-        @Override
+        @Override @NotNull
         public Set<Entry<String, Object>> entrySet() {
             return new AbstractSet<Entry<String,Object>>() {
                 @Override
@@ -861,7 +855,7 @@ public class NbtFactory {
                     return original.size();
                 }
                 
-                @Override
+                @Override @NotNull
                 public Iterator<Entry<String, Object>> iterator() {
                     return ConvertedMap.this.iterator();
                 }
@@ -880,10 +874,7 @@ public class NbtFactory {
                 @Override
                 public Entry<String, Object> next() {
                     Entry<String, Object> entry = proxy.next();
-                    
-                    return new SimpleEntry<String, Object>(
-                        entry.getKey(), wrapOutgoing(entry.getValue())
-                    );
+                    return new SimpleEntry<>(entry.getKey(), wrapOutgoing(entry.getValue()));
                 }
                 
                 @Override
@@ -966,60 +957,34 @@ public class NbtFactory {
      * Represents a method for loading an NBT compound.
      * @author Kristian
      */
-	private static abstract class LoadCompoundMethod {
-		protected Method staticMethod;
-		
-		protected void setMethod(Method method) {
-			this.staticMethod = method;
-			this.staticMethod.setAccessible(true);
-		}
-		
+	private static class LoadCompoundMethod {
+		private Method staticMethod;
+        private Object readLimiter;
+    
+        public LoadCompoundMethod(Class<?> streamClass, Class<?> readLimiterClass) {
+            this.staticMethod = getMethod(Modifier.STATIC, 0, streamClass, null, DataInput.class, readLimiterClass);
+        
+            // Find the unlimited read limiter
+            for (Field field : readLimiterClass.getDeclaredFields()) {
+                if (readLimiterClass.isAssignableFrom(field.getType())) {
+                    try {
+                        readLimiter = field.get(null);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Cannot retrieve read limiter.", e);
+                    }
+                }
+            }
+        }
+        
 		/**
 		 * Load an NBT compound from a given stream.
 		 * @param input - the input stream.
 		 * @return The loaded NBT compound.
+         * @throws IOException If anything went wrong.
 		 */
-		public abstract Object loadNbt(DataInput input);
-	}
-	
-	/**
-	 * Load an NBT compound from the NBTCompressedStreamTools static method in 1.7.2 - 1.7.5
-	 */
-	private static class LoadMethodWorldUpdate extends LoadCompoundMethod {
-		public LoadMethodWorldUpdate(Class<?> streamClass) {
-			setMethod(getMethod(Modifier.STATIC, 0, streamClass, null, DataInput.class));
-		}
-		
-		@Override
-		public Object loadNbt(DataInput input) {
-			return invokeMethod(staticMethod, null, input);
-		}
-	}
+        public Object loadNbt(DataInput input) throws IOException {
+            return invokeMethod(staticMethod, null, input, readLimiter);
+        }
+    }
 
-	/**
-	 * Load an NBT compound from the NBTCompressedStreamTools static method in 1.7.8
-	 */
-	private static class LoadMethodSkinUpdate extends LoadCompoundMethod {
-		private Object readLimiter;
-		
-		public LoadMethodSkinUpdate(Class<?> streamClass, Class<?> readLimiterClass) {
-			setMethod(getMethod(Modifier.STATIC, 0, streamClass, null, DataInput.class, readLimiterClass));
-			
-			// Find the unlimited read limiter
-			for (Field field : readLimiterClass.getDeclaredFields()) {
-				if (readLimiterClass.isAssignableFrom(field.getType())) {
-					try {
-						readLimiter = field.get(null);
-					} catch (Exception e) {
-						throw new RuntimeException("Cannot retrieve read limiter.", e);
-					}
-				}
- 			}
-		}
-		
-		@Override
-		public Object loadNbt(DataInput input) {
-			return invokeMethod(staticMethod, null, input, readLimiter);
-		}
-	}
 }
