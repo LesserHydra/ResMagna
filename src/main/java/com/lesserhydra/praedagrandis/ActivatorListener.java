@@ -1,7 +1,11 @@
 package com.lesserhydra.praedagrandis;
 
 import com.lesserhydra.praedagrandis.activator.ActivatorType;
+import com.lesserhydra.praedagrandis.configuration.GrandItem;
+import com.lesserhydra.praedagrandis.configuration.ItemHandler;
+import com.lesserhydra.praedagrandis.targeters.Target;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -22,22 +26,18 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import org.bukkit.scheduler.BukkitRunnable;
-import com.lesserhydra.praedagrandis.targeters.Target;
-import com.lesserhydra.praedagrandis.configuration.GrandItem;
-import com.lesserhydra.praedagrandis.configuration.ItemHandler;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ActivatorListener implements Listener
-{
-	PraedaGrandis plugin;
+class ActivatorListener implements Listener {
 	
-	public ActivatorListener(PraedaGrandis plugin) {
-		this.plugin = plugin;
-	}
+	private PraedaGrandis plugin;
+	ActivatorListener(PraedaGrandis plugin) { this.plugin = plugin; }
 	
 	
 	/*----------CLICK----------*/
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerClick(PlayerInteractEvent e) {
 		ActivatorType clickType = getClickActivator(e.getAction());
 		if (e.getClickedBlock() != null && !e.getPlayer().isSneaking()) {
@@ -46,11 +46,9 @@ public class ActivatorListener implements Listener
 		if (!clickType.isNull()) activate(clickType, e.getPlayer(), (LivingEntity)null);
 	}
 	
-	
 	/*----------Interact----------*/
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
-	public void onPlayerInteract(PlayerInteractEntityEvent e)
-	{
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerInteract(PlayerInteractEntityEvent e) {
 		if (!(e.getRightClicked() instanceof LivingEntity)) return;
 		
 		LivingEntity target = (LivingEntity) e.getRightClicked();
@@ -59,11 +57,13 @@ public class ActivatorListener implements Listener
 		if (!interactType.isNull()) activate(interactType, e.getPlayer(), target);
 	}
 	
+	
 	/*----------BlockBreak----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent e) {
 		activate(ActivatorType.BLOCKBREAK, e.getPlayer(), e.getBlock().getLocation());
 	}
+	
 	
 	/*----------Break----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -77,8 +77,7 @@ public class ActivatorListener implements Listener
 	
 	/*----------MOVE----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerMove(PlayerMoveEvent e)
-	{
+	public void onPlayerMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
@@ -95,23 +94,38 @@ public class ActivatorListener implements Listener
 		}
 	}
 	
+	/*----------TELEPORT----------*/
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+		activate(ActivatorType.TELEPORT, e.getPlayer(), e.getFrom());
+	}
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerPortal(PlayerPortalEvent e) {
+		activate(ActivatorType.PORTAL, e.getPlayer(), e.getFrom());
+	}
+	
 	
 	/*----------Hurt & Attack----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEntityDamage(EntityDamageEvent e) {
-		if (!(e.getEntity() instanceof Player)) return;
-		activate(ActivatorType.HURTOTHER, (Player) e.getEntity(), (LivingEntity)null);
+	public void onEntityDamage(EntityDamageEvent event) {
+		//Redirect to other handler
+		if (event instanceof EntityDamageByEntityEvent) {
+			onEntityDamageByEntity((EntityDamageByEntityEvent) event);
+			return;
+		}
+		
+		//Only interested in players
+		if (!(event.getEntity() instanceof Player)) return;
+		activate(ActivatorType.HURTOTHER, (Player) event.getEntity(), (LivingEntity)null);
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e)
-	{
+	private void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
 		//Skip if a non living entity was damaged (painting, minecart, ect)
-		if (!(e.getEntity() instanceof LivingEntity)) return;
+		if (!(event.getEntity() instanceof LivingEntity)) return;
 		
 		//Get hurt and attacker
-		LivingEntity hurt = (LivingEntity) e.getEntity();
-		LivingEntity attacker = getAttacker(e.getDamager());
+		LivingEntity hurt = (LivingEntity) event.getEntity();
+		LivingEntity attacker = getAttacker(event.getDamager());
 		
 		//Calculate activators
 		Pair<ActivatorType, ActivatorType> actPair = getAttackActivators(hurt, attacker);
@@ -119,15 +133,17 @@ public class ActivatorListener implements Listener
 		ActivatorType attackType = actPair.getRight();
 		
 		//Activation
-		if (!hurtType.isNull())	activate(hurtType, (Player) hurt, attacker);
-		if (!attackType.isNull())	activate(attackType, (Player) attacker, hurt);
+		if (!hurtType.isNull()) activate(hurtType, (Player) hurt, attacker);
+		if (!attackType.isNull()) {
+			assert attacker != null;
+			activate(attackType, (Player) attacker, hurt);
+		}
 	}
 	
 	
 	/*----------Kill & Death----------*/
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onEntityDeath(EntityDeathEvent e)
-	{
+	public void onEntityDeath(EntityDeathEvent e) {
 		LivingEntity killed = e.getEntity();
 		LivingEntity killer = e.getEntity().getKiller(); //Only returns players
 		
@@ -139,96 +155,70 @@ public class ActivatorListener implements Listener
 		
 		//Activation
 		if (!deathType.isNull()) activate(deathType, (Player) killed, killer);
-		if (!killType.isNull()) activate(killType, (Player) killer, killed);
+		if (!killType.isNull()) {
+			assert killer != null;
+			activate(killType, (Player) killer, killed);
+		}
 	}
 	
 	
-	/*----------TELEPORT----------*/
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerTeleport(PlayerTeleportEvent e) {
-		activate(ActivatorType.TELEPORT, e.getPlayer(), e.getFrom());
-	}
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerPortal(PlayerPortalEvent e) {
-		activate(ActivatorType.PORTAL, e.getPlayer(), e.getFrom());
-	}
+	/*----------Activation Functions----------*/
 	
-	/**
-	 * Sends an activator on the next tick
-	 * @param type Type of activator
-	 * @param holder Player involved in event
-	 * @param activatorTarget Target for the activator, or null
+	/* Activates with entity targeter
 	 */
-	private void activate(final ActivatorType type, final Player holder, final LivingEntity activatorTarget) {
-		//Run one tick later, to avoid the infinite hunger bug
-		new BukkitRunnable() { @Override public void run() {
-			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
-			for (GrandInventory.InventoryElement element : pInv.getItems()) {
-				element.grandItem.activateAbilities(type, element.slotType,
-						Target.make(holder, Target.from(holder), Target.from(activatorTarget)));
-			}
-		}}.runTaskLater(plugin, 1L);
+	private void activate(@NotNull ActivatorType type, @NotNull Player holder, @Nullable LivingEntity activatorTarget) {
+		activate(type, Target.make(holder, Target.from(holder), Target.from(activatorTarget)));
 	}
 	
-	/**
-	 * Sends an activator on the next tick
-	 * @param type Type of activator
-	 * @param holder Player involved in event
-	 * @param activatorTarget Target for the activator, or null
+	/* Activates with location targeter
 	 */
-	private void activate(final ActivatorType type, final Player holder, final Location activatorTarget) {
-		//Run one tick later, to avoid the infinite hunger bug
-		new BukkitRunnable() { @Override public void run() {
-			GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(holder);
-			for (GrandInventory.InventoryElement element : pInv.getItems()) {
-				element.grandItem.activateAbilities(type, element.slotType,
-						Target.make(holder, Target.from(holder), Target.from(activatorTarget)));
-			}
-		}}.runTaskLater(plugin, 1L);
+	private void activate(@NotNull ActivatorType type, @NotNull Player holder, @Nullable Location activatorTarget) {
+		activate(type, Target.make(holder, Target.from(holder), Target.from(activatorTarget)));
 	}
 	
-	/**
-	 * Calculates the appropriate click activator
-	 * @param action Player action type
-	 * @return Click activator type
+	private void activate(@NotNull ActivatorType type, @NotNull Target target) {
+		GrandInventory pInv = InventoryHandler.getInstance().getItemsFromPlayer(target.getHolder());
+		Bukkit.getScheduler().runTask(plugin,
+				() -> pInv.getItems().forEach(e -> e.activateAbilities(type, target))
+		);
+	}
+	
+	
+	/*----------Helper Functions----------*/
+	
+	/* Calculates the appropriate click activator
 	 */
+	@NotNull @Contract(pure = true)
 	private ActivatorType getClickActivator(Action action) {
 		if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) return ActivatorType.CLICKLEFT;
 		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) return ActivatorType.CLICKRIGHT;
 		return ActivatorType.NONE;
 	}
 	
-	/**
-	 * Calculates the appropriate interact activator
-	 * @param target LivingEntity that was interacted with
-	 * @return Interact activator type.
+	/* Calculates the appropriate interact activator
 	 */
+	@NotNull @Contract(pure = true)
 	private ActivatorType getInteractActivator(LivingEntity target) {
 		if (target instanceof Player) return ActivatorType.INTERACTPLAYER;
 		return ActivatorType.INTERACTMOB;
 	}
 	
-	/**
-	 * Calculates the appropriate move activator
-	 * @param from From location
-	 * @param to To location
-	 * @return Move activator type.
+	/* Calculates the appropriate move activator
 	 */
-	private ActivatorType getMoveActivator(Location from, Location to) {
+	@NotNull @Contract(pure = true)
+	private ActivatorType getMoveActivator(@NotNull Location from, @NotNull Location to) {
 		if (from.getY() < to.getY()) return ActivatorType.MOVEUP;
 		if (from.getY() > to.getY()) return ActivatorType.MOVEDOWN;
 		return ActivatorType.MOVEWALK;
 	}
 	
-	/**
-	 * Calculates the appropriate hurt and attack activators.
-	 * @param hurt The entity that was damaged
-	 * @param attacker The damaging entity, or null
-	 * @return A pair containing the hurt activator in the left, and the
+	/* Calculates the appropriate hurt and attack activators.
+	 * Returns a pair containing the hurt activator in the left, and the
 	 * attack activator on the right. Either can be NONE.
 	 */
-	private Pair<ActivatorType, ActivatorType> getAttackActivators(LivingEntity hurt, LivingEntity attacker)
-	{
+	@NotNull @Contract(pure = true)
+	private Pair<ActivatorType, ActivatorType> getAttackActivators(@NotNull LivingEntity hurt,
+	                                                               @Nullable LivingEntity attacker) {
 		boolean hurtIsPlayer = (hurt instanceof Player);
 		boolean attackerIsPlayer = (attacker instanceof Player);
 		
@@ -251,15 +241,13 @@ public class ActivatorListener implements Listener
 		return Pair.of(ActivatorType.HURTOTHER, ActivatorType.NONE);
 	}
 	
-	/**
-	 * Calculates the appropriate death and kill activators.
-	 * @param died The entity that died
-	 * @param killer The entity that killed, or null
-	 * @return A pair containing the death activator in the left, and the
+	/* Calculates the appropriate death and kill activators.
+	 * Returns a pair containing the death activator in the left, and the
 	 * kill activator on the right. Either can be NONE.
 	 */
-	private Pair<ActivatorType, ActivatorType> getDeathActivators(LivingEntity died, LivingEntity killer)
-	{		
+	@NotNull @Contract(pure = true)
+	private Pair<ActivatorType, ActivatorType> getDeathActivators(@NotNull LivingEntity died,
+	                                                              @Nullable LivingEntity killer) {
 		boolean diedIsPlayer = (died instanceof Player);
 		boolean killerIsPlayer = (killer instanceof Player);
 		
@@ -282,12 +270,10 @@ public class ActivatorListener implements Listener
 		return Pair.of(ActivatorType.DEATHOTHER, ActivatorType.NONE);
 	}
 	
-	/**
-	 * Gets an attacking LivingEntity from the damager Entity. Looks for the
+	/* Gets an attacking LivingEntity from the damager Entity. Looks for the
 	 * projectile source if damager is a projectile.
-	 * @param damager Damager from EntityDamagedByEntityEvent
-	 * @return The living entity that caused the damage event, or null
 	 */
+	@Nullable @Contract(pure = true)
 	private LivingEntity getAttacker(Entity damager) {
 		//Damager is living
 		if (damager instanceof LivingEntity) return (LivingEntity) damager;
@@ -302,13 +288,12 @@ public class ActivatorListener implements Listener
 		return null;
 	}
 	
-	/**
-	 * Gets a living entity's killer from last damage event.
-	 * @param died The entity that died
-	 * @return The living entity that caused the last damage event, or null
+	/* Gets a living entity's killer from last damage event.
 	 */
-	private LivingEntity getKiller(LivingEntity died) {
+	@Nullable @Contract(pure = true)
+	private LivingEntity getKiller(@NotNull LivingEntity died) {
 		if (!(died.getLastDamageCause() instanceof EntityDamageByEntityEvent)) return null;
 		return getAttacker( ((EntityDamageByEntityEvent)died.getLastDamageCause()).getDamager() );
 	}
+	
 }

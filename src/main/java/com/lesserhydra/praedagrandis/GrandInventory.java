@@ -1,8 +1,10 @@
 package com.lesserhydra.praedagrandis;
 
+import com.lesserhydra.praedagrandis.activator.ActivatorType;
 import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import com.lesserhydra.praedagrandis.configuration.GrandItem;
 import com.lesserhydra.praedagrandis.configuration.ItemHandler;
+import com.lesserhydra.praedagrandis.targeters.Target;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,6 +31,10 @@ public class GrandInventory {
 			this.id = id;
 			this.grandItem = grandItem;
 			this.slotType = slotType;
+		}
+		
+		public void activateAbilities(ActivatorType type, Target target) {
+			grandItem.activateAbilities(type, slotType, target);
 		}
 	}
 	
