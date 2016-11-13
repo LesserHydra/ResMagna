@@ -10,6 +10,8 @@ import com.lesserhydra.praedagrandis.activator.ActivatorFactory;
 import com.lesserhydra.praedagrandis.activator.ActivatorLine;
 import com.lesserhydra.praedagrandis.activator.ActivatorType;
 import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
+import com.lesserhydra.praedagrandis.logging.GrandLogger;
+import com.lesserhydra.praedagrandis.logging.LogType;
 import com.lesserhydra.praedagrandis.targeters.Target;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -71,7 +73,14 @@ public class GrandItem {
 			lore.add(loreString.replace('&', ChatColor.COLOR_CHAR));
 		}
 		
-		type = Material.matchMaterial(itemConfig.getString("type", "stone"));
+		String materialString = itemConfig.getString("type", "stone");
+		type = Material.matchMaterial(materialString);
+		if (type == null) {
+			GrandLogger.log("Invalid material: " + materialString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  For item: " + itemConfig.getName(), LogType.CONFIG_ERRORS);
+			type = Material.STONE;
+		}
+		
 		durability = (short) itemConfig.getInt("durability", 0);
 		amount = itemConfig.getInt("amount", 1);
 		
@@ -177,6 +186,7 @@ public class GrandItem {
 		if (updateName) meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		meta.spigot().setUnbreakable(unbreakable);
+		meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
 		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
