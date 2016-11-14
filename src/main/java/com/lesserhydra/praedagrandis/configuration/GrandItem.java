@@ -13,6 +13,7 @@ import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import com.lesserhydra.praedagrandis.logging.GrandLogger;
 import com.lesserhydra.praedagrandis.logging.LogType;
 import com.lesserhydra.praedagrandis.targeters.Target;
+import com.lesserhydra.util.StringTools;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -36,7 +37,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -82,63 +82,31 @@ public class GrandItem {
 	//TODO: Make factory function?
 	GrandItem(ConfigurationSection itemConfig) {
 		this.name = itemConfig.getName().toLowerCase();
-		displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
+		
+		this.displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
 		this.lore = itemConfig.getStringList("lore").stream()
 				.map(loreString -> loreString.replace('&', ChatColor.COLOR_CHAR))
 				.collect(Collectors.toList());
 		
-		//Material
-		String materialString = itemConfig.getString("type", "stone");
-		Material matchType = Material.matchMaterial(materialString);
-		if (matchType == null) {
-			GrandLogger.log("Invalid material: " + materialString, LogType.CONFIG_ERRORS);
-			GrandLogger.log("  For item: " + itemConfig.getName(), LogType.CONFIG_ERRORS);
-			matchType = Material.STONE;
-		}
-		type = matchType;
+		this.type = parseMaterial(itemConfig.getString("type", "stone"), itemConfig.getName());
+		this.durability = (short) itemConfig.getInt("durability", 0);
+		this.amount = itemConfig.getInt("amount", 1);
+		this.leatherColor = parseLeatherColor(itemConfig.getConfigurationSection("leatherColor"), type, itemConfig.getName());
 		
-		durability = (short) itemConfig.getInt("durability", 0);
-		amount = itemConfig.getInt("amount", 1);
+		this.enchants = parseEnchantments(itemConfig.getStringList("enchantments"), itemConfig.getName());
+		this.attributes = parseAttributes(itemConfig.getStringList("attributes"), itemConfig.getName());
 		
-		//Leather armor color
-		if (itemConfig.contains("leatherColor")) {
-			leatherColor = Color.fromRGB(itemConfig.getInt("leatherColor.red", 0),
-					itemConfig.getInt("leatherColor.green", 0),
-					itemConfig.getInt("leatherColor.blue", 0));
-		}
-		else leatherColor = null;
+		this.persistant = itemConfig.getBoolean("options.persistant", false);
+		this.placeable = itemConfig.getBoolean("options.placeable", false);
 		
-		//Enchantments
-		this.enchants = new HashMap<>();
-		for (String s : itemConfig.getStringList("enchantments")) {
-			String[] eStrings = s.split(" ");
-			
-			if (eStrings.length == 2) {
-				Enchantment enchant = Enchantment.getByName(eStrings[0].toUpperCase());
-				if (enchant != null) enchants.put(enchant, Integer.parseInt(eStrings[1]));
-				else GrandLogger.log("Unknown enchantment: " + eStrings[0], LogType.CONFIG_ERRORS);
-			}
-			//TODO: Error handling
-		}
-		
-		//Attributes
-		this.attributes = itemConfig.getStringList("attributes").stream()
-				.map(GrandAttribute::fromString)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
-		
-		persistant = itemConfig.getBoolean("options.persistant", false);
-		placeable = itemConfig.getBoolean("options.placeable", false);
-		
-		unbreakable = itemConfig.getBoolean("options.unbreakable", false);
-		hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
-		hideEnchants = itemConfig.getBoolean("options.hideEnchantments", false);
-		hideAttributes = itemConfig.getBoolean("options.hideAttributes", false);
-		
-		updateName = itemConfig.getBoolean("options.fixName", false);
-		updateDurability = itemConfig.getBoolean("options.fixDurability", false);
-		updateAmount = itemConfig.getBoolean("options.fixAmount", false);
-		updateEnchantments = itemConfig.getBoolean("options.fixEnchantments", false);
+		this.unbreakable = itemConfig.getBoolean("options.unbreakable", false);
+		this.hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
+		this.hideEnchants = itemConfig.getBoolean("options.hideEnchantments", false);
+		this.hideAttributes = itemConfig.getBoolean("options.hideAttributes", false);
+		this.updateName = itemConfig.getBoolean("options.fixName", false);
+		this.updateDurability = itemConfig.getBoolean("options.fixDurability", false);
+		this.updateAmount = itemConfig.getBoolean("options.fixAmount", false);
+		this.updateEnchantments = itemConfig.getBoolean("options.fixEnchantments", false);
 		
 		//Abilities
 		this.abilities = new ArrayList<>();
@@ -146,6 +114,7 @@ public class GrandItem {
 		for (String abilityString : itemConfig.getStringList("abilities")) {
 			ActivatorLine a = ActivatorFactory.build(abilityString);
 			if (a == null) {
+				//Continued error message
 				GrandLogger.log("  In Item: " + name, LogType.CONFIG_ERRORS);
 				continue;
 			}
@@ -158,6 +127,309 @@ public class GrandItem {
 		this.hash = calculateChecksum();
 	}
 	
+	
+	/*---------------Item creation/maintenance---------------*/
+	@NotNull
+	public ItemStack create() {
+		ItemStack result = new ItemStack(type, amount, durability);
+		
+		result.addUnsafeEnchantments(enchants);
+		
+		//Meta data stuff
+		ItemMeta meta = result.getItemMeta();
+		meta.setDisplayName(displayName);
+		meta.setLore(lore);
+		meta.spigot().setUnbreakable(unbreakable);
+		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		if (leatherColor != null && meta instanceof LeatherArmorMeta) {
+			((LeatherArmorMeta)meta).setColor(leatherColor);
+		}
+		result.setItemMeta(meta);
+		
+		//Attributes
+		Attributes att = new Attributes(result);
+		for (GrandAttribute a: attributes) {
+			att.add(a.build());
+		}
+		result = att.getStack();
+		
+		//Set NBT name and id
+		result = markItem(result);
+		
+		return result;
+	}
+	
+	@NotNull
+	public ItemStack markItem(@NotNull ItemStack item) {
+		ItemStack result = NbtFactory.getCraftItemStack(item);
+		
+		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
+		NbtCompound storage = nbt.getMap(STORAGE, true);
+		
+		//Set name (Identifies the represented GrandItem)
+		storage.put(STORAGE_NAME, name);
+		
+		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
+		UUID newID = UUID.randomUUID();
+		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
+		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		
+		//Hash will be set on update
+		return result;
+	}
+	
+	@NotNull
+	public ItemStack update(@NotNull ItemStack item) {
+		//TEMP while transitioning
+		item = NbtFactory.getCraftItemStack(item);
+		NbtCompound tag = NbtFactory.fromItemTag(item, true);
+		UUID legacyUUID = getLegacyUUID(tag);
+		if (legacyUUID != null) {
+			tag.remove("CustomStorage");
+			NbtCompound storage = tag.getMap(STORAGE, true);
+			storage.put(STORAGE_NAME, name);
+			//Keep same UUID so as not to confuse inventory handling
+			storage.put(STORAGE_UUID_LEAST, legacyUUID.getLeastSignificantBits());
+			storage.put(STORAGE_UUID_MOST, legacyUUID.getMostSignificantBits());
+		}
+		
+		//Check if needs updating
+		NbtCompound storage = tag.getMap(STORAGE, true);
+		long itemHash = storage.getLong(STORAGE_HASH, 0L);
+		if (itemHash == hash) return item;
+		
+		//Update hash
+		storage.put(STORAGE_HASH, hash);
+		
+		item.setType(type);
+		if (updateAmount) item.setAmount(amount);
+		if (updateDurability) item.setDurability(durability);
+		
+		ItemMeta meta = item.getItemMeta();
+		if (updateName) meta.setDisplayName(displayName);
+		meta.setLore(lore);
+		if (leatherColor != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta)meta).setColor(leatherColor);
+		meta.spigot().setUnbreakable(unbreakable);
+		if (updateEnchantments) {
+			for (Enchantment e : Enchantment.values()) {
+				item.removeEnchantment(e);
+				if (enchants.get(e) != null) item.addUnsafeEnchantment(e, enchants.get(e));
+			}
+		}
+		meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		
+		item.setItemMeta(meta);
+		
+		Attributes att = new Attributes(item);
+		att.clear();
+		attributes.forEach(a -> att.add(a.build()));
+		return att.getStack();
+	}
+	/*-------------------------------------------------------*/
+	
+	
+	/*----------------------Activators-----------------------*/
+	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
+		abilities.stream()
+				.filter(a -> activatorType.isSubtypeOf(a.getType()))
+				.forEach(a -> a.activate(slotType, target));
+	}
+	
+	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
+		for (ActivatorLine line : abilities) {
+			ItemSlotType request = line.getRequestedSlot();
+			
+			//Equip
+			if (line.getType() == ActivatorType.EQUIP
+					&& equipTo.isSubtypeOf(request) && !unEquipFrom.isSubtypeOf(request)) {
+				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
+			}
+			//Unequip
+			else if (line.getType() == ActivatorType.UNEQUIP
+					&& unEquipFrom.isSubtypeOf(request) && !equipTo.isSubtypeOf(request)) {
+				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
+			}
+		}
+	}
+	
+	public void activateTimers(Player holder) {
+		timers.forEach(timer -> timer.activatePlayer(holder));
+	}
+
+	/**
+	 * Cancels all running ability timers
+	 */
+	public void stopTimers() {
+		timers.forEach(AbilityTimer::stopTimer);
+	}
+	/*-------------------------------------------------------*/
+	
+	
+	/*----------------------Informative----------------------*/
+	public String getName() { return name; }
+	public String getDisplayName() { return displayName; }
+	public boolean isPersistant() { return persistant; }
+	public boolean isPlaceable() { return placeable; }
+	
+    /**
+     * Gets the hash code from the name string.
+     */
+    @Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+    /**
+     * Compares GrandItems by their names. No two GrandItems should ever have the same name.
+     */
+	@Override
+	public boolean equals(Object obj) {
+		return this == obj
+				|| (obj instanceof GrandItem && name.equals(((GrandItem)obj).name));
+	}
+	/*-------------------------------------------------------*/
+	
+	
+	/*-------------------Static NBT helpers------------------*/
+	/**
+	 * Finds the name of the GrandItem represented by the given item stack.
+	 * @param item Item
+	 * @return Name, or empty string
+	 */
+	@Nullable @SuppressWarnings("WeakerAccess")
+	public static String getItemName(@NotNull ItemStack item) {
+		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		if (tag == null) return null;
+		
+		NbtCompound storage = tag.getMap(STORAGE, false);
+		if (storage == null) return getLegacyName(tag); //Temp while transitioning
+		
+		return storage.getString(STORAGE_NAME, null);
+	}
+	
+	@NotNull @SuppressWarnings("WeakerAccess")
+	public static UUID getItemUUID(@NotNull ItemStack item) {
+		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
+		
+		NbtCompound storage = tag.getMap(STORAGE, false);
+		if (storage == null) {
+			//Temp while transitioning
+			UUID legacy = getLegacyUUID(tag);
+			if (legacy == null) throw new IllegalStateException("Item does not represent a GrandItem.");
+			return legacy;
+		}
+		
+		long least = storage.getLong(STORAGE_UUID_LEAST, 0L);
+		long most = storage.getLong(STORAGE_UUID_MOST, 0L);
+		return new UUID(most, least);
+	}
+	
+	private static String getLegacyName(NbtCompound tag) {
+		NbtList storage = tag.getList("CustomStorage", false);
+		if (storage == null) return null;
+		
+		return storage.stream()
+				.filter(obj -> obj instanceof NbtCompound)
+				.map(obj -> (NbtCompound) obj)
+				.filter(compound -> "PraedaGrandis.GrandItemName".equals(compound.getString("Name", null)))
+				.map(compound -> compound.getString("Data", null))
+				.findAny().orElse(null);
+	}
+	
+	private static UUID getLegacyUUID(NbtCompound tag) {
+		NbtList storage = tag.getList("CustomStorage", false);
+		if (storage == null) return null;
+		
+		return storage.stream()
+				.filter(obj -> obj instanceof NbtCompound)
+				.map(obj -> (NbtCompound) obj)
+				.filter(compound -> "PraedaGrandis.GrandItemID".equals(compound.getString("Name", null)))
+				.map(compound -> UUID.fromString(compound.getString("Data", "")))
+				.findAny().orElse(null);
+	}
+	/*-------------------------------------------------------*/
+	
+	
+	/*--------------------Parsing helpers--------------------*/
+	private static Color parseLeatherColor(ConfigurationSection colorSection, Material itemType, String name) {
+		if (colorSection == null) return null;
+		if (itemType != Material.LEATHER_BOOTS && itemType != Material.LEATHER_LEGGINGS
+				&& itemType != Material.LEATHER_CHESTPLATE && itemType != Material.LEATHER_HELMET) {
+			GrandLogger.log("Material \'" + itemType.name() + "\' cannot be colored.", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+			return null;
+		}
+		
+		return Color.fromRGB(colorSection.getInt("red", 0),
+				colorSection.getInt("green", 0),
+				colorSection.getInt("blue", 0));
+	}
+
+	private static List<GrandAttribute> parseAttributes(List<String> attributeLines, String name) {
+		List<GrandAttribute> results = new ArrayList<>(attributeLines.size());
+		for (String line : attributeLines) {
+			GrandAttribute attribute = GrandAttribute.fromString(line);
+			if (attribute == null) {
+				//Continued error message
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			results.add(attribute);
+		}
+		return results;
+	}
+
+	private static Map<Enchantment, Integer> parseEnchantments(List<String> enchantmentLines, String name) {
+		Map<Enchantment, Integer> results = new HashMap<>();
+		for (String line : enchantmentLines) {
+			String[] args = line.split(" ");
+			if (args.length != 2) {
+				GrandLogger.log("Invalid enchantment line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Expected: <enchantment> <level>", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			Enchantment enchant = Enchantment.getByName(args[0].toUpperCase());
+			if (enchant == null) {
+				GrandLogger.log("Unknown enchantment: " + args[0], LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			if (!StringTools.isInteger(args[1])) {
+				GrandLogger.log("Invalid enchantment level: " + args[1], LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Expected integer", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			results.put(enchant, Integer.parseInt(args[1]));
+		}
+		return results;
+	}
+	
+	private static Material parseMaterial(String materialString, String name) {
+		//Material
+		Material matchType = Material.matchMaterial(materialString);
+		if (matchType == null) {
+			GrandLogger.log("Invalid material: " + materialString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  For item: " + name, LogType.CONFIG_ERRORS);
+			return Material.STONE;
+		}
+		return matchType;
+	}
+		
 	private long calculateChecksum() {
 		try (
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -203,255 +475,10 @@ public class GrandItem {
 			byte[] hashBytes = md5.digest(byteStream.toByteArray());
 			return Longs.fromByteArray(Arrays.copyOfRange(hashBytes, 0, 64));
 			
-		} catch (NoSuchAlgorithmException| IOException e) {
+		} catch (NoSuchAlgorithmException|IOException e) {
 			throw new IllegalStateException("Failed to compute checksum", e);
 		}
 	}
-
-	public ItemStack create() {
-		ItemStack result = new ItemStack(type, amount, durability);
-		
-		result.addUnsafeEnchantments(enchants);
-		
-		//Meta data stuff
-		ItemMeta meta = result.getItemMeta();
-		meta.setDisplayName(displayName);
-		meta.setLore(lore);
-		meta.spigot().setUnbreakable(unbreakable);
-		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-		if (leatherColor != null && meta instanceof LeatherArmorMeta) {
-			((LeatherArmorMeta)meta).setColor(leatherColor);
-		}
-		result.setItemMeta(meta);
-		
-		//Attributes
-		Attributes att = new Attributes(result);
-		for (GrandAttribute a: attributes) {
-			att.add(a.build());
-		}
-		result = att.getStack();
-		
-		//Set NBT name and id
-		result = markItem(result);
-		
-		return result;
-	}
-
-	public ItemStack update(@NotNull ItemStack item) {
-		//TEMP while transitioning
-		item = NbtFactory.getCraftItemStack(item);
-		NbtCompound tag = NbtFactory.fromItemTag(item, true);
-		UUID legacyUUID = getLegacyUUID(tag);
-		if (legacyUUID != null) {
-			tag.remove("CustomStorage");
-			NbtCompound storage = tag.getMap(STORAGE, true);
-			storage.put(STORAGE_NAME, name);
-			//Keep same UUID so as not to confuse inventory handling
-			storage.put(STORAGE_UUID_LEAST, legacyUUID.getLeastSignificantBits());
-			storage.put(STORAGE_UUID_MOST, legacyUUID.getMostSignificantBits());
-		}
-		
-		//Check is needs updating
-		NbtCompound storage = tag.getMap(STORAGE, true);
-		long itemHash = storage.getLong(STORAGE_HASH, 0L);
-		if (itemHash == hash) return item;
-		
-		//Update hash
-		storage.put(STORAGE_HASH, hash);
-		
-		item.setType(type);
-		if (updateAmount) item.setAmount(amount);
-		if (updateDurability) item.setDurability(durability);
-		
-		if (updateEnchantments) {
-			for (Enchantment e : Enchantment.values()) {
-				item.removeEnchantment(e);
-				if (enchants.get(e) != null) {
-					item.addUnsafeEnchantment(e, enchants.get(e));
-				}
-			}
-		}
-		
-		ItemMeta meta = item.getItemMeta();
-		if (updateName) meta.setDisplayName(displayName);
-		meta.setLore(lore);
-		meta.spigot().setUnbreakable(unbreakable);
-		meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-		if (leatherColor != null && meta instanceof LeatherArmorMeta) {
-			((LeatherArmorMeta)meta).setColor(leatherColor);
-		}
-		item.setItemMeta(meta);
-		
-		Attributes att = new Attributes(item);
-		//Remove all attributes
-		att.clear();
-		
-		//Re-add the proper attributes
-		for (GrandAttribute a: attributes) {
-			att.add(a.build());
-		}
-		
-		return att.getStack();
-	}
-	
-	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
-		abilities.stream()
-				.filter(a -> activatorType.isSubtypeOf(a.getType()))
-				.forEach(a -> a.activate(slotType, target));
-	}
-	
-	public void activateTimers(Player holder) {
-		timers.forEach(timer -> timer.activatePlayer(holder));
-	}
-	
-	public void sendEquip(Player holder, ItemSlotType equipTo) {
-		activateAbilities(ActivatorType.EQUIP, equipTo, Target.make(holder, Target.from(holder), Target.none()));
-	}
-	
-	public void sendUnEquip(Player holder, ItemSlotType unEquipFrom) {
-		activateAbilities(ActivatorType.UNEQUIP, unEquipFrom, Target.make(holder, Target.from(holder), Target.none()));
-	}
-	
-	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
-		for (ActivatorLine line : abilities) {
-			ItemSlotType request = line.getRequestedSlot();
-			
-			//Equip
-			if (line.getType() == ActivatorType.EQUIP
-					&& equipTo.isSubtypeOf(request) && !unEquipFrom.isSubtypeOf(request)) {
-				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
-			}
-			//Unequip
-			else if (line.getType() == ActivatorType.UNEQUIP
-					&& unEquipFrom.isSubtypeOf(request) && !equipTo.isSubtypeOf(request)) {
-				line.activate(request, Target.make(holder, Target.from(holder), Target.none()));
-			}
-		}
-	}
-	
-	/**
-	 * Cancels all running ability timers
-	 */
-	void stopTimers() {
-		for (AbilityTimer at : timers) {
-			at.stopTimer();
-		}
-	}
-	
-	public boolean isPersistant() {
-		return persistant;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public boolean isPlaceable() {
-		return placeable;
-	}
-	
-    public String getName() {
-        return name;
-    }
-    
-    /**
-     * Gets the hash code from the name string.
-     */
-    @Override
-	public int hashCode() {
-		return name.hashCode();
-	}
-	
-    /**
-     * Compares GrandItems by their names. No two GrandItems should ever have the same name.
-     */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof GrandItem)) return false;
-		return name.equals(((GrandItem)obj).name);
-	}
-	
-	@NotNull
-	public ItemStack markItem(@NotNull ItemStack item) {
-		ItemStack result = NbtFactory.getCraftItemStack(item);
-		
-		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
-		NbtCompound storage = nbt.getMap(STORAGE, true);
-		
-		//Set name (Identifies the represented GrandItem)
-		storage.put(STORAGE_NAME, name);
-		
-		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
-		UUID newID = UUID.randomUUID();
-		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
-		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
-		
-		//Hash will be set on update
-		return result;
-	}
-	
-	/**
-	 * Finds the name of the GrandItem represented by the given item stack.
-	 * @param item Item
-	 * @return Name, or empty string
-	 */
-	@Nullable
-	public static String getItemName(ItemStack item) {
-		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
-		if (tag == null) return null;
-		
-		NbtCompound storage = tag.getMap(STORAGE, false);
-		if (storage == null) return getLegacyName(tag); //Temp while transitioning
-		
-		return storage.getString(STORAGE_NAME, null);
-	}
-	
-	@NotNull
-	public static UUID getItemUUID(ItemStack item) {
-		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
-		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
-		
-		NbtCompound storage = tag.getMap(STORAGE, false);
-		if (storage == null) {
-			//Temp while transitioning
-			UUID legacy = getLegacyUUID(tag);
-			if (legacy == null) throw new IllegalStateException("Item does not represent a GrandItem.");
-			return legacy;
-		}
-		
-		long least = storage.getLong(STORAGE_UUID_LEAST, 0L);
-		long most = storage.getLong(STORAGE_UUID_MOST, 0L);
-		return new UUID(most, least);
-	}
-	
-	private static String getLegacyName(NbtCompound tag) {
-		NbtList storage = tag.getList("CustomStorage", false);
-		if (storage == null) return null;
-		
-		return storage.stream()
-				.filter(obj -> obj instanceof NbtCompound)
-				.map(obj -> (NbtCompound) obj)
-				.filter(compound -> "PraedaGrandis.GrandItemName".equals(compound.getString("Name", null)))
-				.map(compound -> compound.getString("Data", null))
-				.findAny().orElse(null);
-	}
-	
-	private static UUID getLegacyUUID(NbtCompound tag) {
-		NbtList storage = tag.getList("CustomStorage", false);
-		if (storage == null) return null;
-		
-		return storage.stream()
-				.filter(obj -> obj instanceof NbtCompound)
-				.map(obj -> (NbtCompound) obj)
-				.filter(compound -> "PraedaGrandis.GrandItemID".equals(compound.getString("Name", null)))
-				.map(compound -> UUID.fromString(compound.getString("Data", "")))
-				.findAny().orElse(null);
-	}
+	/*-------------------------------------------------------*/
 	
 }
