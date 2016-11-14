@@ -122,4 +122,9 @@ class GrandAttribute {
 				.build();
 	}
 	
+	public AttributeType getType()  { return type; }
+	public Slot getSlot()           { return slot; }
+	public Operation getOperation() { return operation; }
+	public double getOperand()      { return operand; }
+	
 }
