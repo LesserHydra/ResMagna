@@ -111,8 +111,6 @@ public class NbtFactory {
     
     // The NBT base class
     private Class<?> BASE_CLASS;
-    private Class<?> STREAM_TOOLS;
-    private Class<?> READ_LIMITER_CLASS;
     private Method NBT_CREATE_TAG;
     private Method NBT_GET_TYPE;
     private Field NBT_LIST_TYPE;
@@ -370,36 +368,26 @@ public class NbtFactory {
                 
                 // Loading/saving
                 String nmsPackage = BASE_CLASS.getPackage().getName();
-				initializeNMS(loader, nmsPackage);
+                Class<?> streamTools = loader.loadClass(nmsPackage + ".NBTCompressedStreamTools");
+                Class<?> readLimiter = loader.loadClass(nmsPackage + ".NBTReadLimiter");
 				
-                LOAD_COMPOUND = new LoadCompoundMethod(STREAM_TOOLS, READ_LIMITER_CLASS);
-                SAVE_COMPOUND = getMethod(Modifier.STATIC, 0, STREAM_TOOLS, null, BASE_CLASS, DataOutput.class);
+                LOAD_COMPOUND = new LoadCompoundMethod(streamTools, readLimiter);
+                SAVE_COMPOUND = getMethod(Modifier.STATIC, 0, streamTools, null, BASE_CLASS, DataOutput.class);
                 
             } catch (ClassNotFoundException e) {
-                throw new IllegalStateException("Unable to find offline player.", e);
+                throw new IllegalStateException("Unable to find required classes.", e);
             }
         }
     }
 
-	private void initializeNMS(ClassLoader loader, String nmsPackage) {		
-		try {
-			STREAM_TOOLS = loader.loadClass(nmsPackage + ".NBTCompressedStreamTools");
-			READ_LIMITER_CLASS = loader.loadClass(nmsPackage + ".NBTReadLimiter");
-		} catch (ClassNotFoundException e) { 
-			// Ignore - we will detect this later
-		}
-	}
-     
     private String getPackageName() {
     	Server server = Bukkit.getServer();
-		String name = server != null ? server.getClass().getPackage().getName() : null;
+        if (server == null) throw new IllegalStateException("Bukkit server has not been initiated.");
+        
+		String name = server.getClass().getPackage().getName();
+    	if (name.contains("craftbukkit")) return name;
     	
-    	if (name != null && name.contains("craftbukkit")) {
-    		return name;
-    	} else {
-    		// Fallback
-    		return "org.bukkit.craftbukkit.v1_7_R3"; 
-    	}
+        throw new IllegalStateException("Unknown server package: " + name);
     } 
     
     @SuppressWarnings("unchecked")
