@@ -1,40 +1,30 @@
 package com.lesserhydra.praedagrandis.conditions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import com.lesserhydra.praedagrandis.GrandInventory;
 import com.lesserhydra.praedagrandis.InventoryHandler;
-import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import com.lesserhydra.praedagrandis.arguments.ArgumentBlock;
+import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.List;
 
 class IsWearing implements Condition.ForPlayer {
 	
-	private final List<String> itemNames = new ArrayList<>();
+	private final List<String> itemNames;
 
 	IsWearing(ArgumentBlock args) {
 		//TODO: Error handling/logging
-		String namesString = args.getString(false, "", "names", "name", "n", null);
-		Collections.addAll(itemNames,
-				namesString.replace("(", "").replace(")", "").replace(",", "").split(" ")
-		);
+		String namesString = args.getString(false, "",      "names", "name", "n", null);
+		itemNames = Arrays.asList(namesString.toLowerCase().replaceAll("\\(|\\)|,", "").split("\\s+"));
 	}
 
 	@Override
 	public boolean test(Player target) {
 		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target);
-		for (String name : itemNames) {
-			if (!found(gInv.getItems(name))) return false;
-		}
-		return true;
+		return itemNames.stream()
+				.allMatch(name -> gInv.getItems(name).stream()
+						.anyMatch(element -> element.slotType.isSubtypeOf(ItemSlotType.WORN)));
 	}
 	
-	private boolean found(List<GrandInventory.InventoryElement> elementList) {
-		for (GrandInventory.InventoryElement element : elementList) {
-			if (!element.slotType.isSubtypeOf(ItemSlotType.WORN)) return true;
-		}
-		return false;
-	}
-
 }

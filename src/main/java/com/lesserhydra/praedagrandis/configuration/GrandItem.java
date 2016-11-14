@@ -66,8 +66,7 @@ public class GrandItem {
 	
 	//TODO: Make factory function
 	GrandItem(ConfigurationSection itemConfig) {
-		this.name = itemConfig.getName();
-		
+		this.name = itemConfig.getName().toLowerCase();
 		displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
 		for (String loreString : itemConfig.getStringList("lore")) {
 			lore.add(loreString.replace('&', ChatColor.COLOR_CHAR));
