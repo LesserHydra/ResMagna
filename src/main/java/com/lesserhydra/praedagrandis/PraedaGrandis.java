@@ -27,9 +27,6 @@ public class PraedaGrandis extends JavaPlugin
 	public static PraedaGrandis plugin;
 	public static final String META_HOLDER = "PG.Holder";
 	public static final String META_GRANDABILITY_PREFIX = "PG.GrandAbility.";
-	public static final String STORAGE_ITEM_NAME = "PraedaGrandis.GrandItemName";
-	public static final String STORAGE_ITEM_ID = "PraedaGrandis.GrandItemID";
-	//public static final UUID ID = UUID.fromString("2b56453f-6eec-4313-8424-4d5b6c456c70");
 	
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
 	private final ActivatorListener activatorListener = new ActivatorListener(this);

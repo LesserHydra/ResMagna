@@ -4,8 +4,8 @@ import com.comphenix.attribute.Attributes;
 import com.comphenix.attribute.NbtFactory;
 import com.comphenix.attribute.NbtFactory.NbtCompound;
 import com.comphenix.attribute.NbtFactory.NbtList;
+import com.google.common.primitives.Longs;
 import com.lesserhydra.praedagrandis.AbilityTimer;
-import com.lesserhydra.praedagrandis.PraedaGrandis;
 import com.lesserhydra.praedagrandis.activator.ActivatorFactory;
 import com.lesserhydra.praedagrandis.activator.ActivatorLine;
 import com.lesserhydra.praedagrandis.activator.ActivatorType;
@@ -13,6 +13,7 @@ import com.lesserhydra.praedagrandis.arguments.ItemSlotType;
 import com.lesserhydra.praedagrandis.logging.GrandLogger;
 import com.lesserhydra.praedagrandis.logging.LogType;
 import com.lesserhydra.praedagrandis.targeters.Target;
+import com.lesserhydra.util.StringTools;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -23,119 +24,113 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GrandItem {
 	
+	private static final String STORAGE = "PraedaGrandis";
+	private static final String STORAGE_NAME = "Name";
+	private static final String STORAGE_UUID_LEAST = "UUIDLeast";
+	private static final String STORAGE_UUID_MOST = "UUIDMost";
+	private static final String STORAGE_HASH = "Hash";
+	
 	private final String name;
 	
-	private String displayName;
-	private List<String> lore = new ArrayList<>();
+	private final String displayName;
+	private final List<String> lore;
 	
-	private Material type;
-	private short durability;
-	private int amount;
-	private Color leatherColor = null;
+	private final Material type;
+	private final short durability;
+	private final int amount;
+	private final Color leatherColor;
 	
-	private Map<Enchantment, Integer> enchants = new HashMap<>();
-	private List<GrandAttribute> attributes = new ArrayList<>();
+	private final Map<Enchantment, Integer> enchants;
+	private final List<GrandAttribute> attributes;
 	
-	private boolean persistant;
-	private boolean placeable;
+	private final boolean persistant;
+	private final boolean placeable;
 	
-	private boolean unbreakable;
-	private boolean hideEnchants;
-	private boolean hideAttributes;
-	private boolean hideUnbreakable;
+	private final boolean unbreakable;
+	private final boolean hideEnchants;
+	private final boolean hideAttributes;
+	private final boolean hideUnbreakable;
 	
-	private boolean updateName = false;
-	private boolean updateDurability = false;
-	private boolean updateAmount = false;
-	private boolean updateEnchantments = false;
+	private final boolean updateName;
+	private final boolean updateDurability;
+	private final boolean updateAmount;
+	private final boolean updateEnchantments;
 	
-	private List<ActivatorLine> abilities = new ArrayList<>();
+	private final List<ActivatorLine> abilities;
+	private final List<AbilityTimer> timers;
 	
-	private List<AbilityTimer> timers = new ArrayList<>();
+	private final long hash;
 	
-	//TODO: Make factory function
+	//TODO: Make factory function?
 	GrandItem(ConfigurationSection itemConfig) {
 		this.name = itemConfig.getName().toLowerCase();
-		displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
-		for (String loreString : itemConfig.getStringList("lore")) {
-			lore.add(loreString.replace('&', ChatColor.COLOR_CHAR));
-		}
 		
-		String materialString = itemConfig.getString("type", "stone");
-		type = Material.matchMaterial(materialString);
-		if (type == null) {
-			GrandLogger.log("Invalid material: " + materialString, LogType.CONFIG_ERRORS);
-			GrandLogger.log("  For item: " + itemConfig.getName(), LogType.CONFIG_ERRORS);
-			type = Material.STONE;
-		}
+		this.displayName = itemConfig.getString("display", "").replace('&', ChatColor.COLOR_CHAR);
+		this.lore = itemConfig.getStringList("lore").stream()
+				.map(loreString -> loreString.replace('&', ChatColor.COLOR_CHAR))
+				.collect(Collectors.toList());
 		
-		durability = (short) itemConfig.getInt("durability", 0);
-		amount = itemConfig.getInt("amount", 1);
+		this.type = parseMaterial(itemConfig.getString("type", "stone"), itemConfig.getName());
+		this.durability = (short) itemConfig.getInt("durability", 0);
+		this.amount = itemConfig.getInt("amount", 1);
+		this.leatherColor = parseLeatherColor(itemConfig.getConfigurationSection("leatherColor"), type, itemConfig.getName());
 		
-		if (itemConfig.contains("leatherColor")) {
-			leatherColor = Color.fromRGB(itemConfig.getInt("leatherColor.red", 0), itemConfig.getInt("leatherColor.green", 0), itemConfig.getInt("leatherColor.blue", 0));
-		}
+		this.enchants = parseEnchantments(itemConfig.getStringList("enchantments"), itemConfig.getName());
+		this.attributes = parseAttributes(itemConfig.getStringList("attributes"), itemConfig.getName());
 		
-		//Enchantments
-		for (String s : itemConfig.getStringList("enchantments")) {
-			String[] eStrings = s.split(" ");
-					
-			if (eStrings.length == 2) {
-				Enchantment enchant = Enchantment.getByName(eStrings[0].toUpperCase());
-				if (enchant != null) {
-					enchants.put(enchant, Integer.parseInt(eStrings[1]));
-				}
-				else {
-					PraedaGrandis.plugin.getLogger().info("Unknown enchantment: " + eStrings[0]);
-				}
-			}
-			//TODO: Error handling
-		}
+		this.persistant = itemConfig.getBoolean("options.persistant", false);
+		this.placeable = itemConfig.getBoolean("options.placeable", false);
 		
-		//Attributes
-		for (String s : itemConfig.getStringList("attributes")) {
-			GrandAttribute att = GrandAttribute.fromString(s);
-			if (att != null) attributes.add(att);
-		}
-		
-		persistant = itemConfig.getBoolean("options.persistant", false);
-		placeable = itemConfig.getBoolean("options.placeable", false);
-		
-		unbreakable = itemConfig.getBoolean("options.unbreakable", false);
-		hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
-		hideEnchants = itemConfig.getBoolean("options.hideEnchantments", false);
-		hideAttributes = itemConfig.getBoolean("options.hideAttributes", false);
-		
-		updateName = itemConfig.getBoolean("options.fixName", false);
-		updateDurability = itemConfig.getBoolean("options.fixDurability", false);
-		updateAmount = itemConfig.getBoolean("options.fixAmount", false);
-		updateEnchantments = itemConfig.getBoolean("options.fixEnchantments", false);
+		this.unbreakable = itemConfig.getBoolean("options.unbreakable", false);
+		this.hideUnbreakable = itemConfig.getBoolean("options.hideUnbreakable", false);
+		this.hideEnchants = itemConfig.getBoolean("options.hideEnchantments", false);
+		this.hideAttributes = itemConfig.getBoolean("options.hideAttributes", false);
+		this.updateName = itemConfig.getBoolean("options.fixName", false);
+		this.updateDurability = itemConfig.getBoolean("options.fixDurability", false);
+		this.updateAmount = itemConfig.getBoolean("options.fixAmount", false);
+		this.updateEnchantments = itemConfig.getBoolean("options.fixEnchantments", false);
 		
 		//Abilities
+		this.abilities = new ArrayList<>();
+		this.timers = new ArrayList<>();
 		for (String abilityString : itemConfig.getStringList("abilities")) {
 			ActivatorLine a = ActivatorFactory.build(abilityString);
-			if (a == null) continue;
+			if (a == null) {
+				//Continued error message
+				GrandLogger.log("  In Item: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
 			
-			if (a.getType() != ActivatorType.TIMER) {
-				abilities.add(a);
-			}
-			else {//Special case. Timers are handled differently.
-				timers.add(new AbilityTimer(this, a, a.getTimerDelay()));
-			}
+			if (a.getType() != ActivatorType.TIMER) abilities.add(a);
+			//Special case. Timers are handled differently.
+			else timers.add(new AbilityTimer(this, a, a.getTimerDelay()));
 		}
+		
+		this.hash = calculateChecksum();
 	}
-
+	
+	
+	/*---------------Item creation/maintenance---------------*/
+	@NotNull @Contract(pure = true)
 	public ItemStack create() {
 		ItemStack result = new ItemStack(type, amount, durability);
 		
@@ -161,70 +156,112 @@ public class GrandItem {
 		}
 		result = att.getStack();
 		
-		//Set NBT name and id
-		result = markItem(result);
+		//Set NBT name, id, and hash
+		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
+		NbtCompound storage = nbt.getMap(STORAGE, true);
+		
+		storage.put(STORAGE_NAME, name);
+		
+		UUID newID = UUID.randomUUID();
+		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
+		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		
+		storage.put(STORAGE_HASH, hash);
 		
 		return result;
 	}
-
-	public ItemStack update(ItemStack item) {
-		item.setType(type);
-		if (updateAmount) item.setAmount(amount);
-		if (updateDurability) item.setDurability(durability);
+	
+	@NotNull
+	public ItemStack markItem(@NotNull ItemStack item) {
+		ItemStack result = NbtFactory.getCraftItemStack(item);
 		
-		if (updateEnchantments) {
-			for (Enchantment e : Enchantment.values()) {
-				item.removeEnchantment(e);
-				if (enchants.get(e) != null) {
-					item.addUnsafeEnchantment(e, enchants.get(e));
-				}
-			}
+		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
+		NbtCompound storage = nbt.getMap(STORAGE, true);
+		
+		//Set name (Identifies the represented GrandItem)
+		storage.put(STORAGE_NAME, name);
+		
+		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
+		UUID newID = UUID.randomUUID();
+		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
+		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		
+		//Hash will be set on update
+		return result;
+	}
+	
+	/**
+	 * Updates the given item to conform to the currently described grand item.
+	 * @param item Item to update
+	 * @return The updated item, or null if no update was needed
+	 */
+	@Nullable
+	public ItemStack update(@NotNull ItemStack item) {
+		ItemStack result = NbtFactory.getCraftItemStack(item);
+		NbtCompound tag = NbtFactory.fromItemTag(result, true);
+		
+		//TEMP while transitioning
+		UUID legacyUUID = getLegacyUUID(tag);
+		if (legacyUUID != null) {
+			GrandLogger.log("Updating item NBT", LogType.DEBUG);
+			tag.remove("CustomStorage");
+			NbtCompound storage = tag.getMap(STORAGE, true);
+			storage.put(STORAGE_NAME, name);
+			//Keep same UUID so as not to confuse inventory handling
+			storage.put(STORAGE_UUID_LEAST, legacyUUID.getLeastSignificantBits());
+			storage.put(STORAGE_UUID_MOST, legacyUUID.getMostSignificantBits());
 		}
 		
-		ItemMeta meta = item.getItemMeta();
+		//Check if needs updating
+		NbtCompound storage = tag.getMap(STORAGE, true);
+		long itemHash = storage.getLong(STORAGE_HASH, 0L);
+		if (itemHash == hash) return null;
+		
+		GrandLogger.log("Updating item: " + name, LogType.DEBUG);
+		
+		//Update hash
+		storage.put(STORAGE_HASH, hash);
+		
+		result.setType(type);
+		if (updateAmount) result.setAmount(amount);
+		if (updateDurability) result.setDurability(durability);
+		
+		ItemMeta meta = result.getItemMeta();
 		if (updateName) meta.setDisplayName(displayName);
 		meta.setLore(lore);
+		if (leatherColor != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta)meta).setColor(leatherColor);
 		meta.spigot().setUnbreakable(unbreakable);
+		if (updateEnchantments) {
+			for (Enchantment e : Enchantment.values()) {
+				result.removeEnchantment(e);
+				if (enchants.get(e) != null) result.addUnsafeEnchantment(e, enchants.get(e));
+			}
+		}
 		meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
 		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-		if (leatherColor != null && meta instanceof LeatherArmorMeta) {
-			((LeatherArmorMeta)meta).setColor(leatherColor);
-		}
-		item.setItemMeta(meta);
 		
-		Attributes att = new Attributes(item);
-		//Remove all attributes
+		result.setItemMeta(meta);
+		
+		Attributes att = new Attributes(result);
 		att.clear();
-		
-		//Re-add the proper attributes
-		for (GrandAttribute a: attributes) {
-			att.add(a.build());
-		}
-		
+		attributes.forEach(a -> att.add(a.build()));
 		return att.getStack();
 	}
+	/*-------------------------------------------------------*/
 	
-	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
+	
+	/*----------------------Activators-----------------------*/
+	public void activateAbilities(@NotNull ActivatorType activatorType,
+	                              @NotNull ItemSlotType slotType,
+	                              @NotNull Target target) {
 		abilities.stream()
 				.filter(a -> activatorType.isSubtypeOf(a.getType()))
 				.forEach(a -> a.activate(slotType, target));
 	}
 	
-	public void activateTimers(Player holder) {
-		timers.forEach(timer -> timer.activatePlayer(holder));
-	}
-	
-	public void sendEquip(Player holder, ItemSlotType equipTo) {
-		activateAbilities(ActivatorType.EQUIP, equipTo, Target.make(holder, Target.from(holder), Target.none()));
-	}
-	
-	public void sendUnEquip(Player holder, ItemSlotType unEquipFrom) {
-		activateAbilities(ActivatorType.UNEQUIP, unEquipFrom, Target.make(holder, Target.from(holder), Target.none()));
-	}
-	
-	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
+	public void sendReEquip(@NotNull Player holder, @NotNull ItemSlotType unEquipFrom, @NotNull ItemSlotType equipTo) {
 		for (ActivatorLine line : abilities) {
 			ItemSlotType request = line.getRequestedSlot();
 			
@@ -241,35 +278,36 @@ public class GrandItem {
 		}
 	}
 	
+	public void activateTimers(@NotNull Player holder) {
+		timers.forEach(timer -> timer.activatePlayer(holder));
+	}
+
 	/**
 	 * Cancels all running ability timers
 	 */
-	void stopTimers() {
-		for (AbilityTimer at : timers) {
-			at.stopTimer();
-		}
+	public void stopTimers() {
+		timers.forEach(AbilityTimer::stopTimer);
 	}
+	/*-------------------------------------------------------*/
 	
-	public boolean isPersistant() {
-		return persistant;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public boolean isPlaceable() {
-		return placeable;
-	}
 	
-    public String getName() {
-        return name;
-    }
-    
+	/*----------------------Informative----------------------*/
+	@NotNull @Contract(pure = true)
+	public String getName() { return name; }
+	
+	@NotNull @Contract(pure = true)
+	public String getDisplayName() { return displayName; }
+	
+	@Contract(pure = true)
+	public boolean isPersistant() { return persistant; }
+	
+	@Contract(pure = true)
+	public boolean isPlaceable() { return placeable; }
+	
     /**
      * Gets the hash code from the name string.
      */
-    @Override
+    @Override @Contract(pure = true)
 	public int hashCode() {
 		return name.hashCode();
 	}
@@ -277,62 +315,46 @@ public class GrandItem {
     /**
      * Compares GrandItems by their names. No two GrandItems should ever have the same name.
      */
-	@Override
+	@Override @Contract(pure = true)
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof GrandItem)) return false;
-		return name.equals(((GrandItem)obj).name);
+		return this == obj
+				|| (obj instanceof GrandItem && name.equals(((GrandItem)obj).name));
 	}
+	/*-------------------------------------------------------*/
 	
-	@NotNull
-	public ItemStack markItem(@NotNull ItemStack item) {
-		ItemStack result = NbtFactory.getCraftItemStack(item);
-		
-		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
-		NbtCompound storage = nbt.getMap("PraedaGrandis", true);
-		
-		//Set name (Identifies the represented GrandItem)
-		storage.put("Name", name);
-		
-		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
-		UUID newID = UUID.randomUUID();
-		storage.put("UUIDLeast", newID.getLeastSignificantBits());
-		storage.put("UUIDMost", newID.getMostSignificantBits());
-		
-		return result;
-	}
 	
+	/*-------------------Static NBT helpers------------------*/
 	/**
 	 * Finds the name of the GrandItem represented by the given item stack.
 	 * @param item Item
 	 * @return Name, or empty string
 	 */
-	@Nullable
-	public static String getItemName(ItemStack item) {
+	@Nullable @SuppressWarnings("WeakerAccess")
+	public static String getItemName(@NotNull ItemStack item) {
 		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
 		if (tag == null) return null;
 		
-		NbtCompound storage = tag.getMap("PraedaGrandis", false);
+		NbtCompound storage = tag.getMap(STORAGE, false);
 		if (storage == null) return getLegacyName(tag); //Temp while transitioning
 		
-		return storage.getString("Name", null);
+		return storage.getString(STORAGE_NAME, null);
 	}
 	
-	@NotNull
-	public static UUID getItemUUID(ItemStack item) {
+	@NotNull @SuppressWarnings("WeakerAccess")
+	public static UUID getItemUUID(@NotNull ItemStack item) {
 		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
 		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
 		
-		NbtCompound storage = tag.getMap("PraedaGrandis", false);
+		NbtCompound storage = tag.getMap(STORAGE, false);
 		if (storage == null) {
 			//Temp while transitioning
 			UUID legacy = getLegacyUUID(tag);
-			if (legacy == null) throw new IllegalStateException("Item does not have the PraedaGrandis compound.");
+			if (legacy == null) throw new IllegalStateException("Item does not represent a GrandItem.");
 			return legacy;
 		}
 		
-		long least = storage.getLong("UUIDLeast", 0L);
-		long most = storage.getLong("UUIDLeast", 0L);
+		long least = storage.getLong(STORAGE_UUID_LEAST, 0L);
+		long most = storage.getLong(STORAGE_UUID_MOST, 0L);
 		return new UUID(most, least);
 	}
 	
@@ -359,5 +381,145 @@ public class GrandItem {
 				.map(compound -> UUID.fromString(compound.getString("Data", "")))
 				.findAny().orElse(null);
 	}
+	/*-------------------------------------------------------*/
+	
+	
+	/*--------------------Parsing helpers--------------------*/
+	private static Color parseLeatherColor(ConfigurationSection colorSection, Material itemType, String name) {
+		if (colorSection == null) return null;
+		if (itemType != Material.LEATHER_BOOTS && itemType != Material.LEATHER_LEGGINGS
+				&& itemType != Material.LEATHER_CHESTPLATE && itemType != Material.LEATHER_HELMET) {
+			GrandLogger.log("Material \'" + itemType.name() + "\' cannot be colored.", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+			return null;
+		}
+		
+		return Color.fromRGB(colorSection.getInt("red", 0),
+				colorSection.getInt("green", 0),
+				colorSection.getInt("blue", 0));
+	}
+
+	private static List<GrandAttribute> parseAttributes(List<String> attributeLines, String name) {
+		List<GrandAttribute> results = new ArrayList<>(attributeLines.size());
+		for (String line : attributeLines) {
+			GrandAttribute attribute = GrandAttribute.fromString(line);
+			if (attribute == null) {
+				//Continued error message
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			results.add(attribute);
+		}
+		return results;
+	}
+
+	private static Map<Enchantment, Integer> parseEnchantments(List<String> enchantmentLines, String name) {
+		Map<Enchantment, Integer> results = new HashMap<>();
+		for (String line : enchantmentLines) {
+			String[] args = line.split(" ");
+			if (args.length != 2) {
+				GrandLogger.log("Invalid enchantment line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Expected: <enchantment> <level>", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			Enchantment enchant = Enchantment.getByName(args[0].toUpperCase());
+			if (enchant == null) {
+				GrandLogger.log("Unknown enchantment: " + args[0], LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			if (!StringTools.isInteger(args[1])) {
+				GrandLogger.log("Invalid enchantment level: " + args[1], LogType.CONFIG_ERRORS);
+				GrandLogger.log("  Expected integer", LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
+				GrandLogger.log("  In item config: " + name, LogType.CONFIG_ERRORS);
+				continue;
+			}
+			
+			results.put(enchant, Integer.parseInt(args[1]));
+		}
+		return results;
+	}
+	
+	private static Material parseMaterial(String materialString, String name) {
+		//Material
+		Material matchType = Material.matchMaterial(materialString);
+		if (matchType == null) {
+			GrandLogger.log("Invalid material: " + materialString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  For item: " + name, LogType.CONFIG_ERRORS);
+			return Material.STONE;
+		}
+		return matchType;
+	}
+		
+	private long calculateChecksum() {
+		try (
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			DataOutputStream dataOutput = new DataOutputStream(byteStream)
+		){
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			
+			//GrandItemName
+			dataOutput.writeChars(name);
+			
+			//Display name and lore
+			dataOutput.writeChars(displayName);
+			dataOutput.writeInt(lore.size());
+			for (String s : lore) {
+				dataOutput.writeChars(s);
+			}
+			
+			//Type, durability, amount, and color
+			dataOutput.writeInt(type.ordinal());
+			dataOutput.writeShort(durability);
+			dataOutput.writeInt(amount);
+			dataOutput.writeInt(leatherColor == null ? 0 : leatherColor.asRGB());
+			
+			//Enchantments
+			List<Enchantment> sortedEnchants = Arrays.stream(Enchantment.values())
+					.sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+					.collect(Collectors.toList());
+			for (Enchantment e : sortedEnchants) {
+				dataOutput.writeInt(enchants.getOrDefault(e, 0));
+			}
+			
+			//Attributes
+			dataOutput.writeInt(attributes.size());
+			for (GrandAttribute a : attributes) {
+				dataOutput.writeChars(a.getType().getMinecraftId());
+				dataOutput.writeInt(a.getSlot().ordinal());
+				dataOutput.writeInt(a.getOperation().getId());
+				dataOutput.writeDouble(a.getOperand());
+			}
+			
+			//Boolean options
+			dataOutput.writeBoolean(persistant);
+			dataOutput.writeBoolean(placeable);
+			dataOutput.writeBoolean(unbreakable);
+			dataOutput.writeBoolean(hideEnchants);
+			dataOutput.writeBoolean(hideAttributes);
+			dataOutput.writeBoolean(hideUnbreakable);
+			dataOutput.writeBoolean(updateName);
+			dataOutput.writeBoolean(updateAmount);
+			dataOutput.writeBoolean(updateEnchantments);
+			
+			//Calculate MD5
+			dataOutput.flush();
+			byte[] hashBytes = md5.digest(byteStream.toByteArray());
+			
+			//Get first 64 bits as a long
+			return Longs.fromByteArray(Arrays.copyOfRange(hashBytes, 0, 64));
+			
+		} catch (NoSuchAlgorithmException|IOException e) {
+			throw new IllegalStateException("Failed to compute checksum", e);
+		}
+	}
+	/*-------------------------------------------------------*/
 	
 }

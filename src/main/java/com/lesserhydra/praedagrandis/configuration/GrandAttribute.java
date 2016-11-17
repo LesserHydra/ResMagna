@@ -93,7 +93,8 @@ class GrandAttribute {
 		case "+": case "-":
 			if (operandIsPercentage) return Operation.ADD_PERCENTAGE;
 			return Operation.ADD_NUMBER;
-		case "*": case "/": return Operation.MULTIPLY_PERCENTAGE;
+		case "*": case "/":
+			return Operation.MULTIPLY_PERCENTAGE;
 		
 		default: return null;
 		}
@@ -121,5 +122,10 @@ class GrandAttribute {
 				.amount(operand)
 				.build();
 	}
+	
+	public AttributeType getType()  { return type; }
+	public Slot getSlot()           { return slot; }
+	public Operation getOperation() { return operation; }
+	public double getOperand()      { return operand; }
 	
 }

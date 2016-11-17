@@ -22,12 +22,10 @@ public class ItemHandler extends MultiConfig {
 	
 	private static ItemHandler instance = new ItemHandler();
 	private ItemHandler() {}
-	public static ItemHandler getInstance() {
-		return instance;
-	}
+	public static ItemHandler getInstance() { return instance; }
 	
-	private Map<String, GrandItem> items = new HashMap<String, GrandItem>();
-	private List<AutoConvertItem> convertItems = new ArrayList<AutoConvertItem>();
+	private Map<String, GrandItem> items = new HashMap<>();
+	private List<AutoConvertItem> convertItems = new ArrayList<>();
 	
 	/**
 	 * Reloads the item configuration files.<br>
@@ -49,8 +47,7 @@ public class ItemHandler extends MultiConfig {
 	 * Loads GrandItems from a single configuration file
 	 */
 	@Override
-	protected void loadConfig(FileConfiguration config)
-	{
+	protected void loadConfig(FileConfiguration config) {
 		for (String key : config.getKeys(false)) {
 			ConfigurationSection itemConfig = config.getConfigurationSection(key);
 			ConfigurationSection autoconvertSection = itemConfig.getConfigurationSection("autoconvert"); //TODO: Move to seperate file
@@ -59,8 +56,7 @@ public class ItemHandler extends MultiConfig {
 			items.put(key.toLowerCase(), item);
 			
 			//autoconvert
-			if (autoconvertSection != null)
-			{
+			if (autoconvertSection != null) {
 				//plugin.getLogger().info("Found autoconvert");
 				String searchDisplay = itemConfig.getString("autoconvert.display", null);
 				List<String> searchLore = itemConfig.getStringList("autoconvert.lore");
