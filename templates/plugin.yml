@@ -1,12 +1,12 @@
-name: PraedaGrandis
+name: ResMagna
 main: @mainClass@
 version: @version@
 author: Roboboy
 
 commands:
-  PraedaGrandis:
-    aliases: [pg, item]
-    description: Main command for PraedaGrandis
+  ResMagna:
+    aliases: [res, magna, item, rm]
+    description: Main command for ResMagna
     usage: /<command> <give|list|reload>
-    permission: praedagrandis.maincommand
+    permission: resmagna.maincommand
     permissions message: You don't have <permission>

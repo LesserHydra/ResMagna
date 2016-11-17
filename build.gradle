@@ -8,7 +8,7 @@ import org.ajoberstar.grgit.*
 import org.apache.tools.ant.filters.ReplaceTokens
 
 version = generateVersion('0.2')
-String pluginMain = 'com.lesserhydra.praedagrandis.PraedaGrandis'
+String pluginMain = 'com.lesserhydra.resmagna.ResMagna'
 
 repositories {
 	mavenLocal()
