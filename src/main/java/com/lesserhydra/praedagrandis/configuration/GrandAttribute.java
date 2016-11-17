@@ -93,7 +93,8 @@ class GrandAttribute {
 		case "+": case "-":
 			if (operandIsPercentage) return Operation.ADD_PERCENTAGE;
 			return Operation.ADD_NUMBER;
-		case "*": case "/": return Operation.MULTIPLY_PERCENTAGE;
+		case "*": case "/":
+			return Operation.MULTIPLY_PERCENTAGE;
 		
 		default: return null;
 		}

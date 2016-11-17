@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,7 +130,7 @@ public class GrandItem {
 	
 	
 	/*---------------Item creation/maintenance---------------*/
-	@NotNull
+	@NotNull @Contract(pure = true)
 	public ItemStack create() {
 		ItemStack result = new ItemStack(type, amount, durability);
 		
@@ -155,8 +156,17 @@ public class GrandItem {
 		}
 		result = att.getStack();
 		
-		//Set NBT name and id
-		result = markItem(result);
+		//Set NBT name, id, and hash
+		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
+		NbtCompound storage = nbt.getMap(STORAGE, true);
+		
+		storage.put(STORAGE_NAME, name);
+		
+		UUID newID = UUID.randomUUID();
+		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
+		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		
+		storage.put(STORAGE_HASH, hash);
 		
 		return result;
 	}
@@ -180,13 +190,20 @@ public class GrandItem {
 		return result;
 	}
 	
-	@NotNull
+	/**
+	 * Updates the given item to conform to the currently described grand item.
+	 * @param item Item to update
+	 * @return The updated item, or null if no update was needed
+	 */
+	@Nullable
 	public ItemStack update(@NotNull ItemStack item) {
+		ItemStack result = NbtFactory.getCraftItemStack(item);
+		NbtCompound tag = NbtFactory.fromItemTag(result, true);
+		
 		//TEMP while transitioning
-		item = NbtFactory.getCraftItemStack(item);
-		NbtCompound tag = NbtFactory.fromItemTag(item, true);
 		UUID legacyUUID = getLegacyUUID(tag);
 		if (legacyUUID != null) {
+			GrandLogger.log("Updating item NBT", LogType.DEBUG);
 			tag.remove("CustomStorage");
 			NbtCompound storage = tag.getMap(STORAGE, true);
 			storage.put(STORAGE_NAME, name);
@@ -198,24 +215,26 @@ public class GrandItem {
 		//Check if needs updating
 		NbtCompound storage = tag.getMap(STORAGE, true);
 		long itemHash = storage.getLong(STORAGE_HASH, 0L);
-		if (itemHash == hash) return item;
+		if (itemHash == hash) return null;
+		
+		GrandLogger.log("Updating item: " + name, LogType.DEBUG);
 		
 		//Update hash
 		storage.put(STORAGE_HASH, hash);
 		
-		item.setType(type);
-		if (updateAmount) item.setAmount(amount);
-		if (updateDurability) item.setDurability(durability);
+		result.setType(type);
+		if (updateAmount) result.setAmount(amount);
+		if (updateDurability) result.setDurability(durability);
 		
-		ItemMeta meta = item.getItemMeta();
+		ItemMeta meta = result.getItemMeta();
 		if (updateName) meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		if (leatherColor != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta)meta).setColor(leatherColor);
 		meta.spigot().setUnbreakable(unbreakable);
 		if (updateEnchantments) {
 			for (Enchantment e : Enchantment.values()) {
-				item.removeEnchantment(e);
-				if (enchants.get(e) != null) item.addUnsafeEnchantment(e, enchants.get(e));
+				result.removeEnchantment(e);
+				if (enchants.get(e) != null) result.addUnsafeEnchantment(e, enchants.get(e));
 			}
 		}
 		meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
@@ -223,9 +242,9 @@ public class GrandItem {
 		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 		
-		item.setItemMeta(meta);
+		result.setItemMeta(meta);
 		
-		Attributes att = new Attributes(item);
+		Attributes att = new Attributes(result);
 		att.clear();
 		attributes.forEach(a -> att.add(a.build()));
 		return att.getStack();
@@ -234,13 +253,15 @@ public class GrandItem {
 	
 	
 	/*----------------------Activators-----------------------*/
-	public void activateAbilities(ActivatorType activatorType, ItemSlotType slotType, Target target) {
+	public void activateAbilities(@NotNull ActivatorType activatorType,
+	                              @NotNull ItemSlotType slotType,
+	                              @NotNull Target target) {
 		abilities.stream()
 				.filter(a -> activatorType.isSubtypeOf(a.getType()))
 				.forEach(a -> a.activate(slotType, target));
 	}
 	
-	public void sendReEquip(Player holder, ItemSlotType unEquipFrom, ItemSlotType equipTo) {
+	public void sendReEquip(@NotNull Player holder, @NotNull ItemSlotType unEquipFrom, @NotNull ItemSlotType equipTo) {
 		for (ActivatorLine line : abilities) {
 			ItemSlotType request = line.getRequestedSlot();
 			
@@ -257,7 +278,7 @@ public class GrandItem {
 		}
 	}
 	
-	public void activateTimers(Player holder) {
+	public void activateTimers(@NotNull Player holder) {
 		timers.forEach(timer -> timer.activatePlayer(holder));
 	}
 
@@ -271,15 +292,22 @@ public class GrandItem {
 	
 	
 	/*----------------------Informative----------------------*/
+	@NotNull @Contract(pure = true)
 	public String getName() { return name; }
+	
+	@NotNull @Contract(pure = true)
 	public String getDisplayName() { return displayName; }
+	
+	@Contract(pure = true)
 	public boolean isPersistant() { return persistant; }
+	
+	@Contract(pure = true)
 	public boolean isPlaceable() { return placeable; }
 	
     /**
      * Gets the hash code from the name string.
      */
-    @Override
+    @Override @Contract(pure = true)
 	public int hashCode() {
 		return name.hashCode();
 	}
@@ -287,7 +315,7 @@ public class GrandItem {
     /**
      * Compares GrandItems by their names. No two GrandItems should ever have the same name.
      */
-	@Override
+	@Override @Contract(pure = true)
 	public boolean equals(Object obj) {
 		return this == obj
 				|| (obj instanceof GrandItem && name.equals(((GrandItem)obj).name));
@@ -437,29 +465,40 @@ public class GrandItem {
 		){
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
 			
+			//GrandItemName
 			dataOutput.writeChars(name);
-			dataOutput.writeChars(displayName);
 			
+			//Display name and lore
+			dataOutput.writeChars(displayName);
+			dataOutput.writeInt(lore.size());
 			for (String s : lore) {
 				dataOutput.writeChars(s);
 			}
 			
+			//Type, durability, amount, and color
 			dataOutput.writeInt(type.ordinal());
 			dataOutput.writeShort(durability);
 			dataOutput.writeInt(amount);
-			if (leatherColor != null) dataOutput.writeInt(leatherColor.asRGB());
+			dataOutput.writeInt(leatherColor == null ? 0 : leatherColor.asRGB());
 			
-			for (Enchantment e : Enchantment.values()) {
+			//Enchantments
+			List<Enchantment> sortedEnchants = Arrays.stream(Enchantment.values())
+					.sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+					.collect(Collectors.toList());
+			for (Enchantment e : sortedEnchants) {
 				dataOutput.writeInt(enchants.getOrDefault(e, 0));
 			}
 			
+			//Attributes
+			dataOutput.writeInt(attributes.size());
 			for (GrandAttribute a : attributes) {
-				dataOutput.writeChars(a.getType().toString());
+				dataOutput.writeChars(a.getType().getMinecraftId());
 				dataOutput.writeInt(a.getSlot().ordinal());
 				dataOutput.writeInt(a.getOperation().getId());
 				dataOutput.writeDouble(a.getOperand());
 			}
 			
+			//Boolean options
 			dataOutput.writeBoolean(persistant);
 			dataOutput.writeBoolean(placeable);
 			dataOutput.writeBoolean(unbreakable);
@@ -470,9 +509,11 @@ public class GrandItem {
 			dataOutput.writeBoolean(updateAmount);
 			dataOutput.writeBoolean(updateEnchantments);
 			
+			//Calculate MD5
 			dataOutput.flush();
-			
 			byte[] hashBytes = md5.digest(byteStream.toByteArray());
+			
+			//Get first 64 bits as a long
 			return Longs.fromByteArray(Arrays.copyOfRange(hashBytes, 0, 64));
 			
 		} catch (NoSuchAlgorithmException|IOException e) {

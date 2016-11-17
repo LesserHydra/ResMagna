@@ -49,7 +49,17 @@ public class GrandInventory {
 		itemMap.clear();
 		grandItemMap.clear();
 		
-		//Read all items from player's inventory
+		//Readd all items from player's inventory
+		/*ItemStack[] contents = holderPlayer.getInventory().getContents();
+		int heldSlot = holderPlayer.getInventory().getHeldItemSlot();
+		for (int i = 0; i < contents.length; ++i) {
+			GrandItem gItem = ItemHandler.getInstance().matchItem(contents[i]);
+			if (gItem == null) continue;
+			
+			ItemSlotType slot = ItemSlotType.fromTotalIndex(i, heldSlot);
+			putItem(contents[i], gItem, slot);
+		}
+		*/
 		for (ItemSlotType slotType : ItemSlotType.getUniqueTypes()) {
 			for (ItemStack item : slotType.getItems(holderPlayer)) {
 				GrandItem gItem = ItemHandler.getInstance().matchItem(item);
@@ -79,21 +89,14 @@ public class GrandInventory {
 		//Put element on the itemMap
 		InventoryElement oldElement = itemMap.put(element.id, element);
 		
-		//Send unequip activator
+		//Send reequip activator
 		if (oldElement != null && oldElement.slotType != slotType) {
-			/*//DEBUG
-			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
-				GrandLogger.log("Debug item moved from: " + oldElement.slotType, LogType.DEBUG);
-			}*/
 			grandItem.sendReEquip(holderPlayer, oldElement.slotType, slotType);
 		}
 		//Send equip activator
 		else if (oldElement == null) {
-			/*//DEBUG
-			if (grandItem.getName().equalsIgnoreCase("InvDebug")) {
-				GrandLogger.log("Debug item added to " + slotType, LogType.DEBUG);
-			}*/
-			grandItem.sendEquip(holderPlayer, slotType);
+			grandItem.activateAbilities(ActivatorType.EQUIP, slotType,
+					Target.make(holderPlayer, Target.from(holderPlayer), Target.none()));
 		}
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
@@ -116,16 +119,12 @@ public class GrandInventory {
 		InventoryElement oldElement = itemMap.remove(GrandItem.getItemUUID(item));
 		
 		if (oldElement != null) {
-			//DEBUG
-			/*if (oldElement.grandItem.getName().equalsIgnoreCase("InvDebug")) {
-				GrandLogger.log("Debug item removed from: " + oldElement.slotType, LogType.DEBUG);
-			}*/
-			
 			//Send unequip activator
-			oldElement.grandItem.sendUnEquip(holderPlayer, oldElement.slotType);
+			oldElement.grandItem.activateAbilities(ActivatorType.UNEQUIP, oldElement.slotType,
+					Target.make(holderPlayer, Target.from(holderPlayer), Target.none()));
 			
-			Map<UUID, InventoryElement> items = grandItemMap.get(oldElement.grandItem.getName());
-			oldElement = items.remove(oldElement.id);
+			//Remove from secondary mapping
+			grandItemMap.get(oldElement.grandItem.getName()).remove(oldElement.id);
 		}
 	}
 	
@@ -141,10 +140,6 @@ public class GrandInventory {
 		Map<UUID, InventoryElement> items = grandItemMap.get(grandItemName);
 		if (items == null) return Collections.emptyList();
 		return new ArrayList<>(items.values());
-	}
-	
-	public boolean containsGrandItem(String grandItemName) {
-		return grandItemMap.containsKey(grandItemName);
 	}
 	
 }

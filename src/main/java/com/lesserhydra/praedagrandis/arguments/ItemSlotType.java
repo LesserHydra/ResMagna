@@ -134,18 +134,13 @@ public enum ItemSlotType {
 	public abstract List<ItemStack> getItems(Player p);
 	
 	/**
-	 * Checks for supertype equivilence. For example, HELD is a subtype of HOTBAR,
+	 * Checks for supertype equivalence. For example, HELD is a subtype of HOTBAR,
 	 * which is a subtype of ANY.
 	 * @param supertype 
 	 * @return True if this type is a subtype of given type, false otherwise
 	 */
-	public boolean isSubtypeOf(ItemSlotType supertype)
-	{
-		if (isNull()) return false;				//Base case
-		
-		if (this == supertype) return true; 	//Is subtype of self
-		//if (parent == supertype) return true;	//Is subtype of parent
-		return parent.isSubtypeOf(supertype);	//Is subtype of parent, ect
+	public boolean isSubtypeOf(ItemSlotType supertype) {
+		return !isNull() && (this == supertype || parent.isSubtypeOf(supertype));
 	}
 	
 	public EnumSet<ItemSlotType> getSupertypes() {
@@ -172,32 +167,6 @@ public enum ItemSlotType {
 	
 	public static ItemSlotType find(Player player, ItemStack item) {
 		return fromTotalIndex(getIndex(player, item), player.getInventory().getHeldItemSlot());
-	}
-	
-	/*public static ItemSlotType getSlotType(SlotType slotType, int slotNumber, int heldSlotNumber) {
-		switch (slotType) {
-		case CONTAINER:		return STORED;
-		case ARMOR:			return getArmorSlotType(slotNumber);
-		case QUICKBAR:		return getHotbarSlotType(slotNumber, heldSlotNumber);
-		default:			return NONE;
-		}
-	}*/
-	
-	/*private static ItemSlotType getArmorSlotType(int i) {
-		switch (i) {
-		case 39: 	return HELMET;
-		case 38:	return CHESTPLATE;
-		case 37:	return LEGGINGS;
-		case 36:	return BOOTS;
-		
-		//Should be impossible, unless inventory structure changes (aka Minecraft 1.9)
-		default: throw new IllegalArgumentException("Invalid armor slot (36-39): " + i);
-		}
-	}*/
-	
-	public static ItemSlotType getHotbarSlotType(final int slotNumber, final int heldSlotNumber) {
-		if (slotNumber == heldSlotNumber) return ItemSlotType.HELDMAIN;
-		return ItemSlotType.UNHELD;
 	}
 	
 	public static Set<ItemSlotType> getUniqueTypes() { return unique; }
@@ -250,8 +219,10 @@ public enum ItemSlotType {
 	public static ItemSlotType fromTotalIndex(int i, int heldSlot) {
 		//Negative values represent unfound
 		if (i < 0) return NONE;
+		//Selected hotbar slot
+		if (i == heldSlot) return HELDMAIN;
 		//0-8 Hotbar
-		if (i < 9) return (i == heldSlot ? HELDMAIN : UNHELD);
+		if (i < 9) return UNHELD;
 		//9-35 Stored
 		if (i < 36) return STORED;
 		//36-39 Armor

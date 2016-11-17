@@ -22,7 +22,7 @@ public class AutoConvertItem {
 		this.searchType = searchType;
 		this.searchName = searchName.replace('&', ChatColor.COLOR_CHAR);
 		
-		List<String> convertedSearchLore = new ArrayList<String>();
+		List<String> convertedSearchLore = new ArrayList<>();
 		for (String s : searchLore) {
 			convertedSearchLore.add(s.replace('&', ChatColor.COLOR_CHAR));
 		}
@@ -43,11 +43,17 @@ public class AutoConvertItem {
 		
 		return matches && !(searchName == null && searchLore.isEmpty());
 	}
-
+	
 	@NotNull
 	public ItemStack convert(ItemStack item) {
 		ItemStack result = convertItem.markItem(item);
-		return convertItem.update(result);
+		result = convertItem.update(result);
+		
+		//Yes compiler, I KNOW update() is nullable. Just trust me when I say it will NOT return null.
+		//Could technically just return original result, but this way is more correct and less likely to be broken by
+		//silly mistakes in the future.
+		assert result != null;
+		return result;
 	}
 	
 }

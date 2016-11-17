@@ -16,14 +16,16 @@ import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Updates all items in player inventory on login and reload. Updates
- * single items when a player clicks on the item in their inventory.
+ * single items when a player clicks on the item in an inventory.
  */
 class ItemUpdater implements Listener {
 	private final PraedaGrandis plugin;
@@ -41,14 +43,17 @@ class ItemUpdater implements Listener {
 		Bukkit.getScheduler().runTask(plugin, () -> updateItems(p));
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onInventoryClick(final InventoryClickEvent event) {
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (event instanceof InventoryCreativeEvent) return;
 		if (!(event.getWhoClicked() instanceof Player)) return;
 		
-		Bukkit.getScheduler().runTask(plugin, () -> {
-			updateItem(event.getCurrentItem());
-			updateItem(event.getCursor());
-		});
+		ItemStack item = event.getCurrentItem();
+		ItemStack updated = updateItem(item);
+		if (updated != null) {
+			event.setCurrentItem(updated);
+			((Player) event.getWhoClicked()).updateInventory();
+		}
 	}
 	
 	/**
@@ -155,6 +160,7 @@ class ItemUpdater implements Listener {
 		player.updateInventory();
 	}
 	
+	@Nullable
 	private ItemStack updateItem(ItemStack item) {
 		if (item == null || item.getType() == Material.AIR) return null;
 		
