@@ -107,6 +107,7 @@ public class ConditionFactory {
 		case "israining":		return Conditions.IS_RAINING;
 		case "isthundering":	return Conditions.IS_THUNDERING;
 		case "issheltered":		return Conditions.IS_SHELTERED;
+		case "isday":		    return Conditions.IS_DAY;
 		
 		//Non-trivial state checks
 		case "isblock":			return new IsBlock(args);
@@ -121,7 +122,10 @@ public class ConditionFactory {
 		//Op
 		//Gamemode
 		//Attribute
-	
+			
+		//Other
+		case "israndom":        return new IsRandom(args);
+			
 		//Non-trivial value checks
 		case "isvariable":		return new IsVariable(varArgsString);
 		case "ishealth":		return new IsHealth(varArgsString);

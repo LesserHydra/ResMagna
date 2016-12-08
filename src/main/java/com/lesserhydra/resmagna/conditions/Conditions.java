@@ -62,6 +62,7 @@ class Conditions {
 	static Condition.ForLocation IS_RAINING    = l -> l.getWorld().hasStorm();
 	static Condition.ForLocation IS_THUNDERING = l -> l.getWorld().isThundering();
 	static Condition.ForLocation IS_SHELTERED  = l -> l.getBlockY() < l.getWorld().getHighestBlockYAt(l);
+	static Condition.ForLocation IS_DAY        = l -> l.getWorld().getTime() < 12575 || l.getWorld().getTime() > 23459;
 	
 	
 }
