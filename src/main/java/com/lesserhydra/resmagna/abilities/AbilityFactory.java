@@ -75,6 +75,7 @@ public class AbilityFactory {
 		case "teleport":		return new TeleportAbility(abilityArgs);
 		case "spin":			return new SpinAbility(abilityArgs);
 		case "swap":			return new SwapAbility(abilityArgs);
+		case "face":			return new FaceAbility(abilityArgs);
 		case "mount":			return new MountAbility(abilityArgs);
 		case "ghostblock":		return new GhostBlockAbility(abilityArgs);
 		case "projectile":		return new ProjectileAbility(abilityArgs);
