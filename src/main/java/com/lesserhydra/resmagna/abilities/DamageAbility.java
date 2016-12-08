@@ -34,14 +34,15 @@ class DamageAbility implements Ability {
 		LivingEntity damagerEntity = damagerTarget.asEntity();
 		
 		//Create and call event
-		EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);
+		damageTarget(targetEntity, damagerEntity, damageAmount);
+		/*EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		
 		//If it wasn't canceled, damage the target
 		if (!event.isCancelled()) {
 			damageTarget(targetEntity, damagerEntity, event.getFinalDamage());
 			targetEntity.setLastDamageCause(event);
-		}
+		}*/
 	}
 
 	@SuppressWarnings("deprecation")
