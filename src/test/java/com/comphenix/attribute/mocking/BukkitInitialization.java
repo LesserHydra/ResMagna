@@ -23,11 +23,11 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.server.v1_10_R1.DispenserRegistry;
+import net.minecraft.server.v1_11_R1.DispenserRegistry;
 
 // Will have to be updated for every version though
-import org.bukkit.craftbukkit.v1_10_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_11_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

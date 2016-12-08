@@ -4,6 +4,8 @@ import com.lesserhydra.resmagna.arguments.ArmorType;
 import com.lesserhydra.resmagna.arguments.ItemSlotType;
 import com.lesserhydra.resmagna.configuration.GrandItem;
 import com.lesserhydra.resmagna.configuration.ItemHandler;
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -155,6 +157,8 @@ public class InventoryHandler implements Listener {
 		GrandItem currentGrandItem = ItemHandler.getInstance().matchItem(currentItem);
 		GrandItem cursorGrandItem = ItemHandler.getInstance().matchItem(cursorItem);
 		
+		//DEBUG: GrandLogger.log(currentGrandItem == null ? "null" : currentGrandItem.getName(), LogType.DEBUG);
+		
 		boolean creative = e instanceof InventoryCreativeEvent;
 		boolean otherInventory = !inv.equals(e.getClickedInventory());
 		
@@ -298,7 +302,8 @@ public class InventoryHandler implements Listener {
 	}
 	
 	private void addItemAtEndOfTick(Player player, ItemStack item, GrandItem grandItem) {
-		Bukkit.getScheduler().runTask(ResMagna.plugin, () -> addItem(player, item, grandItem));
+		ItemStack clonedItem = item.clone();
+		Bukkit.getScheduler().runTask(ResMagna.plugin, () -> addItem(player, clonedItem, grandItem));
 	}
 	
 	private void addItem(Player player, ItemStack item, GrandItem grandItem) {

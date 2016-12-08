@@ -140,7 +140,7 @@ public class GrandItem {
 		ItemMeta meta = result.getItemMeta();
 		meta.setDisplayName(displayName);
 		meta.setLore(lore);
-		meta.spigot().setUnbreakable(unbreakable);
+		meta.setUnbreakable(unbreakable);
 		if (hideEnchants) meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		if (hideAttributes) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		if (hideUnbreakable) meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
@@ -230,7 +230,7 @@ public class GrandItem {
 		if (updateName) meta.setDisplayName(displayName);
 		meta.setLore(lore);
 		if (leatherColor != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta)meta).setColor(leatherColor);
-		meta.spigot().setUnbreakable(unbreakable);
+		meta.setUnbreakable(unbreakable);
 		if (updateEnchantments) {
 			for (Enchantment e : Enchantment.values()) {
 				result.removeEnchantment(e);
