@@ -1,13 +1,11 @@
 package com.lesserhydra.resmagna;
 
-import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
+import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -18,24 +16,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class ProjectileListener implements Listener
-{
+class ProjectileListener implements Listener {
+	
 	private final ResMagna plugin;
 	
-	public ProjectileListener(ResMagna plugin) {
+	ProjectileListener(ResMagna plugin) {
 		this.plugin = plugin;
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onArrowPickup(PlayerPickupItemEvent event) {
-		Item item = event.getItem();
-		if (item.getItemStack().getType() != Material.ARROW) return;
-		if (item.hasMetadata("PG_ArrowStopPickup")) event.setCancelled(true);
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -84,7 +74,7 @@ public class ProjectileListener implements Listener
 	}
 	
 	//Remove projectiles on plugin disable
-	public void removeAbilityProjectiles() {
+	void removeAbilityProjectiles() {
 		for (World world : Bukkit.getWorlds()) {
 			for (Entity entity : world.getEntities()) {
 				if (!(entity instanceof Projectile)) continue;

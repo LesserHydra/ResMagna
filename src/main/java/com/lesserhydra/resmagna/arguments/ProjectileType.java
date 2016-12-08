@@ -7,6 +7,7 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ShulkerBullet;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.SpectralArrow;
@@ -32,11 +33,13 @@ public enum ProjectileType {
 	EGG					(Egg.class),
 	ENDERPEARL			(EnderPearl.class),
 	SNOWBALL			(Snowball.class),
-	EXP_BOTTLE			(ThrownExpBottle.class);
+	EXP_BOTTLE			(ThrownExpBottle.class),
+	
+	SHULKER_BULLET      (ShulkerBullet.class);
 	
 	private Class<? extends Projectile> projectileClass;
 	
-	private ProjectileType(Class<? extends Projectile> projectileClass) {
+	ProjectileType(Class<? extends Projectile> projectileClass) {
 		this.projectileClass = projectileClass;
 	}
 	
