@@ -3,6 +3,8 @@ package com.lesserhydra.resmagna.activator;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 
+import java.util.Arrays;
+
 /**
  * Activators
  */
@@ -21,62 +23,39 @@ public enum ActivatorType {
 	UNEQUIP,								//Item moved from specified slotType	NA
 	
 	MOVE,									//Holder location changed				From location
-	MOVEWALK		(MOVE),					//Holder walking						.
-	MOVEUP			(MOVE),					//Holder moved upwards					.
-	MOVEDOWN		(MOVE),					//Holder moved downwards				.
+	MOVE_WALK       (MOVE),					//Holder walking						.
+	MOVE_UP         (MOVE),					//Holder moved upwards					.
+	MOVE_DOWN       (MOVE),					//Holder moved downwards				.
 	
 	TELEPORT		(MOVE),					//Holder teleported						From location
 	PORTAL			(TELEPORT),				//Holder about to go through portal		.
 	
 	LOOK,									//Holder direction changed				From location (direction)
 	
-	CLICK,									//Holder clicked						What was clicked
-	CLICKLEFT		(CLICK),				//Holder left-clicked					NA
-	CLICKRIGHT		(CLICK),				//Holder right-clicked					NA
-	INTERACT		(CLICKRIGHT),			//Holder right-clicked on an entity		What was clicked
-	INTERACTPLAYER	(INTERACT),				//Holder right-clicked on a player		.
-	INTERACTMOB		(INTERACT),				//Holder right-clicked on a mob			.
+	CLICK,									//Holder clicked						NA
+	LEFT_CLICK          (CLICK),			//Holder left-clicked					NA
+	RIGHT_CLICK         (CLICK),			//Holder right-clicked					NA
+	LEFT_CLICK_BLOCK    (LEFT_CLICK),		//Holder left-clicked					Block that was clicked
+	RIGHT_CLICK_BLOCK   (RIGHT_CLICK),      //Holder right-clicked					Block that was clicked
+	INTERACT		    (RIGHT_CLICK),		//Holder right-clicked on an entity		Entity that was clicked
 	
-	BLOCKBREAK,								//Holder breaks a block					Location of block broken
+	BREAK_BLOCK,							//Holder breaks a block					Location of block broken
 	
 	BREAK,									//Item breaks							NA
 	
 	ATTACK,									//Holder attacked something				What was attacked
-	ATTACKPLAYER	(ATTACK),				//Holder attacked player				.
-	ATTACKSELF		(ATTACKPLAYER),			//Holder attacked self					.
-	ATTACKMOB		(ATTACK),				//Holder attacked mob					.
-	
 	HURT,									//Holder was hurt by something			What owner was hurt by
-	HURTPLAYER		(HURT),					//Holder was hurt by player				.
-	HURTSELF		(HURTPLAYER),			//Holder was hurt by self				.
-	HURTMOB			(HURT),					//Holder was hurt by mob				.
-	HURTOTHER		(HURT),					//Holder was hurt by environmental		NA
-	
 	KILL,									//Holder killed something				What was killed
-	KILLPLAYER		(KILL),					//Holder killed player					.
-	KILLSELF		(KILLPLAYER),			//Holder killed self					.
-	KILLMOB			(KILL),					//Holder killed mob						.
+	DEATH;									//Holder was killed						What owner was killed by
 	
-	DEATH,									//Holder was killed						What owner was killed by
-	DEATHPLAYER		(DEATH),				//Holder was killed by player			.
-	DEATHSELF		(DEATHPLAYER),			//Holder was killed by self				.
-	DEATHMOB		(DEATH),				//Holder was killed by mob				.
-	DEATHOTHER		(DEATH);				//Holder was killed by environmental	NA
-
 	private final ActivatorType parent;
-	
-	private ActivatorType() {
-		this.parent = null;
-	}
-	
-	private ActivatorType(ActivatorType parent) {
-		this.parent = parent;
-	}
+	ActivatorType() { this.parent = null; }
+	ActivatorType(ActivatorType parent) { this.parent = parent; }
 	
 	/**
-	 * Checks for supertype equivilence. For example, ATTACKSELF is a subtype of ATTACKPLAYER,
-	 * which is a subtype of ATTACK.
-	 * @param supertype 
+	 * Checks for supertype equivalence. For example, PORTAL is a subtype of TELEPORT,
+	 * which is a subtype of MOVE.
+	 * @param supertype Supertype
 	 * @return True if this type is a subtype of given type, false otherwise
 	 */
 	public boolean isSubtypeOf(ActivatorType supertype) {
@@ -89,10 +68,12 @@ public enum ActivatorType {
 		//Is subtype of anything parent is subtype of
 		return parent.isSubtypeOf(supertype);
 	}
-
-	public boolean isNull() {
-		return (this == NONE);
-	}
+	
+	/**
+	 * Checks if this type is valid.
+	 * @return True if this type is valid
+	 */
+	public boolean isValid() { return this != NONE; }
 	
 	/**
 	 * Find ActivatorType by name
@@ -101,9 +82,9 @@ public enum ActivatorType {
 	 */
 	public static ActivatorType fromName(String activatorName){
 		//Find by name
-		activatorName = activatorName.toUpperCase();
+		String lookup = activatorName.toUpperCase().replace("_", "");
 		for (ActivatorType type : values()) {
-			if (activatorName.equals(type.name())) return type;
+			if (lookup.equals(type.name().replace("_", ""))) return type;
 		}
 		
 		//Invalid name
