@@ -199,21 +199,12 @@ public class Target {
 	}
 	
 	private interface TargetConstruct {
-		Location getLocation();
-		LivingEntity getEntity();
-		boolean isNull();
+		default Location getLocation() { return null; };
+		default LivingEntity getEntity() { return null; };
+		default boolean isNull() { return true; };
 	}
 	
-	private static class TargetNone implements TargetConstruct {
-		@Override
-		public Location getLocation() { return null; }
-		
-		@Override
-		public LivingEntity getEntity() { return null; }
-		
-		@Override
-		public boolean isNull() { return true; }
-	}
+	private static class TargetNone implements TargetConstruct {}
 	
 	private static class TargetEntity implements TargetConstruct {
 		private final LivingEntity targetEntity;
@@ -237,9 +228,6 @@ public class Target {
 		
 		@Override
 		public Location getLocation() { return targetLocation.clone(); }
-		
-		@Override
-		public LivingEntity getEntity() { return null; }
 		
 		@Override
 		public boolean isNull() { return targetLocation == null; }
