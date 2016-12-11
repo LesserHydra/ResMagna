@@ -18,9 +18,9 @@ class ExplosionAbility implements Ability {
 	private final Targeter damagerTargeter;
 	
 	ExplosionAbility(ArgumentBlock args) {
-		power = args.getFloat(false, 0F,							"power", "yield", "p");
-		setFire = args.getBoolean(false, false,						"setfire", "fire");
-		breakBlocks = args.getBoolean(false, false,					"breakblocks", "blocks", "break");
+		power = args.getFloat(false, 0F,					"power", "yield", "p");
+		setFire = args.getBoolean(false, false,				"setfire", "fire");
+		breakBlocks = args.getBoolean(false, false,			"breakblocks", "blocks", "break");
 		location = args.getLocation(false, new GrandLocation(),     "location", "loc", "l");
 		damagerTargeter = args.getTargeter(false, Targeters.NONE,   "damager", "source", "dmgr");
 	}

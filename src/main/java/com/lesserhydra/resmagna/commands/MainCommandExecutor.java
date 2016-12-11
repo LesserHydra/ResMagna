@@ -1,18 +1,18 @@
 package com.lesserhydra.resmagna.commands;
 
-import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-public class MainCommandExecutor implements TabCompleter, CommandExecutor
-{
+import java.util.List;
+
+public class MainCommandExecutor implements TabCompleter, CommandExecutor {
+	
 	final static public String COMMAND_NAME = "ResMagna";
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args)
-	{
+	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 		if (!command.getName().equalsIgnoreCase(COMMAND_NAME))
 			throw new IllegalArgumentException("Only applies to " + COMMAND_NAME + " command");
 		
@@ -23,8 +23,7 @@ public class MainCommandExecutor implements TabCompleter, CommandExecutor
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
-	{
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (!command.getName().equalsIgnoreCase(COMMAND_NAME))
 			throw new IllegalArgumentException("Only applies to " + COMMAND_NAME + " command");
 		

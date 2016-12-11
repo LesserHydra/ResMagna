@@ -5,8 +5,8 @@ import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public enum MainSubCommandEnum
-{
+public enum MainSubCommandEnum {
+	
 	//TODO: Implement help output
 	NULL ("", new NullSubCommand()),
 	
@@ -53,4 +53,5 @@ public enum MainSubCommandEnum
 		}
 		return results;
 	}
+	
 }

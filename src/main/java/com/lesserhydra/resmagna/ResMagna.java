@@ -1,17 +1,17 @@
 package com.lesserhydra.resmagna;
 
-import java.util.EnumSet;
-import java.util.Random;
+import com.lesserhydra.resmagna.commands.MainCommandExecutor;
+import com.lesserhydra.resmagna.configuration.ConfigManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import com.lesserhydra.resmagna.commands.MainCommandExecutor;
-import com.lesserhydra.resmagna.configuration.ConfigManager;
 
-public class ResMagna extends JavaPlugin
-{
+import java.util.EnumSet;
+import java.util.Random;
+
+public class ResMagna extends JavaPlugin {
 	public static final Random RANDOM_GENERATOR = new Random();
 	public static final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
 			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
@@ -36,8 +36,7 @@ public class ResMagna extends JavaPlugin
 	
 	//Plugin startup
 	@Override
-	public void onEnable()
-	{
+	public void onEnable() {
 		plugin = this;
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
 		getServer().getPluginManager().registerEvents(InventoryHandler.getInstance(), this);
@@ -52,8 +51,7 @@ public class ResMagna extends JavaPlugin
 
 	//Plugin disable
 	@Override
-	public void onDisable()
-	{
+	public void onDisable() {
 		//Remove projectiles spawned by ProjectileAbility
 		projectileListener.removeAbilityProjectiles();
 		//Cancel timer checker
@@ -69,13 +67,11 @@ public class ResMagna extends JavaPlugin
 		
 		//Timer checker
 		if (timerCheckingTask != null) timerCheckingTask.cancel();
-		timerCheckingTask = new BukkitRunnable() { @Override public void run() {
-			for (Player p : getServer().getOnlinePlayers()) {
-        		for (GrandInventory.InventoryElement element : InventoryHandler.getInstance().getItemsFromPlayer(p).getItems()) {
-        			element.grandItem.activateTimers(p);
-        		}
-        	}
-		}}.runTaskTimer(plugin, 0L, ConfigManager.getInstance().getTimerHandlerDelay());
+		timerCheckingTask = getServer().getScheduler().runTaskTimer(this, () -> {
+			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+				InventoryHandler.getInstance().getItemsFromPlayer(p).getItems().forEach(e ->e.grandItem.activateTimers(p));
+			}
+		}, 0L, ConfigManager.getInstance().getTimerHandlerDelay());
 	}
 	
 }
