@@ -80,8 +80,8 @@ class ProjectileAbility implements Ability {
 
 	@Override
 	public void run(Target target) {
+		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
 		
 		Location calculatedLocation = targetLocation.calculate(target);
 		if (calculatedLocation == null) return;
@@ -97,7 +97,7 @@ class ProjectileAbility implements Ability {
 			projectile.setShooter(targetEntity);
 			
 			Target bulletTarget = shulkerBulletTargeter.getRandomTarget(target);
-			((ShulkerBullet)projectile).setTarget(bulletTarget.asEntity());
+			if (bulletTarget.isEntity()) ((ShulkerBullet)projectile).setTarget(bulletTarget.asEntity());
 		}
 		else projectile = targetEntity.launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		

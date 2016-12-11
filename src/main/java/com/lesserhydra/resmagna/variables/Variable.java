@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Variable {
 	
 	/**
-	 * Checks if this variable does not represent anything.
+	 * Checks if this variable represents nothing.
 	 * @return True if this represents nothing
 	 */
 	default boolean isNull() { return false; };

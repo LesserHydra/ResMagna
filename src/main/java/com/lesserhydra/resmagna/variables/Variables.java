@@ -9,7 +9,7 @@ public class Variables {
 	
 	public static Variable wrap(boolean data) { return new VarBoolean(data); }
 	public static Variable wrap(@NotNull Number data) { return new VarNumber(data); }
-	public static Variable wrap(Location data) { return data != null ? new VarLocation(data) : NONE; }
+	public static Variable wrap(Location data) { return data != null ? new VarLocation(data.clone()) : NONE; }
 	public static Variable wrap(LivingEntity data) { return data != null ? new VarLivingEntity(data) : NONE; }
 	
 	private static class VarNone implements Variable {

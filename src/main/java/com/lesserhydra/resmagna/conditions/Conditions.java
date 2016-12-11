@@ -18,12 +18,12 @@ class Conditions {
 	static Condition IS_NONE        = Target::isNull;
 	static Condition IS_ENTITY      = Target::isEntity;
 	static Condition IS_PLAYER      = Target::isPlayer;
-	static Condition IS_HOLDER      = t -> t.getHolder().equals(t.asEntity());
-	static Condition IS_CREATURE    = t -> t.asEntity() instanceof Creature;
-	static Condition IS_AGEABLE     = t -> t.asEntity() instanceof Ageable;
-	static Condition IS_ANIMAL      = t -> t.asEntity() instanceof Animals;
-	static Condition IS_TAMEABLE    = t -> t.asEntity() instanceof Tameable;
-	static Condition IS_MONSTER     = t -> t.asEntity() instanceof Monster;
+	static Condition IS_HOLDER      = t -> t.isEntity() && t.getHolder().equals(t.asEntity());
+	static Condition IS_CREATURE    = t -> t.is(Creature.class);
+	static Condition IS_AGEABLE     = t -> t.is(Ageable.class);
+	static Condition IS_ANIMAL      = t -> t.is(Animals.class);
+	static Condition IS_TAMEABLE    = t -> t.is(Tameable.class);
+	static Condition IS_MONSTER     = t -> t.is(Monster.class);
 	
 	//Trivial entity state checks
 	static Condition.ForEntity IS_VALID        = LivingEntity::isValid;

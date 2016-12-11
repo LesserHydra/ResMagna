@@ -33,16 +33,14 @@ class ExplosionAbility implements Ability {
 		Location calculatedLocation = location.calculate(target);
 		if (calculatedLocation == null) return;
 		
-		LivingEntity damagerEntity = damagerTarget.asEntity();
-		
 		//Mark entities in radius as damaged by damagerEntity, if exists
-		if (damagerEntity != null) {
+		if (damagerTarget.isEntity()) {
 			float damageRadius = power * 2;
 			double damageRadiusSquared = damageRadius * damageRadius;
 			for (Entity entity : calculatedLocation.getWorld().getNearbyEntities(calculatedLocation, damageRadius, damageRadius, damageRadius)) {
 				if (!(entity instanceof LivingEntity)) continue;
 				if (calculatedLocation.distanceSquared(entity.getLocation()) > damageRadiusSquared) continue;
-				((LivingEntity)entity).damage(0D, damagerEntity);
+				((LivingEntity)entity).damage(0D, damagerTarget.asEntity());
 			}
 		}
 		
