@@ -1,5 +1,7 @@
 package com.lesserhydra.resmagna.abilities;
 
+import com.lesserhydra.resmagna.arguments.VariableConstruct;
+import com.lesserhydra.resmagna.arguments.VariableConstructs;
 import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.arguments.VariableOperator;
@@ -12,15 +14,14 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class VariableAbility implements Functor {
+class VariableAbility implements Ability.ForPlayer {
 	
 	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
 	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
 	
 	private final String 			name;
 	private final VariableOperator	operator;
-	private final String			otherName;
-	private final int				number;
+	private final VariableConstruct other;
 	
 	VariableAbility(String variableLine) {
 		//Match
@@ -30,8 +31,7 @@ class VariableAbility implements Functor {
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			name = "";
 			operator = VariableOperator.SET;
-			number = 0;
-			otherName = null;
+			other = VariableConstructs.NONE;
 			return;
 		}
 		
@@ -43,21 +43,12 @@ class VariableAbility implements Functor {
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (StringTools.isInteger(operand)) {
-			number = Integer.parseInt(operand);
-			otherName = null;
-		}
-		else {
-			number = 0;
-			otherName = operand;
-		}
+		other = VariableConstructs.construct(operand);
 	}
 
 	@Override
-	public void run(Target target) {
-		if (!target.isPlayer()) return;
-		Player p = target.asPlayer();
-		VariableHandler.operate(p, name, operator, (otherName != null ? VariableHandler.get(p, otherName) : number));
+	public void run(Player target) {
+		VariableHandler.operate(target, name, operator, other);
 	}
 
 }

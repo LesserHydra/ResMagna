@@ -10,7 +10,7 @@ public interface Variable {
 	 * Checks if this variable represents nothing.
 	 * @return True if this represents nothing
 	 */
-	default boolean isNull() { return false; };
+	default boolean isNull() { return false; }
 	
 	/**
 	 * Checks if this variable represents a boolean value.
@@ -28,18 +28,39 @@ public interface Variable {
 	}
 	
 	/**
-	 * Checks if this variable represents a Number.
-	 * @return True if this represents a Number
+	 * Checks if this variable represents a numerical value.
+	 * @return True if this represents a numerical value
 	 */
-	default boolean hasNumber() { return false; }
+	default boolean hasNumber() { return hasInteger() || hasDouble(); }
 	
 	/**
-	 * Gets the represented value as a Number.
-	 * @return The represented Number
-	 * @throws UnrepresentedTypeException If this does not represent a Number
+	 * Checks if this variable represents an integer value.
+	 * @return True if this represents an integer value
 	 */
-	@NotNull default Number getNumber() {
-		throw new UnrepresentedTypeException("Variable does not represent a number, use hasNumber() first.");
+	default boolean hasInteger() { return false; }
+	
+	/**
+	 * Gets the represented value as an integer.
+	 * @return The represented integer
+	 * @throws UnrepresentedTypeException If this does not represent an integer
+	 */
+	default int getInteger() {
+		throw new UnrepresentedTypeException("Variable does not represent an integer, use hasInteger() first.");
+	}
+	
+	/**
+	 * Checks if this variable represents a double value.
+	 * @return True if this represents a double value
+	 */
+	default boolean hasDouble() { return false; }
+	
+	/**
+	 * Gets the represented value as a double.
+	 * @return The represented double
+	 * @throws UnrepresentedTypeException If this does not represent a double
+	 */
+	default double getDouble() {
+		throw new UnrepresentedTypeException("Variable does not represent a double, use hasDouble() first.");
 	}
 	
 	/**
@@ -70,6 +91,27 @@ public interface Variable {
 	 */
 	@NotNull default LivingEntity getEntity() {
 		throw new UnrepresentedTypeException("Variable does not represent a LivingEntity, use hasEntity() first.");
+	}
+	
+	
+	default Variable add(Variable other) {
+		throw new UnsupportedOperationException(""); //TODO
+	}
+	
+	default Variable subtract(Variable other) {
+		throw new UnsupportedOperationException(""); //TODO
+	}
+	
+	default Variable multiply(Variable other) {
+		throw new UnsupportedOperationException(""); //TODO
+	}
+	
+	default Variable divide(Variable other) {
+		throw new UnsupportedOperationException(""); //TODO
+	}
+	
+	default Variable modulus(Variable other) {
+		throw new UnsupportedOperationException(""); //TODO
 	}
 	
 }

@@ -1,10 +1,12 @@
 package com.lesserhydra.resmagna.conditions;
 
+import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.arguments.VariableConditional;
+import com.lesserhydra.resmagna.arguments.VariableConstruct;
+import com.lesserhydra.resmagna.arguments.VariableConstructs;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.variables.Variable;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;
@@ -16,8 +18,7 @@ class IsVariable implements Condition.ForPlayer {
 	
 	private final String 				name;
 	private final VariableConditional	conditional;
-	private final String				otherName;
-	private final int					number;
+	private final VariableConstruct     other;
 	
 	IsVariable(String variableLine) {
 		//Match
@@ -27,8 +28,7 @@ class IsVariable implements Condition.ForPlayer {
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			name = "";
 			conditional = VariableConditional.EQUAL;
-			number = 0;
-			otherName = null;
+			other = VariableConstructs.NONE;
 			return;
 		}
 		
@@ -40,21 +40,20 @@ class IsVariable implements Condition.ForPlayer {
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (StringTools.isInteger(operand)) {
-			number = Integer.parseInt(operand);
-			otherName = null;
-		}
-		else {
-			number = 0;
-			otherName = operand;
-		}
+		other = VariableConstructs.construct(operand);
 	}
 
 	@Override
 	public boolean test(Player target) {
-		int a = VariableHandler.get(target, name);
-		int b = (otherName != null ? VariableHandler.get(target, otherName) : number);
-		return conditional.check(a, b);
+		Variable a = VariableHandler.get(target, name);
+		Variable b = other.get(target);
+		
+		if (!a.hasNumber() || !b.hasNumber()) {
+			GrandLogger.log("Tried to compare non-numerical values.", LogType.RUNTIME_ERRORS);
+			return false;
+		}
+		return conditional.check(a.getDouble(), b.getDouble()); //TODO
+		
 	}
 
 }

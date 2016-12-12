@@ -1,36 +1,43 @@
 package com.lesserhydra.resmagna;
 
+import com.lesserhydra.resmagna.arguments.VariableConstruct;
+import com.lesserhydra.resmagna.arguments.VariableOperator;
+import com.lesserhydra.resmagna.variables.Variable;
+import com.lesserhydra.resmagna.variables.Variables;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.entity.Player;
-import com.lesserhydra.resmagna.arguments.VariableOperator;
 
-public class VariableHandler
-{
-	final static private Map<String, Map<String, Integer>> variables = new HashMap<>();
+public class VariableHandler {
+	final static private Map<String, Map<String, Variable>> variables = new HashMap<>();
 	
-	static public void registerPlayer(Player p) {
+	public static void registerPlayer(Player p) {
 		if (variables.containsKey(p.getName())) return;
-		variables.put(p.getName(), new HashMap<String, Integer>());
+		variables.put(p.getName(), new HashMap<>());
 	}
 	
-	static public int operate(Player p, String varName, VariableOperator operation, int number) {
-		Map<String, Integer> playerVars = variables.get(p.getName());
-		Integer value = playerVars.get(varName);
-		if (value == null) value = 0;
+	@NotNull
+	public static Variable operate(Player p, String varName, VariableOperator operation, VariableConstruct operand) {
+		Map<String, Variable> playerVars = variables.get(p.getName());
+		Variable value = playerVars.get(varName);
+		if (value == null) value = Variables.NONE;
 		
-		value = operation.apply(value, number);
+		value = operation.apply(value, operand.get(p));
 		
 		playerVars.put(varName, value);
 		return value;
 	}
 	
-	static public int operate(Player p, String var1Name, VariableOperator operation, String var2Name) {
-		return operate(p, var1Name, operation, get(p, var2Name));
+	@NotNull
+	public static Variable get(Player p, String varName) {
+		Variable value = variables.get(p.getName()).get(varName);
+		return value == null ? Variables.NONE : value;
 	}
 	
-	static public int get(Player p, String varName) {
-		Integer value = variables.get(p.getName()).get(varName);
-		return (value == null ? 0 : value);
+	@NotNull
+	public static VariableConstruct linkConstruct(String varName) {
+		return p -> get(p, varName);
 	}
 }
