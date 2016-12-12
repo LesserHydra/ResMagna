@@ -52,8 +52,6 @@ class IsVariable implements Condition {
 	
 	@Override
 	public boolean test(Target target) {
-		if (!target.isPlayer()) return false;
-		
 		Variable a = var.get(target);
 		Variable b = other.get(target);
 		

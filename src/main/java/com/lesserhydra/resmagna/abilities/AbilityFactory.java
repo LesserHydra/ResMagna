@@ -82,7 +82,7 @@ public class AbilityFactory {
 		case "beam":			return new BeamAbility(abilityArgs);
 		
 		//Variable style abilities
-		case "variable":		return new VariableAbility(variableArgs);
+		case "set":		        return new VariableAbility(variableArgs);
 		
 		//No built-in found, request custom
 		default:				return GrandAbilityHandler.getInstance().requestFunction(name);

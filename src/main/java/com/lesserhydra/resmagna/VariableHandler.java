@@ -1,5 +1,7 @@
 package com.lesserhydra.resmagna;
 
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.VariableConstruct;
 import com.lesserhydra.resmagna.variables.VariableConstructs;
@@ -38,7 +40,7 @@ public class VariableHandler {
 	@NotNull
 	public static Variable get(Player p, String varName) {
 		Variable value = variables.get(p.getName()).get(varName);
-		return value == null ? Variables.NONE : value;
+		return value == null ? Variables.wrap(0) : value;
 	}
 	
 	public static void set(Player p, String varName, Variable value) {
@@ -49,10 +51,19 @@ public class VariableHandler {
 	@NotNull
 	public static VariableConstruct linkConstruct(String varName) {
 		return VariableConstructs.makeSettable(t -> {
-			if (!t.isPlayer()) return Variables.NONE;
+			if (!t.isPlayer()) {
+				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
+				return Variables.NONE;
+			}
+			//DEBUG: GrandLogger.log("Get var " + varName + ": " + get(t.asPlayer(), varName).getDouble(), LogType.DEBUG);
 			return get(t.asPlayer(), varName);
 		}, (t, v) -> {
-			if (t.isPlayer()) set(t.asPlayer(), varName, v);
+			if (t.isPlayer()) {
+				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
+				return;
+			}
+			//DEBUG: GrandLogger.log("Set var " + varName + ": " + v.getDouble(), LogType.DEBUG);
+			set(t.asPlayer(), varName, v);
 		});
 	}
 	
