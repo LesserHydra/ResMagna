@@ -58,7 +58,7 @@ public class VariableHandler {
 			//DEBUG: GrandLogger.log("Get var " + varName + ": " + get(t.asPlayer(), varName).asDouble(), LogType.DEBUG);
 			return get(t.asPlayer(), varName);
 		}, (t, v) -> {
-			if (t.isPlayer()) {
+			if (!t.isPlayer()) {
 				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
 				return;
 			}

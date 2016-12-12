@@ -65,6 +65,7 @@ public class Values {
 		
 		@Override public boolean hasLocation() { return true; }
 		@Override @NotNull public Location asLocation() { return data; }
+		@Override @NotNull public Location asLocation() { return data.clone(); }
 	}
 	
 	private static class VarLivingEntity implements Value {
