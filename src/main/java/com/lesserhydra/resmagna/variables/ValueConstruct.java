@@ -6,7 +6,7 @@ import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public interface VariableConstruct {
+public interface ValueConstruct {
 	
 	Value get(Target target);
 	default boolean isNull() { return false; }
@@ -15,7 +15,7 @@ public interface VariableConstruct {
 		throw new UnsupportedOperationException("Value construct is not settable. Check isSettable() first.");
 	}
 	
-	interface WithLivingEntity extends VariableConstruct {
+	interface WithLivingEntity extends ValueConstruct {
 		@Override default Value get(Target target) {
 			if (!target.isEntity()) {
 				GrandLogger.log("Tried to access a LivingEntity variable with invalid target.", LogType.RUNTIME_ERRORS);
@@ -26,7 +26,7 @@ public interface VariableConstruct {
 		Value get(LivingEntity target);
 	}
 	
-	interface WithLivingEntitySettable extends VariableConstruct {
+	interface WithLivingEntitySettable extends ValueConstruct {
 		@Override default boolean isSettable() { return true; }
 		
 		@Override default Value get(Target target) {
@@ -48,7 +48,7 @@ public interface VariableConstruct {
 		void set(LivingEntity target, Value value);
 	}
 	
-	interface WithPlayer extends VariableConstruct {
+	interface WithPlayer extends ValueConstruct {
 		@Override default Value get(Target target) {
 			if (!target.isPlayer()) {
 				GrandLogger.log("Tried to access a player variable with non-player target.", LogType.RUNTIME_ERRORS);
@@ -59,7 +59,7 @@ public interface VariableConstruct {
 		Value get(Player target);
 	}
 	
-	interface WithPlayerSettable extends VariableConstruct {
+	interface WithPlayerSettable extends ValueConstruct {
 		@Override default boolean isSettable() { return true; }
 		
 		@Override default Value get(Target target) {

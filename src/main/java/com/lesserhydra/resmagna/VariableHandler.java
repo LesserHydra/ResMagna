@@ -4,8 +4,8 @@ import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.Value;
-import com.lesserhydra.resmagna.variables.VariableConstruct;
-import com.lesserhydra.resmagna.variables.VariableConstructs;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
 import com.lesserhydra.resmagna.variables.VariableOperator;
 import com.lesserhydra.resmagna.variables.Values;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class VariableHandler {
 	}
 	
 	@NotNull
-	public static Value operate(Target target, String varName, VariableOperator operation, VariableConstruct operand) {
+	public static Value operate(Target target, String varName, VariableOperator operation, ValueConstruct operand) {
 		if (!target.isPlayer()) return Values.NONE;
 		
 		Map<String, Value> playerVars = variables.get(target.asPlayer().getName());
@@ -49,8 +49,8 @@ public class VariableHandler {
 	}
 	
 	@NotNull
-	public static VariableConstruct linkConstruct(String varName) {
-		return VariableConstructs.makeSettable(t -> {
+	public static ValueConstruct linkConstruct(String varName) {
+		return ValueConstructs.makeSettable(t -> {
 			if (!t.isPlayer()) {
 				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
 				return Values.NONE;

@@ -1,11 +1,10 @@
 package com.lesserhydra.resmagna.abilities;
 
-import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.variables.VariableConstruct;
-import com.lesserhydra.resmagna.variables.VariableConstructs;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
 import com.lesserhydra.resmagna.variables.VariableOperator;
 
 import java.util.regex.Matcher;
@@ -16,9 +15,9 @@ class VariableAbility implements Ability {
 	//([\w.]+)\s*([=+\-*/%]+)\s*([\w.]+)
 	static private final Pattern variableLinePattern = Pattern.compile("([\\w.]+)\\s*([=+\\-*/%]+)\\s*([\\w.]+)");
 	
-	private final VariableConstruct var;
+	private final ValueConstruct var;
 	private final VariableOperator	operator;
-	private final VariableConstruct other;
+	private final ValueConstruct other;
 	
 	VariableAbility(String variableLine) {
 		//Match
@@ -26,21 +25,21 @@ class VariableAbility implements Ability {
 		if (!lineMatcher.matches()) {
 			GrandLogger.log("Invalid variable line format.", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			var = VariableConstructs.NONE;
+			var = ValueConstructs.NONE;
 			operator = VariableOperator.SET;
-			other = VariableConstructs.NONE;
+			other = ValueConstructs.NONE;
 			return;
 		}
 		
 		//Get variable name
 		String lhsString = lineMatcher.group(1);
-		VariableConstruct workingVar = VariableConstructs.parse(lhsString);
+		ValueConstruct workingVar = ValueConstructs.parse(lhsString);
 		if (!workingVar.isSettable()) {
 			GrandLogger.log("Left hand operand is not settable: " + lhsString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			var = VariableConstructs.NONE;
+			var = ValueConstructs.NONE;
 			operator = VariableOperator.SET;
-			other = VariableConstructs.NONE;
+			other = ValueConstructs.NONE;
 			return;
 		}
 		var = workingVar;
@@ -50,7 +49,7 @@ class VariableAbility implements Ability {
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		other = VariableConstructs.parse(operand);
+		other = ValueConstructs.parse(operand);
 	}
 
 	@Override

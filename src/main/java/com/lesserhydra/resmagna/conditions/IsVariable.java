@@ -5,8 +5,8 @@ import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.Value;
 import com.lesserhydra.resmagna.variables.VariableConditional;
-import com.lesserhydra.resmagna.variables.VariableConstruct;
-import com.lesserhydra.resmagna.variables.VariableConstructs;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,9 +16,9 @@ class IsVariable implements Condition {
 	//([\w.]+)\s*([=<>]+)\s*([\w.]+)
 	private static final Pattern isVariableLinePattern = Pattern.compile("([\\w.]+)\\s*([=<>]+)\\s*([\\w.]+)");
 	
-	private final VariableConstruct     var;
+	private final ValueConstruct var;
 	private final VariableConditional	conditional;
-	private final VariableConstruct     other;
+	private final ValueConstruct other;
 	
 	IsVariable(String variableLine) {
 		//Match
@@ -26,25 +26,25 @@ class IsVariable implements Condition {
 		if (!lineMatcher.matches()) {
 			GrandLogger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			var = VariableConstructs.NONE;
+			var = ValueConstructs.NONE;
 			conditional = VariableConditional.EQUAL;
-			other = VariableConstructs.NONE;
+			other = ValueConstructs.NONE;
 			return;
 		}
 		
 		//Get variable name
 		String lhsString = lineMatcher.group(1);
-		var = VariableConstructs.parse(lhsString);
+		var = ValueConstructs.parse(lhsString);
 		
 		//Get operator
 		conditional = VariableConditional.fromSymbol(lineMatcher.group(2));
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		other = VariableConstructs.parse(operand);
+		other = ValueConstructs.parse(operand);
 	}
 	
-	public IsVariable(VariableConstruct var, VariableConditional conditional, VariableConstruct other) {
+	public IsVariable(ValueConstruct var, VariableConditional conditional, ValueConstruct other) {
 		this.var = var;
 		this.conditional = conditional;
 		this.other = other;
