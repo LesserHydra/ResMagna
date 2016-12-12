@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class AbilityFactory {
 	
-	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w\s=+\-*/%]+\b))?
-	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
+	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w.\s=+\-*/%]+\b))?
+	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w.\\s=+\\-*/%]+\\b))?");
 	
 	@Nullable
 	public static Functor build(String abilityString) {
@@ -81,8 +81,8 @@ public class AbilityFactory {
 		case "projectile":		return new ProjectileAbility(abilityArgs);
 		case "beam":			return new BeamAbility(abilityArgs);
 		
-		//Variable style abilities
-		case "variable":		return new VariableAbility(variableArgs);
+		//Variable set ability
+		case "set":		        return new VariableAbility(variableArgs);
 		
 		//No built-in found, request custom
 		default:				return GrandAbilityHandler.getInstance().requestFunction(name);

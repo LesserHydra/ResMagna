@@ -21,7 +21,7 @@ public class Targeters {
 	public static Targeter ONLINE_PLAYERS =  t -> Bukkit.getOnlinePlayers().stream()
 														.map(p -> t.target(Target.from(p)))
 														.collect(Collectors.toList());
-
+	
 	private static Target mountTargeter(Target currentTarget) {
 		if (!currentTarget.isEntity()) return currentTarget.targetNone();
 		Entity mount = currentTarget.asEntity().getVehicle();

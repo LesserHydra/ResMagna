@@ -20,12 +20,12 @@ class SwapAbility implements Ability {
 
 	@Override
 	public void run(Target target) {
+		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
 		
 		Target otherTarget = otherTargeter.getRandomTarget(target);
+		if (!otherTarget.isEntity()) return;
 		LivingEntity otherEntity = otherTarget.asEntity();
-		if (otherEntity == null) return;
 		
 		Location targetLoc = targetEntity.getLocation();
 		Location otherLoc = otherEntity.getLocation();

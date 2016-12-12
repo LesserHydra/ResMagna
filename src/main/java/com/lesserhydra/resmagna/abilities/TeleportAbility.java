@@ -45,8 +45,8 @@ class TeleportAbility implements Ability {
 	
 	@Override
 	public void run(Target target) {
+		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
 		
 		Location centerLoc = location.calculate(target);
 		if (centerLoc == null) return;
@@ -54,7 +54,7 @@ class TeleportAbility implements Ability {
 		if (spreadX > 0 || spreadY > 0 || spreadZ > 0) centerLoc = getSpread(centerLoc);
 		if (failSafe && !isSafe(centerLoc)) return;
 		
-		centerLoc.setDirection(target.asEntity().getLocation().getDirection());
+		centerLoc.setDirection(targetEntity.getLocation().getDirection());
 		targetEntity.teleport(centerLoc);
 	}
 

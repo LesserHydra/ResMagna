@@ -1,6 +1,6 @@
-package com.lesserhydra.resmagna.arguments;
+package com.lesserhydra.resmagna.variables;
 
-public enum VariableConditional {
+public enum ValueConditional {
 	
 	EQUAL("==") {
 		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) == 0;}
@@ -20,12 +20,12 @@ public enum VariableConditional {
 	
 	final private String symbol;
 	
-	VariableConditional(String symbol) { this.symbol = symbol; }
+	ValueConditional(String symbol) { this.symbol = symbol; }
 	
 	public abstract <T extends Comparable<T>> boolean check(T a, T b);
 
-	public static VariableConditional fromSymbol(String symbol) {
-		for (VariableConditional op : values()) {
+	public static ValueConditional fromSymbol(String symbol) {
+		for (ValueConditional op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
 		throw new IllegalArgumentException("Invalid variable conditional: " + symbol);

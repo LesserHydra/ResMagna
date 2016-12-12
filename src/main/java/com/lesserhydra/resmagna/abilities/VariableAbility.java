@@ -1,63 +1,61 @@
 package com.lesserhydra.resmagna.abilities;
 
-import com.lesserhydra.resmagna.function.Functor;
-import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.arguments.VariableOperator;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.util.StringTools;
-import org.bukkit.entity.Player;
+import com.lesserhydra.resmagna.targeters.Target;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
+import com.lesserhydra.resmagna.variables.ValueOperator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class VariableAbility implements Functor {
+class VariableAbility implements Ability {
 	
-	//(\w+)\s*([=+\-*/%]+)\s*(\w+)
-	static private final Pattern variableLinePattern = Pattern.compile("(\\w+)\\s*([=+\\-*/%]+)\\s*(\\w+)");
+	//([\w.]+)\s*([=+\-*/%]+)\s*([\w.]+)
+	static private final Pattern variableLinePattern = Pattern.compile("([\\w.]+)\\s*([=+\\-*/%]+)\\s*([\\w.]+)");
 	
-	private final String 			name;
-	private final VariableOperator	operator;
-	private final String			otherName;
-	private final int				number;
+	private final ValueConstruct var;
+	private final ValueOperator operator;
+	private final ValueConstruct other;
 	
 	VariableAbility(String variableLine) {
 		//Match
 		Matcher lineMatcher = variableLinePattern.matcher(variableLine);
 		if (!lineMatcher.matches()) {
-			GrandLogger.log("Invalid variable line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid variable line format.", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			name = "";
-			operator = VariableOperator.SET;
-			number = 0;
-			otherName = null;
+			var = ValueConstructs.NONE;
+			operator = ValueOperator.SET;
+			other = ValueConstructs.NONE;
 			return;
 		}
 		
 		//Get variable name
-		name = lineMatcher.group(1);
+		String lhsString = lineMatcher.group(1);
+		ValueConstruct workingVar = ValueConstructs.parse(lhsString);
+		if (!workingVar.isSettable()) {
+			GrandLogger.log("Left hand operand is not settable: " + lhsString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
+			var = ValueConstructs.NONE;
+			operator = ValueOperator.SET;
+			other = ValueConstructs.NONE;
+			return;
+		}
+		var = workingVar;
 		
 		//Get operator
-		operator = VariableOperator.fromSymbol(lineMatcher.group(2));
+		operator = ValueOperator.fromSymbol(lineMatcher.group(2));
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (StringTools.isInteger(operand)) {
-			number = Integer.parseInt(operand);
-			otherName = null;
-		}
-		else {
-			number = 0;
-			otherName = operand;
-		}
+		other = ValueConstructs.parse(operand);
 	}
 
 	@Override
 	public void run(Target target) {
-		if (!target.isPlayer()) return;
-		Player p = target.asPlayer();
-		VariableHandler.operate(p, name, operator, (otherName != null ? VariableHandler.get(p, otherName) : number));
+		//TODO: Maybe this should be handled by the operators themselves?
+		var.set(target, operator.apply(var.get(target), other.get(target)));
 	}
 
 }

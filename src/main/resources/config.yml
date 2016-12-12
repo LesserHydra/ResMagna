@@ -10,8 +10,10 @@ Folders:
 
 # Enable/disable types of logs
 EnabledLogTypes:
-  # Errors and warnings: Should be on at all times
+  # Parse-time errors and warnings: Should be on at all times
   CONFIG_ERRORS:  true
+  # Runtime errors and warnings: Should be on at all times
+  RUNTIME_ERRORS: true
   # Configuration debuging: Useful if you suspect a config issue that isn't logging an error
   CONFIG_PARSING: false
   # General debugging: Should typically be off

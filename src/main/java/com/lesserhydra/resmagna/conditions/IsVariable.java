@@ -1,23 +1,24 @@
 package com.lesserhydra.resmagna.conditions;
 
-import com.lesserhydra.resmagna.arguments.VariableConditional;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.util.StringTools;
-import org.bukkit.entity.Player;
+import com.lesserhydra.resmagna.targeters.Target;
+import com.lesserhydra.resmagna.variables.Value;
+import com.lesserhydra.resmagna.variables.ValueConditional;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class IsVariable implements Condition.ForPlayer {
-	//(\w+)\s*([=<>]+)\s*(\w+)
-	private static final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
+class IsVariable implements Condition {
 	
-	private final String 				name;
-	private final VariableConditional	conditional;
-	private final String				otherName;
-	private final int					number;
+	//([\w.]+)\s*([=<>]+)\s*([\w.]+)
+	private static final Pattern isVariableLinePattern = Pattern.compile("([\\w.]+)\\s*([=<>]+)\\s*([\\w.]+)");
+	
+	private final ValueConstruct var;
+	private final ValueConditional conditional;
+	private final ValueConstruct other;
 	
 	IsVariable(String variableLine) {
 		//Match
@@ -25,36 +26,40 @@ class IsVariable implements Condition.ForPlayer {
 		if (!lineMatcher.matches()) {
 			GrandLogger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			name = "";
-			conditional = VariableConditional.EQUAL;
-			number = 0;
-			otherName = null;
+			var = ValueConstructs.NONE;
+			conditional = ValueConditional.EQUAL;
+			other = ValueConstructs.NONE;
 			return;
 		}
 		
 		//Get variable name
-		name = lineMatcher.group(1);
+		String lhsString = lineMatcher.group(1);
+		var = ValueConstructs.parse(lhsString);
 		
 		//Get operator
-		conditional = VariableConditional.fromSymbol(lineMatcher.group(2));
+		conditional = ValueConditional.fromSymbol(lineMatcher.group(2));
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		if (StringTools.isInteger(operand)) {
-			number = Integer.parseInt(operand);
-			otherName = null;
-		}
-		else {
-			number = 0;
-			otherName = operand;
-		}
+		other = ValueConstructs.parse(operand);
 	}
-
+	
+	public IsVariable(ValueConstruct var, ValueConditional conditional, ValueConstruct other) {
+		this.var = var;
+		this.conditional = conditional;
+		this.other = other;
+	}
+	
 	@Override
-	public boolean test(Player target) {
-		int a = VariableHandler.get(target, name);
-		int b = (otherName != null ? VariableHandler.get(target, otherName) : number);
-		return conditional.check(a, b);
+	public boolean test(Target target) {
+		Value a = var.get(target);
+		Value b = other.get(target);
+		
+		if (!a.hasNumber() || !b.hasNumber()) {
+			GrandLogger.log("Tried to compare non-numerical values.", LogType.RUNTIME_ERRORS);
+			return false;
+		}
+		return conditional.check(a.asDouble(), b.asDouble()); //TODO: Proper specialization
 	}
 
 }

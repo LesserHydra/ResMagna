@@ -1,10 +1,9 @@
 package com.lesserhydra.resmagna.abilities;
 
+import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.Targeters;
-import com.lesserhydra.resmagna.arguments.ArgumentBlock;
-import org.bukkit.entity.LivingEntity;
 
 class MountAbility implements Ability {
 	
@@ -16,14 +15,15 @@ class MountAbility implements Ability {
 
 	@Override
 	public void run(Target target) {
-		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
+		//Require entity target
+		if (!target.isEntity()) return;
 		
+		//Get other, and require entity
 		Target otherTarget = otherTargeter.getRandomTarget(target);
-		LivingEntity mountEntity = otherTarget.asEntity();
-		if (mountEntity == null) return;
+		if (!otherTarget.isEntity()) return;
 		
-		mountEntity.setPassenger(target.asEntity());
+		//Mount
+		otherTarget.asEntity().setPassenger(target.asEntity());
 	}
 
 }

@@ -4,7 +4,6 @@ import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.Targeters;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -17,24 +16,21 @@ class DamageAbility implements Ability {
 	private final DamageCause cause;
 	
 	DamageAbility(ArgumentBlock args) {
-		damageAmount = args.getDouble(true, 0D,					        "amount", "a", null);
-		damagerTargeter = args.getTargeter(false, Targeters.HOLDER,     "damager", "dmgr", "source");
-		cause = args.getEnum(false, DamageCause.CUSTOM,				    "cause");
+		damageAmount = args.getDouble(true, 0D,             "amount", "a", null);
+		damagerTargeter = args.getTargeter(false, Targeters.HOLDER, "damager", "dmgr", "source");
+		cause = args.getEnum(false, DamageCause.CUSTOM,             "cause");
 	}
 	
 	@Override
 	public void run(Target target) {
+		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
-		if (targetEntity == null) return;
 		
 		//Get damagerTarget
 		Target damagerTarget = damagerTargeter.getRandomTarget(target);
 		
-		//Get damager
-		LivingEntity damagerEntity = damagerTarget.asEntity();
-		
 		//Create and call event
-		damageTarget(targetEntity, damagerEntity, damageAmount);
+		damageTarget(targetEntity, damagerTarget, damageAmount);
 		/*EntityDamageEvent event = createDamageEvent(targetEntity, damagerEntity);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		
@@ -46,17 +42,14 @@ class DamageAbility implements Ability {
 	}
 
 	@SuppressWarnings("deprecation")
-	private EntityDamageEvent createDamageEvent(LivingEntity damagee, LivingEntity damager) {
-		if (damager != null) return new EntityDamageByEntityEvent(damager, damagee, cause, damageAmount);
+	private EntityDamageEvent createDamageEvent(LivingEntity damagee, Target damager) {
+		if (damager.isEntity()) return new EntityDamageByEntityEvent(damager.asEntity(), damagee, cause, damageAmount);
 		return new EntityDamageEvent(damagee, cause, damageAmount);
 	}
 	
-	private void damageTarget(LivingEntity damagee, LivingEntity damager, double amount) {
-		if (damager != null) {
-			damagee.damage(amount, damager);
-			return;
-		}
-		damagee.damage(amount);
+	private void damageTarget(LivingEntity damagee, Target damager, double amount) {
+		if (damager.isEntity()) damagee.damage(amount, damager.asEntity());
+		else damagee.damage(amount);
 	}
 	
 }

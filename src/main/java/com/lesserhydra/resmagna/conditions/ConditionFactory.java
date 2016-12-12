@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class ConditionFactory {
 	
-	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w\s=<>.]*[\w.]))?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w\\s=<>.]*[\\w.]))?");
+	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w.]+\s*[=<>]*\s*[\w.]+))?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w.]+\\s*[=<>]*\\s*[\\w.]+))?");
 	
 	@Nullable
 	public static Condition build(@NotNull String conditionLine) {
@@ -126,13 +126,8 @@ public class ConditionFactory {
 		//Other
 		case "israndom":        return new IsRandom(args);
 			
-		//Non-trivial value checks
-		case "isvariable":		return new IsVariable(varArgsString);
-		case "ishealth":		return new IsHealth(varArgsString);
-		case "ishunger":		return new IsHunger(varArgsString);
-		case "issaturation":	return new IsSaturation(varArgsString);
-		case "isexp":			return new IsExp(varArgsString);
-		case "islevel":			return new IsLevel(varArgsString);
+		//Value checks
+		case "is":		        return new IsVariable(varArgsString);
 		
 		default:				return null;
 		}
