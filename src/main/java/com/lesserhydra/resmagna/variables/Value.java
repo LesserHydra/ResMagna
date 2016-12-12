@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a dynamically typed value.
+ */
 public interface Value {
 	
 	/**
@@ -23,15 +26,15 @@ public interface Value {
 	 * @return The represented boolean value
 	 * @throws UnrepresentedTypeException If this does not represent a boolean
 	 */
-	default boolean getBoolean() {
-		throw new UnrepresentedTypeException("Value does not represent a boolean value, use hasBoolean() first.");
+	default boolean asBoolean() {
+		throw new UnrepresentedTypeException("Value does not represent a boolean value. Use hasBoolean() first.");
 	}
 	
 	/**
 	 * Checks if this variable represents a numerical value.
 	 * @return True if this represents a numerical value
 	 */
-	default boolean hasNumber() { return hasInteger() || hasDouble(); }
+	default boolean hasNumber() { return hasInteger() || hasFloat(); }
 	
 	/**
 	 * Checks if this variable represents an integer value.
@@ -44,23 +47,32 @@ public interface Value {
 	 * @return The represented integer
 	 * @throws UnrepresentedTypeException If this does not represent an integer
 	 */
-	default int getInteger() {
-		throw new UnrepresentedTypeException("Value does not represent an integer, use hasInteger() first.");
+	default int asInteger() {
+		throw new UnrepresentedTypeException("Value does not represent an integer. Use hasInteger() first.");
 	}
 	
 	/**
 	 * Checks if this variable represents a double value.
 	 * @return True if this represents a double value
 	 */
-	default boolean hasDouble() { return false; }
+	default boolean hasFloat() { return false; }
+	
+	/**
+	 * Gets the represented value as a float.
+	 * @return The represented float
+	 * @throws UnrepresentedTypeException If this does not represent a float
+	 */
+	default float asFloat() {
+		throw new UnrepresentedTypeException("Value does not represent a float. Use hasFloat() first.");
+	}
 	
 	/**
 	 * Gets the represented value as a double.
 	 * @return The represented double
 	 * @throws UnrepresentedTypeException If this does not represent a double
 	 */
-	default double getDouble() {
-		throw new UnrepresentedTypeException("Value does not represent a double, use hasDouble() first.");
+	default double asDouble() {
+		throw new UnrepresentedTypeException("Value does not represent a double. Use hasFloat() first.");
 	}
 	
 	/**
@@ -74,8 +86,8 @@ public interface Value {
 	 * @return The represented Location
 	 * @throws UnrepresentedTypeException If this does not represent a Location
 	 */
-	@NotNull default Location getLocation() {
-		throw new UnrepresentedTypeException("Value does not represent a Location, use hasLocation() first.");
+	@NotNull default Location asLocation() {
+		throw new UnrepresentedTypeException("Value does not represent a Location. Use hasLocation() first.");
 	}
 	
 	/**
@@ -89,29 +101,53 @@ public interface Value {
 	 * @return The represented LivingEntity
 	 * @throws UnrepresentedTypeException If this does not represent a LivingEntity
 	 */
-	@NotNull default LivingEntity getEntity() {
-		throw new UnrepresentedTypeException("Value does not represent a LivingEntity, use hasEntity() first.");
+	@NotNull default LivingEntity asEntity() {
+		throw new UnrepresentedTypeException("Value does not represent a LivingEntity. Use hasEntity() first.");
 	}
 	
-	
-	default Value add(Value other) {
-		throw new UnsupportedOperationException(""); //TODO
+	/**
+	 * Adds this value with other value.
+	 * @param other Other value
+	 * @return Resulting value
+	 */
+	@NotNull default Value add(Value other) {
+		throw new UnsupportedOperationException("Value does not support addition. Use isNumber() first.");
 	}
 	
-	default Value subtract(Value other) {
-		throw new UnsupportedOperationException(""); //TODO
+	/**
+	 * Subtracts this value from other value.
+	 * @param other Other value
+	 * @return Resulting value
+	 */
+	@NotNull default Value subtract(Value other) {
+		throw new UnsupportedOperationException("Value does not support subtraction. Use isNumber() first.");
 	}
 	
-	default Value multiply(Value other) {
-		throw new UnsupportedOperationException(""); //TODO
+	/**
+	 * Multiplies this value with other value.
+	 * @param other Other value
+	 * @return Resulting value
+	 */
+	@NotNull default Value multiply(Value other) {
+		throw new UnsupportedOperationException("Value does not support multiplication. Use isNumber() first.");
 	}
 	
-	default Value divide(Value other) {
-		throw new UnsupportedOperationException(""); //TODO
+	/**
+	 * Divides this value by other value.
+	 * @param other Other value
+	 * @return Resulting value
+	 */
+	@NotNull default Value divide(Value other) {
+		throw new UnsupportedOperationException("Value does not support division. Use isNumber() first.");
 	}
 	
-	default Value modulus(Value other) {
-		throw new UnsupportedOperationException(""); //TODO
+	/**
+	 * Mods this value by other value.
+	 * @param other Other value
+	 * @return Resulting value
+	 */
+	@NotNull default Value modulus(Value other) {
+		throw new UnsupportedOperationException("Value does not support modding. Use isNumber() first.");
 	}
 	
 }

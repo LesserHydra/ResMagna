@@ -59,7 +59,7 @@ class IsVariable implements Condition {
 			GrandLogger.log("Tried to compare non-numerical values.", LogType.RUNTIME_ERRORS);
 			return false;
 		}
-		return conditional.check(a.getDouble(), b.getDouble()); //TODO: Proper specialization
+		return conditional.check(a.asDouble(), b.asDouble()); //TODO: Proper specialization
 	}
 
 }

@@ -55,14 +55,14 @@ public class VariableHandler {
 				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
 				return Values.NONE;
 			}
-			//DEBUG: GrandLogger.log("Get var " + varName + ": " + get(t.asPlayer(), varName).getDouble(), LogType.DEBUG);
+			//DEBUG: GrandLogger.log("Get var " + varName + ": " + get(t.asPlayer(), varName).asDouble(), LogType.DEBUG);
 			return get(t.asPlayer(), varName);
 		}, (t, v) -> {
 			if (t.isPlayer()) {
 				GrandLogger.log("Tried to access a global variable with non-player target.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			//DEBUG: GrandLogger.log("Set var " + varName + ": " + v.getDouble(), LogType.DEBUG);
+			//DEBUG: GrandLogger.log("Set var " + varName + ": " + v.asDouble(), LogType.DEBUG);
 			set(t.asPlayer(), varName, v);
 		});
 	}

@@ -88,7 +88,7 @@ public class Target {
 	 * @throws UnrepresentedTypeException If current target does not represent a LivingEntity
 	 */
 	@NotNull
-	public LivingEntity asEntity() { return currentTarget.getEntity(); }
+	public LivingEntity asEntity() { return currentTarget.asEntity(); }
 	
 	/*
 	 * Gets the current target as a location
@@ -96,7 +96,7 @@ public class Target {
 	 * @throws UnrepresentedTypeException If current target does not represent a Location
 	 */
 	@NotNull
-	public Location asLocation() { return currentTarget.getLocation(); }
+	public Location asLocation() { return currentTarget.asLocation(); }
 	
 	/*
 	 * Gets the current target entity as a player
@@ -105,7 +105,7 @@ public class Target {
 	 * @throws ClassCastException If target cannot be expressed as a player
 	 */
 	@NotNull
-	public Player asPlayer() { return (Player) currentTarget.getEntity(); }
+	public Player asPlayer() { return (Player) currentTarget.asEntity(); }
 	
 	/*
 	 * Gets the current target entity as a given class
@@ -116,7 +116,7 @@ public class Target {
 	 * @throws ClassCastException If target cannot be expressed as the given class
 	 */
 	@NotNull
-	public <T> T as(Class<T> clazz) { return clazz.cast(currentTarget.getEntity()); }
+	public <T> T as(Class<T> clazz) { return clazz.cast(currentTarget.asEntity()); }
 	
 	/*
 	 * Checks to see if nothing is currently targeted
@@ -140,7 +140,7 @@ public class Target {
 	 * Checks whether or not a player is currently targeted
 	 * @return True is the current target is a player
 	 */
-	public boolean isPlayer() { return currentTarget.hasEntity() && currentTarget.getEntity() instanceof Player; }
+	public boolean isPlayer() { return currentTarget.hasEntity() && currentTarget.asEntity() instanceof Player; }
 	
 	/*
 	 * Checks whether or not an entity of a given class is currently targeted
@@ -148,7 +148,7 @@ public class Target {
 	 * @param <T> Class type
 	 * @return True is the current target is an entity of the given class
 	 */
-	public <T> boolean is(Class<T> clazz) { return currentTarget.hasEntity() && clazz.isInstance(currentTarget.getEntity()); }
+	public <T> boolean is(Class<T> clazz) { return currentTarget.hasEntity() && clazz.isInstance(currentTarget.asEntity()); }
 	
 	/**
 	 * Set current target to nothing

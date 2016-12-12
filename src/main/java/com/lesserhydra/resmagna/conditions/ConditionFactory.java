@@ -126,7 +126,7 @@ public class ConditionFactory {
 		//Other
 		case "israndom":        return new IsRandom(args);
 			
-		//Non-trivial value checks
+		//Value checks
 		case "is":		        return new IsVariable(varArgsString);
 		
 		default:				return null;

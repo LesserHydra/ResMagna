@@ -6,6 +6,9 @@ import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+/**
+ * Represents a supplier (and potentially consumer) of values.
+ */
 public interface ValueConstruct {
 	
 	Value get(Target target);

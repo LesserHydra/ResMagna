@@ -31,11 +31,11 @@ public class ValueConstructs {
 		@Override public Value get(LivingEntity target) { return Values.wrap(target.getHealth()); }
 		
 		@Override public void set(LivingEntity target, Value value) {
-			if (!value.hasDouble()) {
+			if (!value.hasFloat()) {
 				GrandLogger.log("Tried to set health construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			double normalValue = MathUtil.clamp(value.getDouble(), 0.0, target.getMaxHealth());
+			double normalValue = MathUtil.clamp(value.asDouble(), 0.0, target.getMaxHealth());
 			target.setHealth(normalValue);
 		}
 	};
@@ -48,7 +48,7 @@ public class ValueConstructs {
 		}
 		
 		@Override public void set(Player target, Value value) {
-			if (!value.hasDouble()) {
+			if (!value.hasFloat()) {
 				GrandLogger.log("Tried to set hunger construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
@@ -56,7 +56,7 @@ public class ValueConstructs {
 			int foodLevel = target.getFoodLevel();
 			float saturation = target.getSaturation();
 			float oldValue = foodLevel + saturation;
-			float newValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 40.0);
+			float newValue = MathUtil.clamp(value.asFloat(), 0.0f, 40.0f);
 			
 			float diff = newValue - oldValue;
 			
@@ -95,7 +95,7 @@ public class ValueConstructs {
 				GrandLogger.log("Tried to set food level construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			int normalValue = MathUtil.clamp(value.getInteger(), 0, 20);
+			int normalValue = MathUtil.clamp(value.asInteger(), 0, 20);
 			target.setFoodLevel(normalValue);
 		}
 	};
@@ -106,11 +106,11 @@ public class ValueConstructs {
 		@Override public Value get(Player target) { return Values.wrap(target.getSaturation()); }
 		
 		@Override public void set(Player target, Value value) {
-			if (!value.hasDouble()) {
+			if (!value.hasFloat()) {
 				GrandLogger.log("Tried to set saturation construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			float normalValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 20.0);
+			float normalValue = MathUtil.clamp(value.asFloat(), 0.0f, 20.0f);
 			target.setSaturation(normalValue);
 		}
 	};
@@ -121,11 +121,11 @@ public class ValueConstructs {
 		@Override public Value get(Player target) { return Values.wrap(target.getExhaustion()); }
 		
 		@Override public void set(Player target, Value value) {
-			if (!value.hasDouble()) {
+			if (!value.hasFloat()) {
 				GrandLogger.log("Tried to set exhaustion construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			float normalValue = (float) Math.max(0.0, value.getDouble());
+			float normalValue = Math.max(0.0f, value.asFloat());
 			target.setExhaustion(normalValue);
 		}
 	};
@@ -144,7 +144,7 @@ public class ValueConstructs {
 				GrandLogger.log("Tried to set total experience construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			int normalValue = Math.max(0, value.getInteger());
+			int normalValue = Math.max(0, value.asInteger());
 			Pair<Integer, Float> result = ExpUtils.getLevelAndProgress(normalValue);
 			target.setLevel(result.getLeft());
 			target.setExp(result.getRight());
@@ -157,11 +157,11 @@ public class ValueConstructs {
 		@Override public Value get(Player target) { return Values.wrap(target.getExp()); }
 		
 		@Override public void set(Player target, Value value) {
-			if (!value.hasDouble()) {
+			if (!value.hasFloat()) {
 				GrandLogger.log("Tried to set exp construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			float normalValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 1.0);
+			float normalValue = MathUtil.clamp(value.asFloat(), 0.0f, 1.0f);
 			target.setExp(normalValue);
 		}
 	};
@@ -176,7 +176,7 @@ public class ValueConstructs {
 				GrandLogger.log("Tried to set levels construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			int normalValue = Math.max(0, value.getInteger());
+			int normalValue = Math.max(0, value.asInteger());
 			target.setLevel(normalValue);
 		}
 	};

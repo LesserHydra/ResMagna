@@ -22,7 +22,7 @@ public class Values {
 		private VarBoolean(boolean data) { this.data = data; }
 		
 		@Override public boolean hasBoolean() { return true; }
-		@Override public boolean getBoolean() { return data; }
+		@Override public boolean asBoolean() { return data; }
 	}
 	
 	private static class VarInteger implements Value {
@@ -30,15 +30,16 @@ public class Values {
 		private VarInteger(int data) { this.data = data; }
 		
 		@Override public boolean hasInteger() { return true; }
-		@Override public boolean hasDouble() { return true; }
-		@Override public int getInteger() { return data; }
-		@Override public double getDouble() { return data; }
+		@Override public boolean hasFloat() { return true; }
+		@Override public int asInteger() { return data; }
+		@Override public float asFloat() { return data; }
+		@Override public double asDouble() { return data; }
 		
-		@Override public Value add(Value other) { return wrap(data + other.getInteger()); }
-		@Override public Value subtract(Value other) { return wrap(data - other.getInteger()); }
-		@Override public Value multiply(Value other) { return wrap(data * other.getInteger()); }
-		@Override public Value divide(Value other) { return wrap(data / other.getInteger()); }
-		@Override public Value modulus(Value other) { return wrap(data % other.getInteger()); }
+		@Override @NotNull public Value add(Value other) { return wrap(data + other.asInteger()); }
+		@Override @NotNull public Value subtract(Value other) { return wrap(data - other.asInteger()); }
+		@Override @NotNull public Value multiply(Value other) { return wrap(data * other.asInteger()); }
+		@Override @NotNull public Value divide(Value other) { return wrap(data / other.asInteger()); }
+		@Override @NotNull public Value modulus(Value other) { return wrap(data % other.asInteger()); }
 	}
 	
 	private static class VarDouble implements Value {
@@ -46,15 +47,16 @@ public class Values {
 		private VarDouble(double data) { this.data = data; }
 		
 		@Override public boolean hasInteger() { return true; }
-		@Override public boolean hasDouble() { return true; }
-		@Override public int getInteger() { return (int) data; }
-		@Override public double getDouble() { return data; }
+		@Override public boolean hasFloat() { return true; }
+		@Override public int asInteger() { return (int) data; }
+		@Override public float asFloat() { return (float) data; }
+		@Override public double asDouble() { return data; }
 		
-		@Override public Value add(Value other) { return wrap(data + other.getDouble()); }
-		@Override public Value subtract(Value other) { return wrap(data - other.getDouble()); }
-		@Override public Value multiply(Value other) { return wrap(data * other.getDouble()); }
-		@Override public Value divide(Value other) { return wrap(data / other.getDouble()); }
-		@Override public Value modulus(Value other) { return wrap(data % other.getDouble()); }
+		@Override @NotNull public Value add(Value other) { return wrap(data + other.asDouble()); }
+		@Override @NotNull public Value subtract(Value other) { return wrap(data - other.asDouble()); }
+		@Override @NotNull public Value multiply(Value other) { return wrap(data * other.asDouble()); }
+		@Override @NotNull public Value divide(Value other) { return wrap(data / other.asDouble()); }
+		@Override @NotNull public Value modulus(Value other) { return wrap(data % other.asDouble()); }
 	}
 	
 	private static class VarLocation implements Value {
@@ -62,7 +64,7 @@ public class Values {
 		private VarLocation(@NotNull Location data) { this.data = data; }
 		
 		@Override public boolean hasLocation() { return true; }
-		@Override @NotNull public Location getLocation() { return data; }
+		@Override @NotNull public Location asLocation() { return data; }
 	}
 	
 	private static class VarLivingEntity implements Value {
@@ -71,7 +73,7 @@ public class Values {
 		
 		@Override public boolean hasEntity() { return true; }
 		@Override public boolean hasLocation() { return true; }
-		@Override @NotNull public LivingEntity getEntity() { return data; }
-		@Override @NotNull public Location getLocation() { return data.getLocation(); }
+		@Override @NotNull public LivingEntity asEntity() { return data; }
+		@Override @NotNull public Location asLocation() { return data.getLocation(); }
 	}
 }
