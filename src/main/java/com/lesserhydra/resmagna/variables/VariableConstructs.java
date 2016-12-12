@@ -5,6 +5,7 @@ import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
+import com.lesserhydra.util.MathUtil;
 import com.lesserhydra.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.LivingEntity;
@@ -30,7 +31,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set health construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setHealth(value.getDouble());
+			double normalValue = MathUtil.clamp(value.getDouble(), 0.0, target.getMaxHealth());
+			target.setHealth(normalValue);
 		}
 	};
 	
@@ -48,7 +50,7 @@ public class VariableConstructs {
 			int foodLevel = target.getFoodLevel();
 			float saturation = target.getSaturation();
 			float oldValue = foodLevel + saturation;
-			float newValue = (float) value.getDouble();
+			float newValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 40.0);
 			
 			float diff = newValue - oldValue;
 			
@@ -82,10 +84,11 @@ public class VariableConstructs {
 		
 		@Override public void set(Player target, Variable value) {
 			if (!value.hasInteger()) {
-				GrandLogger.log("Tried to set hunger construct to invalid value.", LogType.RUNTIME_ERRORS);
+				GrandLogger.log("Tried to set food level construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setFoodLevel(value.getInteger());
+			int normalValue = MathUtil.clamp(value.getInteger(), 0, 20);
+			target.setFoodLevel(normalValue);
 		}
 	};
 	
@@ -97,7 +100,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set saturation construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setSaturation((float) value.getDouble());
+			float normalValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 20.0);
+			target.setSaturation(normalValue);
 		}
 	};
 	
@@ -109,7 +113,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set exhaustion construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setExhaustion((float) value.getDouble());
+			float normalValue = (float) Math.max(0.0, value.getDouble());
+			target.setExhaustion(normalValue);
 		}
 	};
 	
@@ -125,7 +130,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set total experience construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			Pair<Integer, Float> result = ExpUtils.getLevelAndProgress(value.getInteger());
+			int normalValue = Math.max(0, value.getInteger());
+			Pair<Integer, Float> result = ExpUtils.getLevelAndProgress(normalValue);
 			target.setLevel(result.getLeft());
 			target.setExp(result.getRight());
 		}
@@ -139,7 +145,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set exp construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setExp((float) value.getDouble());
+			float normalValue = (float) MathUtil.clamp(value.getDouble(), 0.0, 1.0);
+			target.setExp(normalValue);
 		}
 	};
 	
@@ -151,7 +158,8 @@ public class VariableConstructs {
 				GrandLogger.log("Tried to set levels construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			target.setLevel(value.getInteger());
+			int normalValue = Math.max(0, value.getInteger());
+			target.setLevel(normalValue);
 		}
 	};
 	
