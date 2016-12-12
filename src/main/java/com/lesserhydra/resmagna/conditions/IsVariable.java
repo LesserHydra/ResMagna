@@ -4,7 +4,7 @@ import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.Value;
-import com.lesserhydra.resmagna.variables.VariableConditional;
+import com.lesserhydra.resmagna.variables.ValueConditional;
 import com.lesserhydra.resmagna.variables.ValueConstruct;
 import com.lesserhydra.resmagna.variables.ValueConstructs;
 
@@ -17,7 +17,7 @@ class IsVariable implements Condition {
 	private static final Pattern isVariableLinePattern = Pattern.compile("([\\w.]+)\\s*([=<>]+)\\s*([\\w.]+)");
 	
 	private final ValueConstruct var;
-	private final VariableConditional	conditional;
+	private final ValueConditional conditional;
 	private final ValueConstruct other;
 	
 	IsVariable(String variableLine) {
@@ -27,7 +27,7 @@ class IsVariable implements Condition {
 			GrandLogger.log("Invalid variable condition line format:", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			var = ValueConstructs.NONE;
-			conditional = VariableConditional.EQUAL;
+			conditional = ValueConditional.EQUAL;
 			other = ValueConstructs.NONE;
 			return;
 		}
@@ -37,14 +37,14 @@ class IsVariable implements Condition {
 		var = ValueConstructs.parse(lhsString);
 		
 		//Get operator
-		conditional = VariableConditional.fromSymbol(lineMatcher.group(2));
+		conditional = ValueConditional.fromSymbol(lineMatcher.group(2));
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
 		other = ValueConstructs.parse(operand);
 	}
 	
-	public IsVariable(ValueConstruct var, VariableConditional conditional, ValueConstruct other) {
+	public IsVariable(ValueConstruct var, ValueConditional conditional, ValueConstruct other) {
 		this.var = var;
 		this.conditional = conditional;
 		this.other = other;

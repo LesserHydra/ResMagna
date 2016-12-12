@@ -3,7 +3,7 @@ package com.lesserhydra.resmagna.variables;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 
-public enum VariableOperator {
+public enum ValueOperator {
 	
 	SET("=") {
 		@Override public Value apply(Value a, Value b) {
@@ -62,12 +62,12 @@ public enum VariableOperator {
 	
 	final private String symbol;
 	
-	VariableOperator(String symbol) { this.symbol = symbol; }
+	ValueOperator(String symbol) { this.symbol = symbol; }
 	
 	public abstract Value apply(Value a, Value b);
 
-	public static VariableOperator fromSymbol(String symbol) {
-		for (VariableOperator op : values()) {
+	public static ValueOperator fromSymbol(String symbol) {
+		for (ValueOperator op : values()) {
 			if (op.symbol.equals(symbol)) return op;
 		}
 		throw new IllegalArgumentException("Invalid variable operator: " + symbol);

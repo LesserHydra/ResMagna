@@ -5,7 +5,7 @@ import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.ValueConstruct;
 import com.lesserhydra.resmagna.variables.ValueConstructs;
-import com.lesserhydra.resmagna.variables.VariableOperator;
+import com.lesserhydra.resmagna.variables.ValueOperator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ class VariableAbility implements Ability {
 	static private final Pattern variableLinePattern = Pattern.compile("([\\w.]+)\\s*([=+\\-*/%]+)\\s*([\\w.]+)");
 	
 	private final ValueConstruct var;
-	private final VariableOperator	operator;
+	private final ValueOperator operator;
 	private final ValueConstruct other;
 	
 	VariableAbility(String variableLine) {
@@ -26,7 +26,7 @@ class VariableAbility implements Ability {
 			GrandLogger.log("Invalid variable line format.", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			var = ValueConstructs.NONE;
-			operator = VariableOperator.SET;
+			operator = ValueOperator.SET;
 			other = ValueConstructs.NONE;
 			return;
 		}
@@ -38,14 +38,14 @@ class VariableAbility implements Ability {
 			GrandLogger.log("Left hand operand is not settable: " + lhsString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
 			var = ValueConstructs.NONE;
-			operator = VariableOperator.SET;
+			operator = ValueOperator.SET;
 			other = ValueConstructs.NONE;
 			return;
 		}
 		var = workingVar;
 		
 		//Get operator
-		operator = VariableOperator.fromSymbol(lineMatcher.group(2));
+		operator = ValueOperator.fromSymbol(lineMatcher.group(2));
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);

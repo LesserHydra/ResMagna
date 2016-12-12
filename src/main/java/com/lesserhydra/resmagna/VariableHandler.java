@@ -6,7 +6,7 @@ import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.Value;
 import com.lesserhydra.resmagna.variables.ValueConstruct;
 import com.lesserhydra.resmagna.variables.ValueConstructs;
-import com.lesserhydra.resmagna.variables.VariableOperator;
+import com.lesserhydra.resmagna.variables.ValueOperator;
 import com.lesserhydra.resmagna.variables.Values;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class VariableHandler {
 	}
 	
 	@NotNull
-	public static Value operate(Target target, String varName, VariableOperator operation, ValueConstruct operand) {
+	public static Value operate(Target target, String varName, ValueOperator operation, ValueConstruct operand) {
 		if (!target.isPlayer()) return Values.NONE;
 		
 		Map<String, Value> playerVars = variables.get(target.asPlayer().getName());
