@@ -76,6 +76,20 @@ public interface Value {
 	}
 	
 	/**
+	 * Checks if this variable represents a string.
+	 * @return True if this represents a string
+	 */
+	default boolean hasString() { return true; }
+	
+	/**
+	 * Gets the represented value as a string.
+	 * @return The represented string
+	 */
+	@NotNull default String asString() {
+		return toString();
+	}
+	
+	/**
 	 * Checks if this variable represents a Location.
 	 * @return True if this represents a Location
 	 */
@@ -109,6 +123,7 @@ public interface Value {
 	 * Adds this value with other value.
 	 * @param other Other value
 	 * @return Resulting value
+	 * @throws UnsupportedOperationException If this does not support addition
 	 */
 	@NotNull default Value add(Value other) {
 		throw new UnsupportedOperationException("Value does not support addition. Use isNumber() first.");
@@ -118,6 +133,7 @@ public interface Value {
 	 * Subtracts this value from other value.
 	 * @param other Other value
 	 * @return Resulting value
+	 * @throws UnsupportedOperationException If this does not support subtraction
 	 */
 	@NotNull default Value subtract(Value other) {
 		throw new UnsupportedOperationException("Value does not support subtraction. Use isNumber() first.");
@@ -127,6 +143,7 @@ public interface Value {
 	 * Multiplies this value with other value.
 	 * @param other Other value
 	 * @return Resulting value
+	 * @throws UnsupportedOperationException If this does not support multiplication
 	 */
 	@NotNull default Value multiply(Value other) {
 		throw new UnsupportedOperationException("Value does not support multiplication. Use isNumber() first.");
@@ -136,6 +153,7 @@ public interface Value {
 	 * Divides this value by other value.
 	 * @param other Other value
 	 * @return Resulting value
+	 * @throws UnsupportedOperationException If this does not support division
 	 */
 	@NotNull default Value divide(Value other) {
 		throw new UnsupportedOperationException("Value does not support division. Use isNumber() first.");
@@ -145,6 +163,7 @@ public interface Value {
 	 * Mods this value by other value.
 	 * @param other Other value
 	 * @return Resulting value
+	 * @throws UnsupportedOperationException If this does not support modding
 	 */
 	@NotNull default Value modulus(Value other) {
 		throw new UnsupportedOperationException("Value does not support modding. Use isNumber() first.");

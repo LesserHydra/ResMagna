@@ -4,6 +4,7 @@ import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.configuration.GroupingParser;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ public class TargeterFactory {
 	//@(\w+)\s*(?:\((\$[\d]+)\))?
 	static private final Pattern targeterPattern = Pattern.compile("@(\\w+)\\s*(?:\\((\\$[\\d]+)\\))?");
 	
+	@Nullable
 	public static Targeter build(String targeterString) {
 		//Default targeter
 		if (targeterString == null) return Targeters.CURRENT;

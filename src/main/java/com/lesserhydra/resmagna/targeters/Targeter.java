@@ -1,10 +1,10 @@
 package com.lesserhydra.resmagna.targeters;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.conditions.Condition;
+
+import java.util.Collections;
+import java.util.List;
 
 public interface Targeter {
 	

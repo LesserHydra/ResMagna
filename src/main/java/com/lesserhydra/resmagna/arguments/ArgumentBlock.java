@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
 import com.lesserhydra.resmagna.configuration.GroupingParser;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueConstructs;
 import org.bukkit.Color;
 import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.TargeterFactory;
@@ -49,6 +51,13 @@ public class ArgumentBlock {
 		GrandLogger.log("  " + lineString, LogType.CONFIG_ERRORS);
 		argumentMap.entrySet()
 				.forEach(e -> GrandLogger.log("  " + e.getKey() + " : " + e.getValue(), LogType.CONFIG_ERRORS));
+	}
+	
+	public ValueConstruct getValue(boolean required, ValueConstruct fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		return ValueConstructs.parse(value);
 	}
 	
 	/**

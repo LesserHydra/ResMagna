@@ -5,11 +5,14 @@ import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
+import com.lesserhydra.resmagna.targeters.Targeter;
+import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.util.MathUtil;
 import com.lesserhydra.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -181,6 +184,10 @@ public class ValueConstructs {
 		}
 	};
 	
+	public static ValueConstruct makeLiteral(Value value) {
+		return t -> value;
+	}
+	
 	/**
 	 * Makes a settable variable construct with getter and setter functions.
 	 * @param getter Getter function
@@ -196,10 +203,26 @@ public class ValueConstructs {
 	 * @param string Construct string
 	 * @return Resulting construct
 	 */
+	@NotNull
 	public static ValueConstruct parse(String string) {
-		if (StringTools.isInteger(string)) return t -> Values.wrap(Integer.parseInt(string));
-		else if (StringTools.isFloat(string)) return t -> Values.wrap(Double.parseDouble(string));
+		char firstChar = string.charAt(0);
+		if (firstChar == '"') return parseString(string);
+		else if (firstChar == '@') return parseTargeter(string);
+		else if (StringTools.isInteger(string)) return makeLiteral(Values.wrap(Integer.parseInt(string)));
+		else if (StringTools.isFloat(string)) return makeLiteral(Values.wrap(Double.parseDouble(string)));
 		else return parseMap(string);
+	}
+	
+	@NotNull
+	private static ValueConstruct parseString(String string) {
+		//TODO: Proper
+		return makeLiteral(Values.wrap(string.substring(1, string.length()-1)));
+	}
+	
+	@NotNull
+	private static ValueConstruct parseTargeter(String string) {
+		Targeter result = TargeterFactory.build(string);
+		return result != null ? t -> result.getRandomTarget(t).current() : NONE;
 	}
 	
 	private static ValueConstruct parseMap(String string) {
