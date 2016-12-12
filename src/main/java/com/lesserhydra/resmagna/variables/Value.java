@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public interface Variable {
+public interface Value {
 	
 	/**
 	 * Checks if this variable represents nothing.
@@ -24,7 +24,7 @@ public interface Variable {
 	 * @throws UnrepresentedTypeException If this does not represent a boolean
 	 */
 	default boolean getBoolean() {
-		throw new UnrepresentedTypeException("Variable does not represent a boolean value, use hasBoolean() first.");
+		throw new UnrepresentedTypeException("Value does not represent a boolean value, use hasBoolean() first.");
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public interface Variable {
 	 * @throws UnrepresentedTypeException If this does not represent an integer
 	 */
 	default int getInteger() {
-		throw new UnrepresentedTypeException("Variable does not represent an integer, use hasInteger() first.");
+		throw new UnrepresentedTypeException("Value does not represent an integer, use hasInteger() first.");
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public interface Variable {
 	 * @throws UnrepresentedTypeException If this does not represent a double
 	 */
 	default double getDouble() {
-		throw new UnrepresentedTypeException("Variable does not represent a double, use hasDouble() first.");
+		throw new UnrepresentedTypeException("Value does not represent a double, use hasDouble() first.");
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public interface Variable {
 	 * @throws UnrepresentedTypeException If this does not represent a Location
 	 */
 	@NotNull default Location getLocation() {
-		throw new UnrepresentedTypeException("Variable does not represent a Location, use hasLocation() first.");
+		throw new UnrepresentedTypeException("Value does not represent a Location, use hasLocation() first.");
 	}
 	
 	/**
@@ -90,27 +90,27 @@ public interface Variable {
 	 * @throws UnrepresentedTypeException If this does not represent a LivingEntity
 	 */
 	@NotNull default LivingEntity getEntity() {
-		throw new UnrepresentedTypeException("Variable does not represent a LivingEntity, use hasEntity() first.");
+		throw new UnrepresentedTypeException("Value does not represent a LivingEntity, use hasEntity() first.");
 	}
 	
 	
-	default Variable add(Variable other) {
+	default Value add(Value other) {
 		throw new UnsupportedOperationException(""); //TODO
 	}
 	
-	default Variable subtract(Variable other) {
+	default Value subtract(Value other) {
 		throw new UnsupportedOperationException(""); //TODO
 	}
 	
-	default Variable multiply(Variable other) {
+	default Value multiply(Value other) {
 		throw new UnsupportedOperationException(""); //TODO
 	}
 	
-	default Variable divide(Variable other) {
+	default Value divide(Value other) {
 		throw new UnsupportedOperationException(""); //TODO
 	}
 	
-	default Variable modulus(Variable other) {
+	default Value modulus(Value other) {
 		throw new UnsupportedOperationException(""); //TODO
 	}
 	

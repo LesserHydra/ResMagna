@@ -81,7 +81,7 @@ public class AbilityFactory {
 		case "projectile":		return new ProjectileAbility(abilityArgs);
 		case "beam":			return new BeamAbility(abilityArgs);
 		
-		//Variable style abilities
+		//Variable set ability
 		case "set":		        return new VariableAbility(variableArgs);
 		
 		//No built-in found, request custom

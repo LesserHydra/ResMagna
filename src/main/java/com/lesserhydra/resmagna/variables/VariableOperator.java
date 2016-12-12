@@ -6,7 +6,7 @@ import com.lesserhydra.resmagna.logging.LogType;
 public enum VariableOperator {
 	
 	SET("=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!b.hasNumber() && !b.hasLocation()) {
 				GrandLogger.log("Tried to set global variable to a dependant type (ex. entity)", LogType.RUNTIME_ERRORS);
 				return a;
@@ -15,7 +15,7 @@ public enum VariableOperator {
 		}
 	},
 	ADD("+=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!a.hasNumber() || !b.hasNumber()) {
 				GrandLogger.log("Tried to add non-numerical values.", LogType.RUNTIME_ERRORS);
 				return a;
@@ -24,7 +24,7 @@ public enum VariableOperator {
 		}
 	},
 	SUBTRACT("-=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!a.hasNumber() || !b.hasNumber()) {
 				GrandLogger.log("Tried to subtract non-numerical values.", LogType.RUNTIME_ERRORS);
 				return a;
@@ -33,7 +33,7 @@ public enum VariableOperator {
 		}
 	},
 	MULTIPLY("*=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!a.hasNumber() || !b.hasNumber()) {
 				GrandLogger.log("Tried to multiply non-numerical values.", LogType.RUNTIME_ERRORS);
 				return a;
@@ -42,7 +42,7 @@ public enum VariableOperator {
 		}
 	},
 	DIVIDE("/=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!a.hasNumber() || !b.hasNumber()) {
 				GrandLogger.log("Tried to divide non-numerical values.", LogType.RUNTIME_ERRORS);
 				return a;
@@ -51,7 +51,7 @@ public enum VariableOperator {
 		}
 	},
 	MODULO("%=") {
-		@Override public Variable apply(Variable a, Variable b) {
+		@Override public Value apply(Value a, Value b) {
 			if (!a.hasNumber() || !b.hasNumber()) {
 				GrandLogger.log("Tried to mod non-numerical values.", LogType.RUNTIME_ERRORS);
 				return a;
@@ -64,7 +64,7 @@ public enum VariableOperator {
 	
 	VariableOperator(String symbol) { this.symbol = symbol; }
 	
-	public abstract Variable apply(Variable a, Variable b);
+	public abstract Value apply(Value a, Value b);
 
 	public static VariableOperator fromSymbol(String symbol) {
 		for (VariableOperator op : values()) {

@@ -1,7 +1,7 @@
 package com.lesserhydra.resmagna.targeters;
 
-import com.lesserhydra.resmagna.variables.Variable;
-import com.lesserhydra.resmagna.variables.Variables;
+import com.lesserhydra.resmagna.variables.Value;
+import com.lesserhydra.resmagna.variables.Values;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class Target {
 	 * @return Newly constructed targeter
 	 */
 	public static Target makeEmpty(@NotNull Player holder) {
-		return new Target(Variables.NONE, holder, Variables.NONE);
+		return new Target(Values.NONE, holder, Values.NONE);
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class Target {
 	 * @param activator Activator construct
 	 * @return Newly constructed targeter
 	 */
-	public static Target make(@NotNull Player holder, @NotNull Variable target, @NotNull Variable activator) {
+	public static Target make(@NotNull Player holder, @NotNull Value target, @NotNull Value activator) {
 		return new Target(target, holder, activator);
 	}
 	
@@ -36,39 +36,39 @@ public class Target {
 	 * Returns an empty target construct
 	 * @return Empty target construct
 	 */
-	public static Variable none() { return Variables.NONE; }
+	public static Value none() { return Values.NONE; }
 	
 	/**
 	 * Constructs a target construct from given entity
 	 * @param target Living entity
 	 * @return Target construct
 	 */
-	public static Variable from(LivingEntity target) { return Variables.wrap(target); }
+	public static Value from(LivingEntity target) { return Values.wrap(target); }
 	
 	/**
 	 * Constructs a target construct from given location
 	 * @param target Location
 	 * @return Target construct
 	 */
-	public static Variable from(Location target) { return Variables.wrap(target); }
+	public static Value from(Location target) { return Values.wrap(target); }
 	
 	
-	private final Variable currentTarget;
+	private final Value currentTarget;
 	private final Player holder;
-	private final Variable activatorTarget;
-	private final Map<String, Variable> savedTargets;
+	private final Value activatorTarget;
+	private final Map<String, Value> savedTargets;
 	
 	/**
 	 * Returns the currently targeted construct
 	 * @return The currently targeted construct
 	 */
-	public Variable current() { return currentTarget; }
+	public Value current() { return currentTarget; }
 	
 	/**
 	 * Returns the activator construct
 	 * @return The activator construct
 	 */
-	public Variable activator() { return activatorTarget; }
+	public Value activator() { return activatorTarget; }
 	
 	/**
 	 * Get the holder player
@@ -154,7 +154,7 @@ public class Target {
 	 * Set current target to nothing
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target targetNone() { return new Target(Variables.NONE, holder, activatorTarget, savedTargets); }
+	public Target targetNone() { return new Target(Values.NONE, holder, activatorTarget, savedTargets); }
 	
 	/**
 	 * Set currently targeted entity to a saved entity from this Target's shared save map
@@ -162,7 +162,7 @@ public class Target {
 	 * @return Newly constructed Target sharing saved target map
 	 */
 	public Target targetSaved(String saveName) {
-		return new Target(savedTargets.getOrDefault(saveName, Variables.NONE), holder, activatorTarget, savedTargets);
+		return new Target(savedTargets.getOrDefault(saveName, Values.NONE), holder, activatorTarget, savedTargets);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class Target {
 	 * @param newTarget TargetConstruct to target
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target target(@NotNull Variable newTarget) {
+	public Target target(@NotNull Value newTarget) {
 		return new Target(newTarget, holder, activatorTarget, savedTargets);
 	}
 	
@@ -180,7 +180,7 @@ public class Target {
 	 * @param activator Activator construct
 	 * @return Newly constructed Target sharing saved target map
 	 */
-	public Target set(@NotNull Variable target, @NotNull Variable activator) {
+	public Target set(@NotNull Value target, @NotNull Value activator) {
 		return new Target(target, holder, activator, savedTargets);
 	}
 	
@@ -188,7 +188,7 @@ public class Target {
 	/*
 	 * Construct a fresh Target from a new save map
 	 */
-	private Target(Variable currentTarget, Player holder, Variable activatorTarget) {
+	private Target(Value currentTarget, Player holder, Value activatorTarget) {
 		this.currentTarget = currentTarget;
 		this.holder = holder;
 		this.activatorTarget = activatorTarget;
@@ -198,8 +198,8 @@ public class Target {
 	/*
 	 * Construct a new Target sharing a saved target map
 	 */
-	private Target(Variable currentTarget, Player holder, Variable activatorTarget,
-	               Map<String, Variable> savedTargets) {
+	private Target(Value currentTarget, Player holder, Value activatorTarget,
+	               Map<String, Value> savedTargets) {
 		this.currentTarget = currentTarget;
 		this.holder = holder;
 		this.activatorTarget = activatorTarget;

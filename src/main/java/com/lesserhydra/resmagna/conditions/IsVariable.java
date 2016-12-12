@@ -3,7 +3,7 @@ package com.lesserhydra.resmagna.conditions;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.variables.Variable;
+import com.lesserhydra.resmagna.variables.Value;
 import com.lesserhydra.resmagna.variables.VariableConditional;
 import com.lesserhydra.resmagna.variables.VariableConstruct;
 import com.lesserhydra.resmagna.variables.VariableConstructs;
@@ -52,8 +52,8 @@ class IsVariable implements Condition {
 	
 	@Override
 	public boolean test(Target target) {
-		Variable a = var.get(target);
-		Variable b = other.get(target);
+		Value a = var.get(target);
+		Value b = other.get(target);
 		
 		if (!a.hasNumber() || !b.hasNumber()) {
 			GrandLogger.log("Tried to compare non-numerical values.", LogType.RUNTIME_ERRORS);

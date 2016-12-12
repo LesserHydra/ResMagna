@@ -20,17 +20,17 @@ public class VariableConstructs {
 	 */
 	public static final VariableConstruct NONE = new VariableConstruct() {
 		@Override public boolean isNull() { return true; }
-		@Override public Variable get(Target target) { return Variables.NONE; }
+		@Override public Value get(Target target) { return Values.NONE; }
 		@Override public boolean isSettable() { return true; }
-		@Override public void set(Target target, Variable variable) {}
+		@Override public void set(Target target, Value value) {}
 	};
 	
 	/* HEALTH - LivingEntity health
 	 */
 	private static final VariableConstruct HEALTH = new VariableConstruct.WithLivingEntitySettable() {
-		@Override public Variable get(LivingEntity target) { return Variables.wrap(target.getHealth()); }
+		@Override public Value get(LivingEntity target) { return Values.wrap(target.getHealth()); }
 		
-		@Override public void set(LivingEntity target, Variable value) {
+		@Override public void set(LivingEntity target, Value value) {
 			if (!value.hasDouble()) {
 				GrandLogger.log("Tried to set health construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -43,11 +43,11 @@ public class VariableConstructs {
 	/* HUNGER - Player hunger
 	 */
 	private static final VariableConstruct HUNGER = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) {
-			return Variables.wrap(target.getFoodLevel() + target.getSaturation());
+		@Override public Value get(Player target) {
+			return Values.wrap(target.getFoodLevel() + target.getSaturation());
 		}
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasDouble()) {
 				GrandLogger.log("Tried to set hunger construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -88,9 +88,9 @@ public class VariableConstructs {
 	/* FOOD_LEVEL - Player food level
 	 */
 	private static final VariableConstruct FOOD_LEVEL = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) { return Variables.wrap(target.getFoodLevel()); }
+		@Override public Value get(Player target) { return Values.wrap(target.getFoodLevel()); }
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasInteger()) {
 				GrandLogger.log("Tried to set food level construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -103,9 +103,9 @@ public class VariableConstructs {
 	/* SATURATION - Player saturation
 	 */
 	private static final VariableConstruct SATURATION = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) { return Variables.wrap(target.getSaturation()); }
+		@Override public Value get(Player target) { return Values.wrap(target.getSaturation()); }
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasDouble()) {
 				GrandLogger.log("Tried to set saturation construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -118,9 +118,9 @@ public class VariableConstructs {
 	/* EXHAUSTION - Player exhaustion
 	 */
 	private static final VariableConstruct EXHAUSTION = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) { return Variables.wrap(target.getExhaustion()); }
+		@Override public Value get(Player target) { return Values.wrap(target.getExhaustion()); }
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasDouble()) {
 				GrandLogger.log("Tried to set exhaustion construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -133,13 +133,13 @@ public class VariableConstructs {
 	/* TOTAL_EXP - Player total experience
 	 */
 	private static final VariableConstruct TOTAL_EXP = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) {
+		@Override public Value get(Player target) {
 			int result = ExpUtils.calculateXpFromLevel(target.getLevel())
 					+ ExpUtils.calculateXpFromProgress(target.getLevel(), target.getExp());
-			return Variables.wrap(result);
+			return Values.wrap(result);
 		}
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasInteger()) {
 				GrandLogger.log("Tried to set total experience construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -154,9 +154,9 @@ public class VariableConstructs {
 	/* EXP - Player experience progress
 	 */
 	private static final VariableConstruct EXP = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) { return Variables.wrap(target.getExp()); }
+		@Override public Value get(Player target) { return Values.wrap(target.getExp()); }
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasDouble()) {
 				GrandLogger.log("Tried to set exp construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -169,9 +169,9 @@ public class VariableConstructs {
 	/* LEVELS - Player levels
 	 */
 	private static final VariableConstruct LEVELS = new VariableConstruct.WithPlayerSettable() {
-		@Override public Variable get(Player target) { return Variables.wrap(target.getLevel()); }
+		@Override public Value get(Player target) { return Values.wrap(target.getLevel()); }
 		
-		@Override public void set(Player target, Variable value) {
+		@Override public void set(Player target, Value value) {
 			if (!value.hasInteger()) {
 				GrandLogger.log("Tried to set levels construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
@@ -187,7 +187,7 @@ public class VariableConstructs {
 	 * @param setter Setter function
 	 * @return Resulting construct
 	 */
-	public static VariableConstruct makeSettable(Function<Target, Variable> getter, BiConsumer<Target, Variable> setter) {
+	public static VariableConstruct makeSettable(Function<Target, Value> getter, BiConsumer<Target, Value> setter) {
 		return new Settable(getter, setter);
 	}
 	
@@ -197,8 +197,8 @@ public class VariableConstructs {
 	 * @return Resulting construct
 	 */
 	public static VariableConstruct parse(String string) {
-		if (StringTools.isInteger(string)) return t -> Variables.wrap(Integer.parseInt(string));
-		else if (StringTools.isFloat(string)) return t -> Variables.wrap(Double.parseDouble(string));
+		if (StringTools.isInteger(string)) return t -> Values.wrap(Integer.parseInt(string));
+		else if (StringTools.isFloat(string)) return t -> Values.wrap(Double.parseDouble(string));
 		else return parseMap(string);
 	}
 	
@@ -214,29 +214,29 @@ public class VariableConstructs {
 			case "levels": return LEVELS;
 			
 			default:
-				//GrandLogger.log("Variable: " + string, LogType.DEBUG);
+				//GrandLogger.log("Global Variable: " + string, LogType.DEBUG);
 				return VariableHandler.linkConstruct(string);
 		}
 	}
 	
 	private static class Settable implements VariableConstruct {
 		
-		private final Function<Target, Variable> getter;
-		private final BiConsumer<Target, Variable> setter;
+		private final Function<Target, Value> getter;
+		private final BiConsumer<Target, Value> setter;
 		
-		Settable(Function<Target, Variable> getter, BiConsumer<Target, Variable> setter) {
+		Settable(Function<Target, Value> getter, BiConsumer<Target, Value> setter) {
 			this.getter = getter;
 			this.setter = setter;
 		}
 		
 		@Override
-		public Variable get(Target target) { return getter.apply(target); }
+		public Value get(Target target) { return getter.apply(target); }
 		
 		@Override
 		public boolean isSettable() { return true; }
 		
 		@Override
-		public void set(Target target, Variable variable) { setter.accept(target, variable); }
+		public void set(Target target, Value value) { setter.accept(target, value); }
 	}
 	
 }
