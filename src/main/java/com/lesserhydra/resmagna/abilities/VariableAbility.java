@@ -1,14 +1,11 @@
 package com.lesserhydra.resmagna.abilities;
 
-import com.lesserhydra.resmagna.arguments.VariableConstruct;
-import com.lesserhydra.resmagna.arguments.VariableConstructs;
-import com.lesserhydra.resmagna.function.Functor;
-import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.arguments.VariableOperator;
+import com.lesserhydra.resmagna.VariableHandler;
+import com.lesserhydra.resmagna.variables.VariableConstruct;
+import com.lesserhydra.resmagna.variables.VariableConstructs;
+import com.lesserhydra.resmagna.variables.VariableOperator;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.util.StringTools;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;

@@ -1,7 +1,7 @@
 package com.lesserhydra.resmagna;
 
-import com.lesserhydra.resmagna.arguments.VariableConstruct;
-import com.lesserhydra.resmagna.arguments.VariableOperator;
+import com.lesserhydra.resmagna.variables.VariableConstruct;
+import com.lesserhydra.resmagna.variables.VariableOperator;
 import com.lesserhydra.resmagna.variables.Variable;
 import com.lesserhydra.resmagna.variables.Variables;
 import org.bukkit.entity.Player;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VariableHandler {
+	
 	final static private Map<String, Map<String, Variable>> variables = new HashMap<>();
 	
 	public static void registerPlayer(Player p) {
@@ -40,4 +41,5 @@ public class VariableHandler {
 	public static VariableConstruct linkConstruct(String varName) {
 		return p -> get(p, varName);
 	}
+	
 }

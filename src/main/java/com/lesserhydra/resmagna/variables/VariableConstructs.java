@@ -1,7 +1,6 @@
-package com.lesserhydra.resmagna.arguments;
+package com.lesserhydra.resmagna.variables;
 
 import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.resmagna.variables.Variables;
 import com.lesserhydra.util.StringTools;
 
 public class VariableConstructs {

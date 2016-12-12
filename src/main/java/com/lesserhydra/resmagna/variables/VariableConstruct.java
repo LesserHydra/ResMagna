@@ -1,6 +1,5 @@
-package com.lesserhydra.resmagna.arguments;
+package com.lesserhydra.resmagna.variables;
 
-import com.lesserhydra.resmagna.variables.Variable;
 import org.bukkit.entity.Player;
 
 public interface VariableConstruct {

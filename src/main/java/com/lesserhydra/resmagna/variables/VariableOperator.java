@@ -1,8 +1,7 @@
-package com.lesserhydra.resmagna.arguments;
+package com.lesserhydra.resmagna.variables;
 
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.resmagna.variables.Variable;
 
 public enum VariableOperator {
 	

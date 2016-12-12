@@ -1,9 +1,9 @@
 package com.lesserhydra.resmagna.conditions;
 
 import com.lesserhydra.resmagna.VariableHandler;
-import com.lesserhydra.resmagna.arguments.VariableConditional;
-import com.lesserhydra.resmagna.arguments.VariableConstruct;
-import com.lesserhydra.resmagna.arguments.VariableConstructs;
+import com.lesserhydra.resmagna.variables.VariableConditional;
+import com.lesserhydra.resmagna.variables.VariableConstruct;
+import com.lesserhydra.resmagna.variables.VariableConstructs;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.variables.Variable;
@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class IsVariable implements Condition.ForPlayer {
+	
 	//(\w+)\s*([=<>]+)\s*(\w+)
 	private static final Pattern isVariableLinePattern = Pattern.compile("(\\w+)\\s*([=<>]+)\\s*(\\w+)");
 	

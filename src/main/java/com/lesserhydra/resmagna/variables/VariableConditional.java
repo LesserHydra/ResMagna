@@ -1,4 +1,4 @@
-package com.lesserhydra.resmagna.arguments;
+package com.lesserhydra.resmagna.variables;
 
 public enum VariableConditional {
 	

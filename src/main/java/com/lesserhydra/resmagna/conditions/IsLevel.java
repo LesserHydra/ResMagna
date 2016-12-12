@@ -1,6 +1,6 @@
 package com.lesserhydra.resmagna.conditions;
 
-import com.lesserhydra.resmagna.arguments.VariableConditional;
+import com.lesserhydra.resmagna.variables.VariableConditional;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.util.StringTools;
