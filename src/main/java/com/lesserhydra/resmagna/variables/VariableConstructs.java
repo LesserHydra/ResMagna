@@ -16,6 +16,8 @@ import java.util.function.Function;
 
 public class VariableConstructs {
 	
+	/* NONE - Typically symbolizes an error
+	 */
 	public static final VariableConstruct NONE = new VariableConstruct() {
 		@Override public boolean isNull() { return true; }
 		@Override public Variable get(Target target) { return Variables.NONE; }
@@ -23,7 +25,9 @@ public class VariableConstructs {
 		@Override public void set(Target target, Variable variable) {}
 	};
 	
-	public static final VariableConstruct HEALTH = new VariableConstruct.WithLivingEntitySettable() {
+	/* HEALTH - LivingEntity health
+	 */
+	private static final VariableConstruct HEALTH = new VariableConstruct.WithLivingEntitySettable() {
 		@Override public Variable get(LivingEntity target) { return Variables.wrap(target.getHealth()); }
 		
 		@Override public void set(LivingEntity target, Variable value) {
@@ -36,7 +40,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct HUNGER = new VariableConstruct.WithPlayerSettable() {
+	/* HUNGER - Player hunger
+	 */
+	private static final VariableConstruct HUNGER = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) {
 			return Variables.wrap(target.getFoodLevel() + target.getSaturation());
 		}
@@ -79,7 +85,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct FOOD_LEVEL = new VariableConstruct.WithPlayerSettable() {
+	/* FOOD_LEVEL - Player food level
+	 */
+	private static final VariableConstruct FOOD_LEVEL = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) { return Variables.wrap(target.getFoodLevel()); }
 		
 		@Override public void set(Player target, Variable value) {
@@ -92,7 +100,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct SATURATION = new VariableConstruct.WithPlayerSettable() {
+	/* SATURATION - Player saturation
+	 */
+	private static final VariableConstruct SATURATION = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) { return Variables.wrap(target.getSaturation()); }
 		
 		@Override public void set(Player target, Variable value) {
@@ -105,7 +115,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct EXHAUSTION = new VariableConstruct.WithPlayerSettable() {
+	/* EXHAUSTION - Player exhaustion
+	 */
+	private static final VariableConstruct EXHAUSTION = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) { return Variables.wrap(target.getExhaustion()); }
 		
 		@Override public void set(Player target, Variable value) {
@@ -118,7 +130,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct TOTAL_EXP = new VariableConstruct.WithPlayerSettable() {
+	/* TOTAL_EXP - Player total experience
+	 */
+	private static final VariableConstruct TOTAL_EXP = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) {
 			int result = ExpUtils.calculateXpFromLevel(target.getLevel())
 					+ ExpUtils.calculateXpFromProgress(target.getLevel(), target.getExp());
@@ -137,7 +151,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct EXP = new VariableConstruct.WithPlayerSettable() {
+	/* EXP - Player experience progress
+	 */
+	private static final VariableConstruct EXP = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) { return Variables.wrap(target.getExp()); }
 		
 		@Override public void set(Player target, Variable value) {
@@ -150,7 +166,9 @@ public class VariableConstructs {
 		}
 	};
 	
-	public static final VariableConstruct LEVELS = new VariableConstruct.WithPlayerSettable() {
+	/* LEVELS - Player levels
+	 */
+	private static final VariableConstruct LEVELS = new VariableConstruct.WithPlayerSettable() {
 		@Override public Variable get(Player target) { return Variables.wrap(target.getLevel()); }
 		
 		@Override public void set(Player target, Variable value) {
@@ -163,10 +181,21 @@ public class VariableConstructs {
 		}
 	};
 	
+	/**
+	 * Makes a settable variable construct with getter and setter functions.
+	 * @param getter Getter function
+	 * @param setter Setter function
+	 * @return Resulting construct
+	 */
 	public static VariableConstruct makeSettable(Function<Target, Variable> getter, BiConsumer<Target, Variable> setter) {
 		return new Settable(getter, setter);
 	}
 	
+	/**
+	 * Parse construct string.
+	 * @param string Construct string
+	 * @return Resulting construct
+	 */
 	public static VariableConstruct parse(String string) {
 		if (StringTools.isInteger(string)) return t -> Variables.wrap(Integer.parseInt(string));
 		else if (StringTools.isFloat(string)) return t -> Variables.wrap(Double.parseDouble(string));
@@ -183,6 +212,7 @@ public class VariableConstructs {
 			case "totalexp": return TOTAL_EXP;
 			case "exp": return EXP;
 			case "levels": return LEVELS;
+			
 			default:
 				//GrandLogger.log("Variable: " + string, LogType.DEBUG);
 				return VariableHandler.linkConstruct(string);
@@ -194,7 +224,7 @@ public class VariableConstructs {
 		private final Function<Target, Variable> getter;
 		private final BiConsumer<Target, Variable> setter;
 		
-		public Settable(Function<Target, Variable> getter, BiConsumer<Target, Variable> setter) {
+		Settable(Function<Target, Variable> getter, BiConsumer<Target, Variable> setter) {
 			this.getter = getter;
 			this.setter = setter;
 		}
