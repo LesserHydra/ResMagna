@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class AbilityFactory {
 	
-	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w\s=+\-*/%]+\b))?
-	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w\\s=+\\-*/%]+\\b))?");
+	//(\w+)\s*(?:(?:\((\$[\d]+)\))|(\b[\w.\s=+\-*/%]+\b))?
+	static private final Pattern abilityPattern = Pattern.compile("(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|(\\b[\\w.\\s=+\\-*/%]+\\b))?");
 	
 	@Nullable
 	public static Functor build(String abilityString) {

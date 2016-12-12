@@ -1,6 +1,8 @@
 package com.lesserhydra.resmagna;
 
+import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.variables.VariableConstruct;
+import com.lesserhydra.resmagna.variables.VariableConstructs;
 import com.lesserhydra.resmagna.variables.VariableOperator;
 import com.lesserhydra.resmagna.variables.Variable;
 import com.lesserhydra.resmagna.variables.Variables;
@@ -20,12 +22,14 @@ public class VariableHandler {
 	}
 	
 	@NotNull
-	public static Variable operate(Player p, String varName, VariableOperator operation, VariableConstruct operand) {
-		Map<String, Variable> playerVars = variables.get(p.getName());
+	public static Variable operate(Target target, String varName, VariableOperator operation, VariableConstruct operand) {
+		if (!target.isPlayer()) return Variables.NONE;
+		
+		Map<String, Variable> playerVars = variables.get(target.asPlayer().getName());
 		Variable value = playerVars.get(varName);
 		if (value == null) value = Variables.NONE;
 		
-		value = operation.apply(value, operand.get(p));
+		value = operation.apply(value, operand.get(target));
 		
 		playerVars.put(varName, value);
 		return value;
@@ -37,9 +41,19 @@ public class VariableHandler {
 		return value == null ? Variables.NONE : value;
 	}
 	
+	public static void set(Player p, String varName, Variable value) {
+		Map<String, Variable> playerVars = variables.get(p.getName());
+		playerVars.put(varName, value);
+	}
+	
 	@NotNull
 	public static VariableConstruct linkConstruct(String varName) {
-		return p -> get(p, varName);
+		return VariableConstructs.makeSettable(t -> {
+			if (!t.isPlayer()) return Variables.NONE;
+			return get(t.asPlayer(), varName);
+		}, (t, v) -> {
+			if (t.isPlayer()) set(t.asPlayer(), varName, v);
+		});
 	}
 	
 }
