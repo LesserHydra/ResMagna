@@ -1,6 +1,8 @@
 package com.lesserhydra.resmagna.targeters;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -23,8 +25,6 @@ class BoundingBoxTargeter implements Targeter {
 		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx", "x");
 		spreadY = args.getDouble(false, spreadV,		"spready", "sy", "y");
 		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz", "z");
-		
-		//DEBUG: GrandLogger.log("@aabb[" + spreadX + ", " + spreadY + ", " + spreadZ + "]", LogType.CONFIG_PARSING);
 	}
 	
 	@Override

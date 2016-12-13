@@ -195,7 +195,7 @@ public class LineFactory {
 		//Match
 		Matcher matcher = abilityLinePattern.matcher(groupingParser.getSimplifiedString());
 		if (!matcher.matches()) {
-			GrandLogger.log("Invalid ability format: " + l_lineString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid ability line format: " + l_lineString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  Expected: <name> [args] [targeter]", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  Simplified: " + groupingParser.getSimplifiedString(), LogType.CONFIG_ERRORS);
 			return;
@@ -205,11 +205,22 @@ public class LineFactory {
 		String abilityString = groupingParser.readdAllGroupings(matcher.group(1));
 		String targeterString = groupingParser.readdAllGroupings(matcher.group(2));
 		
-		//Null ability or targeter indicates parsing error
-		//TODO: expand errors, like in JUMPIF
+		//Parse ability, check for fail
 		Functor ability = AbilityFactory.build(abilityString);
+		if (ability == null) {
+			GrandLogger.log("  In line: " + l_lineString, LogType.CONFIG_ERRORS);
+			return;
+		}
+		
+		//Parse targeter, check for fail
 		Targeter targeter = TargeterFactory.build(targeterString);
-		if (ability != null && targeter != null) addLine(new AbilityLine(ability, targeter));
+		if (targeter == null) {
+			GrandLogger.log("  In line: " + l_lineString, LogType.CONFIG_ERRORS);
+			return;
+		}
+		
+		//Result
+		addLine(new AbilityLine(ability, targeter));
 	}
 	
 	private void addLine(FunctionLine functionLine) {

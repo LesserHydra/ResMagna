@@ -212,7 +212,6 @@ public enum ItemSlotType {
 		//9-35 Stored
 		if (i <= 35) return STORED;
 
-		//TODO:Should throw?
 		return NONE;
 	}
 	
@@ -232,7 +231,7 @@ public enum ItemSlotType {
 		if (i == 39) return HELMET;
 		//40 Offhand
 		if (i == 40) return HELDOFF;
-		//TODO:Should throw?
+		
 		return NONE;
 	}
 	

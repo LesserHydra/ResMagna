@@ -28,7 +28,9 @@ public class ActivatorFactory {
 		//Match
 		Matcher seperatorMatcher = seperatorPattern.matcher(simplifiedLine);
 		if (!seperatorMatcher.matches()) {
-			//TODO: errors
+			GrandLogger.log("Invalid activator line format:", LogType.CONFIG_ERRORS);
+			GrandLogger.log("  " + line, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  Simplified: " + simplifiedLine, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		
@@ -54,8 +56,8 @@ public class ActivatorFactory {
 		//Parse activator
 		Matcher activatorMatcher = activatorPattern.matcher(activatorString);
 		if (!activatorMatcher.matches()) {
-			//TODO: log error
-			GrandLogger.log("", LogType.CONFIG_ERRORS);
+			GrandLogger.log("Invalid activator format: " + activatorString, LogType.CONFIG_ERRORS);
+			GrandLogger.log("  In line: " + line, LogType.CONFIG_ERRORS);
 			return null;
 		}
 		

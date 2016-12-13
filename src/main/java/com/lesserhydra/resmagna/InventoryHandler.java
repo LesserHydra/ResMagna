@@ -4,8 +4,6 @@ import com.lesserhydra.resmagna.arguments.ArmorType;
 import com.lesserhydra.resmagna.arguments.ItemSlotType;
 import com.lesserhydra.resmagna.configuration.GrandItem;
 import com.lesserhydra.resmagna.configuration.ItemHandler;
-import com.lesserhydra.resmagna.logging.GrandLogger;
-import com.lesserhydra.resmagna.logging.LogType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -142,14 +140,17 @@ public class InventoryHandler implements Listener {
 	//TODO: Implement in a nicer way
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(InventoryClickEvent e) {
+		//Require player clicked
 		if (!(e.getWhoClicked() instanceof Player)) return;
 		Player p = (Player)e.getWhoClicked();
 		
+		//Skip uninteresting actions
 		if (e.getAction() == InventoryAction.NOTHING || e.getAction() == InventoryAction.CLONE_STACK
 				|| e.getAction() == InventoryAction.UNKNOWN) return;
 		
 		//DEBUG: GrandLogger.log(e.getAction().name(), LogType.DEBUG);
 		
+		//Get required info
 		PlayerInventory inv = p.getInventory();
 		GrandInventory gInv = playerInventories.get(p.getName());
 		ItemStack currentItem = e.getCurrentItem();
@@ -159,6 +160,7 @@ public class InventoryHandler implements Listener {
 		
 		//DEBUG: GrandLogger.log(currentGrandItem == null ? "null" : currentGrandItem.getName(), LogType.DEBUG);
 		
+		//Special flags
 		boolean creative = e instanceof InventoryCreativeEvent;
 		boolean otherInventory = !inv.equals(e.getClickedInventory());
 		

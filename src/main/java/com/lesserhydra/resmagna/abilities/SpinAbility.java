@@ -23,8 +23,8 @@ class SpinAbility implements Ability.ForEntity {
 
 	@Override
 	public void run(LivingEntity target) {
-		//TODO: Ick.
-		new SpinTimer(target).runTaskTimer(ResMagna.plugin, 0L, updateDelay);
+		SpinTimer spinTimer = new SpinTimer(target);
+		spinTimer.runTaskTimer(ResMagna.plugin, 0L, updateDelay);
 	}
 
 	private class SpinTimer extends BukkitRunnable {

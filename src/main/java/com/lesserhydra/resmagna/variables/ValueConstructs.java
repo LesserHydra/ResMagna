@@ -10,6 +10,7 @@ import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.util.MathUtil;
 import com.lesserhydra.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,8 @@ public class ValueConstructs {
 				GrandLogger.log("Tried to set health construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			double normalValue = MathUtil.clamp(value.asDouble(), 0.0, target.getMaxHealth());
+			double normalValue = MathUtil.clamp(value.asDouble(),
+					0.0, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			target.setHealth(normalValue);
 		}
 	};
@@ -253,7 +255,7 @@ public class ValueConstructs {
 			case "levels": return LEVELS;
 			
 			default:
-				//GrandLogger.log("Global Variable: " + string, LogType.DEBUG);
+				GrandLogger.log("Global Variable: " + string, LogType.CONFIG_PARSING);
 				return VariableHandler.linkConstruct(string);
 		}
 	}
