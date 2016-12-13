@@ -16,6 +16,7 @@ import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.util.StringTools;
+import org.bukkit.potion.PotionEffectType;
 
 public class ArgumentBlock {
 	
@@ -268,7 +269,6 @@ public class ArgumentBlock {
 		if (result == null) {
 			//Continuing the error message given by BlockPattern
 			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
-			
 			return fallback;
 		}
 		
@@ -291,7 +291,19 @@ public class ArgumentBlock {
 		if (result == null) {
 			//Continuing the error message given by BlockMask
 			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
-			
+			return fallback;
+		}
+		
+		return result;
+	}
+	
+	public PotionEffectType getPotionEffectType(boolean required, PotionEffectType fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		PotionEffectType result = PotionEffectType.getByName(value);
+		if (result == null) {
+			logInvalid(keys, value, "potion effect type");
 			return fallback;
 		}
 		

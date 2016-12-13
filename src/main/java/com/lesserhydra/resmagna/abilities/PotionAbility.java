@@ -15,8 +15,7 @@ class PotionAbility implements Ability.ForEntity {
 	private final boolean force;
 	
 	PotionAbility(ArgumentBlock args) {
-		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
-		this.type = PotionEffectType.getByName(args.getString(true, "ABSORPTION",	"PotionType", "Potion", "Type", "Name", "T", null));
+		this.type = args.getPotionEffectType(true, PotionEffectType.ABSORPTION, "PotionType", "Potion", "Type", "Name", "T", null);
 		
 		this.duration = args.getInteger(false, 600,		"Duration", "Ticks", "D");
 		this.amplifier = args.getInteger(false, 0,		"Amplifier", "Level", "Amp", "A");

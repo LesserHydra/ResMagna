@@ -11,8 +11,7 @@ class IsAffected implements Condition.ForEntity {
 	private final int amplifier;
 	
 	IsAffected(ArgumentBlock args) {
-		//TODO: temp
-		this.type = PotionEffectType.getByName(args.getString(true, "ABSORPTION", "potiontype", "potion", "type", "name", "t", null));
+		this.type = args.getPotionEffectType(true, PotionEffectType.ABSORPTION, "PotionType", "Potion", "Type", "Name", "T", null);
 		this.amplifier = args.getInteger(false, 512,	"amplifier", "level", "amp", "a");
 	}
 	

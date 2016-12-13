@@ -30,8 +30,8 @@ class PotionCloudAbility implements Ability {
 	
 	
 	PotionCloudAbility(ArgumentBlock args) {
-		//TODO: type = args.getPotionEffectType("name", PotionEffectType.ABSORPTION, true);
-		PotionEffectType potType = PotionEffectType.getByName(args.getString(false, "",	"potiontype", "potion", "pottype", "potname"));
+		PotionEffectType potType = args.getPotionEffectType(false, null,
+				"PotionType", "Potion", "PotType", "PotName");
 		int potDuration = args.getInteger(false, 600,			"potionduration", "potticks", "potdur");
 		int potAmplifier = args.getInteger(false, 0,			"potionamplifier", "potlevel", "potamp");
 		boolean potAmbient = args.getBoolean(false, false,		"potionisambient", "potionambient", "potamb");
