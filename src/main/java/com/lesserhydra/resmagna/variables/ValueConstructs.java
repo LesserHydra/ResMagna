@@ -43,6 +43,21 @@ public class ValueConstructs {
 		}
 	};
 	
+	/* FIRE_TICKS - Entity fire ticks
+	 */
+	private static final ValueConstruct FIRE_TICKS = new ValueConstruct.WithLivingEntitySettable() {
+		@Override public Value get(LivingEntity target) { return Values.wrap(target.getFireTicks()); }
+		
+		@Override public void set(LivingEntity target, Value value) {
+			if (!value.hasInteger()) {
+				GrandLogger.log("Tried to set fire ticks construct to invalid value.", LogType.RUNTIME_ERRORS);
+				return;
+			}
+			int normalValue = MathUtil.clamp(value.asInteger(), 0, target.getMaxFireTicks());
+			target.setFireTicks(normalValue);
+		}
+	};
+	
 	/* HUNGER - Player hunger
 	 */
 	private static final ValueConstruct HUNGER = new ValueConstruct.WithPlayerSettable() {
@@ -228,6 +243,7 @@ public class ValueConstructs {
 	private static ValueConstruct parseMap(String string) {
 		switch (string.toLowerCase()) {
 			case "health": return HEALTH;
+			case "fireticks": return FIRE_TICKS;
 			case "hunger": return HUNGER;
 			case "food": return FOOD_LEVEL;
 			case "saturation": return SATURATION;

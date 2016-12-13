@@ -60,12 +60,10 @@ public class AbilityFactory {
 		//Nontrivial abilities
 		case "say":             return new SayAbility(abilityArgs);
 		case "savetarget":		return new SaveTargetAbility(abilityArgs);
-		case "heal":			return new HealAbility(abilityArgs);
 		case "damage":			return new DamageAbility(abilityArgs);
 		case "explosion":		return new ExplosionAbility(abilityArgs);
 		case "lightning":		return new LightningAbility(abilityArgs);
 		case "firework":		return new FireworkAbility(abilityArgs);
-		case "ignite":			return new IgniteAbility(abilityArgs);
 		case "disarm":			return new DisarmAbility(abilityArgs);
 		case "force":			return new ForceAbility(abilityArgs);
 		case "sound":			return new SoundAbility(abilityArgs);
