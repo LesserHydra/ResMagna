@@ -1,14 +1,14 @@
 package com.lesserhydra.resmagna.targeters;
 
+import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 
 class BoundingBoxTargeter implements Targeter {
 	
@@ -23,11 +23,13 @@ class BoundingBoxTargeter implements Targeter {
 		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx", "x");
 		spreadY = args.getDouble(false, spreadV,		"spready", "sy", "y");
 		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz", "z");
+		
+		//DEBUG: GrandLogger.log("@aabb[" + spreadX + ", " + spreadY + ", " + spreadZ + "]", LogType.CONFIG_PARSING);
 	}
 	
 	@Override
 	public List<Target> getTargets(Target currentTarget) {
-		if (currentTarget.isLocation()) return Collections.emptyList();
+		if (!currentTarget.isLocation()) return Collections.emptyList();
 		Location targetLocation = currentTarget.asLocation();
 		
 		//Begin constructing stream over all LivingEntities in bounding box
