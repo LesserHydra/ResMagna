@@ -3,26 +3,28 @@ package com.lesserhydra.resmagna.conditions;
 import com.lesserhydra.resmagna.GrandInventory;
 import com.lesserhydra.resmagna.InventoryHandler;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.ItemSlotType;
+import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.entity.Player;
 
-class IsHolding implements Condition.ForPlayer {
+class IsHolding implements Condition {
 	
-	private final String itemName;
+	private final Evaluators.ForString itemName;
 
 	IsHolding(ArgumentBlock args) {
-		//TODO: Error handling/logging
-		this.itemName = args.getString(true, "",	"name", "n", null)
-				.toLowerCase();
+		this.itemName = args.getString(true, "",	"name", "n", null);
 	}
 
 	@Override
-	public boolean test(Player target) {
-		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target);
-		for (GrandInventory.InventoryElement element : gInv.getItems(itemName)) {
-			if (element.slotType.isSubtypeOf(ItemSlotType.HELD)) return true;
-		}
-		return false;
+	public boolean test(Target target) {
+		if (!target.isPlayer()) return false;
+		
+		if (!itemName.evaluate(target)) return false;
+		
+		GrandInventory gInv = InventoryHandler.getInstance().getItemsFromPlayer(target.asPlayer());
+		return gInv.getItems(itemName.get().toLowerCase()).stream()
+				.anyMatch(element -> element.slotType.isSubtypeOf(ItemSlotType.HELD));
 	}
 
 }

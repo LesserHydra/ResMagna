@@ -1,8 +1,7 @@
 package com.lesserhydra.resmagna.targeters;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
-import com.lesserhydra.resmagna.logging.GrandLogger;
-import com.lesserhydra.resmagna.logging.LogType;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -14,14 +13,14 @@ import java.util.stream.Stream;
 
 class BoundingBoxTargeter implements Targeter {
 	
-	private final double spreadX;
-	private final double spreadY;
-	private final double spreadZ;
+	private final Evaluators.ForDouble spreadX;
+	private final Evaluators.ForDouble spreadY;
+	private final Evaluators.ForDouble spreadZ;
 	
 	BoundingBoxTargeter(ArgumentBlock args) {
-		double spread = args.getDouble(false, 0.5,		"spread", "radius", "sprd", "r");
-		double spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh", "rh");
-		double spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv", "rv");
+		Evaluators.ForDouble spread = args.getDouble(false, 0.5,		"spread", "radius", "sprd", "r");
+		Evaluators.ForDouble spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh", "rh");
+		Evaluators.ForDouble spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv", "rv");
 		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx", "x");
 		spreadY = args.getDouble(false, spreadV,		"spready", "sy", "y");
 		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz", "z");
@@ -32,8 +31,13 @@ class BoundingBoxTargeter implements Targeter {
 		if (!currentTarget.isLocation()) return Collections.emptyList();
 		Location targetLocation = currentTarget.asLocation();
 		
+		if (!(spreadX.evaluate(currentTarget)
+				&& spreadY.evaluate(currentTarget)
+				&& spreadZ.evaluate(currentTarget))) return Collections.emptyList();
+		
 		//Begin constructing stream over all LivingEntities in bounding box
-		Stream<Entity> working = targetLocation.getWorld().getNearbyEntities(targetLocation, spreadX, spreadY, spreadZ)
+		Stream<Entity> working = targetLocation.getWorld()
+				.getNearbyEntities(targetLocation, spreadX.get(), spreadY.get(), spreadZ.get())
 				.stream()
 				.filter(e -> e instanceof LivingEntity);
 		

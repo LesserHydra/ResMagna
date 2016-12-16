@@ -5,6 +5,9 @@ public enum ValueConditional {
 	EQUAL("==") {
 		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) == 0;}
 	},
+	NOT_EQUAL("!=") {
+		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) != 0;}
+	},
 	LESS("<") {
 		@Override public <T extends Comparable<T>> boolean check(T a, T b) {return a.compareTo(b) < 0;}
 	},

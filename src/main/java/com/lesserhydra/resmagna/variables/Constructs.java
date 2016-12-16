@@ -1,37 +1,32 @@
 package com.lesserhydra.resmagna.variables;
 
 import com.lesserhydra.bukkitutil.ExpUtils;
-import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.targeters.Targeter;
-import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.util.MathUtil;
-import com.lesserhydra.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
-public class ValueConstructs {
+public class Constructs {
 	
 	/* NONE - Typically symbolizes an error
 	 */
 	public static final ValueConstruct NONE = new ValueConstruct() {
+		@Override public boolean mayHave(ValueType type) { return false; }
 		@Override public boolean isNull() { return true; }
-		@Override public Value get(Target target) { return Values.NONE; }
+		@Override public Value evaluate(Target target) { return Values.NONE; }
 		@Override public boolean isSettable() { return true; }
 		@Override public void set(Target target, Value value) {}
 	};
 	
 	/* HEALTH - LivingEntity health
 	 */
-	private static final ValueConstruct HEALTH = new ValueConstruct.WithLivingEntitySettable() {
+	public static final ValueConstruct HEALTH = new ValueConstruct.WithLivingEntitySettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(LivingEntity target) { return Values.wrap(target.getHealth()); }
 		
 		@Override public void set(LivingEntity target, Value value) {
@@ -47,7 +42,9 @@ public class ValueConstructs {
 	
 	/* FIRE_TICKS - Entity fire ticks
 	 */
-	private static final ValueConstruct FIRE_TICKS = new ValueConstruct.WithLivingEntitySettable() {
+	public static final ValueConstruct FIRE_TICKS = new ValueConstruct.WithLivingEntitySettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(LivingEntity target) { return Values.wrap(target.getFireTicks()); }
 		
 		@Override public void set(LivingEntity target, Value value) {
@@ -62,7 +59,9 @@ public class ValueConstructs {
 	
 	/* HUNGER - Player hunger
 	 */
-	private static final ValueConstruct HUNGER = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct HUNGER = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) {
 			return Values.wrap(target.getFoodLevel() + target.getSaturation());
 		}
@@ -107,7 +106,9 @@ public class ValueConstructs {
 	
 	/* FOOD_LEVEL - Player food level
 	 */
-	private static final ValueConstruct FOOD_LEVEL = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct FOOD_LEVEL = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) { return Values.wrap(target.getFoodLevel()); }
 		
 		@Override public void set(Player target, Value value) {
@@ -122,7 +123,9 @@ public class ValueConstructs {
 	
 	/* SATURATION - Player saturation
 	 */
-	private static final ValueConstruct SATURATION = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct SATURATION = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) { return Values.wrap(target.getSaturation()); }
 		
 		@Override public void set(Player target, Value value) {
@@ -137,7 +140,9 @@ public class ValueConstructs {
 	
 	/* EXHAUSTION - Player exhaustion
 	 */
-	private static final ValueConstruct EXHAUSTION = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct EXHAUSTION = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) { return Values.wrap(target.getExhaustion()); }
 		
 		@Override public void set(Player target, Value value) {
@@ -152,7 +157,9 @@ public class ValueConstructs {
 	
 	/* TOTAL_EXP - Player total experience
 	 */
-	private static final ValueConstruct TOTAL_EXP = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct TOTAL_EXP = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) {
 			int result = ExpUtils.calculateXpFromLevel(target.getLevel())
 					+ ExpUtils.calculateXpFromProgress(target.getLevel(), target.getExp());
@@ -173,7 +180,9 @@ public class ValueConstructs {
 	
 	/* EXP - Player experience progress
 	 */
-	private static final ValueConstruct EXP = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct EXP = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) { return Values.wrap(target.getExp()); }
 		
 		@Override public void set(Player target, Value value) {
@@ -188,7 +197,9 @@ public class ValueConstructs {
 	
 	/* LEVELS - Player levels
 	 */
-	private static final ValueConstruct LEVELS = new ValueConstruct.WithPlayerSettable() {
+	public static final ValueConstruct LEVELS = new ValueConstruct.WithPlayerSettable() {
+		@Override public boolean mayHave(ValueType type) { return ValueType.NUMBER.has(type); }
+		
 		@Override public Value get(Player target) { return Values.wrap(target.getLevel()); }
 		
 		@Override public void set(Player target, Value value) {
@@ -200,84 +211,6 @@ public class ValueConstructs {
 			target.setLevel(normalValue);
 		}
 	};
-	
-	public static ValueConstruct makeLiteral(Value value) {
-		return t -> value;
-	}
-	
-	/**
-	 * Makes a settable variable construct with getter and setter functions.
-	 * @param getter Getter function
-	 * @param setter Setter function
-	 * @return Resulting construct
-	 */
-	public static ValueConstruct makeSettable(Function<Target, Value> getter, BiConsumer<Target, Value> setter) {
-		return new Settable(getter, setter);
-	}
-	
-	/**
-	 * Parse construct string.
-	 * @param string Construct string
-	 * @return Resulting construct
-	 */
-	@NotNull
-	public static ValueConstruct parse(String string) {
-		char firstChar = string.charAt(0);
-		if (firstChar == '"') return parseString(string);
-		else if (firstChar == '@') return parseTargeter(string);
-		else if (StringTools.isInteger(string)) return makeLiteral(Values.wrap(Integer.parseInt(string)));
-		else if (StringTools.isFloat(string)) return makeLiteral(Values.wrap(Double.parseDouble(string)));
-		else return parseMap(string);
-	}
-	
-	@NotNull
-	private static ValueConstruct parseString(String string) {
-		//TODO: Proper
-		return makeLiteral(Values.wrap(string.substring(1, string.length()-1)));
-	}
-	
-	@NotNull
-	private static ValueConstruct parseTargeter(String string) {
-		Targeter result = TargeterFactory.build(string);
-		return result != null ? t -> result.getRandomTarget(t).current() : NONE;
-	}
-	
-	private static ValueConstruct parseMap(String string) {
-		switch (string.toLowerCase()) {
-			case "health": return HEALTH;
-			case "fireticks": return FIRE_TICKS;
-			case "hunger": return HUNGER;
-			case "food": return FOOD_LEVEL;
-			case "saturation": return SATURATION;
-			case "exhaustion": return EXHAUSTION;
-			case "totalexp": return TOTAL_EXP;
-			case "exp": return EXP;
-			case "levels": return LEVELS;
-			
-			default:
-				GrandLogger.log("Global Variable: " + string, LogType.CONFIG_PARSING);
-				return VariableHandler.linkConstruct(string);
-		}
-	}
-	
-	private static class Settable implements ValueConstruct {
-		
-		private final Function<Target, Value> getter;
-		private final BiConsumer<Target, Value> setter;
-		
-		Settable(Function<Target, Value> getter, BiConsumer<Target, Value> setter) {
-			this.getter = getter;
-			this.setter = setter;
-		}
-		
-		@Override
-		public Value get(Target target) { return getter.apply(target); }
-		
-		@Override
-		public boolean isSettable() { return true; }
-		
-		@Override
-		public void set(Target target, Value value) { setter.accept(target, value); }
-	}
+
 	
 }

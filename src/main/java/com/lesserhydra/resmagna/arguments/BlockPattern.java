@@ -41,7 +41,7 @@ public class BlockPattern {
 	 * @param string String describing the requested BlockPattern
 	 * @return BlockPattern described by given string, or null if an error was hit
 	 */
-	static BlockPattern buildFromString(String string) {
+	public static BlockPattern buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
 		String[] blockStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: Temp
 		RandomCollection<BlockConstruct> blockCollection = new RandomCollection<>();

@@ -1,10 +1,10 @@
 package com.lesserhydra.resmagna.abilities;
 
-import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
+import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.Color;
-import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.potion.PotionEffect;
@@ -12,33 +12,37 @@ import org.bukkit.potion.PotionEffectType;
 
 class PotionCloudAbility implements Ability {
 	
-	private final PotionEffect potion;
-	private final GrandLocation centerLocation;
+	private final PotionEffectType potType;
+	private final Evaluators.ForInt potDuration;
+	private final Evaluators.ForInt potAmplifier;
+	private final Evaluators.ForBoolean potAmbient;
+	private final Evaluators.ForBoolean potParticles;
+	
+	private final Evaluators.ForLocation centerLocation;
 	
 	private final Particle particle;
 	private final Color color;
 	
-	private final int duration;
-	private final int durationUseDecay;
+	private final Evaluators.ForInt duration;
+	private final Evaluators.ForInt durationUseDecay;
 	
-	private final float radius;
-	private final float radiusUseDecay;
-	private final float radiusTickDecay;
+	private final Evaluators.ForFloat radius;
+	private final Evaluators.ForFloat radiusUseDecay;
+	private final Evaluators.ForFloat radiusTickDecay;
 	
-	private final int waitTime;
-	private final int immuneDelay;
+	private final Evaluators.ForInt waitTime;
+	private final Evaluators.ForInt immuneDelay;
 	
 	
 	PotionCloudAbility(ArgumentBlock args) {
-		PotionEffectType potType = args.getPotionEffectType(false, null,
+		this.potType = args.getPotionEffectType(false, null,
 				"PotionType", "Potion", "PotType", "PotName");
-		int potDuration = args.getInteger(false, 600,			"potionduration", "potticks", "potdur");
-		int potAmplifier = args.getInteger(false, 0,			"potionamplifier", "potlevel", "potamp");
-		boolean potAmbient = args.getBoolean(false, false,		"potionisambient", "potionambient", "potamb");
-		boolean potParticles = args.getBoolean(false, false,	"potionshowparticles", "potionparticles", "potpart");
-		this.potion = (potType != null ? new PotionEffect(potType, potDuration, potAmplifier, potAmbient, potParticles) : null);
+		this.potDuration = args.getInteger(false, 600,			"potionduration", "potticks", "potdur");
+		this.potAmplifier = args.getInteger(false, 0,			"potionamplifier", "potlevel", "potamp");
+		this.potAmbient = args.getBoolean(false, false,		"potionisambient", "potionambient", "potamb");
+		this.potParticles = args.getBoolean(false, false,	"potionshowparticles", "potionparticles", "potpart");
 		
-		this.centerLocation = args.getLocation(false, new GrandLocation(),	"location", "loc", "l");
+		this.centerLocation = args.getLocation(false, GrandLocation.CURRENT,	"location", "loc", "l");
 		
 		this.particle = args.getEnum(false, Particle.class,		"particletype", "particle", "part");
 		this.color = args.getColor(false, null,		"particlecolor", "color");
@@ -56,24 +60,42 @@ class PotionCloudAbility implements Ability {
 	
 	@Override
 	public void run(Target target) {
-		Location calculatedLocation = centerLocation.calculate(target);
-		if (calculatedLocation == null) return;
+		if (!evaluateParams(target)) return;
 		
-		AreaEffectCloud cloud = calculatedLocation.getWorld().spawn(calculatedLocation, AreaEffectCloud.class);
-		if (potion != null) cloud.addCustomEffect(potion, true); 
+		AreaEffectCloud cloud = centerLocation.get().getWorld().spawn(centerLocation.get(), AreaEffectCloud.class);
+		if (potType != null) {
+			cloud.addCustomEffect(
+					new PotionEffect(potType, potDuration.get(), potAmplifier.get(), potAmbient.get(), potParticles.get()),
+					true);
+		}
 		
 		if (particle != null) cloud.setParticle(particle);
 		if (color != null) cloud.setColor(color);
 		
-		cloud.setDuration(duration);
-		cloud.setDurationOnUse(durationUseDecay);
+		cloud.setDuration(duration.get());
+		cloud.setDurationOnUse(durationUseDecay.get());
 		
-		cloud.setRadius(radius);
-		cloud.setRadiusOnUse(radiusUseDecay);
-		cloud.setRadiusPerTick(radiusTickDecay);
+		cloud.setRadius(radius.get());
+		cloud.setRadiusOnUse(radiusUseDecay.get());
+		cloud.setRadiusPerTick(radiusTickDecay.get());
 		
-		cloud.setWaitTime(waitTime);
-		cloud.setReapplicationDelay(immuneDelay);
+		cloud.setWaitTime(waitTime.get());
+		cloud.setReapplicationDelay(immuneDelay.get());
+	}
+	
+	private boolean evaluateParams(Target target) {
+		return potDuration.evaluate(target)
+				&& potAmplifier.evaluate(target)
+				&& potAmbient.evaluate(target)
+				&& potParticles.evaluate(target)
+				&& centerLocation.evaluate(target)
+				&& duration.evaluate(target)
+				&& durationUseDecay.evaluate(target)
+				&& radius.evaluate(target)
+				&& radiusUseDecay.evaluate(target)
+				&& radiusTickDecay.evaluate(target)
+				&& waitTime.evaluate(target)
+				&& immuneDelay.evaluate(target);
 	}
 	
 }

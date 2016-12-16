@@ -2,11 +2,11 @@ package com.lesserhydra.resmagna.abilities;
 
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
 import com.lesserhydra.resmagna.arguments.ProjectileType;
 import com.lesserhydra.resmagna.nms.NMSEntity;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.Targeters;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
@@ -20,33 +20,34 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+//TODO: Use functors instead of function names
 class ProjectileAbility implements Ability {
 	
 	private final ProjectileType projectileType;
-	private final double velocity;
-	private final double randomSpread;
-	private final GrandLocation targetLocation;
-	private final String onHitName;
-	private final String onEndName;
-	private final boolean gravity;
-	private final boolean flaming;
-	private final boolean bounce;
+	private final Evaluators.ForDouble velocity;
+	private final Evaluators.ForDouble randomSpread;
+	private final Evaluators.ForLocation targetLocation;
+	private final Evaluators.ForString onHitName;
+	private final Evaluators.ForString onEndName;
+	private final Evaluators.ForBoolean gravity;
+	private final Evaluators.ForBoolean flaming;
+	private final Evaluators.ForBoolean bounce;
 	
-	private final float fireballYield;
-	private final boolean fireballFire;
-	private final boolean skullCharged;
+	private final Evaluators.ForFloat fireballYield;
+	private final Evaluators.ForBoolean fireballFire;
+	private final Evaluators.ForBoolean skullCharged;
 	
-	private final double arrowDamage;
-	private final boolean arrowCritical;
-	private final int arrowKnockback;
-	private final boolean arrowKeepHit;
-	private final boolean arrowKeepEnd;
-	private final boolean arrowRemove;
-	private final boolean arrowPickup;
+	private final Evaluators.ForDouble arrowDamage;
+	private final Evaluators.ForBoolean arrowCritical;
+	private final Evaluators.ForInt arrowKnockback;
+	private final Evaluators.ForBoolean arrowKeepHit;
+	private final Evaluators.ForBoolean arrowKeepEnd;
+	private final Evaluators.ForBoolean arrowRemove;
+	private final Evaluators.ForBoolean arrowPickup;
 	
-	private final String onPotionSplash;
+	private final Evaluators.ForString onPotionSplash;
 	
-	private final Targeter shulkerBulletTargeter;
+	private final Evaluators.ForEntity bulletTarget;
 	
 	ProjectileAbility(ArgumentBlock args) {
 		this.projectileType = args.getEnum(true, ProjectileType.NONE,	"projectileType", "projectile", "type", "proj");
@@ -58,8 +59,8 @@ class ProjectileAbility implements Ability {
 		this.flaming = args.getBoolean(false, false,	"flaming");
 		this.gravity = args.getBoolean(false, true,     "gravity");
 		this.targetLocation = args.getLocation(false, GrandLocation.buildFromString("F+1"),	"targetLocation", "target");
-		this.onHitName = args.getString(false, null, 	"onHit", "hit");
-		this.onEndName = args.getString(false, null,	"onEnd", "end");
+		this.onHitName = args.getString(false, (String)null, 	"onHit", "hit");
+		this.onEndName = args.getString(false, (String)null,	"onEnd", "end");
 		
 		this.fireballYield = args.getFloat(false, 0F,		"fireballYield", "fireYield", "fbYield");
 		this.fireballFire = args.getBoolean(false, false,	"fireballFire", "fireFire", "fbFire");
@@ -73,9 +74,9 @@ class ProjectileAbility implements Ability {
 		this.arrowRemove = args.getBoolean(false, false,	"arrowRemoveOnHit", "arrowRemove", "arrowRem", "arrRem");
 		this.arrowPickup = args.getBoolean(false, false,	"arrowCanBePickedUp", "arrowPickup", "arrPickup", "arrPick");
 		
-		this.onPotionSplash = args.getString(false, null,	"onPotionSplash", "onPotSplash", "onSplash", "splash");
+		this.onPotionSplash = args.getString(false, (String)null,	"onPotionSplash", "onPotSplash", "onSplash", "splash");
 		
-		this.shulkerBulletTargeter = args.getTargeter(false, Targeters.NONE, "shulkerBulletTarget", "bulletTarget");
+		this.bulletTarget = args.getEntity(false, Targeters.NONE, "shulkerBulletTarget", "bulletTarget");
 	}
 
 	@Override
@@ -83,63 +84,90 @@ class ProjectileAbility implements Ability {
 		if (!target.isEntity()) return;
 		LivingEntity targetEntity = target.asEntity();
 		
-		Location calculatedLocation = targetLocation.calculate(target);
-		if (calculatedLocation == null) return;
+		if (!validateCommonParams(target)) return;
 		
 		Vector randomVector = new Vector(ResMagna.RANDOM_GENERATOR.nextDouble() - 0.5,
 				ResMagna.RANDOM_GENERATOR.nextDouble() - 0.5, ResMagna.RANDOM_GENERATOR.nextDouble() - 0.5);
-		randomVector.multiply(randomSpread);
-		Vector projectileVelocity = calculateVelocity(calculatedLocation, target.asLocation()).add(randomVector);
+		randomVector.multiply(randomSpread.get());
+		Vector projectileVelocity = calculateVelocity(targetLocation.get(), target.asLocation()).add(randomVector);
 		
 		Projectile projectile;
 		if (projectileType == ProjectileType.SHULKER_BULLET) {
 			projectile = (Projectile) targetEntity.getWorld().spawnEntity(targetEntity.getEyeLocation(), EntityType.SHULKER_BULLET);
 			projectile.setShooter(targetEntity);
 			
-			Target bulletTarget = shulkerBulletTargeter.getRandomTarget(target);
-			if (bulletTarget.isEntity()) ((ShulkerBullet)projectile).setTarget(bulletTarget.asEntity());
+			if (bulletTarget.evaluate(target, false)) ((ShulkerBullet)projectile).setTarget(bulletTarget.get());
 		}
 		else projectile = targetEntity.launchProjectile(projectileType.getProjectileClass(), projectileVelocity);
 		
-		projectile.setGravity(gravity);
-		projectile.setBounce(bounce);
-		if (flaming) projectile.setFireTicks(Integer.MAX_VALUE);
+		projectile.setGravity(gravity.get());
+		projectile.setBounce(bounce.get());
+		if (flaming.get()) projectile.setFireTicks(Integer.MAX_VALUE);
 		projectile.setMetadata("PG_Projectile", new FixedMetadataValue(ResMagna.plugin, true));
 		
 		projectile.setMetadata(ResMagna.META_HOLDER, new FixedMetadataValue(ResMagna.plugin, target.getHolder()));
-		if (onHitName != null) projectile.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(ResMagna.plugin, onHitName));
-		if (onEndName != null) projectile.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(ResMagna.plugin, onEndName));
+		if (onHitName.evaluate(target, false)) projectile.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnHit", new FixedMetadataValue(ResMagna.plugin, onHitName.get()));
+		if (onEndName.evaluate(target, false)) projectile.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnEnd", new FixedMetadataValue(ResMagna.plugin, onEndName.get()));
 		
-		if (projectile instanceof Fireball) setFireballProperties((Fireball) projectile);
-		if (projectile instanceof Arrow) setArrowProperties((Arrow) projectile);
-		if (projectile instanceof ThrownPotion) setPotionProperties((ThrownPotion) projectile);
+		if (projectile instanceof Fireball && validateFireballParams(target)) setFireballProperties((Fireball) projectile);
+		if (projectile instanceof Arrow && validateArrowParams(target)) setArrowProperties((Arrow) projectile);
+		if (projectile instanceof ThrownPotion && validatePotionParams(target)) setPotionProperties((ThrownPotion) projectile);
 	}
-
+	
+	private boolean validateCommonParams(Target target) {
+		return velocity.evaluate(target)
+				&& randomSpread.evaluate(target)
+				&& targetLocation.evaluate(target)
+				&& gravity.evaluate(target)
+				&& flaming.evaluate(target)
+				&& bounce.evaluate(target);
+	}
+	
+	private boolean validateFireballParams(Target target) {
+		return fireballYield.evaluate(target)
+				&& fireballFire.evaluate(target)
+				&& skullCharged.evaluate(target);
+	}
+	
+	private boolean validateArrowParams(Target target) {
+		return arrowDamage.evaluate(target)
+				&& arrowCritical.evaluate(target)
+				&& arrowKnockback.evaluate(target)
+				&& arrowKeepHit.evaluate(target)
+				&& arrowKeepEnd.evaluate(target)
+				&& arrowRemove.evaluate(target)
+				&& arrowPickup.evaluate(target);
+	}
+	
+	private boolean validatePotionParams(Target target) {
+		return onPotionSplash.evaluate(target);
+	}
+	
 	private void setFireballProperties(Fireball fireball) {
-		fireball.setYield(fireballYield);
-		fireball.setIsIncendiary(fireballFire);
-		if (fireball instanceof WitherSkull) ((WitherSkull) fireball).setCharged(skullCharged);
+		fireball.setYield(fireballYield.get());
+		fireball.setIsIncendiary(fireballFire.get());
+		if (fireball instanceof WitherSkull) ((WitherSkull) fireball).setCharged(skullCharged.get());
 	}
 	
 	private void setArrowProperties(Arrow arrow) {
-		arrow.spigot().setDamage(arrowDamage);
-		arrow.setCritical(arrowCritical);
-		arrow.setKnockbackStrength(arrowKnockback);
-		NMSEntity.setArrowPickup(arrow, arrowPickup);
-		if (arrowKeepHit) arrow.setMetadata("PG_ArrowKeepHit", new FixedMetadataValue(ResMagna.plugin, true));
-		if (arrowKeepEnd) arrow.setMetadata("PG_ArrowKeepEnd", new FixedMetadataValue(ResMagna.plugin, true));
-		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnEnd", new FixedMetadataValue(ResMagna.plugin, true));
+		arrow.spigot().setDamage(arrowDamage.get());
+		arrow.setCritical(arrowCritical.get());
+		arrow.setKnockbackStrength(arrowKnockback.get());
+		NMSEntity.setArrowPickup(arrow, arrowPickup.get());
+		if (arrowKeepHit.get()) arrow.setMetadata("PG_ArrowKeepHit", new FixedMetadataValue(ResMagna.plugin, true));
+		if (arrowKeepEnd.get()) arrow.setMetadata("PG_ArrowKeepEnd", new FixedMetadataValue(ResMagna.plugin, true));
+		if (arrowRemove.get()) arrow.setMetadata("PG_ArrowRemoveOnEnd", new FixedMetadataValue(ResMagna.plugin, true));
 	}
 	
 	private void setPotionProperties(ThrownPotion potion) {
-		potion.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnPotionSplash", new FixedMetadataValue(ResMagna.plugin, onPotionSplash));
+		potion.setMetadata(ResMagna.META_GRANDABILITY_PREFIX + "OnPotionSplash", new FixedMetadataValue(ResMagna.plugin, onPotionSplash.get()));
 	}
 	
 	private Vector calculateVelocity(Location calculatedLocation, Location targetLocation) {
 		//Force vector pointing to targetLocation...
 		return calculatedLocation.toVector().subtract(targetLocation.toVector())
 			//...with length of forceAmount
-			.normalize().multiply(velocity);
+			.normalize().multiply(velocity.get());
 	}
 
 }

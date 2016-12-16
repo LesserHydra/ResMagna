@@ -1,23 +1,28 @@
 package com.lesserhydra.resmagna.arguments;
 
+import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
+import com.lesserhydra.resmagna.configuration.GroupingParser;
+import com.lesserhydra.resmagna.function.Functor;
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
+import com.lesserhydra.resmagna.targeters.Targeter;
+import com.lesserhydra.resmagna.variables.ConstructFactory;
+import com.lesserhydra.resmagna.variables.ValueConstruct;
+import com.lesserhydra.resmagna.variables.ValueType;
+import com.lesserhydra.resmagna.variables.Values;
+import com.lesserhydra.util.StringTools;
+import org.bukkit.Color;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.lesserhydra.resmagna.function.Functor;
-import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
-import com.lesserhydra.resmagna.configuration.GroupingParser;
-import com.lesserhydra.resmagna.variables.ValueConstruct;
-import com.lesserhydra.resmagna.variables.ValueConstructs;
-import org.bukkit.Color;
-import com.lesserhydra.resmagna.targeters.Targeter;
-import com.lesserhydra.resmagna.targeters.TargeterFactory;
-import com.lesserhydra.resmagna.logging.GrandLogger;
-import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
-import org.bukkit.potion.PotionEffectType;
-
+@SuppressWarnings("SameParameterValue")
 public class ArgumentBlock {
 	
 	//(\w+)\s*=\s*([^,;\s\n\(]*(?:\s*\((\$[\d]+)\))?)
@@ -54,25 +59,23 @@ public class ArgumentBlock {
 				.forEach(e -> GrandLogger.log("  " + e.getKey() + " : " + e.getValue(), LogType.CONFIG_ERRORS));
 	}
 	
-	public ValueConstruct getValue(boolean required, ValueConstruct fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForString getString(boolean required, String fallback, String... keys) {
+		return getString(required, new Evaluators.ForString(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+	}
+	
+	@NotNull
+	public Evaluators.ForString getString(boolean required, Evaluators.ForString fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		return ValueConstructs.parse(value);
-	}
-	
-	/**
-	 * Gets the string associated with the given key.<br>
-	 * Logs an error if required and none found.
-	 * @param required Whether or not a value is required
-	 * @param fallback Value to default to if none found
-	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return Raw string value of argument, or fallback if none exists
-	 */
-	public String getString(boolean required, String fallback, String... keys) {
-		String result = findValue(required, keys);
-		if (result == null) return fallback;
-		return result;
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.STRING);
+		if (!result.mayHave(ValueType.STRING)) {
+			logInvalid(keys, value, "string");
+			return fallback;
+		}
+		
+		return new Evaluators.ForString(result);
 	}
 	
 	/**
@@ -83,16 +86,32 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Boolean value of argument, or fallback if none exists
 	 */
-	public boolean getBoolean(boolean required, boolean fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForBoolean getBoolean(boolean required, boolean fallback, String... keys) {
+		return getBoolean(required, new Evaluators.ForBoolean(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+		
+	}
+	
+	/**
+	 * Gets the boolean associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Boolean value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForBoolean getBoolean(boolean required, Evaluators.ForBoolean fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isExtendedBoolean(value)) {
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.BOOLEAN);
+		if (!result.mayHave(ValueType.BOOLEAN)) {
 			logInvalid(keys, value, "boolean");
 			return fallback;
 		}
 		
-		return StringTools.parseExtendedBoolean(value);
+		return new Evaluators.ForBoolean(result);
 	}
 	
 	/**
@@ -103,16 +122,44 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Integer value of argument, or fallback if none exists
 	 */
-	public int getInteger(boolean required, int fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForInt getInteger(boolean required, int fallback, String... keys) {
+		return getInteger(required, new Evaluators.ForInt(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+	}
+	
+	/**
+	 * Gets the integer associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Integer value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForInt getInteger(boolean required, Evaluators.ForInt fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isInteger(value)) {
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.NUMBER);
+		if (!result.mayHave(ValueType.NUMBER)) {
 			logInvalid(keys, value, "integer");
 			return fallback;
 		}
 		
-		return Integer.parseInt(value);
+		return new Evaluators.ForInt(result);
+	}
+	
+	/**
+	 * Gets the integer associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Integer value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForLong getLong(boolean required, long fallback, String... keys) {
+		return getLong(required, new Evaluators.ForLong(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
 	}
 	
 	/**
@@ -123,16 +170,18 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Long value of argument, or fallback if none exists
 	 */
-	public long getLong(boolean required, long fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForLong getLong(boolean required, Evaluators.ForLong fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isInteger(value)) {
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.NUMBER);
+		if (!result.mayHave(ValueType.NUMBER)) {
 			logInvalid(keys, value, "long");
 			return fallback;
 		}
 		
-		return Long.parseLong(value);
+		return new Evaluators.ForLong(result);
 	}
 	
 	/**
@@ -143,16 +192,44 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Float value of argument, or fallback if none exists
 	 */
-	public float getFloat(boolean required, float fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForFloat getFloat(boolean required, float fallback, String... keys) {
+		return getFloat(required, new Evaluators.ForFloat(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+	}
+	
+	/**
+	 * Gets the float associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Float value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForFloat getFloat(boolean required, Evaluators.ForFloat fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isFloat(value)) {
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.NUMBER);
+		if (!result.mayHave(ValueType.NUMBER)) {
 			logInvalid(keys, value, "float");
 			return fallback;
 		}
 		
-		return Float.parseFloat(value);
+		return new Evaluators.ForFloat(result);
+	}
+	
+	/**
+	 * Gets the float associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Double value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForDouble getDouble(boolean required, double fallback, String... keys) {
+		return getDouble(required, new Evaluators.ForDouble(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
 	}
 	
 	/**
@@ -163,16 +240,18 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Double value of argument, or fallback if none exists
 	 */
-	public double getDouble(boolean required, double fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForDouble getDouble(boolean required, Evaluators.ForDouble fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		if (!StringTools.isFloat(value)) {
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.NUMBER);
+		if (!result.mayHave(ValueType.NUMBER)) {
 			logInvalid(keys, value, "double");
 			return fallback;
 		}
 		
-		return Double.parseDouble(value);
+		return new Evaluators.ForDouble(result);
 	}
 	
 	/**
@@ -183,38 +262,106 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return GrandLocation value of argument, or fallback if none exists
 	 */
-	public GrandLocation getLocation(boolean required, GrandLocation fallback, String... keys) {
-		String value = findValue(required, keys);
-		if (value == null) return fallback;
-		
-		GrandLocation result = GrandLocation.buildFromString(value.substring(1, value.length()-1));
-		if (result == null) {
-			logInvalid(keys, value, "targeter");
-			return fallback;
-		}
-		
-		return result;
+	@NotNull
+	public Evaluators.ForLocation getLocation(boolean required, GrandLocation fallback, String... keys) {
+		return getLocation(required, new Evaluators.ForLocation(ConstructFactory.make(fallback)), keys);
 	}
 	
 	/**
-	 * Gets the Targeter associated with the given key.<br>
+	 * Gets the GrandLocation associated with the given key.<br>
 	 * Logs an error if required and none found, or if invalid format.
 	 * @param required Whether or not a value is required
 	 * @param fallback Value to default to if none found
 	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return Targeter value of argument, or fallback if none exists
+	 * @return GrandLocation value of argument, or fallback if none exists
 	 */
-	public Targeter getTargeter(boolean required, Targeter fallback, String... keys) {
+	@NotNull
+	public Evaluators.ForLocation getLocation(boolean required, Evaluators.ForLocation fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		Targeter result = TargeterFactory.build(value);
-		if (result == null) {
-			logInvalid(keys, value, "targeter");
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.LOCATION);
+		if (!result.mayHave(ValueType.LOCATION)) {
+			logInvalid(keys, value, "location");
 			return fallback;
 		}
 		
-		return result;
+		return new Evaluators.ForLocation(result);
+	}
+	
+	/**
+	 * Gets the Entity associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Entity value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForEntity getEntity(boolean required, Targeter fallback, String... keys) {
+		return getEntity(required, new Evaluators.ForEntity(ConstructFactory.make(fallback)), keys);
+	}
+	
+	/**
+	 * Gets the Entity associated with the given key.<br>
+	 * Logs an error if required and none found, or if invalid format.
+	 * @param required Whether or not a value is required
+	 * @param fallback Value to default to if none found
+	 * @param keys Keys to search under, null for default (no key provided)
+	 * @return Entity value of argument, or fallback if none exists
+	 */
+	@NotNull
+	public Evaluators.ForEntity getEntity(boolean required, Evaluators.ForEntity fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.ENTITY);
+		if (!result.mayHave(ValueType.ENTITY)) {
+			logInvalid(keys, value, "entity");
+			return fallback;
+		}
+		
+		return new Evaluators.ForEntity(result);
+	}
+	
+	@NotNull
+	public Evaluators.ForBlockMask getBlockMask(boolean required, BlockMask fallback, String... keys) {
+		return getBlockMask(required, new Evaluators.ForBlockMask(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+	}
+	
+	@NotNull
+	public Evaluators.ForBlockMask getBlockMask(boolean required, Evaluators.ForBlockMask fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		//TODO: Continue the error message given by BlockMask
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.BLOCK_MASK);
+		if (!result.mayHave(ValueType.BLOCK_MASK)) {
+			logInvalid(keys, value, "block mask");
+			return fallback;
+		}
+		
+		return new Evaluators.ForBlockMask(result);
+	}
+	
+	@NotNull
+	public Evaluators.ForBlockPattern getBlockPattern(boolean required, BlockPattern fallback, String... keys) {
+		return getBlockPattern(required, new Evaluators.ForBlockPattern(ConstructFactory.makeLiteral(Values.wrap(fallback))), keys);
+	}
+	
+	@NotNull
+	public Evaluators.ForBlockPattern getBlockPattern(boolean required, Evaluators.ForBlockPattern fallback, String... keys) {
+		String value = findValue(required, keys);
+		if (value == null) return fallback;
+		
+		//TODO: Continue the error message given by BlockPattern
+		ValueConstruct result = ConstructFactory.parse(value, ValueType.BLOCK_PATTERN);
+		if (!result.mayHave(ValueType.BLOCK_PATTERN)) {
+			logInvalid(keys, value, "block pattern");
+			return fallback;
+		}
+		
+		return new Evaluators.ForBlockPattern(result);
 	}
 	
 	/**
@@ -225,6 +372,7 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Function value of argument, or fallback if none exists
 	 */
+	@Contract("_, !null, _ -> !null")
 	public Functor getFunction(boolean required, Functor fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
@@ -240,6 +388,7 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Color value of argument, or fallback if none exists
 	 */
+	@Contract("_, !null, _ -> !null")
 	public Color getColor(boolean required, Color fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
@@ -253,50 +402,7 @@ public class ArgumentBlock {
 		return result;
 	}
 	
-	/**
-	 * Gets the BlockPattern associated with the given key.<br>
-	 * Logs an error if required and none found, or if invalid format.
-	 * @param required Whether or not a value is required
-	 * @param fallback Value to default to if none found
-	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return BlockPattern value of argument, or fallback if none exists
-	 */
-	public BlockPattern getBlockPattern(boolean required, BlockPattern fallback, String... keys) {
-		String value = findValue(required, keys);
-		if (value == null) return fallback;
-		
-		BlockPattern result = BlockPattern.buildFromString(value);
-		if (result == null) {
-			//Continuing the error message given by BlockPattern
-			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
-			return fallback;
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Gets the BlockMask associated with the given key.<br>
-	 * Logs an error if required and none found, or if invalid format.
-	 * @param required Whether or not a value is required
-	 * @param fallback Value to default to if none found
-	 * @param keys Keys to search under, null for default (no key provided)
-	 * @return BlockMask value of argument, or fallback if none exists
-	 */
-	public BlockMask getBlockMask(boolean required, BlockMask fallback, String... keys) {
-		String value = findValue(required, keys);
-		if (value == null) return fallback;
-		
-		BlockMask result = BlockMask.buildFromString(value);
-		if (result == null) {
-			//Continuing the error message given by BlockMask
-			GrandLogger.log("  In: " + lineString, LogType.CONFIG_ERRORS);
-			return fallback;
-		}
-		
-		return result;
-	}
-	
+	@Contract("_, !null, _ -> !null")
 	public PotionEffectType getPotionEffectType(boolean required, PotionEffectType fallback, String... keys) {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
@@ -322,7 +428,8 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Enum type value of argument, or fallback if none exists
 	 */
-	public <T extends Enum<T>> T getEnum(boolean required, T fallback, String... keys) {
+	@NotNull
+	public <T extends Enum<T>> T getEnum(boolean required, @NotNull T fallback, String... keys) {
 		//Get value from map
 		String lookupName = findValue(required, keys);
 		if (lookupName == null) return fallback;
@@ -349,6 +456,7 @@ public class ArgumentBlock {
 	 * @param keys Keys to search under, null for default (no key provided)
 	 * @return Enum type value of argument, or null if none exists
 	 */
+	@Nullable
 	public <T extends Enum<T>> T getEnum(boolean required, Class<T> enumClass, String... keys) {
 		//Get value from map
 		String lookupName = findValue(required, keys);

@@ -1,13 +1,14 @@
 package com.lesserhydra.resmagna.abilities;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
-import org.bukkit.Location;
+import com.lesserhydra.resmagna.arguments.Evaluators;
+import com.lesserhydra.resmagna.targeters.Target;
 
-class SoundAbility implements Ability.ForLocation {
+class SoundAbility implements Ability {
 	
-	private final String sound;
-	private final float volume;
-	private final float pitch;
+	private final Evaluators.ForString sound;
+	private final Evaluators.ForFloat volume;
+	private final Evaluators.ForFloat pitch;
 
 	SoundAbility(ArgumentBlock args) {
 		sound = args.getString(true, "",	"soundname", "sound", "name", "s", "n", null);
@@ -16,8 +17,14 @@ class SoundAbility implements Ability.ForLocation {
 	}
 
 	@Override
-	public void run(Location target) {
-		target.getWorld().playSound(target, sound, volume, pitch);
+	public void run(Target target) {
+		if (!target.isLocation()) return;
+		
+		if (!(sound.evaluate(target)
+				&& volume.evaluate(target)
+				&& pitch.evaluate(target)))
+			
+		target.asLocation().getWorld().playSound(target.asLocation(), sound.get(), volume.get(), pitch.get());
 	}
 
 }

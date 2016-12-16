@@ -1,6 +1,9 @@
 package com.lesserhydra.resmagna.variables;
 
+import com.lesserhydra.resmagna.arguments.BlockMask;
+import com.lesserhydra.resmagna.arguments.BlockPattern;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
  * Represents a dynamically typed value.
  */
 public interface Value {
+	
+	/**
+	 * Gets the type of this value. Is never UNKNOWN.
+	 * @return The type of this value
+	 */
+	ValueType getType();
 	
 	/**
 	 * Checks if this variable represents nothing.
@@ -49,6 +58,15 @@ public interface Value {
 	 */
 	default int asInteger() {
 		throw new UnrepresentedTypeException("Value does not represent an integer. Use hasInteger() first.");
+	}
+	
+	/**
+	 * Gets the represented value as a long integer.
+	 * @return The represented long integer
+	 * @throws UnrepresentedTypeException If this does not represent a long integer
+	 */
+	default long asLong() {
+		throw new UnrepresentedTypeException("Value does not represent a long integer. Use hasInteger() first.");
 	}
 	
 	/**
@@ -105,6 +123,21 @@ public interface Value {
 	}
 	
 	/**
+	 * Checks if this variable represents an Entity.
+	 * @return True if this represents an Entity
+	 */
+	default boolean hasBaseEntity() { return false; }
+	
+	/**
+	 * Gets the represented value as an Entity.
+	 * @return The represented Entity
+	 * @throws UnrepresentedTypeException If this does not represent a Entity
+	 */
+	@NotNull default Entity asBaseEntity() {
+		throw new UnrepresentedTypeException("Value does not represent an Entity. Use hasEntity() first.");
+	}
+	
+	/**
 	 * Checks if this variable represents a LivingEntity.
 	 * @return True if this represents a LivingEntity
 	 */
@@ -118,6 +151,20 @@ public interface Value {
 	@NotNull default LivingEntity asEntity() {
 		throw new UnrepresentedTypeException("Value does not represent a LivingEntity. Use hasEntity() first.");
 	}
+	
+	default boolean hasBlockMask() { return false; }
+	
+	@NotNull default BlockMask asBlockMask() {
+		throw new UnrepresentedTypeException("Value does not represent a BlockMask. Use hasBlockMask() first.");
+	}
+	
+	default boolean hasBlockPattern() { return false; }
+	
+	@NotNull default BlockPattern asBlockPattern() {
+		throw new UnrepresentedTypeException("Value does not represent a BlockPattern. Use hasBlockPattern() first.");
+	}
+	
+	
 	
 	/**
 	 * Adds this value with other value.

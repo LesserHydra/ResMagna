@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 public class GrandLocation {
 	
+	public static final GrandLocation CURRENT = new GrandLocation(Targeters.CURRENT, Collections.emptyList(), Dimension.SAME);
+	
 	//(?:(@\w+\s*(?:\((\$[\d]+)\))?)\s*)?(?:\|\s*)?([^<>\|\n]+)?(?:\s*\|\s*)?(?:<([*\w]+)>)?
 	static private final Pattern formatPattern = Pattern.compile("(?:(@\\w+\\s*(?:\\((\\$[\\d]+)\\))?)\\s*)?(?:\\|\\s*)?([^<>\\|\\n]+)?(?:\\s*\\|\\s*)?(?:<([*\\w]+)>)?");
 	//([~a-zA-Z]+=?)([+-]?[\d\.]+)?
@@ -34,12 +36,6 @@ public class GrandLocation {
 	private final List<Pair<ComponentType, Double>> componentList;
 	private final Dimension dimension;
 	
-	public GrandLocation() {
-		locationTargeter = Targeters.CURRENT;
-		componentList = Collections.emptyList();
-		dimension = Dimension.SAME;
-	}
-	
 	public GrandLocation(Targeter locationTargeter, List<Pair<ComponentType, Double>> componentList, Dimension dimension) {
 		this.locationTargeter = locationTargeter;
 		this.componentList = componentList;
@@ -49,7 +45,10 @@ public class GrandLocation {
 	public Location calculate(Target mainTarget) {
 		//Get new target from targeter
 		Target newTarget = locationTargeter.getRandomTarget(mainTarget);
-		if (!newTarget.isLocation()) return null;
+		if (!newTarget.isLocation()) {
+			GrandLogger.log("Tried to calculate location from non-location target.", LogType.RUNTIME_ERRORS);
+			return null;
+		}
 		
 		//Modify according to components
 		Location finalLoc = newTarget.asLocation();
@@ -77,7 +76,10 @@ public class GrandLocation {
 		
 		//Match
 		Matcher lineMatcher = formatPattern.matcher(simplifiedString);
-		if (!lineMatcher.matches()) return null;
+		if (!lineMatcher.matches()) {
+			GrandLogger.log("Invalid location format: " + locString, LogType.CONFIG_ERRORS);
+			return null;
+		}
 		
 		//Get Targeter, or default if none exist
 		String targeterString = lineMatcher.group(1);

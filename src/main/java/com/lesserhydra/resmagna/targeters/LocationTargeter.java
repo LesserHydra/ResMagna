@@ -1,21 +1,21 @@
 package com.lesserhydra.resmagna.targeters;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
-import org.bukkit.Location;
 
 class LocationTargeter implements Targeter.Singleton {
 	
-	private final GrandLocation grandLocation;
+	private final Evaluators.ForLocation grandLocation;
 	
 	LocationTargeter(ArgumentBlock args) {
-		grandLocation = args.getLocation(true, new GrandLocation(), "location", "loc", "l", null);
+		this.grandLocation = args.getLocation(true, GrandLocation.CURRENT, "location", "loc", "l", null);
 	}
 	
 	@Override
 	public Target getTarget(Target currentTarget) {
-		Location location = grandLocation.calculate(currentTarget);
-		return currentTarget.target(Target.from(location));
+		if (!grandLocation.evaluate(currentTarget)) return currentTarget.target(Target.none());
+		return currentTarget.target(Target.from(grandLocation.get()));
 	}
 
 }

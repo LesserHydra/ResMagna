@@ -1,18 +1,21 @@
 package com.lesserhydra.resmagna.abilities;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
+import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 
-class DisarmAbility implements Ability.ForEntity {
+class DisarmAbility implements Ability {
 	
-	private final boolean mainHand;
-	private final boolean offHand;
-	private final boolean helmet;
-	private final boolean chestplate;
-	private final boolean leggings;
-	private final boolean boots;
+	private final Evaluators.ForBoolean mainHand;
+	private final Evaluators.ForBoolean offHand;
+	private final Evaluators.ForBoolean helmet;
+	private final Evaluators.ForBoolean chestplate;
+	private final Evaluators.ForBoolean leggings;
+	private final Evaluators.ForBoolean boots;
 	
 	DisarmAbility(ArgumentBlock args) {
 		mainHand = args.getBoolean(false, false,	"mainhand", "heldright", "right", "main");
@@ -24,39 +27,55 @@ class DisarmAbility implements Ability.ForEntity {
 	}
 
 	@Override
-	public void run(LivingEntity target) {
-		Location entityLocation = target.getLocation();
-		EntityEquipment equipment = target.getEquipment();
+	public void run(Target target) {
+		if (!target.isEntity()) {
+			GrandLogger.log("Tried to run disarm ability with invalid target.", LogType.RUNTIME_ERRORS);
+			return;
+		}
 		
-		if (mainHand) {
+		if (!evaluateParams(target)) return;
+		
+		Location entityLocation = target.asLocation();
+		EntityEquipment equipment = target.asEntity().getEquipment();
+		
+		if (mainHand.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInMainHand());
 			equipment.setItemInMainHand(null);
 		}
 		
-		if (offHand) {
+		if (offHand.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getItemInOffHand());
 			equipment.setItemInOffHand(null);
 		}
 		
-		if (helmet) {
+		if (helmet.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getHelmet());
 			equipment.setHelmet(null);
 		}
 		
-		if (chestplate) {
+		if (chestplate.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getChestplate());
 			equipment.setChestplate(null);
 		}
 		
-		if (leggings) {
+		if (leggings.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getLeggings());
 			equipment.setLeggings(null);
 		}
 		
-		if (boots) {
+		if (boots.get()) {
 			entityLocation.getWorld().dropItemNaturally(entityLocation, equipment.getBoots());
 			equipment.setBoots(null);
 		}
 	}
-
+	
+	private boolean evaluateParams(Target target) {
+		return mainHand.evaluate(target)
+				&& offHand.evaluate(target)
+				&& helmet.evaluate(target)
+				&& chestplate.evaluate(target)
+				&& leggings.evaluate(target)
+				&& boots.evaluate(target);
+	}
+	
 }

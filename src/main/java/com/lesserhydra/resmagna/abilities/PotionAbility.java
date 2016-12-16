@@ -1,18 +1,19 @@
 package com.lesserhydra.resmagna.abilities;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
-import org.bukkit.entity.LivingEntity;
+import com.lesserhydra.resmagna.arguments.Evaluators;
+import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class PotionAbility implements Ability.ForEntity {
+class PotionAbility implements Ability {
 	
 	private final PotionEffectType type;
-	private final int duration;
-	private final int amplifier;
-	private final boolean ambient;
-	private final boolean particles;
-	private final boolean force;
+	private final Evaluators.ForInt duration;
+	private final Evaluators.ForInt amplifier;
+	private final Evaluators.ForBoolean ambient;
+	private final Evaluators.ForBoolean particles;
+	private final Evaluators.ForBoolean force;
 	
 	PotionAbility(ArgumentBlock args) {
 		this.type = args.getPotionEffectType(true, PotionEffectType.ABSORPTION, "PotionType", "Potion", "Type", "Name", "T", null);
@@ -26,8 +27,20 @@ class PotionAbility implements Ability.ForEntity {
 	}
 	
 	@Override
-	public void run(LivingEntity target) {
-		target.addPotionEffect(new PotionEffect(type, duration, amplifier, ambient, particles), force);
+	public void run(Target target) {
+		//Verify target
+		if (!target.isEntity()) return;
+		
+		//Verify parameters
+		if (!(duration.evaluate(target)
+				&& amplifier.evaluate(target)
+				&& ambient.evaluate(target)
+				&& particles.evaluate(target)
+				&& force.evaluate(target))) return;
+		
+		target.asEntity().addPotionEffect(
+				new PotionEffect(type, duration.get(), amplifier.get(), ambient.get(), particles.get()),
+				force.get());
 	}
 	
 }

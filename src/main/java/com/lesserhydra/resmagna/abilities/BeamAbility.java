@@ -2,10 +2,10 @@ package com.lesserhydra.resmagna.abilities;
 
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
 import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.Targeters;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,80 +14,127 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 class BeamAbility implements Ability {
 	
-	private final double speed;			//Distance per step
-	private final int numSteps;			//Steps per update
-	private final long delay;			//Delay between updates
-	private final double maxDistance;	//Maximum traversal distance
-	private final long maxTicks;		//Maximum time running
+	private final Evaluators.ForDouble speed;			//Distance per step
+	private final Evaluators.ForInt numSteps;			//Steps per update
+	private final Evaluators.ForLong delay;			//Delay between updates
+	private final Evaluators.ForDouble maxDistance;	//Maximum traversal distance
+	private final Evaluators.ForLong maxTicks;		//Maximum time running
 	
-	private final boolean ignoreBlocks;
-	private final boolean ignoreEntities;
+	private final Evaluators.ForBoolean ignoreBlocks;
+	private final Evaluators.ForBoolean ignoreEntities;
 	
-	private final double spreadX;
-	private final double spreadY;
-	private final double spreadZ;
+	private final Evaluators.ForDouble spreadX;
+	private final Evaluators.ForDouble spreadY;
+	private final Evaluators.ForDouble spreadZ;
 	
 	private final Functor onStep;
 	private final Functor onHitBlock;
 	private final Functor onHitEntity;
 	private final Functor onEnd;
 	
-	private final GrandLocation originLocation;
-	private final GrandLocation targetLocation;
+	private final Evaluators.ForLocation originLocation;
+	private final Evaluators.ForLocation targetLocation;
 	
-	private final Targeter homingTargeter;
-	private final double homingForce;
+	private final Evaluators.ForLocation homingTargeter;
+	private final Evaluators.ForDouble homingForce;
 	
-	private final Targeter ignoreTargeter;
+	private final Evaluators.ForEntity ignoreTargeter;
 	
 	BeamAbility(ArgumentBlock args) {
-		speed = args.getDouble(true, 0D,			"speed", "spd", "s");
-		numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
-		delay = args.getLong(false, 10L,			"delay", "dly", "d");
-		maxDistance = args.getDouble(false, 50D,	"maxdistance", "distance", "maxdis", "mdis");
-		maxTicks = args.getLong(false, 200L,		"maxticks", "ticks", "maxt");
+		this.speed = args.getDouble(true, 0D,			"speed", "spd", "s");
+		this.numSteps = args.getInteger(false, 1,		"numsteps", "steps", "nstep");
+		this.delay = args.getLong(false, 10L,			"delay", "dly", "d");
+		this.maxDistance = args.getDouble(false, 50D,	"maxdistance", "distance", "maxdis", "mdis");
+		this.maxTicks = args.getLong(false, 200L,		"maxticks", "ticks", "maxt");
 		
-		ignoreBlocks = args.getBoolean(false, false,	"ignoreblocks", "notblocks", "noblock", "nb", "ib");
-		ignoreEntities = args.getBoolean(false, false,	"ignoreentities", "notentities", "noentity", "noent", "ient", "ne", "ie");
+		this.ignoreBlocks = args.getBoolean(false, false,	"ignoreblocks", "notblocks", "noblock", "nb", "ib");
+		this.ignoreEntities = args.getBoolean(false, false,	"ignoreentities", "notentities", "noentity", "noent", "ient", "ne", "ie");
 		
-		double spread = args.getDouble(false, 0.5,		"spread", "sprd", "s");
-		double spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh");
-		double spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv");
-		spreadX = args.getDouble(false, spreadH,		"spreadx", "sx");
-		spreadY = args.getDouble(false, spreadV,		"spready", "sy");
-		spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz");
+		Evaluators.ForDouble spread = args.getDouble(false, 0.5,		"spread", "sprd", "s");
+		Evaluators.ForDouble spreadH = args.getDouble(false, spread,	"spreadh", "sprdh", "sh");
+		Evaluators.ForDouble spreadV = args.getDouble(false, spread,	"spreadv", "sprdv", "sv");
+		this.spreadX = args.getDouble(false, spreadH,		"spreadx", "sx");
+		this.spreadY = args.getDouble(false, spreadV,		"spready", "sy");
+		this.spreadZ = args.getDouble(false, spreadH,		"spreadz", "sz");
 		
-		originLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62"),		"originlocation", "origin", "oloc");
-		targetLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62 F+1"),	"targetlocation", "target", "tloc");
+		this.originLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62"),		"originlocation", "origin", "oloc");
+		this.targetLocation = args.getLocation(false, GrandLocation.buildFromString("Y+1.62 F+1"),	"targetlocation", "target", "tloc");
 		
-		homingTargeter = args.getTargeter(false, Targeters.NONE,			"homingtarget", "hometarget", "htarget");
-		homingForce = args.getDouble(homingTargeter != Targeters.NONE, 0D,	"homingforce", "homeforce", "hforce");
+		this.homingTargeter = args.getLocation(false, GrandLocation.CURRENT,			"homingtarget", "hometarget", "htarget");
+		this.homingForce = args.getDouble(false, 0D,	"homingforce", "homeforce", "hforce");
 		
-		ignoreTargeter = args.getTargeter(false, Targeters.ACTIVATOR,			"ignore");
+		this.ignoreTargeter = args.getEntity(false, Targeters.ACTIVATOR,			"ignore");
 		
 		Functor onHit = args.getFunction(false, Functor.NONE,	"onhit", "hit");
-		onHitBlock = args.getFunction(false, onHit,				"onhitblock", "hitblock", "hitb");
-		onHitEntity = args.getFunction(false, onHit,			"onhitentity", "hitentity", "hite");
+		this.onHitBlock = args.getFunction(false, onHit,				"onhitblock", "hitblock", "hitb");
+		this.onHitEntity = args.getFunction(false, onHit,			"onhitentity", "hitentity", "hite");
 		
-		onStep = args.getFunction(false, Functor.NONE,	    "onstep", "step");
-		onEnd = args.getFunction(false, Functor.NONE,	    "onend", "end");
+		this.onStep = args.getFunction(false, Functor.NONE,	    "onstep", "step");
+		this.onEnd = args.getFunction(false, Functor.NONE,	    "onend", "end");
 	}
 
 	@Override
 	public void run(Target target) {
-		//Get beam target, if exists
-		Target homingTarget = homingTargeter.getRandomTarget(target);
+		if (!evaluateParams(target)) return;
+		
+		Location startLocation = originLocation.get();
+		Vector startVelocity = targetLocation.get().toVector().subtract(startLocation.toVector())
+				.normalize().multiply(speed.get());
+		
 		//Initialize beam
-		new BeamTimer(target, homingTarget).runTaskTimer(ResMagna.plugin, 0L, delay);
+		BeamTimer timer = new BeamTimer(target, startLocation, startVelocity, speed.get(), numSteps.get(), delay.get(),
+				maxDistance.get(), maxTicks.get(), ignoreBlocks.get(), ignoreEntities.get(), spreadX.get(), spreadY.get(),
+				spreadZ.get(), onStep, onHitBlock, onHitEntity, onEnd, ignoreTargeter, homingTargeter, homingForce.get());
+		timer.runTaskTimer(ResMagna.plugin, 0L, delay.get());
 	}
 	
-	private class BeamTimer extends BukkitRunnable {
-		private final Target homing;
+	private boolean evaluateParams(Target target) {
+		return speed.evaluate(target)
+				&& numSteps.evaluate(target)
+				&& delay.evaluate(target)
+				&& maxDistance.evaluate(target)
+				&& maxTicks.evaluate(target)
+				&& ignoreBlocks.evaluate(target)
+				&& ignoreEntities.evaluate(target)
+				&& spreadX.evaluate(target)
+				&& spreadY.evaluate(target)
+				&& spreadZ.evaluate(target)
+				&& originLocation.evaluate(target)
+				&& targetLocation.evaluate(target)
+				&& homingForce.evaluate(target);
+	}
+	
+	private static class BeamTimer extends BukkitRunnable {
+		private final double speed;			//Distance per step
+		private final int numSteps;			//Steps per update
+		private final long delay;			//Delay between updates
+		private final double maxDistance;	//Maximum traversal distance
+		private final long maxTicks;		//Maximum time running
+		
+		private final boolean ignoreBlocks;
+		private final boolean ignoreEntities;
+		
+		private final double spreadX;
+		private final double spreadY;
+		private final double spreadZ;
+		
+		private final Functor onStep;
+		private final Functor onHitBlock;
+		private final Functor onHitEntity;
+		private final Functor onEnd;
+		
+		private final Evaluators.ForEntity ignoreTargeter;
+		
+		private final Evaluators.ForLocation homing;
+		private final double homingForce;
+		
+		//private final Targeter ignoreTargeter;
+		
 		
 		private Location currentLocation;
 		private Vector currentVelocity;
@@ -95,13 +142,34 @@ class BeamAbility implements Ability {
 		private double totalDistance = 0;
 		private double totalTicks = 0;
 		
-		BeamTimer(Target target, Target homingTarget) {
-			homing = homingTarget;
-			Location startLocation = originLocation.calculate(target);
-			currentVelocity = targetLocation.calculateDirection(target, startLocation).normalize().multiply(speed);
+		BeamTimer(Target target, Location startLocation, Vector startVelocity,
+		          double speed, int numSteps, long delay, double maxDistance, long maxTicks,
+		          boolean ignoreBlocks, boolean ignoreEntities, double spreadX, double spreadY, double spreadZ,
+		          Functor onStep, Functor onHitBlock, Functor onHitEntity, Functor onEnd, Evaluators.ForEntity ignoreTargeter,
+		          Evaluators.ForLocation homing, double homingForce) {
+			this.speed = speed;
+			this.numSteps = numSteps;
+			this.delay = delay;
+			this.maxDistance = maxDistance;
+			this.maxTicks = maxTicks;
+			this.ignoreBlocks = ignoreBlocks;
+			this.ignoreEntities = ignoreEntities;
+			this.spreadX = spreadX;
+			this.spreadY = spreadY;
+			this.spreadZ = spreadZ;
+			this.onStep = onStep;
+			this.onHitBlock = onHitBlock;
+			this.onHitEntity = onHitEntity;
+			this.onEnd = onEnd;
 			
-			currentLocation = startLocation;
-			beamTarget = target.set(Target.from(startLocation), target.current());
+			this.ignoreTargeter = ignoreTargeter;
+			
+			this.homing = homing;
+			this.homingForce = homingForce;
+			
+			this.currentVelocity = startVelocity;
+			this.currentLocation = startLocation;
+			this.beamTarget = target.set(Target.from(startLocation), target.current());
 		}
 		
 		@Override
@@ -132,9 +200,9 @@ class BeamAbility implements Ability {
 		}
 		
 		private void calculateHomingVelocity() {
-			if (homing.isNull()) return;
+			if (homing.evaluate(beamTarget, false)) return;
 			//Get direction to target
-			Vector homingForceVector = homing.asLocation().toVector().subtract(currentLocation.toVector());
+			Vector homingForceVector = homing.get().toVector().subtract(currentLocation.toVector());
 			//Set magnitude
 			homingForceVector.normalize().multiply(homingForce);
 			//Add to current velocity
@@ -162,10 +230,13 @@ class BeamAbility implements Ability {
 		}
 		
 		private boolean hitEntity() {
-			Set<LivingEntity> toIgnore = ignoreTargeter.getTargets(beamTarget).stream()
+			Set<Entity> toIgnore = new HashSet<>();
+			if (ignoreTargeter.evaluate(beamTarget)) toIgnore.add(ignoreTargeter.get());
+			
+			/*ignoreTargeter.getTargets(beamTarget).stream()
 					.filter(Target::isEntity)
 					.map(Target::asEntity)
-					.collect(Collectors.toSet());
+					.collect(Collectors.toSet());*/
 			
 			boolean hit = false;
 			for (Entity entity : currentLocation.getWorld().getNearbyEntities(currentLocation, spreadX, spreadY, spreadZ)) {

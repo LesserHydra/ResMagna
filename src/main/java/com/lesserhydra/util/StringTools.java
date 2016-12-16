@@ -7,8 +7,8 @@ import com.google.common.collect.ImmutableSet;
 
 public class StringTools {
 	
-	private static Set<String> TRUE_VALUES = ImmutableSet.of("true", "t", "yes", "y", "1");
-	private static Set<String> FALSE_VALUES = ImmutableSet.of("false", "f", "no", "n", "0");
+	private static Set<String> TRUE_VALUES = ImmutableSet.of("true", "yes");
+	private static Set<String> FALSE_VALUES = ImmutableSet.of("false", "no");
 	private static Pattern integerPattern = Pattern.compile("[+-]?\\d+");
 	private static Pattern floatPattern = Pattern.compile("[+-]?((\\d+(\\.\\d*)?)|(\\.\\d+))");
 	private static Pattern enumSeparatorPattern = Pattern.compile("[_\\s]");

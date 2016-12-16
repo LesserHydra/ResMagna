@@ -1,14 +1,15 @@
 package com.lesserhydra.resmagna.conditions;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
-import org.bukkit.entity.LivingEntity;
+import com.lesserhydra.resmagna.arguments.Evaluators;
+import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-class IsAffected implements Condition.ForEntity {
+class IsAffected implements Condition {
 	
 	private final PotionEffectType type;
-	private final int amplifier;
+	private final Evaluators.ForInt amplifier;
 	
 	IsAffected(ArgumentBlock args) {
 		this.type = args.getPotionEffectType(true, PotionEffectType.ABSORPTION, "PotionType", "Potion", "Type", "Name", "T", null);
@@ -16,12 +17,14 @@ class IsAffected implements Condition.ForEntity {
 	}
 	
 	@Override
-	public boolean test(LivingEntity target) {
-		PotionEffect effect = target.getPotionEffect(type);
+	public boolean test(Target target) {
+		if (!target.isEntity()) return false;
+		
+		PotionEffect effect = target.asEntity().getPotionEffect(type);
 		//Is affected
 		return effect != null
 				//Match amplifier
-				&& (amplifier == 512 || effect.getAmplifier() == amplifier);
+				&& (!amplifier.evaluate(target, false) || effect.getAmplifier() == amplifier.get());
 	}
 	
 }

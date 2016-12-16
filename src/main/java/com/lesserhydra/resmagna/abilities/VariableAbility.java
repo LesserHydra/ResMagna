@@ -3,8 +3,9 @@ package com.lesserhydra.resmagna.abilities;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
+import com.lesserhydra.resmagna.variables.ConstructFactory;
 import com.lesserhydra.resmagna.variables.ValueConstruct;
-import com.lesserhydra.resmagna.variables.ValueConstructs;
+import com.lesserhydra.resmagna.variables.Constructs;
 import com.lesserhydra.resmagna.variables.ValueOperator;
 
 import java.util.regex.Matcher;
@@ -25,21 +26,21 @@ class VariableAbility implements Ability {
 		if (!lineMatcher.matches()) {
 			GrandLogger.log("Invalid variable line format.", LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			var = ValueConstructs.NONE;
+			var = Constructs.NONE;
 			operator = ValueOperator.SET;
-			other = ValueConstructs.NONE;
+			other = Constructs.NONE;
 			return;
 		}
 		
 		//Get variable name
 		String lhsString = lineMatcher.group(1);
-		ValueConstruct workingVar = ValueConstructs.parse(lhsString);
+		ValueConstruct workingVar = ConstructFactory.parse(lhsString);
 		if (!workingVar.isSettable()) {
 			GrandLogger.log("Left hand operand is not settable: " + lhsString, LogType.CONFIG_ERRORS);
 			GrandLogger.log("  " + variableLine, LogType.CONFIG_ERRORS);
-			var = ValueConstructs.NONE;
+			var = Constructs.NONE;
 			operator = ValueOperator.SET;
-			other = ValueConstructs.NONE;
+			other = Constructs.NONE;
 			return;
 		}
 		var = workingVar;
@@ -49,13 +50,13 @@ class VariableAbility implements Ability {
 		
 		//Operand may be an integer or the name of a variable
 		String operand = lineMatcher.group(3);
-		other = ValueConstructs.parse(operand);
+		other = ConstructFactory.parse(operand);
 	}
 
 	@Override
 	public void run(Target target) {
 		//TODO: Maybe this should be handled by the operators themselves?
-		var.set(target, operator.apply(var.get(target), other.get(target)));
+		var.set(target, operator.apply(var.evaluate(target), other.evaluate(target)));
 	}
 
 }

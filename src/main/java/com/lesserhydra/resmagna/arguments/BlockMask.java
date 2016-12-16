@@ -52,7 +52,7 @@ public class BlockMask {
 	 * @param string String describing the requested BlockMask
 	 * @return BlockMask described by given string, or null if an error was hit
 	 */
-	static BlockMask buildFromString(String string) {
+	public static BlockMask buildFromString(String string) {
 		//Could use find instead, but this way is nicer for debugging
 		String[] componentStrings = string.replaceAll("[\\(\\)]", "").split("[,;]"); //TODO: replaceall is temp
 		List<MaskComponent> components = new LinkedList<>();

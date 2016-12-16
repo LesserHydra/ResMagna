@@ -1,16 +1,20 @@
 package com.lesserhydra.resmagna.targeters;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 
 class SavedTargeter implements Targeter.Singleton {
 	
-	private final String saveName;
+	private final Evaluators.ForString saveName;
 	
 	SavedTargeter(ArgumentBlock args) {
-		saveName = args.getString(true, "",     "savename", "save", "name", "sn", "n", null);
+		this.saveName = args.getString(true, "",     "savename", "save", "name", "sn", "n", null);
 	}
 	
 	@Override
-	public Target getTarget(Target currentTarget) { return currentTarget.targetSaved(saveName);}
+	public Target getTarget(Target currentTarget) {
+		if (!saveName.evaluate(currentTarget)) return currentTarget.target(Target.none());
+		return currentTarget.targetSaved(saveName.get());
+	}
 	
 }

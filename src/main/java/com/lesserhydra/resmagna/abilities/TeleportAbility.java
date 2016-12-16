@@ -1,10 +1,13 @@
 package com.lesserhydra.resmagna.abilities;
 
+import com.lesserhydra.bukkitutil.AreaEffectTools;
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
+import com.lesserhydra.resmagna.arguments.Evaluators;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
+import com.lesserhydra.resmagna.logging.GrandLogger;
+import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.bukkitutil.AreaEffectTools;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -16,25 +19,30 @@ import java.util.stream.Stream;
 
 class TeleportAbility implements Ability {
 	
-	private final GrandLocation location;
-	private final int spreadX;
-	private final int spreadY;
-	private final int spreadZ;
-	private final int attempts;
-	private final boolean includeCenter;
-	private final boolean failSafe;
-	private final boolean perfectSpread;
-	private final boolean ender;
+	//Location
+	private final Evaluators.ForLocation location;
+	
+	//Integer
+	private final Evaluators.ForInt spreadX;
+	private final Evaluators.ForInt spreadY;
+	private final Evaluators.ForInt spreadZ;
+	private final Evaluators.ForInt attempts;
+	
+	//Boolean
+	private final Evaluators.ForBoolean includeCenter;
+	private final Evaluators.ForBoolean failSafe;
+	private final Evaluators.ForBoolean perfectSpread;
+	private final Evaluators.ForBoolean ender;
 	
 	TeleportAbility(ArgumentBlock args) {
-		location = args.getLocation(false, new GrandLocation(),		"location", "loc", "l", null);
+		location = args.getLocation(false, GrandLocation.CURRENT,         "location", "loc", "l", null);
 		
-		int spread = args.getInteger(false, 0,			"spread", "sprd");
-		int spreadH = args.getInteger(false, spread,	"spreadh", "sprdh", "sh");
-		int spreadV = args.getInteger(false, spread,	"spreadv", "sprdv", "sv");
+		Evaluators.ForInt spread = args.getInteger(false, 0,    "spread", "sprd");
+		Evaluators.ForInt spreadH = args.getInteger(false, spread,      "spreadh", "sprdh", "sh");
+		Evaluators.ForInt spreadV = args.getInteger(false, spread,      "spreadv", "sprdv", "sv");
 		spreadX = args.getInteger(false, spreadH,		"spreadx", "sx");
-		spreadY = args.getInteger(false, spreadV,		"spready", "sy");
-		spreadZ = args.getInteger(false, spreadH,		"spreadz", "sz");
+		spreadY= args.getInteger(false, spreadV,		"spready", "sy");
+		spreadZ= args.getInteger(false, spreadH,		"spreadz", "sz");
 		
 		attempts = args.getInteger(false, 32,			"numberofattempts", "numattempts", "attempts", "tries", "try", "att");
 		includeCenter = args.getBoolean(false, false,	"includecenter", "center");
@@ -45,25 +53,41 @@ class TeleportAbility implements Ability {
 	
 	@Override
 	public void run(Target target) {
-		if (!target.isEntity()) return;
+		if (!target.isEntity()) {
+			GrandLogger.log("Tried to run teleport ability with invalid target.", LogType.RUNTIME_ERRORS);
+			return;
+		}
 		LivingEntity targetEntity = target.asEntity();
 		
-		Location centerLoc = location.calculate(target);
-		if (centerLoc == null) return;
+		//Evaluate parameters
+		if (!evaluateParams(target)) return;
 		
-		if (spreadX > 0 || spreadY > 0 || spreadZ > 0) centerLoc = getSpread(centerLoc);
-		if (failSafe && !isSafe(centerLoc)) return;
+		Location centerLoc = location.get();
+		if (spreadX.get() > 0 || spreadY.get() > 0 || spreadZ.get() > 0) centerLoc = getSpread(centerLoc);
+		if (failSafe.get() && !isSafe(centerLoc)) return;
 		
 		centerLoc.setDirection(targetEntity.getLocation().getDirection());
 		targetEntity.teleport(centerLoc);
 	}
+	
+	private boolean evaluateParams(Target target) {
+		return spreadX.evaluate(target)
+				&& spreadY.evaluate(target)
+				&& spreadZ.evaluate(target)
+				&& attempts.evaluate(target)
+				&& includeCenter.evaluate(target)
+				&& failSafe.evaluate(target)
+				&& perfectSpread.evaluate(target)
+				&& ender.evaluate(target)
+				&& location.evaluate(target);
+	}
 
 	private Location getSpread(Location center) {
-		if (perfectSpread) return getSpreadFromSafe(center);
+		if (perfectSpread.get()) return getSpreadFromSafe(center);
 		
-		for (int i = 0; i < attempts; i++) {
-			Location random = center.clone().add(getRandomComponent(spreadX), getRandomComponent(spreadY), getRandomComponent(spreadZ));
-			if (ender) random = getFloor(random);
+		for (int i = 0; i < attempts.get(); i++) {
+			Location random = center.clone().add(getRandomComponent(spreadX.get()), getRandomComponent(spreadY.get()), getRandomComponent(spreadZ.get()));
+			if (ender.get()) random = getFloor(random);
 			if (isSafe(random)) return random.getBlock().getLocation().add(0.5, 0, 0.5);
 		}
 		
@@ -84,10 +108,10 @@ class TeleportAbility implements Ability {
 	}
 
 	private List<Location> getSafeInRadius(Location center) {
-		Stream<Location> stream = AreaEffectTools.cuboidStream(center, spreadX, spreadY, spreadZ);
-		if (ender) stream = stream.map(this::getFloor);
+		Stream<Location> stream = AreaEffectTools.cuboidStream(center, spreadX.get(), spreadY.get(), spreadZ.get());
+		if (ender.get()) stream = stream.map(this::getFloor);
 		
-		return stream.filter(location -> (includeCenter || location.getBlock() != center.getBlock()) && isSafe(location))
+		return stream.filter(location -> (includeCenter.get() || location.getBlock() != center.getBlock()) && isSafe(location))
 				.collect(Collectors.toList());
 	}
 	
