@@ -1,6 +1,6 @@
 package com.lesserhydra.resmagna;
 
-import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
+import com.lesserhydra.resmagna.configuration.ScriptLoader;
 import com.lesserhydra.resmagna.function.Functor;
 import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.Bukkit;
@@ -115,7 +115,7 @@ class ProjectileListener implements Listener {
 	private Functor getGrandAbilityFromMeta(Projectile entity, String key) {
 		for (MetadataValue md : entity.getMetadata(ResMagna.META_GRANDABILITY_PREFIX + key)) {
 			if (md.getOwningPlugin() == ResMagna.plugin) {
-				return GrandAbilityHandler.getInstance().requestFunction(md.asString().toLowerCase());
+				return ScriptLoader.getInstance().requestFunction(md.asString().toLowerCase());
 			}
 		}
 		return null;

@@ -1,8 +1,16 @@
 plugins {
 	id 'org.ajoberstar.grgit' version '1.4.2'
+	id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
-apply plugin: 'java'
+apply plugin: 'scala'
+
+sourceSets {
+	main {
+		scala.srcDirs = ['src/main/scala', 'src/main/java']
+		java.srcDirs = []
+	}
+}
 
 import org.ajoberstar.grgit.*
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -19,6 +27,10 @@ repositories {
 }
 
 dependencies {
+	compile 'org.scala-lang:scala-library:2.12.+'
+	compile 'org.scala-lang:scala-compiler:2.12.+'
+	compile 'org.scala-lang:scala-reflect:2.12.+'
+
 	compile 'org.jetbrains:annotations:15.0'
 	compile 'org.spigotmc:spigot:1.11-R0.1-SNAPSHOT'
 	compile 'org.bukkit:craftbukkit:1.11-R0.1-SNAPSHOT'
@@ -27,6 +39,14 @@ dependencies {
 	testCompile 'org.powermock:powermock-api-mockito:1.6.+'
 	testCompile 'org.powermock:powermock-module-junit4:1.6.+'
 	testCompile 'org.mockito:mockito-all:1.10.+'
+}
+
+shadowJar {
+	dependencies {
+		include(dependency('org.scala-lang:scala-library:2.12.+'))
+		include(dependency('org.scala-lang:scala-compiler:2.12.+'))
+		include(dependency('org.scala-lang:scala-reflect:2.12.+'))
+	}
 }
 
 //Generate plugin.yml

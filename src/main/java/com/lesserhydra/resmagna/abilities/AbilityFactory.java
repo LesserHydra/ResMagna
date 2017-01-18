@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.function.Functor;
-import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
+import com.lesserhydra.resmagna.configuration.ScriptLoader;
 import com.lesserhydra.resmagna.configuration.GroupingParser;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
@@ -83,7 +83,7 @@ public class AbilityFactory {
 		case "set":		        return new VariableAbility(variableArgs);
 		
 		//No built-in found, request custom
-		default:				return GrandAbilityHandler.getInstance().requestFunction(name);
+		default:				return ScriptLoader.getInstance().requestFunction(name);
 		}
 	}
 	

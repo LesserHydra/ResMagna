@@ -11,8 +11,8 @@ import com.lesserhydra.resmagna.logging.LogType;
  * Loads the main configuration file
  * @author roboboy
  */
-public class ConfigManager
-{	
+public class ConfigManager {
+	
 	private static ConfigManager instance = new ConfigManager();
 	private ConfigManager() {}
 	public static ConfigManager getInstance() {
@@ -54,7 +54,7 @@ public class ConfigManager
 		}
 		
 		//MultiConfigs
-		GrandAbilityHandler.getInstance().reload();
+		ScriptLoader.getInstance().reload();
 		ItemHandler.getInstance().reload();
 	}
 	

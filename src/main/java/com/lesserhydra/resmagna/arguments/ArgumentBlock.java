@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.lesserhydra.resmagna.function.Functor;
-import com.lesserhydra.resmagna.configuration.GrandAbilityHandler;
+import com.lesserhydra.resmagna.configuration.ScriptLoader;
 import com.lesserhydra.resmagna.configuration.GroupingParser;
 import com.lesserhydra.resmagna.variables.ValueConstruct;
 import com.lesserhydra.resmagna.variables.ValueConstructs;
@@ -229,7 +229,7 @@ public class ArgumentBlock {
 		String value = findValue(required, keys);
 		if (value == null) return fallback;
 		
-		return GrandAbilityHandler.getInstance().requestFunction(value);
+		return ScriptLoader.getInstance().requestFunction(value);
 	}
 
 	/**
