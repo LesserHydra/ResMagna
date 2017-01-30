@@ -4,7 +4,9 @@ import com.lesserhydra.resmagna.configuration.AutoConvertItem;
 import com.lesserhydra.resmagna.configuration.GrandItem;
 import com.lesserhydra.resmagna.configuration.ItemHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,17 +17,18 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 /**
- * Updates all items in player inventory on login and reload. Updates
- * single items when a player clicks on the item in an inventory.
+ * Calls item updates.
  */
 class ItemUpdater implements Listener {
 	private final ResMagna plugin;
@@ -36,24 +39,33 @@ class ItemUpdater implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		final Player p = event.getPlayer();
-		VariableHandler.registerPlayer(p);
+		Player player = event.getPlayer();
+		VariableHandler.registerPlayer(player);
 		
 		//Schedule items for updating
-		Bukkit.getScheduler().runTask(plugin, () -> updateItems(p));
+		Bukkit.getScheduler().runTask(plugin, () -> {
+			if (!player.isValid()) return;
+			updateItemsInInventory(player.getInventory());
+			player.updateInventory();
+		});
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onInventoryClick(InventoryClickEvent event) {
-		if (event instanceof InventoryCreativeEvent) return;
-		if (!(event.getWhoClicked() instanceof Player)) return;
-		
-		ItemStack item = event.getCurrentItem();
-		ItemStack updated = updateItem(item);
-		if (updated != null) {
-			event.setCurrentItem(updated);
-			((Player) event.getWhoClicked()).updateInventory();
-		}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onChunkLoad(ChunkLoadEvent event) {
+		//Update items in tile entity and entity (excluding players) inventories
+		Chunk chunk = event.getChunk();
+		Arrays.stream(chunk.getTileEntities())
+				.filter(tile -> tile instanceof InventoryHolder)
+				.map(tile -> (InventoryHolder) tile)
+				.map(InventoryHolder::getInventory)
+				.forEach(this::updateItemsInInventory);
+		//TODO: Update items on ground
+		Arrays.stream(chunk.getEntities())
+				.filter(e -> e instanceof InventoryHolder)
+				.filter(e -> !(e instanceof Player))
+				.map(e -> (InventoryHolder) e)
+				.map(InventoryHolder::getInventory)
+				.forEach(this::updateItemsInInventory);
 	}
 	
 	/**
@@ -62,10 +74,28 @@ class ItemUpdater implements Listener {
 	 * <strong>The ItemHandler must be reloaded first.</strong>
 	 */
 	void reload() {
+		//Update items in tile entity and entity (including players) inventories
+		for (World world : Bukkit.getWorlds()) {
+			Arrays.stream(world.getLoadedChunks())
+					.flatMap(chunk -> Arrays.stream(chunk.getTileEntities()))
+					.filter(tile -> tile instanceof InventoryHolder)
+					.map(tile -> (InventoryHolder) tile)
+					.map(InventoryHolder::getInventory)
+					.forEach(this::updateItemsInInventory);
+			//TODO: Update items on ground
+			world.getEntities().stream()
+					.filter(e -> e instanceof InventoryHolder)
+					.map(e -> (InventoryHolder) e)
+					.map(InventoryHolder::getInventory)
+					.forEach(this::updateItemsInInventory);
+		}
+		
+		//Send inventory updates and register players
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			updateItems(p);
+			p.updateInventory();
 			VariableHandler.registerPlayer(p);
 		}
+		
 	}
 	
 	//Keep items from being used in crafting
@@ -148,16 +178,12 @@ class ItemUpdater implements Listener {
 		drop.setCustomNameVisible(true);
 	}
 	
-	private void updateItems(Player player) {
-		if (!player.isOnline()) return;
-		
-		PlayerInventory inventory = player.getInventory();
+	private void updateItemsInInventory(Inventory inventory) {
 		ItemStack[] contents = inventory.getContents();
 		for (int i = 0; i < contents.length; ++i) {
 			ItemStack newItem = updateItem(contents[i]);
 			if (newItem != null) inventory.setItem(i, newItem);
 		}
-		player.updateInventory();
 	}
 	
 	@Nullable
