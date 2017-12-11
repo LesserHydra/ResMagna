@@ -95,6 +95,7 @@ class ProjectileAbility implements Ability {
 		if (projectileType == ProjectileType.SHULKER_BULLET) {
 			projectile = (Projectile) targetEntity.getWorld().spawnEntity(targetEntity.getEyeLocation(), EntityType.SHULKER_BULLET);
 			projectile.setShooter(targetEntity);
+			projectile.setVelocity(projectileVelocity);
 			
 			Target bulletTarget = shulkerBulletTargeter.getRandomTarget(target);
 			if (bulletTarget.isEntity()) ((ShulkerBullet)projectile).setTarget(bulletTarget.asEntity());

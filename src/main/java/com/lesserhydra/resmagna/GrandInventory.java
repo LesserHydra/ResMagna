@@ -100,11 +100,8 @@ public class GrandInventory {
 		}
 		
 		//Get corresponding slotTypeMap for the given grandItem, initializing if null
-		Map<UUID, InventoryElement> items = grandItemMap.get(element.grandItem.getName());
-		if (items == null) {
-			items = new HashMap<>(4);
-			grandItemMap.put(element.grandItem.getName(), items);
-		}
+		Map<UUID, InventoryElement> items =
+				grandItemMap.computeIfAbsent(element.grandItem.getName(), k -> new HashMap<>(4));
 		items.put(element.id, element);
 	}
 	

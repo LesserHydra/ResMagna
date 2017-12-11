@@ -1,5 +1,6 @@
 package com.lesserhydra.resmagna.conditions;
 
+import com.lesserhydra.bukkitutil.EntityTypeUtils;
 import com.lesserhydra.resmagna.targeters.Target;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
@@ -24,6 +25,8 @@ class Conditions {
 	static Condition IS_ANIMAL      = t -> t.is(Animals.class);
 	static Condition IS_TAMEABLE    = t -> t.is(Tameable.class);
 	static Condition IS_MONSTER     = t -> t.is(Monster.class);
+	static Condition IS_UNDEAD      = t -> t.isEntity() && EntityTypeUtils.isUndead(t.asEntity());
+	static Condition IS_ARTHROPOD   = t -> t.isEntity() && EntityTypeUtils.isArthropod(t.asEntity());
 	
 	//Trivial entity state checks
 	static Condition.ForEntity IS_VALID        = LivingEntity::isValid;
@@ -38,7 +41,7 @@ class Conditions {
 	static Condition.ForEntity IS_GLOWING      = LivingEntity::isGlowing;
 	static Condition.ForEntity IS_LEASHED      = LivingEntity::isLeashed;
 	static Condition.ForEntity IS_BURNING      = t -> t.getFireTicks() > 0;
-	static Condition.ForEntity IS_MOUNT        = t -> t.getPassenger() instanceof LivingEntity;
+	static Condition.ForEntity IS_MOUNT        = t -> !t.getPassengers().isEmpty();
 	
 	//Trivial creature state checks
 	static Condition HAS_TARGET         = t -> t.is(Creature.class) && t.as(Creature.class).getTarget() != null;

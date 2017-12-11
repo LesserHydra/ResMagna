@@ -20,8 +20,8 @@ repositories {
 
 dependencies {
 	compile 'org.jetbrains:annotations:15.0'
-	compile 'org.spigotmc:spigot:1.11-R0.1-SNAPSHOT'
-	compile 'org.bukkit:craftbukkit:1.11-R0.1-SNAPSHOT'
+	compile 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
+	compile 'org.bukkit:craftbukkit:1.12.2-R0.1-SNAPSHOT'
 
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.powermock:powermock-api-mockito:1.6.+'

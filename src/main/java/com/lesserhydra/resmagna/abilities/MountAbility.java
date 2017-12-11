@@ -23,7 +23,7 @@ class MountAbility implements Ability {
 		if (!otherTarget.isEntity()) return;
 		
 		//Mount
-		otherTarget.asEntity().setPassenger(target.asEntity());
+		otherTarget.asEntity().addPassenger(target.asEntity());
 	}
 
 }

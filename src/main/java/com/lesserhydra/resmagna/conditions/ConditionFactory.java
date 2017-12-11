@@ -69,6 +69,8 @@ public class ConditionFactory {
 		case "isanimal":		return Conditions.IS_ANIMAL;
 		case "istameable":      return Conditions.IS_TAMEABLE;
 		case "ismonster":		return Conditions.IS_MONSTER;
+		case "isundead":		return Conditions.IS_UNDEAD;
+		case "isarthropod":		return Conditions.IS_ARTHROPOD;
 		
 		//Trivial entity state checks
 		case "isvalid":			return Conditions.IS_VALID;
@@ -110,6 +112,7 @@ public class ConditionFactory {
 		case "isday":		    return Conditions.IS_DAY;
 		
 		//Non-trivial state checks
+		case "issame":          return new IsSame(args);
 		case "isblock":			return new IsBlock(args);
 		case "iswearing":		return new IsWearing(args);
 		case "isholding":		return new IsHolding(args);

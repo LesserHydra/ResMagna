@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +24,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -55,6 +56,15 @@ public class InventoryHandler implements Listener {
 	}
 	
 	public GrandInventory getItemsFromPlayer(Player p) { return playerInventories.get(p.getName()); }
+	
+	public void giveItemToPlayer(Player player, GrandItem item) {
+		ItemStack createdItem = item.create();
+		player.getInventory().addItem(createdItem)
+				//Drop on ground if inventory full
+				.forEach((i, dropItem) -> player.getWorld().dropItem(player.getLocation(), dropItem));
+		
+		addItem(player, createdItem, item);
+	}
 	
 	//Player logs in
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -105,11 +115,13 @@ public class InventoryHandler implements Listener {
 	
 	//Player picks up an item
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onItemPickup(PlayerPickupItemEvent e) {
+	public void onItemPickup(EntityPickupItemEvent e) {
+		if (e.getEntity().getType() != EntityType.PLAYER) return;
+		Player player = (Player) e.getEntity();
+		
 		ItemStack item = e.getItem().getItemStack();
 		GrandItem grandItem = ItemHandler.getInstance().matchItem(item);
 		
-		Player player = e.getPlayer();
 		if (grandItem != null) Bukkit.getScheduler().runTask(ResMagna.plugin, () -> addItem(player, item, grandItem));
 	}
 	

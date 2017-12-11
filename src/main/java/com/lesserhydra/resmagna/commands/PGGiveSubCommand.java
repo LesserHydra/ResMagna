@@ -1,5 +1,6 @@
 package com.lesserhydra.resmagna.commands;
 
+import com.lesserhydra.resmagna.InventoryHandler;
 import com.lesserhydra.resmagna.configuration.GrandItem;
 import com.lesserhydra.resmagna.configuration.ItemHandler;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 class PGGiveSubCommand implements SubCommand {
@@ -58,9 +58,7 @@ class PGGiveSubCommand implements SubCommand {
 		}
 		
 		//Give to player
-		givePlayer.getInventory().addItem(giveItem.create())
-				//Drop on ground if inventory full
-				.forEach((i, item) -> givePlayer.getWorld().dropItem(givePlayer.getLocation(), item));
+		InventoryHandler.getInstance().giveItemToPlayer(givePlayer, giveItem);
 	}
 	
 	private Player parsePlayer(String playerString, CommandSender sender) {
@@ -68,10 +66,10 @@ class PGGiveSubCommand implements SubCommand {
 			Location senderLoc = getSenderLocation(sender);
 			if (senderLoc == null) return null;
 			
-			Optional<ImmutablePair<Double, Player>> found = senderLoc.getWorld().getPlayers().stream()
+			return senderLoc.getWorld().getPlayers().stream()
 					.map(p -> new ImmutablePair<>(p.getLocation().distanceSquared(senderLoc), p))
-					.min((a, b) -> (int) (a.left - b.left));
-			return found.isPresent() ? found.get().right : null;
+					.min((a, b) -> (int) (a.left - b.left))
+					.map(pair -> pair.right).orElse(null);
 		}
 		return Bukkit.getPlayer(playerString);
 	}

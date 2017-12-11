@@ -1,7 +1,7 @@
 package com.lesserhydra.resmagna.nms;
 
-import net.minecraft.server.v1_11_R1.EntityArrow;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftArrow;
+import net.minecraft.server.v1_12_R1.EntityArrow;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArrow;
 
 public class NMSEntity {
 	

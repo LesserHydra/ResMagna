@@ -72,7 +72,7 @@ public class ArgumentBlock {
 	public String getString(boolean required, String fallback, String... keys) {
 		String result = findValue(required, keys);
 		if (result == null) return fallback;
-		return result;
+		return result.replace("\"", "");
 	}
 	
 	/**

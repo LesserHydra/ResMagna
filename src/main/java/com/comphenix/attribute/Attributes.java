@@ -17,7 +17,6 @@
 
 package com.comphenix.attribute;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.UUID;
@@ -30,6 +29,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("WeakerAccess")
 public class Attributes {
@@ -172,7 +172,7 @@ public class Attributes {
             return Operation.fromId(data.getInteger("Operation", 0));
         }
 
-        public void setOperation(@Nonnull Operation operation) {
+        public void setOperation(@NotNull Operation operation) {
             Preconditions.checkNotNull(operation, "operation cannot be NULL.");
             data.put("Operation", operation.getId());
         }
@@ -181,7 +181,7 @@ public class Attributes {
             return Slot.fromId(data.getString("Slot", null));
         }
         
-        public void setSlot(@Nonnull Slot slot) {
+        public void setSlot(@NotNull Slot slot) {
             Preconditions.checkNotNull(slot, "slot cannot be NULL.");
             if (slot != Slot.ALL) data.put("Slot", slot.getId());
             else data.remove("Slot");
@@ -191,7 +191,7 @@ public class Attributes {
             return AttributeType.fromId(data.getString("AttributeName", null));
         }
 
-        public void setAttributeType(@Nonnull AttributeType type) {
+        public void setAttributeType(@NotNull AttributeType type) {
             Preconditions.checkNotNull(type, "type cannot be NULL.");
             data.put("AttributeName", type.getMinecraftId());
         }
@@ -200,16 +200,16 @@ public class Attributes {
             return data.getString("Name", null);
         }
 
-        public void setName(@Nonnull String name) {
+        public void setName(@NotNull String name) {
             Preconditions.checkNotNull(name, "name cannot be NULL.");
             data.put("Name", name);
         }
 
         public UUID getUUID() {
-            return new UUID(data.getLong("UUIDMost", null), data.getLong("UUIDLeast", null));
+            return new UUID(data.getLong("UUIDMost", 0L), data.getLong("UUIDLeast", 0L));
         }
 
-        public void setUUID(@Nonnull UUID id) {
+        public void setUUID(@NotNull UUID id) {
             Preconditions.checkNotNull("id", "id cannot be NULL.");
             data.put("UUIDLeast", id.getLeastSignificantBits());
             data.put("UUIDMost", id.getMostSignificantBits());

@@ -55,8 +55,9 @@ public class ValueConstructs {
 				GrandLogger.log("Tried to set fire ticks construct to invalid value.", LogType.RUNTIME_ERRORS);
 				return;
 			}
-			int normalValue = MathUtil.clamp(value.asInteger(), 0, target.getMaxFireTicks());
-			target.setFireTicks(normalValue);
+			//FIXME: Why is max set at 20???
+			//int normalValue = MathUtil.clamp(value.asInteger(), 0, target.getMaxFireTicks());
+			target.setFireTicks(value.asInteger());
 		}
 	};
 	
