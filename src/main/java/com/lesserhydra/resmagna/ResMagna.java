@@ -31,6 +31,7 @@ public class ResMagna extends JavaPlugin {
 	private final ItemUpdater itemUpdater = new ItemUpdater(this);
 	private final ActivatorListener activatorListener = new ActivatorListener(this);
 	private final ProjectileListener projectileListener = new ProjectileListener(this);
+	private final RecipeHandler recipeHandler = new RecipeHandler();
 	
 	private BukkitTask timerCheckingTask;
 	
@@ -42,9 +43,13 @@ public class ResMagna extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(InventoryHandler.getInstance(), this);
 		getServer().getPluginManager().registerEvents(activatorListener, this);
 		getServer().getPluginManager().registerEvents(projectileListener, this);
+		getServer().getPluginManager().registerEvents(recipeHandler, this);
 		
 		//Initial (re)load
 		reload();
+		
+		//Register recipes
+		recipeHandler.registerRecipes();
 		
 		getCommand(MainCommandExecutor.COMMAND_NAME).setExecutor(new MainCommandExecutor());
 	}

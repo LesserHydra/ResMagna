@@ -56,4 +56,8 @@ public class AutoConvertItem {
 		return result;
 	}
 	
+	@NotNull
+	public GrandItem getGrandItem() {
+		return convertItem;
+	}
 }

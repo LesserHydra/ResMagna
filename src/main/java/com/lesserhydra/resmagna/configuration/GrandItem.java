@@ -6,6 +6,7 @@ import com.comphenix.attribute.NbtFactory.NbtCompound;
 import com.comphenix.attribute.NbtFactory.NbtList;
 import com.google.common.primitives.Longs;
 import com.lesserhydra.resmagna.AbilityTimer;
+import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.activator.ActivatorFactory;
 import com.lesserhydra.resmagna.activator.ActivatorLine;
 import com.lesserhydra.resmagna.activator.ActivatorType;
@@ -17,11 +18,14 @@ import com.lesserhydra.util.StringTools;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.Contract;
@@ -80,6 +84,8 @@ public class GrandItem {
 	
 	private final long hash;
 	
+	private final Recipe recipe;
+	
 	//TODO: Make factory function?
 	GrandItem(ConfigurationSection itemConfig) {
 		this.name = itemConfig.getName().toLowerCase();
@@ -126,6 +132,32 @@ public class GrandItem {
 		}
 		
 		this.hash = calculateChecksum();
+		
+		this.recipe = parseRecipe(itemConfig.getConfigurationSection("recipe"));
+	}
+	
+	private Recipe parseRecipe(ConfigurationSection recipeConfig) {
+		if (recipeConfig == null) return null;
+		
+		String modeString = recipeConfig.getString("mode");
+		if (!modeString.equalsIgnoreCase("shapeless")) {
+			GrandLogger.log("Only shapeless crafting is implemented for now.", LogType.CONFIG_ERRORS);
+			return null;
+		}
+		
+		ShapelessRecipe result = new ShapelessRecipe(new NamespacedKey(ResMagna.plugin, name + "_recipe"), create());
+		recipeConfig.getMapList("ingredients").stream()
+				.forEach(ing -> {
+					String ingTypeString = (String) ing.getOrDefault("type", null);
+					Material ingType = Material.matchMaterial(ingTypeString);
+					if (ingType == null) {
+						GrandLogger.log("Invalid ingredient material: " + ingTypeString, LogType.CONFIG_ERRORS);
+						GrandLogger.log("  For item: " + name, LogType.CONFIG_ERRORS);
+						ingType = Material.BARRIER;
+					};
+					result.addIngredient(ingType);
+				});
+		return result;
 	}
 	
 	
@@ -303,6 +335,9 @@ public class GrandItem {
 	
 	@Contract(pure = true)
 	public boolean isPlaceable() { return placeable; }
+	
+	@Nullable @Contract(pure = true)
+	public Recipe getRecipe() { return recipe; }
 	
     /**
      * Gets the hash code from the name string.

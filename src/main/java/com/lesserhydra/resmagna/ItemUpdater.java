@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -100,12 +101,13 @@ class ItemUpdater implements Listener {
 	
 	//Keep items from being used in crafting
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onCraftingEvent(CraftItemEvent event) {
+	public void onCraftingEvent(PrepareItemCraftEvent event) {
 		for (ItemStack item : event.getInventory().getMatrix()) {
 			GrandItem gItem = ItemHandler.getInstance().matchItem(item);
 			if (gItem == null) continue;
 			
-			event.setCancelled(true);
+			//TODO: Don't cancel if item allows crafting
+			event.getInventory().setResult(new ItemStack(Material.AIR));
 			return;
 		}
 	}
