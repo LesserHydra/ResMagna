@@ -7,6 +7,7 @@ import com.lesserhydra.bukkitutil.nbt.NbtBase;
 import com.lesserhydra.bukkitutil.nbt.NbtCompound;
 import com.lesserhydra.bukkitutil.nbt.NbtList;
 import com.lesserhydra.bukkitutil.nbt.NbtType;
+import com.lesserhydra.bukkitutil.volatilecode.MirrorItemStack;
 import com.lesserhydra.resmagna.AbilityTimer;
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.activator.ActivatorFactory;
@@ -167,7 +168,7 @@ public class GrandItem {
 	/*---------------Item creation/maintenance---------------*/
 	@NotNull @Contract(pure = true)
 	public ItemStack create() {
-		ItemStack result = InventoryUtil.getCraftItemStack(new ItemStack(type, amount, durability));
+		MirrorItemStack result = InventoryUtil.getMirrorItemStack(new ItemStack(type, amount, durability));
 		
 		result.addUnsafeEnchantments(enchants);
 		
@@ -207,7 +208,7 @@ public class GrandItem {
 	
 	@NotNull
 	public ItemStack markItem(@NotNull ItemStack item) {
-		ItemStack result = InventoryUtil.getCraftItemStack(item);
+		MirrorItemStack result = InventoryUtil.getMirrorItemStack(item);
 		
 		NbtCompound nbt = InventoryUtil.getItemTag(result, true);
 		NbtCompound storage = nbt.getCompound(STORAGE, true);
@@ -230,7 +231,7 @@ public class GrandItem {
 	 */
 	@Nullable
 	public ItemStack update(@NotNull ItemStack item) {
-		ItemStack result = InventoryUtil.getCraftItemStack(item);
+		MirrorItemStack result = InventoryUtil.getMirrorItemStack(item);
 		NbtCompound tag = InventoryUtil.getItemTag(result, true);
 		
 		//TEMP while transitioning
@@ -366,7 +367,7 @@ public class GrandItem {
 	 */
 	@Nullable @SuppressWarnings("WeakerAccess")
 	public static String getItemName(@NotNull ItemStack item) {
-		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getCraftItemStack(item), false);
+		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getMirrorItemStack(item), false);
 		if (tag == null) return null;
 		
 		NbtCompound storage = tag.getCompound(STORAGE, false);
@@ -377,7 +378,7 @@ public class GrandItem {
 	
 	@NotNull @SuppressWarnings("WeakerAccess")
 	public static UUID getItemUUID(@NotNull ItemStack item) {
-		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getCraftItemStack(item), false);
+		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getMirrorItemStack(item), false);
 		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
 		
 		NbtCompound storage = tag.getCompound(STORAGE, false);

@@ -1,7 +1,9 @@
 package com.lesserhydra.resmagna;
 
+import com.lesserhydra.hydracore.HydraCore;
 import com.lesserhydra.resmagna.commands.MainCommandExecutor;
 import com.lesserhydra.resmagna.configuration.ConfigManager;
+import com.lesserhydra.util.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +14,10 @@ import java.util.EnumSet;
 import java.util.Random;
 
 public class ResMagna extends JavaPlugin {
+	
+	private static final int CORE_MAJOR = 2;
+	private static final int CORE_MINOR = 0;
+	
 	public static final Random RANDOM_GENERATOR = new Random();
 	public static final EnumSet<Material> CLICK_STEALERS = EnumSet.of(Material.FURNACE, Material.CHEST, Material.BEACON,
 			Material.DISPENSER, Material.DROPPER, Material.HOPPER, Material.WORKBENCH, Material.ENCHANTMENT_TABLE,
@@ -38,6 +44,24 @@ public class ResMagna extends JavaPlugin {
 	//Plugin startup
 	@Override
 	public void onEnable() {
+		assert HydraCore.isLoaded();
+		Version.Compat coreCompat = HydraCore.expectVersion(CORE_MAJOR, CORE_MINOR);
+		if (coreCompat != Version.Compat.MATCH) {
+			if (coreCompat.isOutdated()) {
+				getLogger().severe("The loaded version of HydraCore is outdated! Please update to "
+						+ CORE_MAJOR + "." + CORE_MINOR + "+.");
+				//TODO: Link
+			}
+			else {
+				getLogger().severe("The loaded version of HydraCore is incompatible with this " +
+						"version of ResMagna. Please update ResMagna or downgrade HydraCore to "
+						+ CORE_MAJOR + "." + CORE_MINOR + "+.");
+				//TODO: Links
+			}
+			getPluginLoader().disablePlugin(this);
+			return;
+		}
+		
 		plugin = this;
 		getServer().getPluginManager().registerEvents(itemUpdater, this);
 		getServer().getPluginManager().registerEvents(InventoryHandler.getInstance(), this);
@@ -57,6 +81,8 @@ public class ResMagna extends JavaPlugin {
 	//Plugin disable
 	@Override
 	public void onDisable() {
+		if (plugin == null) return;
+		
 		//Remove projectiles spawned by ProjectileAbility
 		projectileListener.removeAbilityProjectiles();
 		//Cancel timer checker
