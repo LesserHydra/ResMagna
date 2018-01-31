@@ -3,6 +3,7 @@ package com.lesserhydra.resmagna.variables;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -82,6 +83,30 @@ public interface ValueConstruct {
 			set(target.asPlayer(), value);
 		}
 		void set(Player target, Value value);
+	}
+	
+	interface WithLocation extends ValueConstruct {
+		@Override default Value get(Target target) {
+			if (!target.isLocation()) {
+				GrandLogger.log("Tried to access a location variable with non-location target.", LogType.RUNTIME_ERRORS);
+				return Values.NONE;
+			}
+			return get(target.asLocation());
+		}
+		Value get(Location target);
+	}
+	
+	interface WithLocationSettable extends WithLocation {
+		@Override default boolean isSettable() { return true; }
+		
+		@Override default void set(Target target, Value value) {
+			if (!target.isLocation()) {
+				GrandLogger.log("Tried to access a location variable with non-location target.", LogType.RUNTIME_ERRORS);
+				return;
+			}
+			set(target.asLocation(), value);
+		}
+		void set(Location target, Value value);
 	}
 	
 }

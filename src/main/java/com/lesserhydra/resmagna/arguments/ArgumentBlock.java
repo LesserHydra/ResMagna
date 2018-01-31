@@ -189,7 +189,7 @@ public class ArgumentBlock {
 		
 		GrandLocation result = GrandLocation.buildFromString(value.substring(1, value.length()-1));
 		if (result == null) {
-			logInvalid(keys, value, "targeter");
+			logInvalid(keys, value, "location");
 			return fallback;
 		}
 		

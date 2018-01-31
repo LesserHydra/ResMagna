@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 class VariableAbility implements Ability {
 	
-	//([\w.]+)\s*([=+\-*/%]+)\s*([\w.]+)
-	static private final Pattern variableLinePattern = Pattern.compile("([\\w.]+)\\s*([=+\\-*/%]+)\\s*([\\w.]+)");
+	//([\w.]+)\s*([=+\-*/%]+)\s*([+\-]?[\w.]+)
+	static private final Pattern variableLinePattern = Pattern.compile("([\\w.]+)\\s*([=+\\-*/%]+)\\s*([+\\-]?[\\w.]+)");
 	
 	private final ValueConstruct var;
 	private final ValueOperator operator;

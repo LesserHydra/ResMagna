@@ -1,10 +1,12 @@
 package com.lesserhydra.resmagna.configuration;
 
-import com.comphenix.attribute.Attributes;
-import com.comphenix.attribute.NbtFactory;
-import com.comphenix.attribute.NbtFactory.NbtCompound;
-import com.comphenix.attribute.NbtFactory.NbtList;
 import com.google.common.primitives.Longs;
+import com.lesserhydra.bukkitutil.Attributes;
+import com.lesserhydra.bukkitutil.InventoryUtil;
+import com.lesserhydra.bukkitutil.nbt.NbtBase;
+import com.lesserhydra.bukkitutil.nbt.NbtCompound;
+import com.lesserhydra.bukkitutil.nbt.NbtList;
+import com.lesserhydra.bukkitutil.nbt.NbtType;
 import com.lesserhydra.resmagna.AbilityTimer;
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.activator.ActivatorFactory;
@@ -39,18 +41,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("WeakerAccess")
 public class GrandItem {
 	
 	private static final String STORAGE = "ResMagna";
 	private static final String STORAGE_NAME = "Name";
-	private static final String STORAGE_UUID_LEAST = "UUIDLeast";
-	private static final String STORAGE_UUID_MOST = "UUIDMost";
+	private static final String STORAGE_UUID = "UUID";
 	private static final String STORAGE_HASH = "Hash";
 	
 	private final String name;
@@ -146,7 +149,7 @@ public class GrandItem {
 		}
 		
 		ShapelessRecipe result = new ShapelessRecipe(new NamespacedKey(ResMagna.plugin, name + "_recipe"), create());
-		recipeConfig.getMapList("ingredients").stream()
+		recipeConfig.getMapList("ingredients")
 				.forEach(ing -> {
 					String ingTypeString = (String) ing.getOrDefault("type", null);
 					Material ingType = Material.matchMaterial(ingTypeString);
@@ -154,7 +157,7 @@ public class GrandItem {
 						GrandLogger.log("Invalid ingredient material: " + ingTypeString, LogType.CONFIG_ERRORS);
 						GrandLogger.log("  For item: " + name, LogType.CONFIG_ERRORS);
 						ingType = Material.BARRIER;
-					};
+					}
 					result.addIngredient(ingType);
 				});
 		return result;
@@ -164,7 +167,7 @@ public class GrandItem {
 	/*---------------Item creation/maintenance---------------*/
 	@NotNull @Contract(pure = true)
 	public ItemStack create() {
-		ItemStack result = new ItemStack(type, amount, durability);
+		ItemStack result = InventoryUtil.getCraftItemStack(new ItemStack(type, amount, durability));
 		
 		result.addUnsafeEnchantments(enchants);
 		
@@ -189,34 +192,32 @@ public class GrandItem {
 		result = att.getStack();
 		
 		//Set NBT name, id, and hash
-		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
-		NbtCompound storage = nbt.getMap(STORAGE, true);
+		NbtCompound nbt = InventoryUtil.getItemTag(result, true);
+		NbtCompound storage = nbt.getCompound(STORAGE, true);
 		
-		storage.put(STORAGE_NAME, name);
+		storage.set(STORAGE_NAME, name);
 		
 		UUID newID = UUID.randomUUID();
-		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
-		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		storage.setUUID(STORAGE_UUID, newID);
 		
-		storage.put(STORAGE_HASH, hash);
+		storage.set(STORAGE_HASH, hash);
 		
 		return result;
 	}
 	
 	@NotNull
 	public ItemStack markItem(@NotNull ItemStack item) {
-		ItemStack result = NbtFactory.getCraftItemStack(item);
+		ItemStack result = InventoryUtil.getCraftItemStack(item);
 		
-		NbtCompound nbt = NbtFactory.fromItemTag(result, true);
-		NbtCompound storage = nbt.getMap(STORAGE, true);
+		NbtCompound nbt = InventoryUtil.getItemTag(result, true);
+		NbtCompound storage = nbt.getCompound(STORAGE, true);
 		
 		//Set name (Identifies the represented GrandItem)
-		storage.put(STORAGE_NAME, name);
+		storage.set(STORAGE_NAME, name);
 		
 		//Set UUID (Serves as an identifier for inventory operations, and keeps items from stacking)
 		UUID newID = UUID.randomUUID();
-		storage.put(STORAGE_UUID_LEAST, newID.getLeastSignificantBits());
-		storage.put(STORAGE_UUID_MOST, newID.getMostSignificantBits());
+		storage.setUUID(STORAGE_UUID, newID);
 		
 		//Hash will be set on update
 		return result;
@@ -229,30 +230,29 @@ public class GrandItem {
 	 */
 	@Nullable
 	public ItemStack update(@NotNull ItemStack item) {
-		ItemStack result = NbtFactory.getCraftItemStack(item);
-		NbtCompound tag = NbtFactory.fromItemTag(result, true);
+		ItemStack result = InventoryUtil.getCraftItemStack(item);
+		NbtCompound tag = InventoryUtil.getItemTag(result, true);
 		
 		//TEMP while transitioning
 		UUID legacyUUID = getLegacyUUID(tag);
 		if (legacyUUID != null) {
 			GrandLogger.log("Updating item NBT", LogType.DEBUG);
 			tag.remove("CustomStorage");
-			NbtCompound storage = tag.getMap(STORAGE, true);
-			storage.put(STORAGE_NAME, name);
+			NbtCompound storage = tag.getCompound(STORAGE, true);
+			storage.set(STORAGE_NAME, name);
 			//Keep same UUID so as not to confuse inventory handling
-			storage.put(STORAGE_UUID_LEAST, legacyUUID.getLeastSignificantBits());
-			storage.put(STORAGE_UUID_MOST, legacyUUID.getMostSignificantBits());
+			storage.setUUID(STORAGE_UUID, legacyUUID);
 		}
 		
 		//Check if needs updating
-		NbtCompound storage = tag.getMap(STORAGE, true);
-		long itemHash = storage.getLong(STORAGE_HASH, 0L);
+		NbtCompound storage = tag.getCompound(STORAGE, true);
+		long itemHash = storage.getLong(STORAGE_HASH);
 		if (itemHash == hash) return null;
 		
 		GrandLogger.log("Updating item: " + name, LogType.DEBUG);
 		
 		//Update hash
-		storage.put(STORAGE_HASH, hash);
+		storage.set(STORAGE_HASH, hash);
 		
 		result.setType(type);
 		if (updateAmount) result.setAmount(amount);
@@ -366,21 +366,21 @@ public class GrandItem {
 	 */
 	@Nullable @SuppressWarnings("WeakerAccess")
 	public static String getItemName(@NotNull ItemStack item) {
-		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getCraftItemStack(item), false);
 		if (tag == null) return null;
 		
-		NbtCompound storage = tag.getMap(STORAGE, false);
+		NbtCompound storage = tag.getCompound(STORAGE, false);
 		if (storage == null) return getLegacyName(tag); //Temp while transitioning
 		
-		return storage.getString(STORAGE_NAME, null);
+		return storage.hasKey(STORAGE_NAME) ? storage.getString(STORAGE_NAME) : null;
 	}
 	
 	@NotNull @SuppressWarnings("WeakerAccess")
 	public static UUID getItemUUID(@NotNull ItemStack item) {
-		NbtCompound tag = NbtFactory.fromItemTag(NbtFactory.getCraftItemStack(item), false);
+		NbtCompound tag = InventoryUtil.getItemTag(InventoryUtil.getCraftItemStack(item), false);
 		if (tag == null) throw new IllegalStateException("Item does not have the tag compound.");
 		
-		NbtCompound storage = tag.getMap(STORAGE, false);
+		NbtCompound storage = tag.getCompound(STORAGE, false);
 		if (storage == null) {
 			//Temp while transitioning
 			UUID legacy = getLegacyUUID(tag);
@@ -388,33 +388,33 @@ public class GrandItem {
 			return legacy;
 		}
 		
-		long least = storage.getLong(STORAGE_UUID_LEAST, 0L);
-		long most = storage.getLong(STORAGE_UUID_MOST, 0L);
-		return new UUID(most, least);
+		return storage.getUUID(STORAGE_UUID);
 	}
 	
 	private static String getLegacyName(NbtCompound tag) {
-		NbtList storage = tag.getList("CustomStorage", false);
+		NbtList storage = tag.getList("CustomStorage", NbtType.COMPOUND, false);
 		if (storage == null) return null;
 		
-		return storage.stream()
-				.filter(obj -> obj instanceof NbtCompound)
-				.map(obj -> (NbtCompound) obj)
-				.filter(compound -> "PraedaGrandis.GrandItemName".equals(compound.getString("Name", null)))
-				.map(compound -> compound.getString("Data", null))
-				.findAny().orElse(null);
+		for (NbtBase nbt : storage) {
+			NbtCompound compound = (NbtCompound) nbt;
+			String name = compound.getString("name");
+			if (!"PraedaGrandis.GrandItemName".equals(name)) continue;
+			return compound.getString("Data");
+		}
+		return null;
 	}
 	
 	private static UUID getLegacyUUID(NbtCompound tag) {
-		NbtList storage = tag.getList("CustomStorage", false);
+		NbtList storage = tag.getList("CustomStorage", NbtType.COMPOUND, false);
 		if (storage == null) return null;
 		
-		return storage.stream()
-				.filter(obj -> obj instanceof NbtCompound)
-				.map(obj -> (NbtCompound) obj)
-				.filter(compound -> "PraedaGrandis.GrandItemID".equals(compound.getString("Name", null)))
-				.map(compound -> UUID.fromString(compound.getString("Data", "")))
-				.findAny().orElse(null);
+		for (NbtBase nbt : storage) {
+			NbtCompound compound = (NbtCompound) nbt;
+			String name = compound.getString("name");
+			if (!"PraedaGrandis.GrandItemID".equals(name)) continue;
+			return UUID.fromString(compound.getString("Data"));
+		}
+		return null;
 	}
 	/*-------------------------------------------------------*/
 	
@@ -518,7 +518,7 @@ public class GrandItem {
 			
 			//Enchantments
 			List<Enchantment> sortedEnchants = Arrays.stream(Enchantment.values())
-					.sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+					.sorted(Comparator.comparing(Enchantment::getName))
 					.collect(Collectors.toList());
 			for (Enchantment e : sortedEnchants) {
 				dataOutput.writeInt(enchants.getOrDefault(e, 0));

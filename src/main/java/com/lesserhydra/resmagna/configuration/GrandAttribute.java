@@ -1,9 +1,9 @@
 package com.lesserhydra.resmagna.configuration;
 
-import com.comphenix.attribute.Attributes.Attribute;
-import com.comphenix.attribute.Attributes.AttributeType;
-import com.comphenix.attribute.Attributes.Operation;
-import com.comphenix.attribute.Attributes.Slot;
+import com.lesserhydra.bukkitutil.Attributes.Attribute;
+import com.lesserhydra.bukkitutil.Attributes.AttributeType;
+import com.lesserhydra.bukkitutil.Attributes.Operation;
+import com.lesserhydra.bukkitutil.Attributes.Slot;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.util.StringTools;

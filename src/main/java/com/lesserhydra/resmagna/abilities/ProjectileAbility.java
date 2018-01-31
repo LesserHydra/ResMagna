@@ -1,10 +1,10 @@
 package com.lesserhydra.resmagna.abilities;
 
+import com.lesserhydra.bukkitutil.EntityUtil;
 import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
 import com.lesserhydra.resmagna.arguments.ProjectileType;
-import com.lesserhydra.resmagna.nms.NMSEntity;
 import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.Targeters;
@@ -126,7 +126,7 @@ class ProjectileAbility implements Ability {
 		arrow.spigot().setDamage(arrowDamage);
 		arrow.setCritical(arrowCritical);
 		arrow.setKnockbackStrength(arrowKnockback);
-		NMSEntity.setArrowPickup(arrow, arrowPickup);
+		EntityUtil.setArrowPickupStatus(arrow, arrowPickup);
 		if (arrowKeepHit) arrow.setMetadata("PG_ArrowKeepHit", new FixedMetadataValue(ResMagna.plugin, true));
 		if (arrowKeepEnd) arrow.setMetadata("PG_ArrowKeepEnd", new FixedMetadataValue(ResMagna.plugin, true));
 		if (arrowRemove) arrow.setMetadata("PG_ArrowRemoveOnEnd", new FixedMetadataValue(ResMagna.plugin, true));

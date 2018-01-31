@@ -1,5 +1,6 @@
 package com.lesserhydra.resmagna.variables;
 
+import com.lesserhydra.bukkitutil.BlockUtil;
 import com.lesserhydra.bukkitutil.ExpUtils;
 import com.lesserhydra.resmagna.VariableHandler;
 import com.lesserhydra.resmagna.logging.GrandLogger;
@@ -10,6 +11,8 @@ import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.util.MathUtil;
 import com.lesserhydra.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -202,6 +205,90 @@ public class ValueConstructs {
 		}
 	};
 	
+	/* RAIN - Number of ticks till rain is toggled
+	 * If == 0, rain state will be kept, and a random duration will be applied.
+	 * If <= 0, rain is inactive, value is time till activated
+	 * If > 0, rain is active, value is time till deactivated
+	 */
+	private static final ValueConstruct RAIN = new ValueConstruct.WithLocationSettable() {
+		/* Number of ticks till rain is toggled
+         * If <= 0, random duration will be set.
+         * If == 1, will toggle rain state. (Next tick will randomize duration)
+         * If > 0, value decrements every tick.
+         */
+		@Override public Value get(Location target) {
+			World world = target.getWorld();
+			boolean isRaining = world.hasStorm();
+			int rainDuration = world.getWeatherDuration();
+			return Values.wrap(isRaining ? rainDuration : -rainDuration);
+		}
+		
+		@Override public void set(Location target, Value value) {
+			if (!value.hasInteger()) {
+				GrandLogger.log("Tried to set rain construct to invalid value.", LogType.RUNTIME_ERRORS);
+				return;
+			}
+			int intValue = value.asInteger();
+			World world = target.getWorld();
+			boolean shouldHaveRain = intValue > 0;
+			int rainDuration = Math.abs(intValue);
+			if (intValue != 0 && shouldHaveRain != world.hasStorm()) world.setStorm(shouldHaveRain);
+			world.setWeatherDuration(rainDuration);
+		}
+	};
+	
+	/* THUNDER - Number of ticks till thunder is toggled
+	 * If == 0, thunder state will be kept, and a random duration will be applied.
+	 * If <= 0, thunder is inactive, value is time till activated
+	 * If > 0, thunder is active, value is time till deactivated
+	 */
+	private static final ValueConstruct THUNDER = new ValueConstruct.WithLocationSettable() {
+		/* Number of ticks till thunder is toggled
+         * If <= 0, random duration will be set.
+         * If == 1, will toggle thunder state. (Next tick will randomize duration)
+         * If > 0, value decrements every tick.
+         */
+		@Override public Value get(Location target) {
+			World world = target.getWorld();
+			boolean isThundering = world.isThundering();
+			int thunderDuration = world.getThunderDuration();
+			return Values.wrap(isThundering ? thunderDuration : -thunderDuration);
+		}
+		
+		@Override public void set(Location target, Value value) {
+			if (!value.hasInteger()) {
+				GrandLogger.log("Tried to set thunder construct to invalid value.", LogType.RUNTIME_ERRORS);
+				return;
+			}
+			int intValue = value.asInteger();
+			World world = target.getWorld();
+			boolean shouldHaveThunder = intValue > 0;
+			int thunderDuration = Math.abs(intValue);
+			if (intValue != 0 && shouldHaveThunder != world.isThundering()) world.setThundering(shouldHaveThunder);
+			world.setThunderDuration(thunderDuration);
+		}
+	};
+	
+	/* TEMPERATURE - True temperature of block (affected by height)
+	 */
+	private static final ValueConstruct.WithLocation TEMPERATURE
+			= target -> Values.wrap(BlockUtil.getTrueTemperature(target.getBlock()));
+	
+	/* TOTAL_LIGHT_LEVEL - Light level
+	 */
+	private static final ValueConstruct.WithLocation TOTAL_LIGHT_LEVEL
+			= target -> Values.wrap(target.getBlock().getLightLevel());
+	
+	/* BLOCK_LIGHT_LEVEL - Light level from blocks
+	 */
+	private static final ValueConstruct.WithLocation BLOCK_LIGHT_LEVEL
+			= target -> Values.wrap(target.getBlock().getLightFromBlocks());
+	
+	/* SKY_LIGHT_LEVEL - Light level from sky
+	 */
+	private static final ValueConstruct.WithLocation SKY_LIGHT_LEVEL
+			= target -> Values.wrap(target.getBlock().getLightFromSky());
+	
 	public static ValueConstruct makeLiteral(Value value) {
 		return t -> value;
 	}
@@ -254,6 +341,12 @@ public class ValueConstructs {
 			case "totalexp": return TOTAL_EXP;
 			case "exp": return EXP;
 			case "levels": return LEVELS;
+			case "rain": return RAIN;
+			case "thunder": return THUNDER;
+			case "temperature": return TEMPERATURE;
+			case "totallightlevel": return TOTAL_LIGHT_LEVEL;
+			case "blocklightlevel": return BLOCK_LIGHT_LEVEL;
+			case "skylightlevel": return SKY_LIGHT_LEVEL;
 			
 			default:
 				GrandLogger.log("Global Variable: " + string, LogType.CONFIG_PARSING);

@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 class IsVariable implements Condition {
 	
-	//([\w.]+)\s*([=<>]+)\s*([\w.]+)
-	private static final Pattern isVariableLinePattern = Pattern.compile("([\\w.]+)\\s*([=<>]+)\\s*([\\w.]+)");
+	//([\w.]+)\s*([=<>]+)\s*([+\-]?[\w.]+)
+	private static final Pattern isVariableLinePattern = Pattern.compile("([\\w.]+)\\s*([=<>]+)\\s*([+\\-]?[\\w.]+)");
 	
 	private final ValueConstruct var;
 	private final ValueConditional conditional;

@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class ConditionFactory {
 	
-	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w.]+\s*[=<>]*\s*[\w.]+))?
-	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w.]+\\s*[=<>]*\\s*[\\w.]+))?");
+	//~?(\w+)\s*(?:(?:\((\$[\d]+)\))|([\w.]+\s*[=<>]*\s*[+\-]-?[\w.]+))?
+	static private final Pattern conditionLinePattern = Pattern.compile("~?(\\w+)\\s*(?:(?:\\((\\$[\\d]+)\\))|([\\w.]+\\s*[=<>]*\\s*[+\\-]?[\\w.]+))?");
 	
 	@Nullable
 	public static Condition build(@NotNull String conditionLine) {
@@ -110,6 +110,10 @@ public class ConditionFactory {
 		case "isthundering":	return Conditions.IS_THUNDERING;
 		case "issheltered":		return Conditions.IS_SHELTERED;
 		case "isday":		    return Conditions.IS_DAY;
+		case "isnight":		    return Conditions.IS_NIGHT;
+		case "iscold":		    return Conditions.IS_COLD;
+		case "ishot":		    return Conditions.IS_HOT;
+		case "ismoderate":		return Conditions.IS_MODERATE;
 		
 		//Non-trivial state checks
 		case "issame":          return new IsSame(args);
