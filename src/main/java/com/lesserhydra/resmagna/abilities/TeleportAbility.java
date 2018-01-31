@@ -4,7 +4,7 @@ import com.lesserhydra.resmagna.ResMagna;
 import com.lesserhydra.resmagna.arguments.ArgumentBlock;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.bukkitutil.AreaEffectTools;
+import com.lesserhydra.resmagna.util.AreaEffectTools;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

@@ -7,7 +7,7 @@ import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.resmagna.targeters.Targeters;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;

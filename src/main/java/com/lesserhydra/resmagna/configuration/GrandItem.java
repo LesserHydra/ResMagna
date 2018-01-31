@@ -16,7 +16,7 @@ import com.lesserhydra.resmagna.arguments.ItemSlotType;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;

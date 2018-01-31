@@ -1,4 +1,4 @@
-package com.lesserhydra.util;
+package com.lesserhydra.resmagna.util;
 
 import java.util.EnumSet;
 import java.util.Set;

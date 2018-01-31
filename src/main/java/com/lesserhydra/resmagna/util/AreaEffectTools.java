@@ -1,4 +1,4 @@
-package com.lesserhydra.bukkitutil;
+package com.lesserhydra.resmagna.util;
 
 import java.util.stream.Stream;
 import org.bukkit.Location;

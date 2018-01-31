@@ -15,7 +15,7 @@ import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 import org.bukkit.potion.PotionEffectType;
 
 public class ArgumentBlock {

@@ -6,7 +6,7 @@ import com.lesserhydra.resmagna.arguments.BlockPattern;
 import com.lesserhydra.resmagna.arguments.BlockPattern.BlockConstruct;
 import com.lesserhydra.resmagna.arguments.GrandLocation;
 import com.lesserhydra.resmagna.targeters.Target;
-import com.lesserhydra.bukkitutil.AreaEffectTools;
+import com.lesserhydra.resmagna.util.AreaEffectTools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

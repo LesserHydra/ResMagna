@@ -7,7 +7,7 @@ import com.lesserhydra.util.RandomCollection;
 import org.bukkit.Material;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 
 public class BlockPattern {
 	

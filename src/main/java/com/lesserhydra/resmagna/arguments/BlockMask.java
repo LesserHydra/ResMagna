@@ -11,7 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 
 public class BlockMask {
 	

@@ -9,7 +9,7 @@ import com.lesserhydra.resmagna.targeters.Target;
 import com.lesserhydra.resmagna.targeters.Targeter;
 import com.lesserhydra.resmagna.targeters.TargeterFactory;
 import com.lesserhydra.util.MathUtil;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Location;
 import org.bukkit.World;

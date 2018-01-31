@@ -6,7 +6,7 @@ import com.lesserhydra.bukkitutil.Attributes.Operation;
 import com.lesserhydra.bukkitutil.Attributes.Slot;
 import com.lesserhydra.resmagna.logging.GrandLogger;
 import com.lesserhydra.resmagna.logging.LogType;
-import com.lesserhydra.util.StringTools;
+import com.lesserhydra.resmagna.util.StringTools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
