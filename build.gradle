@@ -1,0 +1,48 @@
+plugins {
+	id 'org.ajoberstar.grgit' version '1.4.2'
+}
+
+apply plugin: 'java'
+
+import org.ajoberstar.grgit.*
+import org.apache.tools.ant.filters.ReplaceTokens
+
+version = generateVersion('0.2')
+String pluginMain = 'com.lesserhydra.resmagna.ResMagna'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven {
+		url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+	}
+}
+
+dependencies {
+	compile 'org.jetbrains:annotations:15.0'
+	compile 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
+	compile ('com.lesserhydra:HydraCore:1.0.0-SNAPSHOT') { transitive = false }
+
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.powermock:powermock-api-mockito:1.6.+'
+	testCompile 'org.powermock:powermock-module-junit4:1.6.+'
+	testCompile 'org.mockito:mockito-all:1.10.+'
+}
+
+//Generate plugin.yml
+processResources {
+	inputs.file 'build.gradle' //So it's regenerated if version changes
+	from 'templates/plugin.yml'
+	filter(ReplaceTokens, tokens: [
+			version:		version,
+			mainClass:  pluginMain,
+	])
+}
+
+static String generateVersion(workingVersion) {
+	Grgit repo = Grgit.open()
+	Tag currentTag = repo.tag.list().find {it.commit == repo.head()}
+
+	if (currentTag == null) return workingVersion + '-SNAPSHOT'
+	return currentTag.getName()
+}

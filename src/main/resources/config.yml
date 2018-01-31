@@ -1,0 +1,22 @@
+# Every x ticks, timers will be started for all custom items in each players' inventory.
+timerCheckDelay: 80L #Default: 80L
+
+# Configuration folder names
+Folders:
+  # Custom items folder
+  items: Items #Default: Items
+  # Custom abilities folder
+  abilities: Abilities #Default: Abilities
+
+# Enable/disable types of logs
+EnabledLogTypes:
+  # Parse-time errors and warnings: Should be on at all times
+  CONFIG_ERRORS:  true
+  # Runtime errors and warnings: Should be on at all times
+  RUNTIME_ERRORS: true
+  # Configuration debuging: Useful if you suspect a config issue that isn't logging an error
+  CONFIG_PARSING: false
+  # General debugging: Should typically be off
+  TOO_MUCH_INFO:  false
+  ACTIVATORS:     false
+  DEBUG:          false

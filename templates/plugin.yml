@@ -1,0 +1,12 @@
+name: ResMagna
+main: @mainClass@
+version: @version@
+author: Roboboy
+
+commands:
+  ResMagna:
+    aliases: [res, magna, item, rm]
+    description: Main command for ResMagna
+    usage: /<command> <give|list|reload>
+    permission: resmagna.maincommand
+    permissions message: You don't have <permission>
